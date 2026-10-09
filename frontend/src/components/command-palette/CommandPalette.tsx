@@ -13,7 +13,6 @@ import {
   ClusterOutlined,
   CodeOutlined,
   CopyOutlined,
-  CrownOutlined,
   DashboardOutlined,
   DatabaseOutlined,
   DiscordOutlined,
@@ -420,12 +419,6 @@ export default function CommandPalette() {
         keywords: ['api', 'api docs', 'swagger', 'rest api', 'endpoints'],
         icon: <ApiOutlined />,
       },
-      {
-        path: '/sponsors',
-        title: t('menu.sponsors'),
-        keywords: ['sponsors', 'sponsor', 'partners'],
-        icon: <CrownOutlined />,
-      },
     ];
 
     pages
@@ -811,7 +804,7 @@ export default function CommandPalette() {
                 {t('close')}
               </span>
             </div>
-            <span>3x-ui Command Palette</span>
+            <span>FullBoard Command Palette</span>
           </div>
         </div>
       </div>

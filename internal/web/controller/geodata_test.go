@@ -16,9 +16,9 @@ import (
 	xraygeodata "github.com/xtls/xray-core/common/geodata"
 	"google.golang.org/protobuf/proto"
 
-	xuilogger "github.com/mhsanaei/3x-ui/v3/internal/logger"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service"
-	"github.com/mhsanaei/3x-ui/v3/internal/xray/geodata"
+	xuilogger "github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/xray/geodata"
 )
 
 func newGeodataEngine(t *testing.T) *gin.Engine {
@@ -162,7 +162,7 @@ func TestGeodataRejectsBadRequests(t *testing.T) {
 		{name: "missing code", path: "/panel/api/xray/geodata/entries?file=geosite.dat"},
 		{name: "unknown category", path: "/panel/api/xray/geodata/entries?file=geosite.dat&code=nope"},
 		{name: "path traversal", path: "/panel/api/xray/geodata/categories?file=../../etc/passwd.dat"},
-		{name: "non dat file", path: "/panel/api/xray/geodata/categories?file=x-ui.db"},
+		{name: "non dat file", path: "/panel/api/xray/geodata/categories?file=fullboard.db"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 )
 
 func TestSubscriptionProfileModesFromSavedSettings(t *testing.T) {

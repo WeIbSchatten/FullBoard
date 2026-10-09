@@ -5,14 +5,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 )
 
 func initSubDB(t *testing.T) {
 	t.Helper()
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 }
 
 // The subscription page's Copy URL must be built from the same host the

@@ -1,4 +1,4 @@
-# 3x-ui frontend
+# FullBoard frontend
 
 React 19 + Ant Design 6 + TypeScript + Vite 8. Three SPA bundles —
 `index.html` (admin panel SPA, all `/panel/*` routes), `login.html`
@@ -212,7 +212,7 @@ Reusable components in `src/components/` are developed and documented in
 **Storybook** (`@storybook/react-vite`). It is a component workbench, not part
 of the shipped panel — nothing here is embedded into the Go binary. The built
 Storybook is published with the docs site at
-[docs.sanaei.dev/storybook](https://docs.sanaei.dev/storybook/) by
+[weibschatten.github.io/FullBoard/storybook](https://weibschatten.github.io/FullBoard/storybook/) by
 `.github/workflows/docs-deploy.yml`.
 
 ```sh

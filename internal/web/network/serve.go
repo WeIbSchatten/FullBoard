@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/logger"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
 )
 
 // ServeHTTP runs a panel HTTP server and records unexpected listener failures.

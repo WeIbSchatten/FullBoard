@@ -6,12 +6,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 )
 
 func initMigrateDB(t *testing.T) {
 	t.Helper()
-	if err := InitDB(filepath.Join(t.TempDir(), "x-ui.db")); err != nil {
+	if err := InitDB(filepath.Join(t.TempDir(), "fullboard.db")); err != nil {
 		t.Fatalf("InitDB: %v", err)
 	}
 	t.Cleanup(func() { _ = CloseDB() })

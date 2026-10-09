@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/util/common"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
 )
 
 func ParseInboundSettingsClients(settings string) ([]model.Client, error) {

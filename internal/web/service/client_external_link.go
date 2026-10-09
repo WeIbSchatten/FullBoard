@@ -4,10 +4,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/util/common"
-	"github.com/mhsanaei/3x-ui/v3/internal/util/link"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/util/link"
 
 	"gorm.io/gorm"
 )

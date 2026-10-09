@@ -6,7 +6,7 @@ blue='\033[0;34m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-xui_folder="${XUI_MAIN_FOLDER:=/usr/local/x-ui}"
+xui_folder="${XUI_MAIN_FOLDER:=/usr/local/fullboard}"
 xui_service="${XUI_SERVICE:=/etc/systemd/system}"
 
 # Don't edit this config
@@ -39,7 +39,7 @@ _fail() {
 # calls that don't go through _fail.
 xui_update_run_id="${XUI_UPDATE_RUN_ID:-0}"
 [[ "${xui_update_run_id}" =~ ^[0-9]+$ ]] || xui_update_run_id="0"
-xui_update_status_file="${XUI_UPDATE_STATUS_FILE:-/etc/x-ui/update-status.json}"
+xui_update_status_file="${XUI_UPDATE_STATUS_FILE:-/etc/fullboard/update-status.json}"
 
 _write_update_status() {
     local state="$1"
@@ -111,13 +111,13 @@ gen_random_string() {
 xui_env_file_path() {
     case "${release}" in
         ubuntu | debian | armbian)
-            echo "/etc/default/x-ui"
+            echo "/etc/default/fullboard"
             ;;
         arch | manjaro | parch | alpine)
-            echo "/etc/conf.d/x-ui"
+            echo "/etc/conf.d/fullboard"
             ;;
         *)
-            echo "/etc/sysconfig/x-ui"
+            echo "/etc/sysconfig/fullboard"
             ;;
     esac
 }
@@ -167,14 +167,14 @@ install_base() {
 config_after_update() {
     local panel_needs_restart=0
 
-    echo -e "${yellow}x-ui settings:${plain}"
-    ${xui_folder}/x-ui setting -show true
-    ${xui_folder}/x-ui migrate
+    echo -e "${yellow}fullboard settings:${plain}"
+    ${xui_folder}/fullboard setting -show true
+    ${xui_folder}/fullboard migrate
 
     # Properly detect empty cert by checking if cert: line exists and has content after it
-    local existing_cert=$(${xui_folder}/x-ui setting -getCert true 2> /dev/null | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
-    local existing_port=$(${xui_folder}/x-ui setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
-    local existing_webBasePath=$(${xui_folder}/x-ui setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}' | sed 's#^/##')
+    local existing_cert=$(${xui_folder}/fullboard setting -getCert true 2> /dev/null | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
+    local existing_port=$(${xui_folder}/fullboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
+    local existing_webBasePath=$(${xui_folder}/fullboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}' | sed 's#^/##')
 
     # Get server IP
     local URL_lists=(
@@ -206,14 +206,14 @@ config_after_update() {
     if [[ ${#existing_webBasePath} -lt 4 ]]; then
         echo -e "${yellow}WebBasePath is missing or too short. Generating a new one...${plain}"
         local config_webBasePath=$(gen_random_string 18)
-        ${xui_folder}/x-ui setting -webBasePath "${config_webBasePath}"
+        ${xui_folder}/fullboard setting -webBasePath "${config_webBasePath}"
         existing_webBasePath="${config_webBasePath}"
         panel_needs_restart=1
         echo -e "${green}New WebBasePath: ${config_webBasePath}${plain}"
     fi
 
     # An update only updates the panel: TLS stays exactly as configured. Set it up
-    # explicitly from the x-ui menu (SSL Certificate Management).
+    # explicitly from the fullboard menu (SSL Certificate Management).
     local access_scheme="http" access_host="${server_ip}"
     if [[ -n "$existing_cert" ]]; then
         access_scheme="https"
@@ -227,17 +227,17 @@ config_after_update() {
     echo -e "${green}═══════════════════════════════════════════${plain}"
     if [[ -z "$existing_cert" ]]; then
         echo -e "${yellow}No SSL certificate is configured; the panel is served over HTTP.${plain}"
-        echo -e "${yellow}Run 'x-ui' and choose SSL Certificate Management to set one up.${plain}"
+        echo -e "${yellow}Run 'fullboard' and choose SSL Certificate Management to set one up.${plain}"
     fi
 
     if [[ "$panel_needs_restart" -eq 1 ]]; then
         echo -e "${yellow}Restarting panel to apply the new web base path...${plain}"
-        systemctl restart x-ui 2> /dev/null || rc-service x-ui restart 2> /dev/null
+        systemctl restart fullboard 2> /dev/null || rc-service fullboard restart 2> /dev/null
     fi
 }
 
 # setup_fail2ban auto-installs and configures fail2ban for the IP Limit feature
-# by invoking the freshly downloaded x-ui CLI. IP Limit is load-bearing on
+# by invoking the freshly downloaded fullboard CLI. IP Limit is load-bearing on
 # fail2ban (without it the panel disables the limitIp field and zeroes existing
 # limits), so updating an older install should make it work without a manual
 # trip through the IP Limit menu. Non-fatal: a fail2ban failure must never abort
@@ -249,23 +249,23 @@ setup_fail2ban() {
         return 0
     fi
 
-    if [[ ! -x /usr/bin/x-ui ]]; then
-        echo -e "${yellow}x-ui CLI not found; skipping Fail2ban auto-setup.${plain}"
+    if [[ ! -x /usr/bin/fullboard ]]; then
+        echo -e "${yellow}fullboard CLI not found; skipping Fail2ban auto-setup.${plain}"
         return 0
     fi
 
     # Scripts older than v3.4.0 have no setup-fail2ban and exit 0 from the
     # usage banner, which would read as success here.
-    if ! grep -q '"setup-fail2ban")' /usr/bin/x-ui; then
-        echo -e "${yellow}This x-ui.sh predates 'x-ui setup-fail2ban'; skipping Fail2ban auto-setup.${plain}"
+    if ! grep -q '"setup-fail2ban")' /usr/bin/fullboard; then
+        echo -e "${yellow}This fullboard.sh predates 'fullboard setup-fail2ban'; skipping Fail2ban auto-setup.${plain}"
         return 0
     fi
 
     echo -e "${green}Setting up Fail2ban for the IP Limit feature...${plain}"
-    if /usr/bin/x-ui setup-fail2ban; then
+    if /usr/bin/fullboard setup-fail2ban; then
         echo -e "${green}Fail2ban setup complete.${plain}"
     else
-        echo -e "${yellow}Fail2ban setup did not finish; IP Limit stays disabled until you run 'x-ui' and open the IP Limit menu. Continuing.${plain}"
+        echo -e "${yellow}Fail2ban setup did not finish; IP Limit stays disabled until you run 'fullboard' and open the IP Limit menu. Continuing.${plain}"
     fi
     return 0
 }
@@ -275,17 +275,17 @@ setup_fail2ban() {
 # transient systemd-run unit; when systemd-run is unavailable it starts this
 # script as a plain child instead, and that child inherits the sandbox and then
 # cannot write anything this update needs. Say so once, up front, instead of
-# dying partway through with "Failed to download x-ui".
+# dying partway through with "Failed to download fullboard".
 require_writable_update_paths() {
     local dir probe
     for dir in "${xui_folder%/*}" "/usr/bin"; do
         [[ -n "$dir" && -d "$dir" ]] || continue
-        probe="${dir}/.x-ui-write-test.$$"
+        probe="${dir}/.fullboard-write-test.$$"
         # A real write test rather than [[ -w ]]: this runs as root, where a
         # permission bit means little and the test only reflects the file mode
         # and the mount flags, not an immutable attribute or a full filesystem.
         if ! : > "$probe" 2> /dev/null; then
-            _fail "ERROR: ${dir} is not writable for this process (read-only mount, attribute or full filesystem). The panel's fallback updater cannot run inside the hardened systemd sandbox; update from the panel UI (which uses systemd-run) or run 'x-ui update' in a shell."
+            _fail "ERROR: ${dir} is not writable for this process (read-only mount, attribute or full filesystem). The panel's fallback updater cannot run inside the hardened systemd sandbox; update from the panel UI (which uses systemd-run) or run 'fullboard update' in a shell."
         fi
         rm -f "$probe"
     done
@@ -327,7 +327,7 @@ _xui_warn_unsupported_hardening() {
         fi
     done
     [[ -n "$missing" ]] || return 0
-    echo -e "${yellow}Note: systemd ${version} ignores part of the hardening in x-ui.service; the panel still starts.${plain}"
+    echo -e "${yellow}Note: systemd ${version} ignores part of the hardening in fullboard.service; the panel still starts.${plain}"
     echo "      Not applied, needs a newer systemd: ${missing}."
     if [[ "$version" -lt 231 ]]; then
         echo "      The panel's folders stay writable through ReadWriteDirectories=, the alias this script installs."
@@ -372,8 +372,8 @@ _xui_service_write_paths_dropin() {
     # file to the panel through EnvironmentFile=, so these are the folders it
     # will actually use.
     main_folder="${XUI_MAIN_FOLDER:-${xui_folder}}"
-    db_folder="${XUI_DB_FOLDER:-/etc/x-ui}"
-    log_folder="${XUI_LOG_FOLDER:-/var/log/x-ui}"
+    db_folder="${XUI_DB_FOLDER:-/etc/fullboard}"
+    log_folder="${XUI_LOG_FOLDER:-/var/log/fullboard}"
     # An empty XUI_BIN_FOLDER resolves to "bin" relative to the panel's working
     # directory, which the unit sets to the main folder.
     bin_folder="${XUI_BIN_FOLDER:-bin}"
@@ -409,7 +409,7 @@ _xui_service_write_paths_dropin() {
     line="${line# }"
     [[ -n "$line" ]] || return 1
 
-    dropin_dir="${xui_service}/x-ui.service.d"
+    dropin_dir="${xui_service}/fullboard.service.d"
     dropin="${dropin_dir}/10-xui-sandbox.conf"
     temp_file="${dropin}.tmp.$$"
 
@@ -419,7 +419,7 @@ _xui_service_write_paths_dropin() {
 # are lost, and the list only reflects the XUI_* variables read from
 # ${env_file} at that moment. Re-run install/update after moving a store.
 # It lists the folders the panel writes to. Put local additions in their own
-# drop-in, for example 20-x-ui-local.conf, which nothing here touches.
+# drop-in, for example 20-fullboard-local.conf, which nothing here touches.
 [Service]
 ReadWritePaths=${line}
 ReadWriteDirectories=${line}
@@ -427,7 +427,7 @@ EOF
     if [[ "$(_xui_systemd_major_version)" -ge 239 ]]; then
         cat >> "$temp_file" << 'EOF'
 # @system-service needs systemd >= 239; on older versions the unknown group
-# would leave the panel with a filter it cannot start under (x-ui.service.*).
+# would leave the panel with a filter it cannot start under (fullboard.service.*).
 SystemCallFilter=@system-service
 SystemCallErrorNumber=EPERM
 EOF
@@ -444,16 +444,16 @@ EOF
     return 0
 }
 
-# Lands a systemd unit file at ${xui_service}/x-ui.service via a temp file +
+# Lands a systemd unit file at ${xui_service}/fullboard.service via a temp file +
 # atomic mv, so a failed cp/curl or an interrupted mv never leaves a
 # truncated unit file at the live path -- systemd would then fail to parse
 # it on the next daemon-reload/start. Same pattern already used for
-# /usr/bin/x-ui elsewhere in this script. source_is_url picks cp (from a
+# /usr/bin/fullboard elsewhere in this script. source_is_url picks cp (from a
 # file already extracted from the release tarball) vs curl (GitHub fallback).
 _install_xui_service_unit() {
     local source="$1"
     local source_is_url="$2"
-    local dest="${xui_service}/x-ui.service"
+    local dest="${xui_service}/fullboard.service"
     local temp_file="${dest}.tmp.$$"
 
     rm -f "$temp_file"
@@ -476,14 +476,14 @@ _install_xui_service_unit() {
         return 1
     fi
     if ! _xui_service_write_paths_dropin; then
-        echo -e "${yellow}Warning: could not refresh ${xui_service}/x-ui.service.d/10-xui-sandbox.conf.${plain}"
-        echo -e "${yellow}If XUI_DB_FOLDER or XUI_LOG_FOLDER points outside /etc/x-ui and /var/log/x-ui, the panel may not be able to write to it under ProtectSystem=full.${plain}"
+        echo -e "${yellow}Warning: could not refresh ${xui_service}/fullboard.service.d/10-xui-sandbox.conf.${plain}"
+        echo -e "${yellow}If XUI_DB_FOLDER or XUI_LOG_FOLDER points outside /etc/fullboard and /var/log/fullboard, the panel may not be able to write to it under ProtectSystem=full.${plain}"
     fi
     _xui_warn_unsupported_hardening
     return 0
 }
 
-# Older tags predate some of these files (x-ui.rc arrived in v2.8.4). Serving
+# Older tags predate some of these files (fullboard.rc arrived in v2.8.4). Serving
 # main's copy against an old binary is the mismatch this pinning exists to
 # prevent, so probe before the old install is removed and refuse the tag.
 require_repo_files() {
@@ -491,7 +491,7 @@ require_repo_files() {
     shift
     [[ "${ref}" == "main" ]] && return 0
     for name in "$@"; do
-        status=$(${curl_bin} -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "https://raw.githubusercontent.com/MHSanaei/3x-ui/${ref}/${name}")
+        status=$(${curl_bin} -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${ref}/${name}")
         if [[ "${status}" != "200" ]]; then
             _fail "ERROR: ${name} is not available for ${ref} (HTTP ${status}). Update to a release that ships it, or to 'dev-latest'. The current installation is untouched."
         fi
@@ -499,18 +499,18 @@ require_repo_files() {
 }
 
 update_x-ui() {
-    cd ${xui_folder%/x-ui}/
+    cd ${xui_folder%/fullboard}/
 
     load_xui_env
 
-    if [ -f "${xui_folder}/x-ui" ]; then
-        current_xui_version=$(${xui_folder}/x-ui -v)
-        echo -e "${green}Current x-ui version: ${current_xui_version}${plain}"
+    if [ -f "${xui_folder}/fullboard" ]; then
+        current_xui_version=$(${xui_folder}/fullboard -v)
+        echo -e "${green}Current fullboard version: ${current_xui_version}${plain}"
     else
-        _fail "ERROR: Current x-ui version: unknown"
+        _fail "ERROR: Current fullboard version: unknown"
     fi
 
-    echo -e "${green}Downloading new x-ui version...${plain}"
+    echo -e "${green}Downloading new fullboard version...${plain}"
 
     # XUI_UPDATE_TAG lets the panel target a specific release tag (e.g. the
     # rolling dev-latest pre-release). Empty keeps the default latest-stable flow.
@@ -518,13 +518,13 @@ update_x-ui() {
         tag_version="${XUI_UPDATE_TAG}"
         echo -e "${green}Using update tag: ${tag_version}${plain}"
     else
-        tag_version=$(${curl_bin} -Ls "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" 2> /dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_version=$(${curl_bin} -Ls "https://api.github.com/repos/WeIbSchatten/FullBoard/releases/latest" 2> /dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
-            _fail "ERROR: Failed to fetch x-ui version, it may be due to GitHub API restrictions, please try it later"
+            _fail "ERROR: Failed to fetch fullboard version, it may be due to GitHub API restrictions, please try it later"
         fi
     fi
-    echo -e "Got x-ui latest version: ${tag_version}, beginning the installation..."
-    # x-ui.sh, x-ui.rc and the unit files must come from the same release as
+    echo -e "Got fullboard latest version: ${tag_version}, beginning the installation..."
+    # fullboard.sh, fullboard.rc and the unit files must come from the same release as
     # the binary; only the rolling dev build tracks main.
     script_ref="${tag_version}"
     if [[ "${tag_version}" == "dev-latest" ]]; then
@@ -532,23 +532,23 @@ update_x-ui() {
     fi
     # The unit files are only fetched when the release tarball lacks them, so
     # they are checked at that point instead of here.
-    local required_files=("x-ui.sh")
-    [[ $release == "alpine" ]] && required_files+=("x-ui.rc")
+    local required_files=("fullboard.sh")
+    [[ $release == "alpine" ]] && required_files+=("fullboard.rc")
     require_repo_files "${script_ref}" "${required_files[@]}"
-    ${curl_bin} -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz 2> /dev/null
+    ${curl_bin} -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/WeIbSchatten/FullBoard/releases/download/${tag_version}/fullboard-linux-$(arch).tar.gz 2> /dev/null
     if [[ $? -ne 0 ]]; then
-        _fail "ERROR: Failed to download x-ui, please be sure that your server can access GitHub"
+        _fail "ERROR: Failed to download fullboard, please be sure that your server can access GitHub"
     fi
     if [[ ! -s ${xui_folder}-linux-$(arch).tar.gz ]]; then
         rm ${xui_folder}-linux-$(arch).tar.gz -f > /dev/null 2>&1
-        _fail "ERROR: Downloaded x-ui release archive is empty, please be sure that your server can access GitHub"
+        _fail "ERROR: Downloaded fullboard release archive is empty, please be sure that your server can access GitHub"
     fi
     # Releases publish <asset>.sha256 next to each archive. A mismatch or a
     # failed sidecar download aborts the update; only a 404 (releases
     # predating the sidecar) is tolerated with a warning.
     archive="${xui_folder}-linux-$(arch).tar.gz"
     rm -f "${archive}.sha256"
-    sidecar_code=$(${curl_bin} -sL --retry 3 --retry-delay 3 --connect-timeout 15 --max-time 60 -o "${archive}.sha256" -w '%{http_code}' "https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz.sha256" 2> /dev/null)
+    sidecar_code=$(${curl_bin} -sL --retry 3 --retry-delay 3 --connect-timeout 15 --max-time 60 -o "${archive}.sha256" -w '%{http_code}' "https://github.com/WeIbSchatten/FullBoard/releases/download/${tag_version}/fullboard-linux-$(arch).tar.gz.sha256" 2> /dev/null)
     if [[ "${sidecar_code}" == "200" ]]; then
         expected_sha256=$(awk 'NR == 1 {print $1}' "${archive}.sha256")
         actual_sha256=$(sha256sum "${archive}" | awk '{print $1}')
@@ -563,47 +563,47 @@ update_x-ui() {
         echo -e "${yellow}No checksum published for this release, skipping verification${plain}"
     else
         rm -f "${archive}.sha256" "${archive}"
-        _fail "ERROR: Failed to download the checksum for x-ui-linux-$(arch).tar.gz (HTTP ${sidecar_code})"
+        _fail "ERROR: Failed to download the checksum for fullboard-linux-$(arch).tar.gz (HTTP ${sidecar_code})"
     fi
 
     if [[ -e ${xui_folder}/ ]]; then
-        echo -e "${green}Stopping x-ui...${plain}"
+        echo -e "${green}Stopping fullboard...${plain}"
         if [[ $release == "alpine" ]]; then
-            if [ -f "/etc/init.d/x-ui" ]; then
-                rc-service x-ui stop > /dev/null 2>&1
-                rc-update del x-ui > /dev/null 2>&1
+            if [ -f "/etc/init.d/fullboard" ]; then
+                rc-service fullboard stop > /dev/null 2>&1
+                rc-update del fullboard > /dev/null 2>&1
                 echo -e "${green}Removing old service unit version...${plain}"
-                rm -f /etc/init.d/x-ui > /dev/null 2>&1
+                rm -f /etc/init.d/fullboard > /dev/null 2>&1
             else
-                rm x-ui-linux-$(arch).tar.gz -f > /dev/null 2>&1
-                _fail "ERROR: x-ui service unit not installed."
+                rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+                _fail "ERROR: fullboard service unit not installed."
             fi
         else
-            if [ -f "${xui_service}/x-ui.service" ]; then
-                systemctl stop x-ui > /dev/null 2>&1
-                systemctl disable x-ui > /dev/null 2>&1
+            if [ -f "${xui_service}/fullboard.service" ]; then
+                systemctl stop fullboard > /dev/null 2>&1
+                systemctl disable fullboard > /dev/null 2>&1
                 echo -e "${green}Removing old systemd unit version...${plain}"
-                rm ${xui_service}/x-ui.service -f > /dev/null 2>&1
+                rm ${xui_service}/fullboard.service -f > /dev/null 2>&1
                 systemctl daemon-reload > /dev/null 2>&1
             else
-                rm x-ui-linux-$(arch).tar.gz -f > /dev/null 2>&1
-                _fail "ERROR: x-ui systemd unit not installed."
+                rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+                _fail "ERROR: fullboard systemd unit not installed."
             fi
         fi
-        # Kill any leftover mtg (MTProto) sidecars. x-ui runs them outside its own
+        # Kill any leftover mtg (MTProto) sidecars. fullboard runs them outside its own
         # lifecycle, so on Linux a stale one can survive the stop and keep holding
         # an inbound port with an outdated secret, silently breaking new clients.
         # The new panel respawns a clean mtg per inbound on next start.
         pkill -f 'mtg-linux-[^ ]* run ' > /dev/null 2>&1 || true
         pkill -f 'tuic-server.*-c .*bin/tuic/tuic_[0-9]+\.json' > /dev/null 2>&1 || true
-        echo -e "${green}Removing old x-ui version...${plain}"
+        echo -e "${green}Removing old fullboard version...${plain}"
         rm ${xui_folder} -f > /dev/null 2>&1
-        rm ${xui_folder}/x-ui.service -f > /dev/null 2>&1
-        rm ${xui_folder}/x-ui.service.debian -f > /dev/null 2>&1
-        rm ${xui_folder}/x-ui.service.arch -f > /dev/null 2>&1
-        rm ${xui_folder}/x-ui.service.rhel -f > /dev/null 2>&1
-        rm ${xui_folder}/x-ui -f > /dev/null 2>&1
-        rm ${xui_folder}/x-ui.sh -f > /dev/null 2>&1
+        rm ${xui_folder}/fullboard.service -f > /dev/null 2>&1
+        rm ${xui_folder}/fullboard.service.debian -f > /dev/null 2>&1
+        rm ${xui_folder}/fullboard.service.arch -f > /dev/null 2>&1
+        rm ${xui_folder}/fullboard.service.rhel -f > /dev/null 2>&1
+        rm ${xui_folder}/fullboard -f > /dev/null 2>&1
+        rm ${xui_folder}/fullboard.sh -f > /dev/null 2>&1
         echo -e "${green}Removing old mtg version...${plain}"
         rm ${xui_folder}/bin/mtg-linux-$(arch) -f > /dev/null 2>&1
         echo -e "${green}Removing old xray version...${plain}"
@@ -614,22 +614,22 @@ update_x-ui() {
         rm ${xui_folder}/bin/tuic-server -f > /dev/null 2>&1
         rm ${xui_folder}/bin/tuic -rf > /dev/null 2>&1
     else
-        rm x-ui-linux-$(arch).tar.gz -f > /dev/null 2>&1
-        _fail "ERROR: x-ui not installed."
+        rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+        _fail "ERROR: fullboard not installed."
     fi
 
-    echo -e "${green}Installing new x-ui version...${plain}"
-    tar zxvf x-ui-linux-$(arch).tar.gz > /dev/null 2>&1
+    echo -e "${green}Installing new fullboard version...${plain}"
+    tar zxvf fullboard-linux-$(arch).tar.gz > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
-        rm x-ui-linux-$(arch).tar.gz -f > /dev/null 2>&1
-        _fail "ERROR: Failed to extract the x-ui release archive -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
+        rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+        _fail "ERROR: Failed to extract the fullboard release archive -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
     fi
-    rm x-ui-linux-$(arch).tar.gz -f > /dev/null 2>&1
-    cd x-ui > /dev/null 2>&1
-    if [[ $? -ne 0 || ! -s x-ui ]]; then
-        _fail "ERROR: Extracted x-ui archive is missing the x-ui binary -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
+    rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+    cd fullboard > /dev/null 2>&1
+    if [[ $? -ne 0 || ! -s fullboard ]]; then
+        _fail "ERROR: Extracted fullboard archive is missing the fullboard binary -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
     fi
-    chmod +x x-ui > /dev/null 2>&1
+    chmod +x fullboard > /dev/null 2>&1
 
     # Check the system's architecture and rename the file accordingly.
     # The panel binary maps GOARCH=arm to "arm32" (internal/xray/process.go),
@@ -643,34 +643,34 @@ update_x-ui() {
         fi
     fi
 
-    chmod +x x-ui bin/xray-linux-$(arch) > /dev/null 2>&1
+    chmod +x fullboard bin/xray-linux-$(arch) > /dev/null 2>&1
     if [[ -f bin/mtg-linux-arm ]]; then
         chmod +x bin/mtg-linux-arm > /dev/null 2>&1
     elif [[ -f bin/mtg-linux-$(arch) ]]; then
         chmod +x bin/mtg-linux-$(arch) > /dev/null 2>&1
     fi
 
-    echo -e "${green}Downloading and installing x-ui.sh script...${plain}"
-    local xui_script_temp="/usr/bin/x-ui-temp.$$"
+    echo -e "${green}Downloading and installing fullboard.sh script...${plain}"
+    local xui_script_temp="/usr/bin/fullboard-temp.$$"
     rm -f "${xui_script_temp}"
-    ${curl_bin} -fLRo "${xui_script_temp}" "https://raw.githubusercontent.com/MHSanaei/3x-ui/${script_ref}/x-ui.sh" > /dev/null 2>&1
+    ${curl_bin} -fLRo "${xui_script_temp}" "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.sh" > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         rm -f "${xui_script_temp}"
-        _fail "ERROR: Failed to download x-ui.sh script, please be sure that your server can access GitHub"
+        _fail "ERROR: Failed to download fullboard.sh script, please be sure that your server can access GitHub"
     fi
     if [[ ! -s "${xui_script_temp}" ]]; then
         rm -f "${xui_script_temp}"
-        _fail "ERROR: Downloaded x-ui.sh script is empty, please be sure that your server can access GitHub"
+        _fail "ERROR: Downloaded fullboard.sh script is empty, please be sure that your server can access GitHub"
     fi
-    mv -f "${xui_script_temp}" /usr/bin/x-ui
+    mv -f "${xui_script_temp}" /usr/bin/fullboard
     if [[ $? -ne 0 ]]; then
         rm -f "${xui_script_temp}"
-        _fail "ERROR: Failed to install x-ui.sh script"
+        _fail "ERROR: Failed to install fullboard.sh script"
     fi
 
-    chmod +x ${xui_folder}/x-ui.sh > /dev/null 2>&1
-    chmod +x /usr/bin/x-ui > /dev/null 2>&1
-    mkdir -p /var/log/x-ui > /dev/null 2>&1
+    chmod +x ${xui_folder}/fullboard.sh > /dev/null 2>&1
+    chmod +x /usr/bin/fullboard > /dev/null 2>&1
+    mkdir -p /var/log/fullboard > /dev/null 2>&1
 
     echo -e "${green}Changing owner...${plain}"
     chown -R root:root ${xui_folder} > /dev/null 2>&1
@@ -683,60 +683,60 @@ update_x-ui() {
     # Finish the schema/data migrations before the service starts, so the service and
     # config_after_update's CLI calls never run them on the same database at once (#6728).
     echo -e "${green}Migrating database...${plain}"
-    "${xui_folder}/x-ui" migrate
+    "${xui_folder}/fullboard" migrate
 
     if [[ $release == "alpine" ]]; then
-        echo -e "${green}Downloading and installing startup unit x-ui.rc...${plain}"
-        xui_rc_temp="/etc/init.d/x-ui.tmp.$$"
+        echo -e "${green}Downloading and installing startup unit fullboard.rc...${plain}"
+        xui_rc_temp="/etc/init.d/fullboard.tmp.$$"
         rm -f "${xui_rc_temp}"
-        ${curl_bin} -fLRo "${xui_rc_temp}" "https://raw.githubusercontent.com/MHSanaei/3x-ui/${script_ref}/x-ui.rc" > /dev/null 2>&1
+        ${curl_bin} -fLRo "${xui_rc_temp}" "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.rc" > /dev/null 2>&1
         if [[ $? -ne 0 ]]; then
             rm -f "${xui_rc_temp}"
-            _fail "ERROR: Failed to download startup unit x-ui.rc, please be sure that your server can access GitHub"
+            _fail "ERROR: Failed to download startup unit fullboard.rc, please be sure that your server can access GitHub"
         fi
         if [[ ! -s "${xui_rc_temp}" ]]; then
             rm -f "${xui_rc_temp}"
-            _fail "ERROR: Downloaded startup unit x-ui.rc is empty, please be sure that your server can access GitHub"
+            _fail "ERROR: Downloaded startup unit fullboard.rc is empty, please be sure that your server can access GitHub"
         fi
-        mv -f "${xui_rc_temp}" /etc/init.d/x-ui
+        mv -f "${xui_rc_temp}" /etc/init.d/fullboard
         if [[ $? -ne 0 ]]; then
             rm -f "${xui_rc_temp}"
-            _fail "ERROR: Failed to install startup unit x-ui.rc"
+            _fail "ERROR: Failed to install startup unit fullboard.rc"
         fi
-        chmod +x /etc/init.d/x-ui > /dev/null 2>&1
-        chown root:root /etc/init.d/x-ui > /dev/null 2>&1
-        rc-update add x-ui > /dev/null 2>&1
-        rc-service x-ui start > /dev/null 2>&1
+        chmod +x /etc/init.d/fullboard > /dev/null 2>&1
+        chown root:root /etc/init.d/fullboard > /dev/null 2>&1
+        rc-update add fullboard > /dev/null 2>&1
+        rc-service fullboard start > /dev/null 2>&1
     else
-        if [ -f "x-ui.service" ]; then
+        if [ -f "fullboard.service" ]; then
             echo -e "${green}Installing systemd unit...${plain}"
-            if ! _install_xui_service_unit "x-ui.service" "false"; then
-                echo -e "${red}Failed to copy x-ui.service${plain}"
+            if ! _install_xui_service_unit "fullboard.service" "false"; then
+                echo -e "${red}Failed to copy fullboard.service${plain}"
                 exit 1
             fi
         else
             service_installed=false
             case "${release}" in
                 ubuntu | debian | armbian)
-                    if [ -f "x-ui.service.debian" ]; then
+                    if [ -f "fullboard.service.debian" ]; then
                         echo -e "${green}Installing debian-like systemd unit...${plain}"
-                        if _install_xui_service_unit "x-ui.service.debian" "false"; then
+                        if _install_xui_service_unit "fullboard.service.debian" "false"; then
                             service_installed=true
                         fi
                     fi
                     ;;
                 arch | manjaro | parch)
-                    if [ -f "x-ui.service.arch" ]; then
+                    if [ -f "fullboard.service.arch" ]; then
                         echo -e "${green}Installing arch-like systemd unit...${plain}"
-                        if _install_xui_service_unit "x-ui.service.arch" "false"; then
+                        if _install_xui_service_unit "fullboard.service.arch" "false"; then
                             service_installed=true
                         fi
                     fi
                     ;;
                 *)
-                    if [ -f "x-ui.service.rhel" ]; then
+                    if [ -f "fullboard.service.rhel" ]; then
                         echo -e "${green}Installing rhel-like systemd unit...${plain}"
-                        if _install_xui_service_unit "x-ui.service.rhel" "false"; then
+                        if _install_xui_service_unit "fullboard.service.rhel" "false"; then
                             service_installed=true
                         fi
                     fi
@@ -748,27 +748,27 @@ update_x-ui() {
                 echo -e "${yellow}Service files not found in tar.gz, downloading from GitHub...${plain}"
                 case "${release}" in
                     ubuntu | debian | armbian)
-                        service_unit_url="https://raw.githubusercontent.com/MHSanaei/3x-ui/${script_ref}/x-ui.service.debian"
+                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.service.debian"
                         ;;
                     arch | manjaro | parch)
-                        service_unit_url="https://raw.githubusercontent.com/MHSanaei/3x-ui/${script_ref}/x-ui.service.arch"
+                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.service.arch"
                         ;;
                     *)
-                        service_unit_url="https://raw.githubusercontent.com/MHSanaei/3x-ui/${script_ref}/x-ui.service.rhel"
+                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.service.rhel"
                         ;;
                 esac
 
                 if ! _install_xui_service_unit "$service_unit_url" "true"; then
-                    echo -e "${red}Failed to install x-ui.service from GitHub (${script_ref}) -- the release tarball did not ship one either${plain}"
+                    echo -e "${red}Failed to install fullboard.service from GitHub (${script_ref}) -- the release tarball did not ship one either${plain}"
                     exit 1
                 fi
             fi
         fi
-        chown root:root ${xui_service}/x-ui.service > /dev/null 2>&1
-        chmod 644 ${xui_service}/x-ui.service > /dev/null 2>&1
+        chown root:root ${xui_service}/fullboard.service > /dev/null 2>&1
+        chmod 644 ${xui_service}/fullboard.service > /dev/null 2>&1
         systemctl daemon-reload > /dev/null 2>&1
-        systemctl enable x-ui > /dev/null 2>&1
-        systemctl start x-ui > /dev/null 2>&1
+        systemctl enable fullboard > /dev/null 2>&1
+        systemctl start fullboard > /dev/null 2>&1
     fi
 
     config_after_update
@@ -778,25 +778,25 @@ update_x-ui() {
     # Never fatal.
     setup_fail2ban
 
-    echo -e "${green}x-ui ${tag_version}${plain} updating finished, it is running now..."
+    echo -e "${green}fullboard ${tag_version}${plain} updating finished, it is running now..."
     echo -e ""
     echo -e "┌───────────────────────────────────────────────────────┐
-│  ${blue}x-ui control menu usages (subcommands):${plain}              │
+│  ${blue}fullboard control menu usages (subcommands):${plain}              │
 │                                                       │
-│  ${blue}x-ui${plain}              - Admin Management Script          │
-│  ${blue}x-ui start${plain}        - Start                            │
-│  ${blue}x-ui stop${plain}         - Stop                             │
-│  ${blue}x-ui restart${plain}      - Restart                          │
-│  ${blue}x-ui status${plain}       - Current Status                   │
-│  ${blue}x-ui settings${plain}     - Current Settings                 │
-│  ${blue}x-ui enable${plain}       - Enable Autostart on OS Startup   │
-│  ${blue}x-ui disable${plain}      - Disable Autostart on OS Startup  │
-│  ${blue}x-ui log${plain}          - Check logs                       │
-│  ${blue}x-ui banlog${plain}       - Check Fail2ban ban logs          │
-│  ${blue}x-ui update${plain}       - Update                           │
-│  ${blue}x-ui legacy${plain}       - Legacy version                   │
-│  ${blue}x-ui install${plain}      - Install                          │
-│  ${blue}x-ui uninstall${plain}    - Uninstall                        │
+│  ${blue}fullboard${plain}              - Admin Management Script          │
+│  ${blue}fullboard start${plain}        - Start                            │
+│  ${blue}fullboard stop${plain}         - Stop                             │
+│  ${blue}fullboard restart${plain}      - Restart                          │
+│  ${blue}fullboard status${plain}       - Current Status                   │
+│  ${blue}fullboard settings${plain}     - Current Settings                 │
+│  ${blue}fullboard enable${plain}       - Enable Autostart on OS Startup   │
+│  ${blue}fullboard disable${plain}      - Disable Autostart on OS Startup  │
+│  ${blue}fullboard log${plain}          - Check logs                       │
+│  ${blue}fullboard banlog${plain}       - Check Fail2ban ban logs          │
+│  ${blue}fullboard update${plain}       - Update                           │
+│  ${blue}fullboard legacy${plain}       - Legacy version                   │
+│  ${blue}fullboard install${plain}      - Install                          │
+│  ${blue}fullboard uninstall${plain}    - Uninstall                        │
 └───────────────────────────────────────────────────────┘"
 }
 

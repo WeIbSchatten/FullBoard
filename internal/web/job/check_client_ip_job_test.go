@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 )
 
 func TestMergeClientIps_EvictsStaleOldEntries(t *testing.T) {
@@ -198,7 +198,7 @@ func TestPartitionLiveIps_ConcurrentLiveIpsSortedAscending(t *testing.T) {
 func TestGetInboundByEmailFallbackIgnoresProtocolScalarFields(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 
 	inbound := &model.Inbound{
 		UserId:   1,

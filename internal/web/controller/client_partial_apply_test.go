@@ -10,11 +10,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/entity"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/entity"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
 )
 
 // seedPartlyApplyingClient puts one client on two inbounds and corrupts the second
@@ -23,7 +23,7 @@ func seedPartlyApplyingClient(t *testing.T, email string, basePort int) (healthy
 	t.Helper()
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 
 	db := database.GetDB()
 	ids := make([]int, 0, 2)
@@ -127,7 +127,7 @@ func TestDeleteHandlerFlagsRestartOnPartialApply(t *testing.T) {
 func TestImportHandlerFlagsRestartWhenTrafficRestoreFails(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 	db := database.GetDB()
 	ib := &model.Inbound{
 		UserId: 1, Enable: true, Port: 43340, Tag: "in-import-partial",

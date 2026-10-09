@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 
 	"gorm.io/gorm"
 )
@@ -19,7 +19,7 @@ func setupClientIpTestDB(t *testing.T) {
 	t.Helper()
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 }
 
 func marshalIps(t *testing.T, entries ...clientIpEntry) string {

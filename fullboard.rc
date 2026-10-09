@@ -1,15 +1,15 @@
 #!/sbin/openrc-run
 
-command="/usr/local/x-ui/x-ui"
+command="/usr/local/fullboard/fullboard"
 command_background=true
-pidfile="/run/x-ui.pid"
-description="x-ui Service"
-procname="x-ui"
+pidfile="/run/fullboard.pid"
+description="FullBoard Service"
+procname="fullboard"
 depend() {
     need net
 }
 start_pre(){
-    cd /usr/local/x-ui
+    cd /usr/local/fullboard
 }
 reload() {
   ebegin "Reloading ${RC_SVCNAME}"

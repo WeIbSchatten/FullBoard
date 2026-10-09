@@ -12,7 +12,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
 )
 
 // Loyalsoldier and runetfreedom write "<hash>  geoip.dat"; chocolate4u writes
@@ -141,7 +141,7 @@ func geofileTestEnv(t *testing.T, entries map[string]geofileEntry) string {
 
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 
 	binFolder := t.TempDir()
 	t.Setenv("XUI_BIN_FOLDER", binFolder)

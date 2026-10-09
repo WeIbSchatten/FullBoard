@@ -2,230 +2,203 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./media/3x-ui-dark.png">
-    <img alt="3x-ui" src="./media/3x-ui-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./media/fullboard-dark.png">
+    <img alt="FullBoard" src="./media/fullboard-light.png">
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://github.com/MHSanaei/3x-ui/releases"><img src="https://img.shields.io/github/v/release/mhsanaei/3x-ui" alt="Release"></a>
-  <a href="https://github.com/MHSanaei/3x-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/mhsanaei/3x-ui/release.yml.svg" alt="Build"></a>
-  <a href="#"><img src="https://img.shields.io/github/go-mod/go-version/mhsanaei/3x-ui.svg" alt="GO Version"></a>
-  <a href="https://github.com/MHSanaei/3x-ui/releases/latest"><img src="https://img.shields.io/github/downloads/mhsanaei/3x-ui/total.svg" alt="Downloads"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/releases"><img src="https://img.shields.io/github/v/release/WeIbSchatten/FullBoard" alt="Release"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/actions"><img src="https://img.shields.io/github/actions/workflow/status/WeIbSchatten/FullBoard/release.yml.svg" alt="Build"></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GPL%20V3-blue.svg?longCache=true" alt="License"></a>
-  <a href="https://pkg.go.dev/github.com/mhsanaei/3x-ui/v3"><img src="https://pkg.go.dev/badge/github.com/mhsanaei/3x-ui/v3.svg" alt="Go Reference"></a>
-  <a href="https://docs.sanaei.dev"><img src="https://img.shields.io/badge/docs-docs.sanaei.dev-22d3ee" alt="Documentation"></a>
+  <a href="https://pkg.go.dev/github.com/WeIbSchatten/FullBoard/v3"><img src="https://pkg.go.dev/badge/github.com/WeIbSchatten/FullBoard/v3.svg" alt="Go Reference"></a>
 </p>
 
-**3X-UI**, [Xray-core](https://github.com/XTLS/Xray-core) sunucularını yönetmek için geliştirilmiş profesyonel, açık kaynaklı bir web kontrol panelidir. Tek bir sanal sunucudan (VPS) çok düğümlü (multi-node) dağıtımlara kadar çok çeşitli proxy ve VPN protokollerini kurmak, yapılandırmak ve izlemek için temiz, çok dilli bir arayüz sağlar.
-
-Orijinal X-UI projesinin geliştirilmiş bir çatallaması (fork) olarak inşa edilen 3X-UI; çok daha geniş protokol desteği, artırılmış kararlılık, kullanıcı başına trafik hesaplama ve kullanım kolaylığı sağlayan birçok yeni özellik sunar.
+**FullBoard**, [Xray-core](https://github.com/XTLS/Xray-core) sunucularını yönetmek için açık kaynaklı bir web panelidir. Tek bir VPS'ten çok düğümlü kurulumlara kadar birçok proxy ve VPN protokolünü kurmak, yapılandırmak ve izlemek için çok dilli tek bir arayüz sunar.
 
 > [!IMPORTANT]
-> Bu proje yalnızca kişisel kullanım için tasarlanmıştır. Lütfen yasadışı amaçlar için veya üretim (production) ortamında kullanmayın.
+> Bu proje kişisel kullanım içindir. Yasa dışı amaçlarla kullanmayın.
 
 ## Özellikler
 
-- **Çoklu protokol destekli gelen bağlantılar (Inbounds)** — VLESS, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC v5, Hysteria2, MTProto, HTTP, SOCKS (Karma), Dokodemo-door / Tunnel ve TUN.
-- **Modern aktarımlar (transports) ve güvenlik** — TCP (Raw), mKCP, WebSocket, gRPC, HTTPUpgrade ve XHTTP; TLS, XTLS ve REALITY ile güvene alınmıştır.
-- **Dahili AmneziaWG** — DPI'ya dayanıklı WireGuard, panelin içinde bir kullanıcı alanı ağ yığını üzerinde çalışır; çekirdek modülü, DKMS veya ek paket kurulumu gerektirmez.
-- **Dahili TUIC v5** — Yerel UDP geçişi trafik ölçümü, 0-RTT el sıkışmaları ve BBR tıkanıklık kontrolü ile QUIC tabanlı yüksek performanslı proxy.
-- **MTProto proxy'leri** — İstemci başına FakeTLS gizli anahtarları, reklam etiketleri (ad-tag) ve kotalar, mevcut bağlantılar kopmadan anlık olarak uygulanır.
-- **Geri Dönüş (Fallbacks)** — Xray'in fallback desteğini kullanarak tek bir port üzerinde birden fazla protokole (ör. 443 üzerinde hem VLESS hem Trojan) hizmet verin.
-- **Kullanıcı başına yönetim** — Trafik kotaları, bitiş tarihleri, güvenilir adreslere muafiyet tanınabilen IP sınırları, HWID cihaz sınırları, zamanlanmış yenileme döngüleri, canlı çevrimiçi (online) durumu ve tek tıkla paylaşım bağlantıları, QR kodları ve abonelikler.
-- **Trafik istatistikleri** — Gelen bağlantı (Inbound), istemci ve giden bağlantı (Outbound) bazında istatistikler ve sıfırlama kontrolleri.
-- **Çoklu düğüm (Multi-node) desteği** — Tek bir panel üzerinden birden fazla sunucuyu yönetin ve ölçeklendirin; gelen bağlantıları diğer düğümlere klonlayın.
-- **Giden bağlantı (Outbound) ve yönlendirme** — WARP, NordVPN, PIA, özel yönlendirme kuralları, dengeleyiciler arası yük devretme destekli yük dengeleyiciler (load balancers) ve giden bağlantı proxy zincirleme (proxy chaining). Pakete dahil geosite ve geoip kategorileri doğrudan kural düzenleyicisinden taranabilir.
-- **Dahili abonelik sunucusu** — İstemcinin User-Agent bilgisine göre otomatik seçilen raw, JSON ve Clash çıktısı ve [özel sayfa şablonları](docs/custom-subscription-templates.md).
-- Uzaktan izleme ve yönetim için **Telegram ve Discord botları**.
-- Kapsamı sınırlanmış, isteğe bağlı olarak süresi dolan token'lar ve panel içi API referansı sunan **RESTful API**.
-- **Kurulabilir panel (PWA)** — 3X-UI'yi masaüstüne veya telefon ana ekranına sabitleyin.
-- **Esnek depolama** — SQLite (varsayılan) veya PostgreSQL.
-- Koyu ve açık tema seçenekleriyle **13 farklı UI dili**.
-- Kullanıcı başına IP limitlerini zorunlu kılmak için **Fail2ban entegrasyonu**.
+- **Çok protokollü inbound'lar**: VLESS, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC v5, Hysteria2, MTProto, HTTP, SOCKS (Mixed), Dokodemo-door / Tunnel ve TUN.
+- **Modern taşıma ve güvenlik**: TCP (Raw), mKCP, WebSocket, gRPC, HTTPUpgrade ve XHTTP; TLS, XTLS ve REALITY ile.
+- **Yerleşik AmneziaWG**: DPI'ya dayanıklı WireGuard, panel içinde kullanıcı alanı ağ yığınında çalışır; çekirdek modülü, DKMS veya ek paket gerekmez.
+- **Yerel TUIC v5 sunucusu**: Xray yönlendirmesi ve istemci bazlı trafik sayımı olan süreç içi QUIC sunucusu (BBR ve New Reno).
+- **MTProto proxy'leri**: istemci başına FakeTLS gizli anahtarları, ad-tag'ler ve kotalar; bağlantılar kopmadan canlı uygulanır.
+- **Fallback**: tek portta birden çok protokol (ör. 443'te VLESS ve Trojan).
+- **İstemci yönetimi**: trafik kotaları, son kullanma tarihleri, güvenilir adres istisnalı IP limitleri, HWID cihaz limitleri, zamanlanmış yenileme, çevrimiçi durum, paylaşım bağlantıları, QR kodlar ve abonelikler.
+- **Trafik istatistikleri**: inbound, istemci ve outbound bazında, sıfırlama ile.
+- **Çoklu düğüm**: birçok sunucuyu tek panelden yönetin, inbound'ları diğer düğümlere kopyalayın.
+- **Outbound ve yönlendirme**: WARP, NordVPN, PIA, özel kurallar, fallback zincirli yük dengeleyiciler ve proxy zincirleme. geosite/geoip kategorileri kural düzenleyiciden görüntülenebilir.
+- **Abonelik sunucusu**: istemcinin User-Agent'ına göre raw, JSON ve Clash çıktısı, ayrıca [özel sayfa şablonları](docs/custom-subscription-templates.md).
+- **Telegram ve Discord botları** ile uzaktan izleme ve yönetim.
+- **REST API**: kapsamlı, isteğe bağlı süreli token'lar ve panel içi API referansı.
+- **Kurulabilir panel (PWA)** masaüstü ve mobil için.
+- **Depolama**: SQLite (varsayılan) veya PostgreSQL.
+- **13 arayüz dili**, koyu ve açık tema.
+- **Fail2ban entegrasyonu** ile istemci bazlı IP limitleri.
 
-## Ekran Görüntüleri
+## Ekran görüntüleri
 
 <details>
 <summary>Genişletmek için tıklayın</summary>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./media/01-overview-dark.png">
-  <img alt="Genel Bakış" src="./media/01-overview-light.png">
+  <img alt="Overview" src="./media/01-overview-light.png">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./media/02-add-inbound-dark.png">
-  <img alt="Gelen Bağlantılar (Inbounds)" src="./media/02-add-inbound-light.png">
+  <img alt="Inbounds" src="./media/02-add-inbound-light.png">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./media/03-add-client-dark.png">
-  <img alt="Kullanıcı Ekle" src="./media/03-add-client-light.png">
+  <img alt="Add client" src="./media/03-add-client-light.png">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./media/05-add-nodes-dark.png">
-  <img alt="Yapılandırmalar" src="./media/05-add-nodes-light.png">
+  <img alt="Nodes" src="./media/05-add-nodes-light.png">
 </picture>
 
 </details>
 
-## Hızlı Başlangıç
+## Hızlı başlangıç
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh)
 ```
 
-Belirli bir sürümü kurmak için, etiketini (ör. `v3.7.0`) ekleyin:
+Belirli bir sürümü kurmak için etiketini ekleyin:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v3.7.0
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v3.7.0
 ```
 
-Sürekli güncellenen **dev** sürümünü (kararlı bir sürüm değil; `main` dalından her commit'te oluşturulan en son ön sürüm) kurmak için `dev-latest` değerini geçirin:
+**dev** derlemesi (`main` dalındaki en son ön sürüm) için `dev-latest` verin:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) dev-latest
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) dev-latest
 ```
 
-Kurulum sırasında rastgele bir kullanıcı adı, şifre ve erişim yolu oluşturulur. Kurulumdan sonra, hizmeti başlatabileceğiniz/durdurabileceğiniz, giriş bilgilerinizi görüntüleyebileceğiniz veya sıfırlayabileceğiniz, SSL sertifikalarını yönetebileceğiniz ve çok daha fazlasını yapabileceğiniz yönetim menüsünü açmak için terminalde `x-ui` komutunu çalıştırın.
+Kurulum rastgele kullanıcı adı, parola ve erişim yolu üretir. Ardından yönetim menüsünü açmak için `fullboard` çalıştırın: servisi başlatma/durdurma, kimlik bilgilerini görme veya sıfırlama, SSL sertifikaları ve dahası.
 
-Her yayın dosyası, yanında bir `.sha256` sağlama toplamıyla birlikte yayımlanır. Hem `install.sh` hem de güncelleyici, arşivi bu toplama karşı doğrular ve uyuşmazlık halinde işlemi durdurur.
+Her sürüm dosyası bir `.sha256` ile yayınlanır. `install.sh` ve güncelleyici arşivi doğrular, uyuşmazlıkta durur.
 
-Tam dokümantasyon — kurulum, yapılandırma, işletim ve eksiksiz API referansı — için **[docs.sanaei.dev](https://docs.sanaei.dev)** adresini ziyaret edin.
+Tam dokümantasyon (kurulum, yapılandırma, işletim, API referansı) [`docs/`](docs/) klasöründedir.
 
-### Etkileşimsiz kurulum
+### Gözetimsiz kurulum
 
-Yükleyici, cloud-init için **etkileşimsiz** olarak da çalışır.
-`XUI_NONINTERACTIVE=1` ayarlayın (veya TTY olmadan boru hattına aktarın); kurulum baştan
-sona hiçbir soru sormadan tamamlanır, rastgele kimlik bilgileri oluşturup bunları
-`/etc/x-ui/install-result.env` dosyasına yazar. Şunlar için [`deploy/`](deploy/) klasörüne bakın:
+Kurulum **etkileşimsiz** de çalışır (ör. cloud-init). `XUI_NONINTERACTIVE=1` ayarlayın veya TTY olmadan çalıştırın; rastgele kimlik bilgileri üretip `/etc/fullboard/install-result.env` dosyasına yazar. Bkz. [`deploy/`](deploy/):
 
-- [Cloud-init user-data](deploy/cloud-init/) — herhangi bir bulutta etkileşimsiz kurulum (Hetzner/AWS/DO/Vultr/GCP/Azure/Oracle)
-- [Hetzner Cloud notları](deploy/marketplace/hetzner/) — Hetzner üzerinde cloud-init tabanlı dağıtım
+- Her bulut için [Cloud-init user-data](deploy/cloud-init/)
+- [Hetzner Cloud notları](deploy/marketplace/hetzner/)
 
-## Desteklenen Platformlar
+### Yönetim
+
+| Komut | İşlev |
+| --- | --- |
+| `fullboard` | Etkileşimli menü |
+| `fullboard start` / `stop` / `restart` | Servisi yönet |
+| `fullboard status` | Servis durumu |
+| `fullboard settings` | Mevcut panel ayarları |
+| `fullboard log` | Son günlükler |
+| `fullboard update` | En son sürüme güncelle |
+| `fullboard uninstall` | Paneli kaldır |
+
+Yollar: ikili dosya ve Xray kaynakları `/usr/local/fullboard`, veritabanı ve durum `/etc/fullboard`, günlükler `/var/log/fullboard`, servis `fullboard.service`.
+
+## Desteklenen platformlar
 
 **İşletim sistemleri:** Ubuntu, Debian, Armbian, Fedora, CentOS, RHEL, AlmaLinux, Rocky Linux, Oracle Linux, Amazon Linux, Virtuozzo, Arch, Manjaro, Parch, openSUSE (Tumbleweed / Leap), Alpine ve Windows.
 
 **Mimariler:** `amd64` · `386` · `arm64` (aarch64) · `armv7` · `armv6` · `armv5` · `s390x`.
 
-## Veritabanı Seçenekleri
+## Veritabanı
 
-3X-UI kurulum sırasında seçilebilecek iki arka uç (backend) destekler:
+FullBoard kurulum sırasında seçilen iki arka ucu destekler:
 
-- **SQLite** (varsayılan) — `/etc/x-ui/x-ui.db` konumunda tek bir dosya. Kurulum gerektirmez, küçük ve orta ölçekli dağıtımlar için idealdir.
-- **PostgreSQL** — Yüksek kullanıcı sayıları veya çoklu düğüm (multi-node) kurulumları için önerilir. Yükleyici sizin için yerel olarak PostgreSQL kurabilir veya mevcut bir sunucuya DSN bağlantısı kabul edebilir.
+- **SQLite** (varsayılan): `/etc/fullboard/fullboard.db` tek dosya. Kurulum gerektirmez, küçük ve orta ölçek için idealdir.
+- **PostgreSQL**: çok sayıda istemci veya çoklu düğüm için önerilir. Kurulum PostgreSQL'i yerel kurabilir veya mevcut bir sunucunun DSN'ini kullanabilir.
 
-Çalışma anında veritabanı türü ortam değişkenleri (environment variables) ile seçilir (yükleyici bunları sizin için `/etc/default/x-ui` dosyasına yazar):
+Arka uç ortam değişkenleriyle seçilir (kurulum bunları `/etc/default/fullboard` dosyasına yazar):
 
 ```
 XUI_DB_TYPE=postgres
 XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 ```
 
-### Mevcut bir SQLite Kurulumunu PostgreSQL'e Taşıma
+### SQLite'tan PostgreSQL'e geçiş
 
 ```bash
-x-ui migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
-# ardından /etc/default/x-ui içindeki XUI_DB_TYPE ve XUI_DB_DSN değerlerini ayarlayıp yeniden başlatın:
-systemctl restart x-ui
+fullboard migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
+# ardından /etc/default/fullboard içinde XUI_DB_TYPE ve XUI_DB_DSN ayarlayıp yeniden başlatın:
+systemctl restart fullboard
 ```
 
-Kaynak SQLite dosyasına dokunulmaz; yeni veritabanının düzgün çalıştığını doğruladıktan sonra eski SQLite dosyasını manuel olarak silebilirsiniz.
+Kaynak SQLite dosyasına dokunulmaz; yeni arka ucu doğruladıktan sonra elle silin.
 
-### Docker
+## Docker
 
-Varsayılan `docker compose up -d` komutu SQLite kullanmaya devam eder. Birlikte paketlenmiş PostgreSQL servisi ile çalıştırmak için, `docker-compose.yml` dosyasındaki iki `XUI_DB_*` değişken satırının yorumunu kaldırın ve profille başlatın:
+```bash
+docker compose up -d
+```
+
+Varsayılan kurulum SQLite kullanır. Dahili PostgreSQL servisi için `docker-compose.yml` içindeki iki `XUI_DB_*` satırının yorumunu kaldırıp profil ile başlatın:
 
 ```bash
 docker compose --profile postgres up -d
 ```
 
-Docker imajı, kullanıcı başına **IP limitlerini** zorunlu kılmak için Fail2ban ile (varsayılan olarak etkindir) paketlenmiştir. Fail2ban, ihlalcileri `iptables` ile engeller ve bunun için `NET_ADMIN` yetkisine ihtiyaç duyar. `docker-compose.yml` bunu zaten `cap_add` üzerinden vermektedir; ancak konteyneri bunun yerine `docker run` ile başlatırsanız bu yetkileri kendiniz eklemelisiniz, aksi takdirde yasaklamalar günlüğe kaydedilir ancak uygulanmaz:
+İmaj, istemci bazlı **IP limitleri** için Fail2ban içerir (varsayılan açık). Engelleme `iptables` ile yapılır ve `NET_ADMIN` yetkisi gerekir. `docker-compose.yml` bunu zaten verir; `docker run` kullanıyorsanız kendiniz ekleyin, yoksa engellemeler yalnızca günlüğe yazılır:
 
 ```bash
-docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW ... ghcr.io/mhsanaei/3x-ui
+docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW -p 2053:2053 -v $PWD/db/:/etc/fullboard/ ghcr.io/weibschatten/fullboard
 ```
 
-## Ortam Değişkenleri (Environment Variables)
+## Ortam değişkenleri
 
 | Değişken | Açıklama | Varsayılan |
 | --- | --- | --- |
-| `XUI_DB_TYPE` | Veritabanı türü: `sqlite` veya `postgres` | `sqlite` |
-| `XUI_DB_DSN` | PostgreSQL bağlantı dizesi (eğer `XUI_DB_TYPE=postgres` ise) | — |
-| `XUI_DB_FOLDER` | SQLite veritabanı dizini | `/etc/x-ui` |
-| `XUI_DB_MAX_OPEN_CONNS` | Maksimum açık bağlantı sayısı (PostgreSQL havuzu) | — |
-| `XUI_DB_MAX_IDLE_CONNS` | Maksimum boşta bekleme bağlantısı (PostgreSQL havuzu) | — |
-| `XUI_INIT_WEB_BASE_PATH` | Web paneli için başlangıç URI yolu | `/` |
-| `XUI_ENABLE_FAIL2BAN` | Fail2ban tabanlı IP limit uygulamasını etkinleştir | `true` |
-| `XUI_LOG_LEVEL` | Günlük (Log) ayrıntı seviyesi (`debug`, `info`, `warning`, `error`) | `info` |
-| `XUI_DEBUG` | Hata ayıklama (debug) modunu etkinleştir | `false` |
-| `XUI_TUNNEL_HEALTH_MONITOR` | Tünel sağlık izleyicisini etkinleştir (bir URL'yi yoklar ve tekrarlanan başarısızlıklardan sonra xray'i yeniden başlatır; yeniden başlatma tüm istemcilerin bağlantısını düşürür) | `false` |
-| `XUI_TUNNEL_HEALTH_PROXY` | Yoklamanın gönderildiği proxy; yoklamanın tüneli test etmesi için bunu yerel bir xray gelen bağlantısına yönlendirin (ör. `socks5://127.0.0.1:1080`). Boş bırakılırsa yoklama yalnızca ana makine bağlantısını kontrol eder | — |
-| `XUI_TUNNEL_HEALTH_URL` | Tünel sağlığı için yoklanan URL | `https://www.cloudflare.com/cdn-cgi/trace` |
-| `XUI_TUNNEL_HEALTH_INTERVAL` | Yoklamalar arasındaki aralık | `30s` |
-| `XUI_TUNNEL_HEALTH_TIMEOUT` | Yoklama başına zaman aşımı | `10s` |
-| `XUI_TUNNEL_HEALTH_FAILURES` | Yeniden başlatma tetiklenmeden önceki ardışık başarısızlık sayısı | `3` |
-| `XUI_TUNNEL_HEALTH_COOLDOWN` | Ardışık yeniden başlatmalar arasındaki minimum gecikme | `5m` |
-| `NODE_TOKEN_ENCRYPTION` | Düğüm API token'ları için beklemede şifreleme: `off`, `migration` veya `required` (`XUI_` öneki yoktur) | `off` |
-| `XUI_NODE_TOKEN_KEY_FILE` | Etkin anahtar kimliğini ve base64 kodlu 32 baytlık anahtarlarını içeren JSON anahtarlığı (mod `0600`) | `/etc/x-ui/node_token_key.json` |
-| `XUI_NODE_TOKEN_KEY` | Tek bir base64 kodlu 32 baytlık anahtar; yalnızca anahtar dosyası yüklenemediğinde kullanılır | — |
+| `XUI_DB_TYPE` | Veritabanı: `sqlite` veya `postgres` | `sqlite` |
+| `XUI_DB_DSN` | PostgreSQL bağlantı dizesi | — |
+| `XUI_DB_FOLDER` | SQLite dosyasının dizini | `/etc/fullboard` |
+| `XUI_DB_MAX_OPEN_CONNS` | Maks. açık bağlantı (PostgreSQL havuzu) | — |
+| `XUI_DB_MAX_IDLE_CONNS` | Maks. boşta bağlantı (PostgreSQL havuzu) | — |
+| `XUI_INIT_WEB_BASE_PATH` | Panelin ilk URI yolu | `/` |
+| `XUI_PORT` | Panel portunu geçersiz kıl | — |
+| `XUI_ENABLE_FAIL2BAN` | Fail2ban ile IP limiti | `true` |
+| `XUI_LOG_LEVEL` | Günlük seviyesi (`debug`, `info`, `warning`, `error`) | `info` |
+| `XUI_DEBUG` | Hata ayıklama modu | `false` |
+| `XUI_TUNNEL_HEALTH_MONITOR` | URL'yi yoklar, tekrarlanan hatalardan sonra Xray'i yeniden başlatır (tüm istemciler kopar) | `false` |
+| `XUI_TUNNEL_HEALTH_PROXY` | Yoklama proxy'si, ör. yerel inbound (`socks5://127.0.0.1:1080`) | — |
+| `XUI_TUNNEL_HEALTH_URL` | Yoklanan URL | `https://www.cloudflare.com/cdn-cgi/trace` |
+| `XUI_TUNNEL_HEALTH_INTERVAL` | Yoklama aralığı | `30s` |
+| `XUI_TUNNEL_HEALTH_TIMEOUT` | Yoklama zaman aşımı | `10s` |
+| `XUI_TUNNEL_HEALTH_FAILURES` | Yeniden başlatmadan önceki ardışık hata sayısı | `3` |
+| `XUI_TUNNEL_HEALTH_COOLDOWN` | Yeniden başlatmalar arası minimum süre | `5m` |
+| `NODE_TOKEN_ENCRYPTION` | Düğüm token şifrelemesi: `off`, `migration` veya `required` | `off` |
+| `XUI_NODE_TOKEN_KEY_FILE` | JSON anahtarlık (mod `0600`) | `/etc/fullboard/node_token_key.json` |
+| `XUI_NODE_TOKEN_KEY` | Anahtar dosyası yüklenemezse tek base64 32 bayt anahtar | — |
 
-Tam liste [ortam değişkenleri referansında](https://docs.sanaei.dev/docs/reference/env-vars) yer alır.
+Tam liste [ortam değişkenleri referansında](docs/content/docs/en/reference/env-vars.mdx).
 
-## Desteklenen Diller
+## Diller
 
-Panel arayüzü 13 farklı dilde mevcuttur:
+English · فارسی · العربية · 中文（简体） · 中文（繁體） · Español · Русский · Українська · Türkçe · Tiếng Việt · 日本語 · Bahasa Indonesia · Português (Brasil)
 
-İngilizce · Farsça · Arapça · Çince (Basitleştirilmiş) · Çince (Geleneksel) · İspanyolca · Rusça · Ukraynaca · Türkçe · Vietnamca · Japonca · Endonezce · Portekizce (Brezilya)
+## Katkı
 
-## Katkıda Bulunma
+Katkılar memnuniyetle karşılanır. Issue veya pull request açmadan önce [katkı rehberini](/CONTRIBUTING.md) okuyun. Güvenlik açıkları için [SECURITY.md](/SECURITY.md).
 
-Katkılarınızı her zaman bekliyoruz. Bir sorun (issue) açmadan veya pull request (PR) göndermeden önce lütfen [Katkıda Bulunma Kılavuzunu](/CONTRIBUTING.md) okuyun.
+## Teşekkürler
 
-## Özel Teşekkürler
+- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (GPL-3.0): İran alan adları içeren, güvenlik ve reklam engelleme odaklı yönlendirme kuralları.
+- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0): Rusya'da engellenen alan adı ve adreslere göre otomatik güncellenen kurallar.
 
-- [alireza0](https://github.com/alireza0/)
+## Lisans
 
-## Teşekkür & Atıf
-
-- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (Lisans: **GPL-3.0**): _Geliştirilmiş v2ray/xray ve v2ray/xray-clients yönlendirme (routing) kuralları; yerleşik İran alan adları ile güvenlik ve reklam engelleme odaklıdır._
-- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (Lisans: **GPL-3.0**): _Bu depo, Rusya'daki engellenen alan adları ve adreslere dayalı otomatik olarak güncellenen V2Ray yönlendirme kurallarını içerir._
-
-## Topluluk Araçları
-
-3x-ui çevresindeki topluluk tarafından oluşturulmuş araçlar ve entegrasyonlar.
-
-- [terraform-provider-3x-ui](https://github.com/batonogov/terraform-provider-threexui) (Lisans: **MIT**): _Gelen bağlantılarnı, kullanıcıları, panel ayarlarını ve Xray yapılandırmasını Terraform / OpenTofu ile kod olarak (as code) yönetin._
-- [3X-UI Manager](https://github.com/yukh975/3X-UI-Manager) (Lisans: **MIT**): _3x-ui için yerel Android istemcisi — kontrol paneli, gelen bağlantılar, QR ile paylaşımlı kullanıcılar, düğümler ve çoklu panel yönetimi. F-Droid'de mevcut._
-
-## Projeyi Destekleyin
-
-**Eğer bu proje size faydalı olduysa, bir yıldız verebilirsiniz**:star2:
-
-<a href="https://www.buymeacoffee.com/MHSanaei" target="_blank">
-<img src="./media/default-yellow.png" alt="Bana Bir Kahve Ismarla" style="height: 70px !important;width: 277px !important;" >
-</a>
-
-</br>
-<a href="https://nowpayments.io/donation/hsanaei" target="_blank" rel="noreferrer noopener">
-   <img src="./media/donation-button-black.svg" alt="NOWPayments üzerinden Kripto Bağış Butonu">
-</a>
-
-## Yıldız Geçmişi
-
-<a href="https://www.star-history.com/?repos=mhsanaei%2F3x-ui&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&legend=top-left" />
- </picture>
-</a>
-
-<p align="center">
- <a href="https://www.star-history.com/mhsanaei/3x-ui">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank&theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank" /><img alt="Star History Rank" src="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank" /></picture> <picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending&theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending" /><img alt="GitHub Trending Repository of the Day" src="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending" /></picture>
- </a>
-</p>
+FullBoard, [GNU General Public License v3.0](/LICENSE) ile lisanslanmıştır.

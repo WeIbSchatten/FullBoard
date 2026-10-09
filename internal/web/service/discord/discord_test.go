@@ -11,13 +11,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
 )
 
 func setupTestDB(t *testing.T) service.SettingService {
 	t.Helper()
-	dbPath := filepath.Join(t.TempDir(), "x-ui.db")
+	dbPath := filepath.Join(t.TempDir(), "fullboard.db")
 	dbtest.InitDB(t, dbPath)
 	return service.SettingService{}
 }
@@ -329,7 +329,7 @@ func TestSendMessageWithFiles_Success(t *testing.T) {
 		Embeds:  []Embed{{Title: "Report Embed"}},
 	}
 	files := []FileAttachment{
-		{Filename: "x-ui.db", Data: []byte("sqlite-db-binary")},
+		{Filename: "fullboard.db", Data: []byte("sqlite-db-binary")},
 		{Filename: "config.json", Data: []byte(`{"log":{}}`)},
 	}
 
@@ -343,8 +343,8 @@ func TestSendMessageWithFiles_Success(t *testing.T) {
 	if receivedPayload.Content != "Report message" || len(receivedPayload.Embeds) != 1 {
 		t.Errorf("payload mismatch: %+v", receivedPayload)
 	}
-	if string(receivedFiles["x-ui.db"]) != "sqlite-db-binary" {
-		t.Errorf("x-ui.db mismatch: %s", string(receivedFiles["x-ui.db"]))
+	if string(receivedFiles["fullboard.db"]) != "sqlite-db-binary" {
+		t.Errorf("fullboard.db mismatch: %s", string(receivedFiles["fullboard.db"]))
 	}
 	if string(receivedFiles["config.json"]) != `{"log":{}}` {
 		t.Errorf("config.json mismatch: %s", string(receivedFiles["config.json"]))
