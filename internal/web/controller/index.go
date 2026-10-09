@@ -42,10 +42,16 @@ func NewIndexController(g *gin.RouterGroup) *IndexController {
 func (a *IndexController) initRouter(g *gin.RouterGroup) {
 	g.GET("/", a.index)
 	g.GET("/csrf-token", a.csrfToken)
+	g.GET("/"+customLoginCssPath, a.customLoginCss)
 
 	g.POST("/login", middleware.CSRFMiddleware(), a.login)
 	g.POST("/logout", middleware.CSRFMiddleware(), a.logout)
 	g.POST("/getTwoFactorEnable", middleware.CSRFMiddleware(), a.getTwoFactorEnable)
+}
+
+// customLoginCss is public: the login page needs it before authentication.
+func (a *IndexController) customLoginCss(c *gin.Context) {
+	serveCustomCss(c, "login.html")
 }
 
 // index handles the root route, redirecting logged-in users to the panel or showing the login page.

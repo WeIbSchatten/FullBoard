@@ -1686,6 +1686,41 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'GET',
+        path: '/panel/api/nodes/remote/:id/status',
+        summary:
+          "Read the remote FullBoard panel's live server status (CPU, memory, disk, Xray state and version), proxied verbatim from the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/nodes/remote/:id/settings',
+        summary:
+          "Read the remote FullBoard panel's settings in their redacted view (secrets blank, has* flags set). Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/settings',
+        summary:
+          'Save a full settings object on the remote FullBoard panel. Send the object read from GET first; blank secrets keep their stored value. Requires an admin-scope API token on the node.',
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        body: '{\n  "webPort": 2053,\n  "pageSize": 50,\n  "customCss": ".ant-layout { background: #0b1020; }",\n  "...": "every other field from GET /remote/:id/settings"\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/restartXray',
+        summary: 'Restart the Xray core on the remote FullBoard panel.',
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/restartPanel',
+        summary:
+          'Restart the remote FullBoard panel process. Requires an admin-scope API token on the node.',
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'GET',
         path: '/panel/api/nodes/get/:id',
         summary: 'Fetch a single node by ID.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],

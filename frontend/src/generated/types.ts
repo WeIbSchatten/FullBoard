@@ -10,6 +10,8 @@ export type trafficLocalApplyAction = number;
 export type transportBits = number;
 
 export interface AllSetting {
+  customCss: string;
+  customLoginCss: string;
   datepicker: string;
   discordAdminIds: string;
   discordBotBackup: boolean;
@@ -190,6 +192,8 @@ export interface AllSetting {
 }
 
 export interface AllSettingView {
+  customCss: string;
+  customLoginCss: string;
   datepicker: string;
   discordAdminIds: string;
   discordBotBackup: boolean;

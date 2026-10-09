@@ -7,6 +7,7 @@ import {
   ApartmentOutlined,
   ClusterOutlined,
   CloudDownloadOutlined,
+  ControlOutlined,
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
@@ -42,6 +43,7 @@ interface NodeListProps {
   onToggleEnable: (node: NodeRecord, next: boolean) => void;
   onUpdateNode: (node: NodeRecord) => void;
   onUpdateSelected: () => void;
+  onManage?: (node: NodeRecord) => void;
 }
 
 function isUpdateEligible(n: NodeRecord): boolean {
@@ -178,6 +180,7 @@ export default function NodeList({
   onToggleEnable,
   onUpdateNode,
   onUpdateSelected,
+  onManage,
 }: NodeListProps) {
   const { t } = useTranslation();
   const relativeTime = useRelativeTime();
@@ -244,7 +247,7 @@ export default function NodeList({
       {
         title: t('pages.nodes.actions'),
         align: 'center',
-        width: 190,
+        width: 230,
         render: (_value, record) =>
           record.transitive ? (
             <Tooltip
@@ -258,6 +261,18 @@ export default function NodeList({
             </Tooltip>
           ) : (
             <Space>
+              {onManage && (
+                <Tooltip title={t('pages.nodes.remote.manage')}>
+                  <Button
+                    type="text"
+                    size="small"
+                    style={{ fontSize: 16 }}
+                    icon={<ControlOutlined />}
+                    aria-label={t('pages.nodes.remote.manage')}
+                    onClick={() => onManage(record)}
+                  />
+                </Tooltip>
+              )}
               <Tooltip title={t('pages.nodes.probe')}>
                 <Button
                   type="text"
@@ -531,6 +546,7 @@ export default function NodeList({
       onEdit,
       onDelete,
       onUpdateNode,
+      onManage,
       nameByGuid,
     ],
   );
@@ -660,6 +676,19 @@ export default function NodeList({
                           placement="bottomRight"
                           menu={{
                             items: [
+                              ...(onManage
+                                ? [
+                                    {
+                                      key: 'manage',
+                                      label: (
+                                        <>
+                                          <ControlOutlined /> {t('pages.nodes.remote.manage')}
+                                        </>
+                                      ),
+                                      onClick: () => onManage(record),
+                                    },
+                                  ]
+                                : []),
                               {
                                 key: 'probe',
                                 label: (

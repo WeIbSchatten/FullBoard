@@ -143,6 +143,7 @@ func serveDistPage(c *gin.Context, name string) {
 	inject = append(inject, csrfMeta...)
 	inject = append(inject, basePathMeta...)
 	inject = append(inject, pwaHeadInjection(basePath, name)...)
+	inject = append(inject, customCssHeadInjection(basePath, name)...)
 	inject = append(inject, []byte(`</head>`)...)
 	out := bytes.Replace(body, []byte("</head>"), inject, 1)
 

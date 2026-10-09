@@ -2,6 +2,12 @@
 export const SCHEMAS: Record<string, unknown> = {
   "AllSetting": {
     "properties": {
+      "customCss": {
+        "type": "string"
+      },
+      "customLoginCss": {
+        "type": "string"
+      },
       "datepicker": {
         "type": "string"
       },
@@ -572,6 +578,8 @@ export const SCHEMAS: Record<string, unknown> = {
       }
     },
     "required": [
+      "customCss",
+      "customLoginCss",
       "datepicker",
       "discordAdminIds",
       "discordBotBackup",
@@ -754,6 +762,12 @@ export const SCHEMAS: Record<string, unknown> = {
   },
   "AllSettingView": {
     "properties": {
+      "customCss": {
+        "type": "string"
+      },
+      "customLoginCss": {
+        "type": "string"
+      },
       "datepicker": {
         "type": "string"
       },
@@ -1348,6 +1362,8 @@ export const SCHEMAS: Record<string, unknown> = {
       }
     },
     "required": [
+      "customCss",
+      "customLoginCss",
       "datepicker",
       "discordAdminIds",
       "discordBotBackup",
