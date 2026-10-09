@@ -33,6 +33,7 @@ import { useNodeMutations } from '@/api/queries/useNodeMutations';
 import AppSidebar from '@/layouts/AppSidebar';
 import NodeList from './NodeList';
 import NodeFormModal from './NodeFormModal';
+import RemotePanelDrawer from './RemotePanelDrawer';
 import { setMessageInstance } from '@/utils/messageBus';
 import { HttpUtil } from '@/utils';
 import type { PanelUpdateInfo } from '../index/PanelUpdateModal';
@@ -103,6 +104,7 @@ export default function NodesPage() {
   const [formMode, setFormMode] = useState<'add' | 'edit'>('add');
   const [formNode, setFormNode] = useState<NodeRecord | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [managedNode, setManagedNode] = useState<NodeRecord | null>(null);
   const [mtlsOpen, setMtlsOpen] = useState(false);
   const [trustCa, setTrustCa] = useState('');
   const [copyingCa, setCopyingCa] = useState(false);
@@ -361,6 +363,7 @@ export default function NodesPage() {
                       onToggleEnable={onToggleEnable}
                       onUpdateNode={onUpdateNode}
                       onUpdateSelected={onUpdateSelected}
+                      onManage={setManagedNode}
                     />
                   </Col>
                 </Row>
@@ -368,6 +371,12 @@ export default function NodesPage() {
             </Spin>
           </Layout.Content>
         </Layout>
+
+        <RemotePanelDrawer
+          key={managedNode?.id ?? 'none'}
+          node={managedNode}
+          onClose={() => setManagedNode(null)}
+        />
 
         <NodeFormModal
           open={formOpen}

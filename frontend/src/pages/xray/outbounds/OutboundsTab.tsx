@@ -35,6 +35,7 @@ import {
   WarningOutlined,
   ExportOutlined,
   ImportOutlined,
+  BranchesOutlined,
 } from '@ant-design/icons';
 
 import { isOutboundProtocol } from '@/schemas/primitives';
@@ -62,6 +63,13 @@ import { originalOutboundIndex } from './outbounds-tab-helpers';
 import { useOutboundColumns } from './useOutboundColumns';
 import OutboundCardList from './OutboundCardList';
 import SubscriptionOutbounds from './SubscriptionOutbounds';
+import CrossServerChainModal, { type CrossServerChainPreset } from './CrossServerChainModal';
+import {
+  applyCrossServerChain,
+  type ChainOutbound,
+  type ChainRoutingRule,
+  type ChainRulePosition,
+} from './cross-server-chain';
 
 const defaultOutboundSubscriptionUserAgent = 'fullboard-outbound-sub/1.0';
 
@@ -101,6 +109,8 @@ interface OutboundsTabProps {
   onShowNord: () => void;
   onShowPia: () => void;
   onRefreshXrayData?: () => void;
+  chainRequest?: CrossServerChainPreset;
+  onChainRequestHandled?: () => void;
 }
 
 export default function OutboundsTab({
@@ -110,7 +120,7 @@ export default function OutboundsTab({
   outboundTestStates,
   subscriptionTestStates,
   testingAll,
-  inboundTags: _inboundTags,
+  inboundTags,
   subscriptionOutbounds,
   subscriptionOutboundTags,
   isMobile,
@@ -122,6 +132,8 @@ export default function OutboundsTab({
   onShowNord,
   onShowPia,
   onRefreshXrayData,
+  chainRequest,
+  onChainRequestHandled,
 }: OutboundsTabProps) {
   const { t } = useTranslation();
   const [modal, modalContextHolder] = Modal.useModal();
@@ -287,6 +299,28 @@ export default function OutboundsTab({
       if (!tt.outbounds) return;
       [tt.outbounds[next], tt.outbounds[target]] = [tt.outbounds[target], tt.outbounds[next]];
     });
+  }
+
+  const [chainOpen, setChainOpen] = useState(false);
+  const chainModalOpen = chainOpen || !!chainRequest;
+  const existingOutboundTags = useMemo(
+    () => outbounds.map((o) => o.tag).filter((tg): tg is string => !!tg),
+    [outbounds],
+  );
+
+  function closeChain() {
+    setChainOpen(false);
+    if (chainRequest) onChainRequestHandled?.();
+  }
+
+  function applyChain(
+    outbound: ChainOutbound,
+    rule: ChainRoutingRule | null,
+    position: ChainRulePosition,
+  ) {
+    mutate((tt) => applyCrossServerChain(tt, outbound, rule, position));
+    closeChain();
+    messageApi.success(t('pages.xray.chain.added'));
   }
 
   const [importOpen, setImportOpen] = useState(false);
@@ -572,6 +606,12 @@ export default function OutboundsTab({
                       label: t('pages.xray.pia.menu'),
                       onClick: onShowPia,
                     },
+                    {
+                      key: 'chain',
+                      icon: <BranchesOutlined />,
+                      label: t('pages.xray.chain.menu'),
+                      onClick: () => setChainOpen(true),
+                    },
                     { type: 'divider' },
                     {
                       key: 'import',
@@ -666,6 +706,16 @@ export default function OutboundsTab({
           onClose={() => setModalOpen(false)}
           onConfirm={onConfirm}
         />
+        {chainModalOpen && (
+          <CrossServerChainModal
+            open={chainModalOpen}
+            preset={chainRequest}
+            existingTags={existingOutboundTags}
+            inboundTags={inboundTags}
+            onClose={closeChain}
+            onApply={applyChain}
+          />
+        )}
         <PromptModal
           open={importOpen}
           onClose={() => setImportOpen(false)}

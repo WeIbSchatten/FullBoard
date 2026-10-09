@@ -92,6 +92,12 @@ export default function XrayPage() {
       : location.pathname === '/routing'
         ? 'routing'
         : '';
+  const chainRequest = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const nodeId = Number(params.get('chainNode'));
+    if (!nodeId) return undefined;
+    return { nodeId, inboundId: Number(params.get('chainInbound')) || undefined };
+  }, [location.search]);
   const sectionSlug = pathSection || location.hash.replace(/^#/, '');
   const activeSection = SECTION_SLUGS.includes(sectionSlug) ? sectionSlug : 'basic';
 
@@ -254,6 +260,10 @@ export default function XrayPage() {
             onShowNord={() => setNordOpen(true)}
             onShowPia={() => setPiaOpen(true)}
             onRefreshXrayData={fetchAll}
+            chainRequest={chainRequest}
+            onChainRequestHandled={() =>
+              navigate(location.pathname + location.hash, { replace: true })
+            }
           />
         );
       case 'balancer':

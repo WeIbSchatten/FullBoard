@@ -50,6 +50,11 @@ func (a *XUIController) initRouter(g *gin.RouterGroup) {
 	// so they fetch the session token via this endpoint at startup and replay it
 	// on subsequent unsafe requests.
 	g.GET("/csrf-token", a.csrfToken)
+	g.GET("/custom.css", a.customCss)
+}
+
+func (a *XUIController) customCss(c *gin.Context) {
+	serveCustomCss(c, "index.html")
 }
 
 // panelSPA serves the React SPA shell. Every GET under /panel/ that isn't an
