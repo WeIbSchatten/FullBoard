@@ -28,6 +28,21 @@ import (
 
 const remoteHTTPTimeout = 10 * time.Second
 
+// remoteSlowTimeout bounds node calls that legitimately take long: an Xray or
+// geo-file download on the node, and database backup transfer.
+const remoteSlowTimeout = 3 * time.Minute
+
+type slowOpKey struct{}
+
+func withSlowOp(ctx context.Context) context.Context {
+	return context.WithValue(ctx, slowOpKey{}, true)
+}
+
+func isSlowOp(ctx context.Context) bool {
+	slow, _ := ctx.Value(slowOpKey{}).(bool)
+	return slow
+}
+
 // zstdMinBodyBytes is the smallest body worth compressing; below it the framing
 // overhead can outweigh the savings.
 const zstdMinBodyBytes = 1024
@@ -175,7 +190,32 @@ func (r *Remote) baseURL() (string, error) {
 	return u.String(), nil
 }
 
+// do sends a request and decodes the node's JSON envelope.
 func (r *Remote) do(ctx context.Context, method, path string, body any) (*envelope, error) {
+	raw, err := r.send(ctx, method, path, body)
+	if err != nil {
+		return nil, err
+	}
+	var env envelope
+	if err := json.Unmarshal(raw, &env); err != nil {
+		return nil, fmt.Errorf("decode envelope: %w", err)
+	}
+	if !env.Success {
+		return &env, &remoteAPIError{msg: env.Msg}
+	}
+	return &env, nil
+}
+
+// multipartBody is a pre-encoded multipart/form-data request body.
+type multipartBody struct {
+	contentType string
+	data        []byte
+}
+
+// send performs one authenticated node request and returns the capped,
+// status-checked response body, undecoded: do() wraps it for JSON envelopes
+// and backup download reads the node's file bytes directly.
+func (r *Remote) send(ctx context.Context, method, path string, body any) ([]byte, error) {
 	// mtls nodes authenticate via the client certificate, so a bearer token is
 	// optional for them; every other mode still requires one.
 	if r.node.ApiToken == "" && r.node.TlsVerifyMode != "mtls" {
@@ -197,6 +237,9 @@ func (r *Remote) do(ctx context.Context, method, path string, body any) (*envelo
 	case url.Values:
 		bodyBytes = []byte(b.Encode())
 		contentType = "application/x-www-form-urlencoded"
+	case multipartBody:
+		bodyBytes = b.data
+		contentType = b.contentType
 	default:
 		buf, jerr := json.Marshal(b)
 		if jerr != nil {
@@ -223,7 +266,12 @@ func (r *Remote) do(ctx context.Context, method, path string, body any) (*envelo
 		reqBody = bytes.NewReader(bodyBytes)
 	}
 
-	cctx, cancel := context.WithTimeout(netsafe.ContextWithAllowPrivate(ctx, r.node.AllowPrivateAddress), remoteHTTPTimeout)
+	timeout := remoteHTTPTimeout
+	slow := isSlowOp(ctx)
+	if slow {
+		timeout = remoteSlowTimeout
+	}
+	cctx, cancel := context.WithTimeout(netsafe.ContextWithAllowPrivate(ctx, r.node.AllowPrivateAddress), timeout)
 	defer cancel()
 	req, err := http.NewRequestWithContext(cctx, method, target, reqBody)
 	if err != nil {
@@ -251,6 +299,13 @@ func (r *Remote) do(ctx context.Context, method, path string, body any) (*envelo
 	client, err := r.httpClient()
 	if err != nil {
 		return nil, err
+	}
+	if slow {
+		// The cached client's own Timeout would cut the call at remoteHTTPTimeout;
+		// the context deadline above bounds it instead. Transport stays shared.
+		slowClient := *client
+		slowClient.Timeout = 0
+		client = &slowClient
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -286,15 +341,7 @@ func (r *Remote) do(ctx context.Context, method, path string, body any) (*envelo
 		}
 		return nil, fmt.Errorf("read body: %w", err)
 	}
-
-	var env envelope
-	if err := json.Unmarshal(raw, &env); err != nil {
-		return nil, fmt.Errorf("decode envelope: %w", err)
-	}
-	if !env.Success {
-		return &env, &remoteAPIError{msg: env.Msg}
-	}
-	return &env, nil
+	return raw, nil
 }
 
 func (r *Remote) resolveRemoteID(ctx context.Context, tag string) (int, error) {

@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"io"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
@@ -14,16 +16,33 @@ import (
 type TgWebProxyService struct{}
 
 var (
-	tgWebProxyOnce    sync.Once
+	tgWebProxyMu      sync.Mutex
 	tgWebProxyManager *tgwebproxy.Manager
 )
 
 func tgWebProxy() *tgwebproxy.Manager {
-	tgWebProxyOnce.Do(func() {
+	tgWebProxyMu.Lock()
+	defer tgWebProxyMu.Unlock()
+	if tgWebProxyManager == nil {
 		paths := tgwebproxy.DefaultPaths(filepath.Join(config.GetLogFolder(), "tg-web-proxy"))
 		tgWebProxyManager = tgwebproxy.NewManager(paths, nil)
-	})
+	}
 	return tgWebProxyManager
+}
+
+// UseTgWebProxyManager swaps the relay manager so tests in other packages can
+// point the service at a throwaway directory; the returned func restores it.
+func UseTgWebProxyManager(m *tgwebproxy.Manager) (restore func()) {
+	tgWebProxyMu.Lock()
+	prev := tgWebProxyManager
+	tgWebProxyManager = m
+	tgWebProxyMu.Unlock()
+	return func() {
+		cancelTgWebProxySync()
+		tgWebProxyMu.Lock()
+		tgWebProxyManager = prev
+		tgWebProxyMu.Unlock()
+	}
 }
 
 type TgWebProxyConfigRequest struct {
@@ -52,10 +71,25 @@ func (s *TgWebProxyService) AddProfile(ctx context.Context, p tgwebproxy.RelayPr
 }
 
 func (s *TgWebProxyService) UpdateProfile(ctx context.Context, name string, p tgwebproxy.RelayProfile) (tgwebproxy.RelayApplyResult, error) {
-	return tgWebProxy().UpdateProfile(ctx, name, p)
+	if strings.TrimSpace(p.Name) != name {
+		if err := ensureTgWebProxyProfileUnbound(name); err != nil {
+			return tgwebproxy.RelayApplyResult{}, err
+		}
+	}
+	res, err := tgWebProxy().UpdateProfile(ctx, name, p)
+	if err != nil {
+		return res, err
+	}
+	if cloned, derr := dedicatedBindingsUse(name); derr == nil && cloned {
+		scheduleTgWebProxySync()
+	}
+	return res, nil
 }
 
 func (s *TgWebProxyService) DeleteProfile(ctx context.Context, name string) (tgwebproxy.RelayApplyResult, error) {
+	if err := ensureTgWebProxyProfileUnbound(name); err != nil {
+		return tgwebproxy.RelayApplyResult{}, err
+	}
 	return tgWebProxy().DeleteProfile(ctx, name)
 }
 
@@ -81,4 +115,24 @@ func (s *TgWebProxyService) Update(ctx context.Context) (tgwebproxy.RelayJobStat
 
 func (s *TgWebProxyService) Job(ctx context.Context) tgwebproxy.RelayJobStatus {
 	return tgWebProxy().JobStatus(ctx)
+}
+
+func (s *TgWebProxyService) GetPublicSite() (tgwebproxy.PublicSiteSnapshot, error) {
+	return tgWebProxy().GetPublicSite()
+}
+
+func (s *TgWebProxyService) PutPublicSiteIndex(ctx context.Context, html string) (tgwebproxy.RelayApplyResult, error) {
+	return tgWebProxy().PutPublicSiteIndex(ctx, html)
+}
+
+func (s *TgWebProxyService) ResetPublicSite(ctx context.Context) (tgwebproxy.RelayApplyResult, error) {
+	return tgWebProxy().ResetPublicSite(ctx)
+}
+
+func (s *TgWebProxyService) UploadPublicSiteAsset(name string, r io.Reader, size int64) error {
+	return tgWebProxy().UploadPublicSiteAsset(name, r, size)
+}
+
+func (s *TgWebProxyService) DeletePublicSiteAsset(name string) error {
+	return tgWebProxy().DeletePublicSiteAsset(name)
 }

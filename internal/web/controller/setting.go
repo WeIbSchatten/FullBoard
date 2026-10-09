@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/entity"
@@ -73,6 +74,7 @@ func (a *SettingController) initRouter(g *gin.RouterGroup) {
 	g.POST("/validateRegex", a.validateRegex)
 	g.POST("/updateUser", a.updateUser)
 	g.POST("/restartPanel", a.restartPanel)
+	g.POST("/loginTicket", a.issueLoginTicket)
 	g.GET("/getDefaultJsonConfig", a.getDefaultXrayConfig)
 	g.GET("/apiTokens", a.listApiTokens)
 	g.POST("/apiTokens/create", a.createApiToken)
@@ -227,6 +229,27 @@ func (a *SettingController) updateUser(c *gin.Context) {
 func (a *SettingController) restartPanel(c *gin.Context) {
 	err := a.panelService.RestartPanel(time.Second * 3)
 	jsonMsg(c, I18nWeb(c, "pages.settings.restartPanelSuccess"), err)
+}
+
+// issueLoginTicket mints a one-time browser sign-in ticket for a managing
+// master. Admin API tokens only: a browser session or a node-sync/monitor token
+// must not be able to turn itself into a full panel login.
+func (a *SettingController) issueLoginTicket(c *gin.Context) {
+	if scope, _ := c.Get("api_token_scope"); scope != model.ApiScopeAdmin {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			"success": false,
+			"msg":     "login tickets are issued to admin-scope API tokens only",
+		})
+		return
+	}
+	ticket, err := session.IssueLoginTicket()
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "somethingWentWrong"), err)
+		return
+	}
+	logger.Infof("login ticket issued to an admin API token from IP=%q", getRemoteIp(c))
+	c.Header("Cache-Control", "no-store")
+	jsonObj(c, service.LoginTicketResponse{Ticket: ticket, ExpiresIn: int(session.LoginTicketTTL.Seconds())}, nil)
 }
 
 // getDefaultXrayConfig retrieves the default Xray configuration.

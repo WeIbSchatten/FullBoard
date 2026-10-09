@@ -122,8 +122,15 @@ func (m *Manager) SaveConfig(ctx context.Context, cfg RelayConfig, initial *Rela
 	return m.afterCommit(ctx), nil
 }
 
+func errManagedProfile(name string) error {
+	return fmt.Errorf("profile %q is managed by client bindings; unbind the client instead", name)
+}
+
 func (m *Manager) AddProfile(ctx context.Context, p RelayProfile) (RelayApplyResult, error) {
 	p = NormalizeProfile(p)
+	if IsManagedProfileName(p.Name) {
+		return RelayApplyResult{}, fmt.Errorf("profile names starting with %q are reserved for client bindings", DedicatedPrefix)
+	}
 	err := m.store.MutateProfiles(ctx, func(list []RelayProfile) ([]RelayProfile, error) {
 		for _, existing := range list {
 			if existing.Name == p.Name {
@@ -140,6 +147,12 @@ func (m *Manager) AddProfile(ctx context.Context, p RelayProfile) (RelayApplyRes
 
 func (m *Manager) UpdateProfile(ctx context.Context, name string, p RelayProfile) (RelayApplyResult, error) {
 	p = NormalizeProfile(p)
+	if IsManagedProfileName(name) {
+		return RelayApplyResult{}, errManagedProfile(name)
+	}
+	if IsManagedProfileName(p.Name) {
+		return RelayApplyResult{}, fmt.Errorf("profile names starting with %q are reserved for client bindings", DedicatedPrefix)
+	}
 	err := m.store.MutateProfiles(ctx, func(list []RelayProfile) ([]RelayProfile, error) {
 		for i := range list {
 			if list[i].Name == name {
@@ -156,6 +169,9 @@ func (m *Manager) UpdateProfile(ctx context.Context, name string, p RelayProfile
 }
 
 func (m *Manager) DeleteProfile(ctx context.Context, name string) (RelayApplyResult, error) {
+	if IsManagedProfileName(name) {
+		return RelayApplyResult{}, errManagedProfile(name)
+	}
 	err := m.store.MutateProfiles(ctx, func(list []RelayProfile) ([]RelayProfile, error) {
 		for i := range list {
 			if list[i].Name == name {
@@ -184,6 +200,34 @@ func (m *Manager) Share(name string) (RelayShareInfo, error) {
 		}
 	}
 	return RelayShareInfo{}, fmt.Errorf("profile %q not found", name)
+}
+
+// ShareProfiles builds share info for several profiles from one snapshot.
+// Names the relay does not have, or a host with no usable config, are omitted.
+func (m *Manager) ShareProfiles(names []string) (map[string]RelayShareInfo, error) {
+	out := make(map[string]RelayShareInfo, len(names))
+	snap, err := m.store.Load()
+	if err != nil {
+		return nil, err
+	}
+	if !snap.ConfigExists || snap.Config.PublicHostname == "" {
+		return out, nil
+	}
+	wanted := make(map[string]struct{}, len(names))
+	for _, name := range names {
+		wanted[name] = struct{}{}
+	}
+	for _, p := range snap.Profiles {
+		if _, ok := wanted[p.Name]; !ok {
+			continue
+		}
+		info, err := BuildShareInfo(snap.Config.PublicHostname, snap.Config.BasePath, p)
+		if err != nil {
+			return nil, err
+		}
+		out[p.Name] = info
+	}
+	return out, nil
 }
 
 func (m *Manager) StartInstall(ctx context.Context, req RelayInstallRequest) (RelayJobStatus, error) {

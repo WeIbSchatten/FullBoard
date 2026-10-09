@@ -1,8 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { keys } from '@/api/queryKeys';
-import { RelayShareInfoSchema, RelaySnapshotSchema, RelayStatusSchema } from '@/generated/zod';
+import {
+  RelayShareInfoSchema,
+  RelaySnapshotSchema,
+  RelayStatusSchema,
+  TgWebProxyBindingListSchema,
+} from '@/generated/zod';
 import type {
+  TgWebProxyBindRequest,
+  TgWebProxyBinding,
+  TgWebProxyBindingList,
   RelayApplyResult,
   RelayConfig,
   RelayInstallRequest,
@@ -44,6 +52,46 @@ export function useTgWebProxyStatus() {
 
 export function useTgWebProxySnapshot() {
   return useQuery({ queryKey: keys.tgWebProxy.config(), queryFn: fetchSnapshot });
+}
+
+async function fetchBindings(): Promise<TgWebProxyBindingList> {
+  const msg = await HttpUtil.get(`${BASE}/bindings`, undefined, { silent: true });
+  if (!msg?.success) throw new Error(msg?.msg || 'Failed to fetch tg-web-proxy bindings');
+  const validated = parseMsg(msg, TgWebProxyBindingListSchema, 'tgWebProxy/bindings');
+  if (!validated.obj) throw new Error('Empty tg-web-proxy bindings');
+  return validated.obj;
+}
+
+export function useTgWebProxyBindings() {
+  return useQuery({ queryKey: keys.tgWebProxy.bindings(), queryFn: fetchBindings });
+}
+
+// The relay profile of a dedicated binding is written by a debounced server-side sync.
+const BINDING_SYNC_REFETCH_MS = 3000;
+
+export function useTgWebProxyBindingMutations() {
+  const queryClient = useQueryClient();
+  const onSuccess = (msg: { success?: boolean } | undefined) => {
+    if (!msg?.success) return;
+    const invalidate = () => queryClient.invalidateQueries({ queryKey: keys.tgWebProxy.root() });
+    invalidate();
+    setTimeout(invalidate, BINDING_SYNC_REFETCH_MS);
+  };
+  const bind = useMutation({
+    mutationFn: (req: TgWebProxyBindRequest) =>
+      HttpUtil.post<TgWebProxyBinding>(`${BASE}/bindings/bind`, req, JSON_HEADERS),
+    onSuccess,
+  });
+  const unbind = useMutation({
+    mutationFn: (email: string) =>
+      HttpUtil.post(`${BASE}/bindings/unbind`, { email }, JSON_HEADERS),
+    onSuccess,
+  });
+  return {
+    bindClient: bind.mutateAsync,
+    unbindClient: unbind.mutateAsync,
+    pending: bind.isPending || unbind.isPending,
+  };
 }
 
 export async function fetchShare(name: string): Promise<RelayShareInfo | null> {

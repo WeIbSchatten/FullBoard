@@ -54,6 +54,7 @@ type SubService struct {
 	subTrafficDepletedTemplate string
 	inboundService             service.InboundService
 	settingService             service.SettingService
+	tgWebProxyService          service.TgWebProxyService
 	// nodesByID is populated per request from the Node table so
 	// resolveInboundAddress can return the node's address for any
 	// inbound whose NodeID is set. Keeps the per-link host derivation
@@ -475,7 +476,9 @@ func (s *SubService) getSubs(subId string) ([]string, []string, int64, xray.Clie
 		return nil, nil, 0, traffic, err
 	}
 
-	if len(inbounds) == 0 && len(externalLinks) == 0 {
+	webProxyLinks := s.webProxyLinksBySubId(subId)
+
+	if len(inbounds) == 0 && len(externalLinks) == 0 && len(webProxyLinks) == 0 {
 		return nil, nil, 0, traffic, nil
 	}
 
@@ -509,6 +512,12 @@ func (s *SubService) getSubs(subId string) ([]string, []string, int64, xray.Clie
 			emails = append(emails, client.Email)
 			seenEmails[client.Email] = struct{}{}
 		}
+	}
+	for _, wl := range webProxyLinks {
+		hasEnabledClient = true
+		result = append(result, wl.Link)
+		emails = append(emails, wl.Email)
+		seenEmails[wl.Email] = struct{}{}
 	}
 	for _, ext := range externalLinks {
 		if ext.Enable {
@@ -547,6 +556,17 @@ func (s *SubService) getSubs(subId string) ([]string, []string, int64, xray.Clie
 	}
 
 	return result, emails, lastOnline, traffic, nil
+}
+
+// webProxyLinksBySubId is raw-subscription only (JSON and Clash cannot carry a
+// tg-web-proxy link). A relay read failure drops the links, not the whole subscription.
+func (s *SubService) webProxyLinksBySubId(subId string) []service.TgWebProxyClientLink {
+	links, err := s.tgWebProxyService.ClientLinksBySubId(subId)
+	if err != nil {
+		logger.Warning("SubService - webProxyLinksBySubId:", err)
+		return nil
+	}
+	return links
 }
 
 // inboundLinks builds the share links for every distinct client of one inbound

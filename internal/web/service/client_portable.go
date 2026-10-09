@@ -294,6 +294,7 @@ func (s *ClientService) DeleteOrphans() (int, error) {
 	}
 	tombstoneClientEmails(emails)
 
+	var droppedBindings int64
 	if err := runSerializedTx(func(tx *gorm.DB) error {
 		if e := adjustGroupBaselinesForRemovedTraffic(tx, emails); e != nil {
 			return e
@@ -309,6 +310,11 @@ func (s *ClientService) DeleteOrphans() (int, error) {
 				return e
 			}
 		}
+		n, e := deleteClientTgWebProxyBindings(tx, ids)
+		if e != nil {
+			return e
+		}
+		droppedBindings = n
 		if len(emails) > 0 {
 			for _, batch := range chunkStrings(emails, sqlInChunk) {
 				if e := tx.Where("email IN ?", batch).Delete(&xray.ClientTraffic{}).Error; e != nil {
@@ -330,6 +336,9 @@ func (s *ClientService) DeleteOrphans() (int, error) {
 		return nil
 	}); err != nil {
 		return 0, err
+	}
+	if droppedBindings > 0 {
+		scheduleTgWebProxySync()
 	}
 	return len(ids), nil
 }

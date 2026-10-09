@@ -9,6 +9,7 @@
     "telegram-bot",
     "discord-bot",
     "tg-web-proxy",
+    "custom-css",
     "security"
   ]
 }

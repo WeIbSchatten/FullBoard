@@ -982,6 +982,7 @@ func (s *ClientService) BulkDelete(inboundSvc *InboundService, emails []string, 
 	withdrawClientTombstones(failedEmails...)
 
 	if len(successIds) > 0 {
+		var droppedBindings int64
 		// Serialize the row cleanup against the traffic poll to avoid the
 		// cross-transaction lock-order deadlock on client_traffics/inbounds.
 		if err := runSerializedTx(func(tx *gorm.DB) error {
@@ -999,6 +1000,11 @@ func (s *ClientService) BulkDelete(inboundSvc *InboundService, emails []string, 
 					return e
 				}
 			}
+			n, e := deleteClientTgWebProxyBindings(tx, successIds)
+			if e != nil {
+				return e
+			}
+			droppedBindings = n
 			if !keepTraffic && len(successEmails) > 0 {
 				for _, batch := range chunkStrings(successEmails, sqlInChunk) {
 					if e := tx.Where("email IN ?", batch).Delete(&xray.ClientTraffic{}).Error; e != nil {
@@ -1018,6 +1024,9 @@ func (s *ClientService) BulkDelete(inboundSvc *InboundService, emails []string, 
 		}); err != nil {
 			withdrawClientTombstones(successEmails...)
 			return result, needRestart, err
+		}
+		if droppedBindings > 0 {
+			scheduleTgWebProxySync()
 		}
 	}
 

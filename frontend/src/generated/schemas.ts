@@ -3432,6 +3432,24 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "LoginTicketResponse": {
+    "description": "LoginTicketResponse is what a node returns to an admin token asking for a login ticket.",
+    "properties": {
+      "expiresIn": {
+        "example": 45,
+        "type": "integer"
+      },
+      "ticket": {
+        "example": "q3dKx0m7uZ1pYb2l9sVwQeR5tN8aHc4F6gJ_iLoPzXk",
+        "type": "string"
+      }
+    },
+    "required": [
+      "expiresIn",
+      "ticket"
+    ],
+    "type": "object"
+  },
   "MLDSA65Response": {
     "properties": {
       "seed": {
@@ -4201,6 +4219,63 @@ export const SCHEMAS: Record<string, unknown> = {
       "xrayError",
       "xrayState",
       "xrayVersion"
+    ],
+    "type": "object"
+  },
+  "PublicSiteFile": {
+    "description": "PublicSiteFile is one entry under the managed public directory.",
+    "properties": {
+      "name": {
+        "example": "index.html",
+        "type": "string"
+      },
+      "size": {
+        "example": 2048,
+        "format": "int64",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "name",
+      "size"
+    ],
+    "type": "object"
+  },
+  "PublicSiteSnapshot": {
+    "description": "PublicSiteSnapshot is the panel-managed static site state.",
+    "properties": {
+      "active": {
+        "example": true,
+        "type": "boolean"
+      },
+      "configPublicDir": {
+        "example": "/var/lib/fullboard/tproxy-site",
+        "type": "string"
+      },
+      "defaultHtml": {
+        "type": "string"
+      },
+      "dir": {
+        "example": "/var/lib/fullboard/tproxy-site",
+        "type": "string"
+      },
+      "files": {
+        "items": {
+          "$ref": "#/components/schemas/PublicSiteFile"
+        },
+        "type": "array"
+      },
+      "indexHtml": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "active",
+      "configPublicDir",
+      "defaultHtml",
+      "dir",
+      "files",
+      "indexHtml"
     ],
     "type": "object"
   },
@@ -4976,6 +5051,61 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "RemoteLiveInbound": {
+    "description": "RemoteLiveInbound is an inbound as the node itself serves it, flagged with\nwhether this panel already manages it.",
+    "properties": {
+      "adopted": {
+        "example": false,
+        "type": "boolean"
+      },
+      "id": {
+        "example": 3,
+        "type": "integer"
+      },
+      "listen": {
+        "type": "string"
+      },
+      "port": {
+        "example": 443,
+        "type": "integer"
+      },
+      "protocol": {
+        "example": "vless",
+        "type": "string"
+      },
+      "remark": {
+        "example": "edge-vless",
+        "type": "string"
+      },
+      "tag": {
+        "example": "in-443-tcp",
+        "type": "string"
+      }
+    },
+    "required": [
+      "adopted",
+      "id",
+      "listen",
+      "port",
+      "protocol",
+      "remark",
+      "tag"
+    ],
+    "type": "object"
+  },
+  "RemoteLoginURL": {
+    "description": "RemoteLoginURL carries the one-time URL that signs a browser into a node panel.",
+    "properties": {
+      "url": {
+        "example": "https://node.example.com:2053/#loginTicket=abc123",
+        "type": "string"
+      }
+    },
+    "required": [
+      "url"
+    ],
+    "type": "object"
+  },
   "ServerSettings": {
     "description": "ServerSettings is the \"server\" block of an AmneziaWG inbound's Settings\nJSON: the interface-level configuration shared by every client/peer. The\nlisten port is deliberately not duplicated here — it lives on the inbound\nrow itself (Inbound.Port), like every other protocol.",
     "properties": {
@@ -5212,6 +5342,79 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "TgWebProxyBindRequest": {
+    "properties": {
+      "dedicated": {
+        "example": false,
+        "type": "boolean"
+      },
+      "email": {
+        "example": "alice",
+        "type": "string"
+      },
+      "profileName": {
+        "example": "default",
+        "type": "string"
+      }
+    },
+    "required": [
+      "dedicated",
+      "email",
+      "profileName"
+    ],
+    "type": "object"
+  },
+  "TgWebProxyBinding": {
+    "properties": {
+      "clientId": {
+        "example": 7,
+        "type": "integer"
+      },
+      "dedicated": {
+        "example": false,
+        "type": "boolean"
+      },
+      "effectiveProfile": {
+        "example": "default",
+        "type": "string"
+      },
+      "email": {
+        "example": "alice",
+        "type": "string"
+      },
+      "profileName": {
+        "example": "default",
+        "type": "string"
+      }
+    },
+    "required": [
+      "clientId",
+      "dedicated",
+      "effectiveProfile",
+      "email",
+      "profileName"
+    ],
+    "type": "object"
+  },
+  "TgWebProxyBindingList": {
+    "properties": {
+      "bindings": {
+        "items": {
+          "$ref": "#/components/schemas/TgWebProxyBinding"
+        },
+        "type": "array"
+      },
+      "syncError": {
+        "description": "SyncError is the last failure of the background profile sync, \"\" when it succeeded.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "bindings",
+      "syncError"
+    ],
+    "type": "object"
+  },
   "TgWebProxyConfigRequest": {
     "properties": {
       "config": {
@@ -5228,6 +5431,18 @@ export const SCHEMAS: Record<string, unknown> = {
     },
     "required": [
       "config"
+    ],
+    "type": "object"
+  },
+  "TgWebProxyUnbindRequest": {
+    "properties": {
+      "email": {
+        "example": "alice",
+        "type": "string"
+      }
+    },
+    "required": [
+      "email"
     ],
     "type": "object"
   },
