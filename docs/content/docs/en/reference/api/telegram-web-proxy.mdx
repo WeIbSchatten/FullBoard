@@ -1,0 +1,126 @@
+---
+title: Telegram WEB Proxy
+description: 'Manage the host-local tproxy-server relay (Telegram WEB proxy
+  type): systemd lifecycle, config.json, profiles.json and client share links.
+  Every write is validated (numeric loopback listeners/backends, profiles.json
+  mode 0400) and passes `tproxy-server -check` before it is committed; a running
+  relay is restarted afterwards. The relay admin listener is only probed
+  server-side. Linux + systemd only.'
+full: true
+_openapi:
+  preload:
+    - ./public/openapi.json
+  toc:
+    - depth: 2
+      title: Install state, systemd units (tproxy-server, mtproxy, caddy,
+        tproxy-firewall), profiles.json mode and the admin /healthz, /readyz and
+        /metrics probe.
+      url: '#install-state-systemd-units-tproxy-server-mtproxy-caddy-tproxy-firewall-profilesjson-mode-and-the-admin-healthz-readyz-and-metrics-probe'
+    - depth: 2
+      title: Current config.json and profiles.json. On a host without config.json the
+        defaults written by the upstream installer are returned with
+        configExists=false.
+      url: '#current-configjson-and-profilesjson-on-a-host-without-configjson-the-defaults-written-by-the-upstream-installer-are-returned-with-configexistsfalse'
+    - depth: 2
+      title: Replace config.json. Unknown keys of the previous file are preserved.
+        initialProfile is required only while profiles.json is empty.
+      url: '#replace-configjson-unknown-keys-of-the-previous-file-are-preserved-initialprofile-is-required-only-while-profilesjson-is-empty'
+    - depth: 2
+      title: Run `tproxy-server -check` against the committed config.json and
+        profiles.json.
+      url: '#run-tproxy-server--check-against-the-committed-configjson-and-profilesjson'
+    - depth: 2
+      title: List profiles.json entries, including their secrets.
+      url: '#list-profilesjson-entries-including-their-secrets'
+    - depth: 2
+      title: Add a profile. The secret must be 32 hex characters (optionally
+        dd-prefixed) and unique; backend must be a numeric loopback host:port.
+      url: '#add-a-profile-the-secret-must-be-32-hex-characters-optionally-dd-prefixed-and-unique-backend-must-be-a-numeric-loopback-hostport'
+    - depth: 2
+      title: Replace the profile with the given name (the body may rename it).
+      url: '#replace-the-profile-with-the-given-name-the-body-may-rename-it'
+    - depth: 2
+      title: Delete a profile. The last remaining profile cannot be deleted.
+      url: '#delete-a-profile-the-last-remaining-profile-cannot-be-deleted'
+    - depth: 2
+      title: 'Client share values for a profile: server (hostname[/base_path]), typed
+        secret, link secret and the t.me/webproxy and tg://webproxy links.'
+      url: '#client-share-values-for-a-profile-server-hostnamebase_path-typed-secret-link-secret-and-the-tmewebproxy-and-tgwebproxy-links'
+    - depth: 2
+      title: systemctl action on tproxy-server or mtproxy. Starting or restarting
+        tproxy-server re-runs `-check` first.
+      url: '#systemctl-action-on-tproxy-server-or-mtproxy-starting-or-restarting-tproxy-server-re-runs--check-first'
+    - depth: 2
+      title: Last journal lines of a managed unit.
+      url: '#last-journal-lines-of-a-managed-unit'
+    - depth: 2
+      title: Download the upstream tproxy-server tree and run deploy/install.sh as a
+        detached systemd-run job. The installer takes over ports 80/443 with
+        Caddy. The secret is passed on stdin, never on the command line.
+      url: '#download-the-upstream-tproxy-server-tree-and-run-deployinstallsh-as-a-detached-systemd-run-job-the-installer-takes-over-ports-80443-with-caddy-the-secret-is-passed-on-stdin-never-on-the-command-line'
+    - depth: 2
+      title: Download the latest upstream tree and run deploy/update-relay.sh (tests,
+        build, atomic swap, automatic rollback).
+      url: '#download-the-latest-upstream-tree-and-run-deployupdate-relaysh-tests-build-atomic-swap-automatic-rollback'
+    - depth: 2
+      title: State and log tail of the last install/update job.
+      url: '#state-and-log-tail-of-the-last-installupdate-job'
+  structuredData:
+    headings:
+      - content: Install state, systemd units (tproxy-server, mtproxy, caddy,
+          tproxy-firewall), profiles.json mode and the admin /healthz, /readyz
+          and /metrics probe.
+        id: install-state-systemd-units-tproxy-server-mtproxy-caddy-tproxy-firewall-profilesjson-mode-and-the-admin-healthz-readyz-and-metrics-probe
+      - content: Current config.json and profiles.json. On a host without config.json
+          the defaults written by the upstream installer are returned with
+          configExists=false.
+        id: current-configjson-and-profilesjson-on-a-host-without-configjson-the-defaults-written-by-the-upstream-installer-are-returned-with-configexistsfalse
+      - content: Replace config.json. Unknown keys of the previous file are preserved.
+          initialProfile is required only while profiles.json is empty.
+        id: replace-configjson-unknown-keys-of-the-previous-file-are-preserved-initialprofile-is-required-only-while-profilesjson-is-empty
+      - content: Run `tproxy-server -check` against the committed config.json and
+          profiles.json.
+        id: run-tproxy-server--check-against-the-committed-configjson-and-profilesjson
+      - content: List profiles.json entries, including their secrets.
+        id: list-profilesjson-entries-including-their-secrets
+      - content: Add a profile. The secret must be 32 hex characters (optionally
+          dd-prefixed) and unique; backend must be a numeric loopback host:port.
+        id: add-a-profile-the-secret-must-be-32-hex-characters-optionally-dd-prefixed-and-unique-backend-must-be-a-numeric-loopback-hostport
+      - content: Replace the profile with the given name (the body may rename it).
+        id: replace-the-profile-with-the-given-name-the-body-may-rename-it
+      - content: Delete a profile. The last remaining profile cannot be deleted.
+        id: delete-a-profile-the-last-remaining-profile-cannot-be-deleted
+      - content: 'Client share values for a profile: server (hostname[/base_path]),
+          typed secret, link secret and the t.me/webproxy and tg://webproxy
+          links.'
+        id: client-share-values-for-a-profile-server-hostnamebase_path-typed-secret-link-secret-and-the-tmewebproxy-and-tgwebproxy-links
+      - content: systemctl action on tproxy-server or mtproxy. Starting or restarting
+          tproxy-server re-runs `-check` first.
+        id: systemctl-action-on-tproxy-server-or-mtproxy-starting-or-restarting-tproxy-server-re-runs--check-first
+      - content: Last journal lines of a managed unit.
+        id: last-journal-lines-of-a-managed-unit
+      - content: Download the upstream tproxy-server tree and run deploy/install.sh as a
+          detached systemd-run job. The installer takes over ports 80/443 with
+          Caddy. The secret is passed on stdin, never on the command line.
+        id: download-the-upstream-tproxy-server-tree-and-run-deployinstallsh-as-a-detached-systemd-run-job-the-installer-takes-over-ports-80443-with-caddy-the-secret-is-passed-on-stdin-never-on-the-command-line
+      - content: Download the latest upstream tree and run deploy/update-relay.sh
+          (tests, build, atomic swap, automatic rollback).
+        id: download-the-latest-upstream-tree-and-run-deployupdate-relaysh-tests-build-atomic-swap-automatic-rollback
+      - content: State and log tail of the last install/update job.
+        id: state-and-log-tail-of-the-last-installupdate-job
+    contents: []
+---
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+export default function Layout(props) {
+  const { APIPage, OpenAPIPage } = props.components ?? {};
+  // "APIPage" is the old name from v10, this allows both for backward compatibility
+  const Comp = OpenAPIPage ?? APIPage;
+  return (
+    <>
+      {props.children}
+      <Comp document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/tgWebProxy/status","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"post"},{"path":"/panel/api/tgWebProxy/check","method":"post"},{"path":"/panel/api/tgWebProxy/profiles","method":"get"},{"path":"/panel/api/tgWebProxy/profiles/add","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/update/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/share/{name}","method":"get"},{"path":"/panel/api/tgWebProxy/service/{unit}/{action}","method":"post"},{"path":"/panel/api/tgWebProxy/logs/{unit}","method":"get"},{"path":"/panel/api/tgWebProxy/install","method":"post"},{"path":"/panel/api/tgWebProxy/update","method":"post"},{"path":"/panel/api/tgWebProxy/job","method":"get"}]} showTitle />
+    </>
+  );
+}

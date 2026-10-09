@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/config"
-	"github.com/mhsanaei/3x-ui/v3/internal/tuic"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/tuic"
 )
 
 var tuicJournalMu sync.Mutex

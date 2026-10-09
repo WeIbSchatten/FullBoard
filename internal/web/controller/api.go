@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/middleware"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service/panel"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service/tgbot"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/session"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/panel"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/tgbot"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
 
 	"github.com/gin-gonic/gin"
 )
 
-// APIController handles the main API routes for the 3x-ui panel, including inbounds and server management.
+// APIController handles the main API routes for the FullBoard panel, including inbounds and server management.
 type APIController struct {
 	BaseController
 	inboundController     *InboundController
@@ -210,6 +210,8 @@ func (a *APIController) initRouter(g *gin.RouterGroup) {
 
 	// Subscription balancers — client-side balancers for the JSON sub output
 	NewSubBalancerController(api)
+
+	NewTgWebProxyController(api.Group("/tgWebProxy"))
 
 	// Extra routes
 	api.POST("/backuptotgbot", a.BackuptoTgbot)

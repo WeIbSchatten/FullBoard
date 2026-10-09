@@ -1,6 +1,6 @@
 ---
 title: Migration
-description: Migrate to 3x-ui from x-ui, between servers, or between 3x-ui versions.
+description: Migrate to FullBoard from fullboard, between servers, or between FullBoard versions.
 icon: ArrowRightLeft
 ---
 
@@ -13,12 +13,12 @@ Moving to a new server is a database move:
 <Step>
 ### Back up the old server
 
-Copy the database (default `/etc/x-ui/x-ui.db`) and your certificates. See
+Copy the database (default `/etc/fullboard/fullboard.db`) and your certificates. See
 [Backup & restore](/docs/operations/backup-restore).
 </Step>
 
 <Step>
-### Install 3x-ui on the new server
+### Install FullBoard on the new server
 
 Use the same install method and a compatible version. See
 [Installation](/docs/guide/installation).
@@ -33,17 +33,17 @@ panel. Update any IP/domain-specific settings.
 
 </Steps>
 
-## Between 3x-ui versions
+## Between FullBoard versions
 
 Within the same backend, upgrading is usually just re-running the installer or
 pulling a new image — the panel migrates its own database. Across **major**
-versions, read the [release notes](https://github.com/MHSanaei/3x-ui/releases)
+versions, read the [release notes](https://github.com/WeIbSchatten/FullBoard/releases)
 first and take a backup.
 
-## From x-ui
+## From fullboard
 
-Importing an older x-ui panel's database directly into 3x-ui is **not
-supported** — the schemas differ. Install 3x-ui fresh and recreate
+Importing an older fullboard panel's database directly into FullBoard is **not
+supported** — the schemas differ. Install FullBoard fresh and recreate
 inbounds/clients, exporting share links from the old panel as you go.
 
 <Callout type="warn">

@@ -2,46 +2,41 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./media/3x-ui-dark.png">
-    <img alt="3x-ui" src="./media/3x-ui-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./media/fullboard-dark.png">
+    <img alt="FullBoard" src="./media/fullboard-light.png">
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://github.com/MHSanaei/3x-ui/releases"><img src="https://img.shields.io/github/v/release/mhsanaei/3x-ui" alt="Release"></a>
-  <a href="https://github.com/MHSanaei/3x-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/mhsanaei/3x-ui/release.yml.svg" alt="Build"></a>
-  <a href="#"><img src="https://img.shields.io/github/go-mod/go-version/mhsanaei/3x-ui.svg" alt="GO Version"></a>
-  <a href="https://github.com/MHSanaei/3x-ui/releases/latest"><img src="https://img.shields.io/github/downloads/mhsanaei/3x-ui/total.svg" alt="Downloads"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/releases"><img src="https://img.shields.io/github/v/release/WeIbSchatten/FullBoard" alt="Release"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/actions"><img src="https://img.shields.io/github/actions/workflow/status/WeIbSchatten/FullBoard/release.yml.svg" alt="Build"></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GPL%20V3-blue.svg?longCache=true" alt="License"></a>
-  <a href="https://pkg.go.dev/github.com/mhsanaei/3x-ui/v3"><img src="https://pkg.go.dev/badge/github.com/mhsanaei/3x-ui/v3.svg" alt="Go Reference"></a>
-  <a href="https://docs.sanaei.dev"><img src="https://img.shields.io/badge/docs-docs.sanaei.dev-22d3ee" alt="Documentation"></a>
+  <a href="https://pkg.go.dev/github.com/WeIbSchatten/FullBoard/v3"><img src="https://pkg.go.dev/badge/github.com/WeIbSchatten/FullBoard/v3.svg" alt="Go Reference"></a>
 </p>
 
-**3X-UI** es un panel de control web avanzado y de código abierto para gestionar servidores [Xray-core](https://github.com/XTLS/Xray-core). Ofrece una interfaz limpia y multilingüe para desplegar, configurar y monitorear una amplia gama de protocolos de proxy y VPN — desde un único VPS hasta despliegues multinodo.
-
-Construido como un fork mejorado del proyecto X-UI original, 3X-UI añade un soporte de protocolos más amplio, mayor estabilidad, contabilidad de tráfico por cliente y muchas funciones que mejoran la experiencia de uso.
+**FullBoard** es un panel web de código abierto para administrar servidores [Xray-core](https://github.com/XTLS/Xray-core). Ofrece una interfaz multilingüe para desplegar, configurar y supervisar una amplia gama de protocolos proxy y VPN, desde un único VPS hasta despliegues con varios nodos.
 
 > [!IMPORTANT]
-> Este proyecto está destinado únicamente al uso personal. Por favor, no lo uses para fines ilegales ni en un entorno de producción.
+> Este proyecto está pensado para uso personal. No lo utilices con fines ilegales.
 
 ## Características
 
-- **Entradas multiprotocolo** — VLESS, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC v5, Hysteria2, MTProto, HTTP, SOCKS (Mixed), Dokodemo-door / Tunnel y TUN.
-- **Transportes y seguridad modernos** — TCP (Raw), mKCP, WebSocket, gRPC, HTTPUpgrade y XHTTP, protegidos con TLS, XTLS y REALITY.
-- **AmneziaWG integrado** — WireGuard resistente al DPI se ejecuta dentro del panel sobre una pila de red en espacio de usuario, sin módulo del kernel, DKMS ni paquetes adicionales que instalar.
-- **TUIC v5 integrado** — Proxy de alto rendimiento basado en QUIC con medición de tráfico mediante retransmisión UDP nativa, handshakes 0-RTT y control de congestión BBR.
-- **Proxies MTProto** — secretos FakeTLS, ad-tags y cuotas por cliente, aplicados en caliente sin cortar las conexiones existentes.
-- **Fallbacks** — sirve varios protocolos en un solo puerto (p. ej. VLESS y Trojan en el 443) usando la función de fallback de Xray.
-- **Gestión por cliente** — cuotas de tráfico, fechas de caducidad, límites de IP con exenciones para direcciones de confianza, límites de dispositivos (HWID), ciclos de renovación programados, estado en línea en tiempo real y enlaces de compartición, códigos QR y suscripciones con un solo clic.
-- **Estadísticas de tráfico** — por entrada, por cliente y por salida, con controles de reinicio.
-- **Soporte multinodo** — gestiona y escala a través de varios servidores desde un único panel, incluida la clonación de entradas en otros nodos.
-- **Salida y enrutamiento** — WARP, NordVPN, PIA, reglas de enrutamiento personalizadas, balanceadores de carga con conmutación por error entre balanceadores y encadenamiento de proxy de salida. Las categorías geosite y geoip incluidas se pueden explorar directamente desde el editor de reglas.
-- **Servidor de suscripción integrado** — salida raw, JSON y Clash, seleccionada automáticamente según el User-Agent del cliente, además de [plantillas de página personalizables](docs/custom-subscription-templates.md).
-- **Bots de Telegram y Discord** para monitorización y gestión remotas.
-- **API RESTful** con tokens de alcance limitado y caducidad opcional, y una referencia de la API dentro del panel.
-- **Panel instalable (PWA)** — ancla 3X-UI al escritorio o a la pantalla de inicio del móvil.
-- **Almacenamiento flexible** — SQLite (predeterminado) o PostgreSQL.
-- **13 idiomas de interfaz** con temas oscuro y claro.
+- **Inbounds multiprotocolo**: VLESS, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC v5, Hysteria2, MTProto, HTTP, SOCKS (Mixed), Dokodemo-door / Tunnel y TUN.
+- **Transportes y seguridad modernos**: TCP (Raw), mKCP, WebSocket, gRPC, HTTPUpgrade y XHTTP, con TLS, XTLS y REALITY.
+- **AmneziaWG integrado**: WireGuard resistente a DPI dentro del panel sobre una pila de red en espacio de usuario, sin módulo del kernel, DKMS ni paquetes extra.
+- **Servidor TUIC v5 nativo**: servidor QUIC en proceso con enrutamiento de Xray y contabilidad de tráfico por cliente (BBR y New Reno).
+- **Proxies MTProto**: secretos FakeTLS, ad-tags y cuotas por cliente, aplicados en vivo sin cortar conexiones.
+- **Fallbacks**: varios protocolos en un mismo puerto (por ejemplo VLESS y Trojan en 443).
+- **Gestión por cliente**: cuotas de tráfico, fechas de caducidad, límites de IP con direcciones de confianza, límites de dispositivos HWID, renovaciones programadas, estado en línea, enlaces, códigos QR y suscripciones.
+- **Estadísticas de tráfico** por inbound, cliente y outbound, con reinicio.
+- **Multinodo**: administra muchos servidores desde un panel, incluida la clonación de inbounds a otros nodos.
+- **Outbounds y enrutamiento**: WARP, NordVPN, PIA, reglas personalizadas, balanceadores con cadenas de fallback y encadenamiento de proxies. Las categorías geosite/geoip se exploran desde el editor de reglas.
+- **Servidor de suscripciones**: salida raw, JSON y Clash según el User-Agent del cliente, más [plantillas de página personalizadas](docs/custom-subscription-templates.md).
+- **Bots de Telegram y Discord** para supervisión y gestión remotas.
+- **API REST** con tokens con alcance y caducidad opcional, y referencia de API en el panel.
+- **Panel instalable (PWA)** para escritorio y móvil.
+- **Almacenamiento**: SQLite (predeterminado) o PostgreSQL.
+- **13 idiomas** con temas claro y oscuro.
 - **Integración con Fail2ban** para aplicar límites de IP por cliente.
 
 ## Capturas de pantalla
@@ -66,166 +61,144 @@ Construido como un fork mejorado del proyecto X-UI original, 3X-UI añade un sop
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./media/05-add-nodes-dark.png">
-  <img alt="Configs" src="./media/05-add-nodes-light.png">
+  <img alt="Nodes" src="./media/05-add-nodes-light.png">
 </picture>
 
 </details>
 
-## Inicio Rápido
+## Inicio rápido
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh)
 ```
 
-Para instalar una versión específica, añade su etiqueta (p. ej. `v3.7.0`):
+Para instalar una versión concreta, añade su etiqueta:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v3.7.0
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v3.7.0
 ```
 
-Para instalar la versión **dev** continua (la última prelanzamiento por commit desde `main`, no una versión estable), pasa `dev-latest`:
+Para la compilación **dev** (último pre-release de `main`), usa `dev-latest`:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) dev-latest
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) dev-latest
 ```
 
-Durante la instalación se generan un nombre de usuario, una contraseña y una ruta de acceso aleatorios. Tras la instalación, ejecuta `x-ui` para abrir el menú de gestión, donde puedes iniciar/detener el servicio, ver o restablecer tus credenciales de acceso, gestionar certificados SSL y mucho más.
+El instalador genera un usuario, contraseña y ruta de acceso aleatorios. Después ejecuta `fullboard` para abrir el menú de gestión: iniciar/detener el servicio, ver o restablecer credenciales, gestionar certificados SSL y más.
 
-Cada recurso de la publicación se publica con una suma `.sha256` junto a él. Tanto `install.sh` como el actualizador verifican el archivo contra esa suma y abortan si no coincide.
+Cada archivo de release incluye un `.sha256`. Tanto `install.sh` como el actualizador verifican el archivo y se detienen si no coincide.
 
-Para la documentación completa —instalación, configuración, operación y la referencia completa de la API— visita **[docs.sanaei.dev](https://docs.sanaei.dev)**.
+La documentación completa (instalación, configuración, operación y referencia de API) está en la carpeta [`docs/`](docs/).
 
 ### Instalación desatendida
 
-El instalador también se ejecuta de forma **no interactiva** para cloud-init.
-Define `XUI_NONINTERACTIVE=1` (o canalízalo sin TTY) y realizará la instalación de principio a fin sin
-ninguna pregunta, generando credenciales aleatorias y escribiéndolas en
-`/etc/x-ui/install-result.env`. Consulta [`deploy/`](deploy/) para:
+El instalador funciona **sin interacción** (por ejemplo desde cloud-init). Define `XUI_NONINTERACTIVE=1` o ejecútalo sin TTY: genera credenciales aleatorias y las guarda en `/etc/fullboard/install-result.env`. Consulta [`deploy/`](deploy/):
 
-- [User-data de cloud-init](deploy/cloud-init/) — instalación desatendida en cualquier nube (Hetzner/AWS/DO/Vultr/GCP/Azure/Oracle)
-- [Notas de Hetzner Cloud](deploy/marketplace/hetzner/) — despliegue basado en cloud-init en Hetzner
+- [Cloud-init user-data](deploy/cloud-init/) para cualquier proveedor
+- [Notas para Hetzner Cloud](deploy/marketplace/hetzner/)
 
-## Plataformas Compatibles
+### Gestión
+
+| Comando | Función |
+| --- | --- |
+| `fullboard` | Menú interactivo |
+| `fullboard start` / `stop` / `restart` | Controlar el servicio |
+| `fullboard status` | Estado del servicio |
+| `fullboard settings` | Ajustes actuales del panel |
+| `fullboard log` | Registros recientes |
+| `fullboard update` | Actualizar a la última versión |
+| `fullboard uninstall` | Eliminar el panel |
+
+Rutas: binario y recursos de Xray en `/usr/local/fullboard`, base de datos y estado en `/etc/fullboard`, registros en `/var/log/fullboard`, servicio `fullboard.service`.
+
+## Plataformas compatibles
 
 **Sistemas operativos:** Ubuntu, Debian, Armbian, Fedora, CentOS, RHEL, AlmaLinux, Rocky Linux, Oracle Linux, Amazon Linux, Virtuozzo, Arch, Manjaro, Parch, openSUSE (Tumbleweed / Leap), Alpine y Windows.
 
 **Arquitecturas:** `amd64` · `386` · `arm64` (aarch64) · `armv7` · `armv6` · `armv5` · `s390x`.
 
-## Opciones de Base de Datos
+## Base de datos
 
-3X-UI admite dos backends, que se eligen durante la instalación:
+FullBoard admite dos backends, elegidos durante la instalación:
 
-- **SQLite** (predeterminado) — un único archivo en `/etc/x-ui/x-ui.db`. Sin configuración, ideal para despliegues pequeños y medianos.
-- **PostgreSQL** — recomendado para un gran número de clientes o configuraciones multinodo. El instalador puede instalar PostgreSQL localmente por ti, o aceptar un DSN a un servidor existente.
+- **SQLite** (predeterminado): un único archivo en `/etc/fullboard/fullboard.db`. Sin configuración, ideal para despliegues pequeños y medianos.
+- **PostgreSQL**: recomendado para muchos clientes o varios nodos. El instalador puede instalarlo localmente o usar el DSN de un servidor existente.
 
-En tiempo de ejecución, el backend se selecciona mediante variables de entorno (el instalador las escribe por ti en `/etc/default/x-ui`):
+El backend se elige con variables de entorno (el instalador las escribe en `/etc/default/fullboard`):
 
 ```
 XUI_DB_TYPE=postgres
 XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 ```
 
-### Migrar una instalación de SQLite existente a PostgreSQL
+### Migrar de SQLite a PostgreSQL
 
 ```bash
-x-ui migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
-# luego define XUI_DB_TYPE y XUI_DB_DSN en /etc/default/x-ui y reinicia:
-systemctl restart x-ui
+fullboard migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
+# después define XUI_DB_TYPE y XUI_DB_DSN en /etc/default/fullboard y reinicia:
+systemctl restart fullboard
 ```
 
-El archivo SQLite de origen permanece intacto; elimínalo manualmente una vez que hayas verificado el nuevo backend.
+El archivo SQLite original no se modifica; elimínalo cuando hayas verificado el nuevo backend.
 
-### Docker
+## Docker
 
-El comando predeterminado `docker compose up -d` sigue usando SQLite. Para ejecutarlo con el servicio PostgreSQL incluido, descomenta las dos líneas de variables de entorno `XUI_DB_*` en `docker-compose.yml` e inícialo con el perfil:
+```bash
+docker compose up -d
+```
+
+Por defecto se usa SQLite. Para el servicio PostgreSQL incluido, descomenta las dos líneas `XUI_DB_*` de `docker-compose.yml` y arranca con el perfil:
 
 ```bash
 docker compose --profile postgres up -d
 ```
 
-La imagen incluye Fail2ban (habilitado de forma predeterminada) para aplicar **límites de IP** por cliente. Fail2ban banea a los infractores con `iptables`, lo que requiere la capacidad `NET_ADMIN`. `docker-compose.yml` ya la concede mediante `cap_add`; si en su lugar inicias el contenedor con `docker run`, añade tú mismo las capacidades, de lo contrario los baneos se registran pero nunca se aplican:
+La imagen incluye Fail2ban (activo por defecto) para los **límites de IP** por cliente. Bloquea con `iptables`, lo que requiere la capacidad `NET_ADMIN`. `docker-compose.yml` ya la concede; con `docker run` añádela tú, o los bloqueos solo se registrarán:
 
 ```bash
-docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW ... ghcr.io/mhsanaei/3x-ui
+docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW -p 2053:2053 -v $PWD/db/:/etc/fullboard/ ghcr.io/weibschatten/fullboard
 ```
 
-## Variables de Entorno
+## Variables de entorno
 
 | Variable | Descripción | Predeterminado |
 | --- | --- | --- |
-| `XUI_DB_TYPE` | Backend de base de datos: `sqlite` o `postgres` | `sqlite` |
-| `XUI_DB_DSN` | Cadena de conexión de PostgreSQL (cuando `XUI_DB_TYPE=postgres`) | — |
-| `XUI_DB_FOLDER` | Directorio del archivo de base de datos SQLite | `/etc/x-ui` |
-| `XUI_DB_MAX_OPEN_CONNS` | Máximo de conexiones abiertas (pool de PostgreSQL) | — |
-| `XUI_DB_MAX_IDLE_CONNS` | Máximo de conexiones inactivas (pool de PostgreSQL) | — |
-| `XUI_INIT_WEB_BASE_PATH` | La ruta URI inicial para el panel web | `/` |
-| `XUI_ENABLE_FAIL2BAN` | Habilitar la aplicación de límites de IP basada en Fail2ban | `true` |
+| `XUI_DB_TYPE` | Backend: `sqlite` o `postgres` | `sqlite` |
+| `XUI_DB_DSN` | Cadena de conexión de PostgreSQL | — |
+| `XUI_DB_FOLDER` | Directorio del archivo SQLite | `/etc/fullboard` |
+| `XUI_DB_MAX_OPEN_CONNS` | Máx. conexiones abiertas (pool PostgreSQL) | — |
+| `XUI_DB_MAX_IDLE_CONNS` | Máx. conexiones inactivas (pool PostgreSQL) | — |
+| `XUI_INIT_WEB_BASE_PATH` | Ruta URI inicial del panel | `/` |
+| `XUI_PORT` | Sobrescribe el puerto del panel | — |
+| `XUI_ENABLE_FAIL2BAN` | Límites de IP mediante Fail2ban | `true` |
 | `XUI_LOG_LEVEL` | Nivel de registro (`debug`, `info`, `warning`, `error`) | `info` |
-| `XUI_DEBUG` | Habilitar el modo de depuración | `false` |
-| `XUI_TUNNEL_HEALTH_MONITOR` | Habilitar el monitor de salud del túnel (sondea una URL y reinicia xray tras fallos repetidos; un reinicio desconecta a todos los clientes) | `false` |
-| `XUI_TUNNEL_HEALTH_PROXY` | Proxy a través del cual se envía el sondeo; apúntalo a una entrada local de xray para que el sondeo pruebe el túnel (p. ej. `socks5://127.0.0.1:1080`). Vacío significa que el sondeo solo comprueba la conectividad del host | — |
-| `XUI_TUNNEL_HEALTH_URL` | URL sondeada para verificar la salud del túnel | `https://www.cloudflare.com/cdn-cgi/trace` |
+| `XUI_DEBUG` | Modo depuración | `false` |
+| `XUI_TUNNEL_HEALTH_MONITOR` | Sondea una URL y reinicia Xray tras fallos repetidos (desconecta a todos los clientes) | `false` |
+| `XUI_TUNNEL_HEALTH_PROXY` | Proxy del sondeo, p. ej. un inbound local (`socks5://127.0.0.1:1080`) | — |
+| `XUI_TUNNEL_HEALTH_URL` | URL sondeada | `https://www.cloudflare.com/cdn-cgi/trace` |
 | `XUI_TUNNEL_HEALTH_INTERVAL` | Intervalo entre sondeos | `30s` |
-| `XUI_TUNNEL_HEALTH_TIMEOUT` | Tiempo de espera por sondeo | `10s` |
-| `XUI_TUNNEL_HEALTH_FAILURES` | Fallos consecutivos antes de que se active un reinicio | `3` |
-| `XUI_TUNNEL_HEALTH_COOLDOWN` | Retardo mínimo entre reinicios consecutivos | `5m` |
-| `NODE_TOKEN_ENCRYPTION` | Cifrado en reposo de los tokens de API de los nodos: `off`, `migration` o `required` (sin el prefijo `XUI_`) | `off` |
-| `XUI_NODE_TOKEN_KEY_FILE` | Llavero JSON (modo `0600`) con el id de la clave activa y sus claves de 32 bytes en base64 | `/etc/x-ui/node_token_key.json` |
-| `XUI_NODE_TOKEN_KEY` | Una única clave de 32 bytes en base64, usada solo si no se puede cargar el archivo de claves | — |
+| `XUI_TUNNEL_HEALTH_TIMEOUT` | Tiempo límite por sondeo | `10s` |
+| `XUI_TUNNEL_HEALTH_FAILURES` | Fallos seguidos antes de reiniciar | `3` |
+| `XUI_TUNNEL_HEALTH_COOLDOWN` | Espera mínima entre reinicios | `5m` |
+| `NODE_TOKEN_ENCRYPTION` | Cifrado de tokens de nodos: `off`, `migration` o `required` | `off` |
+| `XUI_NODE_TOKEN_KEY_FILE` | Llavero JSON (modo `0600`) | `/etc/fullboard/node_token_key.json` |
+| `XUI_NODE_TOKEN_KEY` | Una clave base64 de 32 bytes si no se puede cargar el llavero | — |
 
-La lista completa está en la [referencia de variables de entorno](https://docs.sanaei.dev/docs/reference/env-vars).
+La lista completa está en la [referencia de variables de entorno](docs/content/docs/en/reference/env-vars.mdx).
 
-## Idiomas Compatibles
-
-La interfaz del panel está disponible en 13 idiomas:
+## Idiomas
 
 English · فارسی · العربية · 中文（简体） · 中文（繁體） · Español · Русский · Українська · Türkçe · Tiếng Việt · 日本語 · Bahasa Indonesia · Português (Brasil)
 
 ## Contribuir
 
-Las contribuciones son bienvenidas. Por favor, lee la [Guía de contribución](/CONTRIBUTING.md) antes de abrir una incidencia (issue) o una solicitud de incorporación (pull request).
+Las contribuciones son bienvenidas. Lee la [guía de contribución](/CONTRIBUTING.md) antes de abrir un issue o pull request. Para vulnerabilidades, consulta [SECURITY.md](/SECURITY.md).
 
-## Un Agradecimiento Especial a
+## Agradecimientos
 
-- [alireza0](https://github.com/alireza0/)
+- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (GPL-3.0): reglas de enrutamiento con dominios iraníes integrados, centradas en seguridad y bloqueo de anuncios.
+- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0): reglas actualizadas automáticamente según dominios y direcciones bloqueados en Rusia.
 
-## Reconocimientos
+## Licencia
 
-- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (Licencia: **GPL-3.0**): _Reglas de enrutamiento mejoradas para v2ray/xray y v2ray/xray-clients con dominios iraníes incorporados y un enfoque en seguridad y bloqueo de anuncios._
-- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (Licencia: **GPL-3.0**): _Este repositorio contiene reglas de enrutamiento V2Ray actualizadas automáticamente basadas en datos de dominios y direcciones bloqueadas en Rusia._
-
-## Herramientas de la Comunidad
-
-Herramientas e integraciones construidas por la comunidad alrededor de 3x-ui.
-
-- [terraform-provider-3x-ui](https://github.com/batonogov/terraform-provider-threexui) (Licencia: **MIT**): _Gestiona inbounds, clientes, configuración del panel y configuración de Xray como código con Terraform / OpenTofu._
-- [3X-UI Manager](https://github.com/yukh975/3X-UI-Manager) (Licencia: **MIT**): _Cliente nativo de Android para 3x-ui — panel de control, inbounds, clientes con compartición por QR, nodos y gestión de múltiples paneles. Disponible en F-Droid._
-
-## Apoyar el Proyecto
-
-**Si este proyecto te es útil, puedes darle una**:star2:
-
-<a href="https://www.buymeacoffee.com/MHSanaei" target="_blank">
-<img src="./media/default-yellow.png" alt="Buy Me A Coffee" style="height: 70px !important;width: 277px !important;" >
-</a>
-
-</br>
-<a href="https://nowpayments.io/donation/hsanaei" target="_blank" rel="noreferrer noopener">
-   <img src="./media/donation-button-black.svg" alt="Crypto donation button by NOWPayments">
-</a>
-
-## Historial de estrellas
-
-<a href="https://www.star-history.com/?repos=mhsanaei%2F3x-ui&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&legend=top-left" />
- </picture>
-</a>
-
-<p align="center">
- <a href="https://www.star-history.com/mhsanaei/3x-ui">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank&theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank" /><img alt="Star History Rank" src="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank" /></picture> <picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending&theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending" /><img alt="GitHub Trending Repository of the Day" src="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending" /></picture>
- </a>
-</p>
+FullBoard se distribuye bajo la [GNU General Public License v3.0](/LICENSE).

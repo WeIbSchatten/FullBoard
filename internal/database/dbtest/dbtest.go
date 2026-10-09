@@ -8,8 +8,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/config"
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
 )
 
 var migrated struct {

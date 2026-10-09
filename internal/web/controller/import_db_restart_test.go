@@ -12,9 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/global"
-	"github.com/mhsanaei/3x-ui/v3/internal/xray"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/global"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func TestImportDBSchedulesPanelRestart(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("the stub xray binary is a shell script")
 	}
-	uploadPath := filepath.Join(t.TempDir(), "x-ui.db")
+	uploadPath := filepath.Join(t.TempDir(), "fullboard.db")
 	if err := database.InitDB(uploadPath); err != nil {
 		t.Fatalf("InitDB(upload): %v", err)
 	}
@@ -56,7 +56,7 @@ func TestImportDBSchedulesPanelRestart(t *testing.T) {
 
 	var body bytes.Buffer
 	mw := multipart.NewWriter(&body)
-	part, err := mw.CreateFormFile("db", "x-ui.db")
+	part, err := mw.CreateFormFile("db", "fullboard.db")
 	if err != nil {
 		t.Fatalf("CreateFormFile: %v", err)
 	}

@@ -13,7 +13,6 @@ import {
   ClusterOutlined,
   CodeOutlined,
   CopyOutlined,
-  CrownOutlined,
   DashboardOutlined,
   DatabaseOutlined,
   DiscordOutlined,
@@ -29,6 +28,7 @@ import {
   ReloadOutlined,
   SafetyOutlined,
   SearchOutlined,
+  SendOutlined,
   SettingOutlined,
   SunOutlined,
   SwapOutlined,
@@ -391,6 +391,12 @@ export default function CommandPalette() {
         icon: <GlobalOutlined />,
       },
       {
+        path: '/tg-web-proxy',
+        title: t('menu.tgWebProxy'),
+        keywords: ['telegram', 'web proxy', 'tproxy', 'mtproxy', 'webview'],
+        icon: <SendOutlined />,
+      },
+      {
         path: '/outbound',
         title: t('menu.outbounds'),
         keywords: ['outbounds', 'freedom', 'blackhole', 'socks', 'http', 'warp', 'nord', 'pia'],
@@ -419,12 +425,6 @@ export default function CommandPalette() {
         title: t('menu.apiDocs'),
         keywords: ['api', 'api docs', 'swagger', 'rest api', 'endpoints'],
         icon: <ApiOutlined />,
-      },
-      {
-        path: '/sponsors',
-        title: t('menu.sponsors'),
-        keywords: ['sponsors', 'sponsor', 'partners'],
-        icon: <CrownOutlined />,
       },
     ];
 
@@ -811,7 +811,7 @@ export default function CommandPalette() {
                 {t('close')}
               </span>
             </div>
-            <span>3x-ui Command Palette</span>
+            <span>FullBoard Command Palette</span>
           </div>
         </div>
       </div>
