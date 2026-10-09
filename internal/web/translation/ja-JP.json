@@ -720,6 +720,7 @@
       "tabBasics": "基本",
       "tabCredentials": "認証情報",
       "tabLinks": "リンク",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "WireGuard 設定",
       "config": "設定",
       "linksHint": "サードパーティの共有リンクやリモートのサブスクリプションURLを追加して、このクライアントのサブスクリプションに含めます。",
@@ -764,6 +765,8 @@
       "sortMostTraffic": "トラフィック多い順",
       "sortHighestRemaining": "残量多い順",
       "sortExpiringSoonest": "もうすぐ期限切れ",
+      "sortManual": "手動の並び順",
+      "dragToReorder": "ドラッグして並べ替え",
       "has": "あり",
       "hasNot": "なし",
       "actions": "操作",
@@ -942,7 +945,8 @@
         "delDepleted": "使い切った {count} 件のクライアントを削除しました",
         "delOrphans": "未アタッチの {count} 件のクライアントを削除しました",
         "imported": "{count} 件のクライアントをインポートしました",
-        "importedMixed": "{ok} 件インポート、{failed} 件スキップ"
+        "importedMixed": "{ok} 件インポート、{failed} 件スキップ",
+        "reorder": "クライアントの順序を更新しました"
       },
       "renewMax": "最大更新回数",
       "renewMaxDesc": "自動更新が実行される最大回数です。これを超えるとクライアントはそのまま失効します。0 は無制限。複数の未処理期間をまとめて処理する場合、1 期間につき 1 回消費します。",
@@ -1132,6 +1136,7 @@
       "pinFetchFailed": "証明書を取得できませんでした",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "ノード行の「パネルを管理」でリモートパネルを完全操作できます — 設定、Xray、ライブインバウンド、再起動、ログイン。",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2562,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "シークレット",
+        "link": "リンク",
+        "showSecret": "シークレットを表示",
+        "hideSecret": "シークレットを隠す"
+      },
+      "egress": {
+        "button": "出口 IP を確認",
+        "hint": "このプロファイルの route-via ルールが指すアウトバウンドをテストし、Cloudflare が見る出口 IP を表示します。",
+        "noRoute": "このプロファイルに route-via ルールはありません — トラフィックはデフォルトのアウトバウンドを使います。",
+        "failed": "出口チェックに失敗しました: {error}",
+        "outboundMissing": "アウトバウンド \"{tag}\" が Xray テンプレートにありません",
+        "noIp": "アウトバウンド \"{tag}\" には到達できますが出口 IP が報告されませんでした",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

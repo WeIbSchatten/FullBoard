@@ -720,6 +720,7 @@
       "tabBasics": "أساسي",
       "tabCredentials": "بيانات الاعتماد",
       "tabLinks": "الروابط",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "إعدادات WireGuard",
       "config": "الإعداد",
       "linksHint": "أضف روابط مشاركة من جهات خارجية وعناوين اشتراك خارجية لتضمينها في اشتراك هذا العميل.",
@@ -764,6 +765,8 @@
       "sortMostTraffic": "الأكثر استهلاكاً",
       "sortHighestRemaining": "الأعلى متبقياً",
       "sortExpiringSoonest": "الأقرب انتهاءً",
+      "sortManual": "ترتيب يدوي",
+      "dragToReorder": "اسحب لإعادة الترتيب",
       "has": "يملك",
       "hasNot": "لا يملك",
       "actions": "الإجراءات",
@@ -942,7 +945,8 @@
         "delDepleted": "تم حذف {count} عميل منتهٍ",
         "delOrphans": "تم حذف {count} عميل غير مرتبط",
         "imported": "تم استيراد {count} عميل",
-        "importedMixed": "{ok} تم استيرادهم، {failed} تم تخطيهم"
+        "importedMixed": "{ok} تم استيرادهم، {failed} تم تخطيهم",
+        "reorder": "تم تحديث ترتيب العملاء"
       },
       "renewMax": "الحد الأقصى للتجديدات",
       "renewMaxDesc": "عدد المرات التي يمكن أن يعمل فيها التجديد التلقائي قبل ترك العميل ينتهي. القيمة 0 تعني بلا حد. تعويض عدة فترات فائتة يستهلك تجديدًا واحدًا لكل فترة.",
@@ -1132,6 +1136,7 @@
       "pinFetchFailed": "تعذّر جلب الشهادة",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "افتح التحكم الكامل باللوحة البعيدة عبر «إدارة اللوحة» في صف العقدة — الإعدادات وXray والمنافذ الحية وإعادة التشغيل وتسجيل الدخول.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2562,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "السر",
+        "link": "الرابط",
+        "showSecret": "إظهار السر",
+        "hideSecret": "إخفاء السر"
+      },
+      "egress": {
+        "button": "تحقق من IP الخروج",
+        "hint": "يختبر المسار الصادر الذي تشير إليه قاعدة route-via لهذا الملف ويعرض عنوان IP الذي تراه Cloudflare.",
+        "noRoute": "لا توجد قاعدة route-via لهذا الملف — تمر الحركة عبر المسار الافتراضي.",
+        "failed": "فشل فحص الخروج: {error}",
+        "outboundMissing": "المسار الصادر \"{tag}\" غير موجود في قالب Xray",
+        "noIp": "المسار الصادر \"{tag}\" متاح لكن لم يُبلَّغ عن IP خروج",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

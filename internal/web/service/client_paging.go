@@ -19,6 +19,7 @@ import (
 // so the list payload stays compact even when the panel manages thousands
 // of clients. Modals that need the full record still call /get/:email.
 type ClientSlim struct {
+	Id           int                 `json:"id" example:"1"`
 	Email        string              `json:"email" example:"alice@example.com"`
 	SubID        string              `json:"subId" example:"abcd1234"`
 	Enable       bool                `json:"enable" example:"true"`
@@ -34,6 +35,7 @@ type ClientSlim struct {
 	Comment      string              `json:"comment,omitempty" example:"Primary device"`
 	InboundIds   []int               `json:"inboundIds" example:"[3,5]"`
 	Traffic      *xray.ClientTraffic `json:"traffic,omitempty"`
+	SortOrder    int                 `json:"sortOrder" example:"1"`
 	CreatedAt    int64               `json:"createdAt" example:"1735000000000"`
 	UpdatedAt    int64               `json:"updatedAt" example:"1735100000000"`
 }
@@ -361,8 +363,10 @@ func (q clientQuery) applyOrder(tx *gorm.DB, sortKey, order string) *gorm.DB {
 		expr, tieDir = "c.updated_at", dir
 	case "lastOnline":
 		expr, tieDir = "COALESCE(ct.last_online, 0)", dir
+	case "sortOrder":
+		expr, tieDir = "c.sort_order", dir
 	default:
-		return tx.Order("c.id ASC")
+		return tx.Order("c.sort_order ASC, c.id ASC")
 	}
 	return tx.Order(expr + dir + ", c.id" + tieDir)
 }
@@ -635,6 +639,7 @@ func sqlInt(v int64) string {
 
 func toClientSlim(c ClientWithAttachments) ClientSlim {
 	return ClientSlim{
+		Id:           c.Id,
 		Email:        c.Email,
 		SubID:        c.SubID,
 		Enable:       c.Enable,
@@ -650,6 +655,7 @@ func toClientSlim(c ClientWithAttachments) ClientSlim {
 		Comment:      c.Comment,
 		InboundIds:   c.InboundIds,
 		Traffic:      c.Traffic,
+		SortOrder:    c.SortOrder,
 		CreatedAt:    c.CreatedAt,
 		UpdatedAt:    c.UpdatedAt,
 	}

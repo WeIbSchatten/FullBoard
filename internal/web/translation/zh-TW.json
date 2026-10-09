@@ -720,6 +720,7 @@
       "tabBasics": "基本",
       "tabCredentials": "認證資訊",
       "tabLinks": "連結",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "WireGuard 設定",
       "config": "設定",
       "linksHint": "新增第三方分享連結和遠端訂閱網址，將其包含在此用戶端的訂閱中。",
@@ -764,6 +765,8 @@
       "sortMostTraffic": "流量最多",
       "sortHighestRemaining": "剩餘最多",
       "sortExpiringSoonest": "即將到期",
+      "sortManual": "手動排序",
+      "dragToReorder": "拖曳以重新排序",
       "has": "擁有",
       "hasNot": "不擁有",
       "actions": "操作",
@@ -942,7 +945,8 @@
         "delDepleted": "已刪除 {count} 個已耗盡的客戶端",
         "delOrphans": "已刪除 {count} 個未關聯的客戶端",
         "imported": "已匯入 {count} 個客戶端",
-        "importedMixed": "已匯入 {ok} 個，跳過 {failed} 個"
+        "importedMixed": "已匯入 {ok} 個，跳過 {failed} 個",
+        "reorder": "客戶端順序已更新"
       },
       "renewMax": "最大續期次數",
       "renewMaxDesc": "自動續期最多可觸發的次數，達到後用戶端將自然到期。填 0 表示不限制。補齊多個錯過的週期時，每個週期消耗一次續期。",
@@ -1132,6 +1136,7 @@
       "pinFetchFailed": "無法取得憑證",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "在節點列點「管理面板」可完整管理遠端面版：設定、Xray、即時入站、重啟與登入。",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2562,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "密鑰",
+        "link": "連結",
+        "showSecret": "顯示密鑰",
+        "hideSecret": "隱藏密鑰"
+      },
+      "egress": {
+        "button": "檢查出口 IP",
+        "hint": "測試此設定檔 route-via 規則指向的出站，並顯示 Cloudflare 看到的出口 IP。",
+        "noRoute": "此設定檔沒有 route-via 規則 — 流量走預設出站。",
+        "failed": "出口檢查失敗：{error}",
+        "outboundMissing": "出站 \"{tag}\" 不在 Xray 範本中",
+        "noIp": "出站 \"{tag}\" 可達但未回報出口 IP",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

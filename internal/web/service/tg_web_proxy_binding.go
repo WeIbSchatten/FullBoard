@@ -35,6 +35,9 @@ type TgWebProxyBinding struct {
 	ProfileName      string `json:"profileName" example:"default"`
 	Dedicated        bool   `json:"dedicated" example:"false"`
 	EffectiveProfile string `json:"effectiveProfile" example:"default"`
+	// Secret/Link are filled from the live relay profile when available.
+	Secret string `json:"secret,omitempty" example:"000102030405060708090a0b0c0d0e0f"`
+	Link   string `json:"link,omitempty" example:"https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f"`
 }
 
 type TgWebProxyBindingList struct {
@@ -165,8 +168,21 @@ func (s *TgWebProxyService) ListBindings() (TgWebProxyBindingList, error) {
 		return TgWebProxyBindingList{}, err
 	}
 	out := TgWebProxyBindingList{Bindings: make([]TgWebProxyBinding, len(rows)), SyncError: lastTgWebProxySyncError()}
+	names := make([]string, len(rows))
 	for i, r := range rows {
-		out.Bindings[i] = r.view()
+		names[i] = r.effectiveProfile()
+	}
+	shares, shareErr := tgWebProxy().ShareProfiles(names)
+	if shareErr != nil {
+		logger.Warning("tg-web-proxy: share bindings:", shareErr)
+	}
+	for i, r := range rows {
+		b := r.view()
+		if info, ok := shares[r.effectiveProfile()]; ok {
+			b.Secret = info.Secret
+			b.Link = info.Link
+		}
+		out.Bindings[i] = b
 	}
 	return out, nil
 }

@@ -96,4 +96,20 @@ describe('link-label parseLinkParts', () => {
     expect(parts?.port).toBe('8443');
     expect(parts?.remark).toBe('tuic-remark');
   });
+
+  // Bound clients append https://t.me/webproxy (and sometimes tg://webproxy) to
+  // the raw subscription; without a dedicated label they were shown as Https/MTProto.
+  it('labels Telegram WEB proxy links with the server query as remark', () => {
+    const https = parseLinkParts(
+      'https://t.me/webproxy?server=proxy.example.com%2Fpath&secret=abc',
+    );
+    expect(https?.protocol).toBe('WEB Proxy');
+    expect(https?.remark).toBe('proxy.example.com/path');
+    expect(https?.network).toBe('');
+    expect(https?.security).toBe('');
+
+    const deep = parseLinkParts('tg://webproxy?server=proxy.example.com&secret=abc');
+    expect(deep?.protocol).toBe('WEB Proxy');
+    expect(deep?.remark).toBe('proxy.example.com');
+  });
 });

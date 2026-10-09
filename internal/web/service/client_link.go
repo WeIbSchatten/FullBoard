@@ -190,10 +190,20 @@ func (s *ClientService) syncInboundClients(tx *gorm.DB, inboundId int, clients [
 			return err
 		}
 		disabledIDs := make([]int, 0)
+		newIDs := make([]int, 0, len(toCreate))
 		for i, rec := range toCreate {
 			idByEmail[rec.Email] = rec.Id
+			newIDs = append(newIDs, rec.Id)
 			if !wantEnable[i] {
 				disabledIDs = append(disabledIDs, rec.Id)
+			}
+		}
+		// New rows default sort_order=0; mirror migrateClientSortOrder (id ASC).
+		for _, batch := range chunkInts(newIDs, sqlInChunk) {
+			if err := tx.Model(&model.ClientRecord{}).
+				Where("id IN ? AND sort_order = 0", batch).
+				UpdateColumn("sort_order", gorm.Expr("id")).Error; err != nil {
+				return err
 			}
 		}
 		for _, batch := range chunkInts(disabledIDs, sqlInChunk) {

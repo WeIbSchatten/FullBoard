@@ -51,12 +51,19 @@ func (r *Remote) RestartPanel(ctx context.Context) error {
 	return err
 }
 
-// GetXraySetting reads the node's Xray template with its inbound tags, as the
-// node serialized it. Requires an admin-scope token on the node.
+// GetXraySetting reads the node Xray template (+ inbound tags). Requires admin
+// scope. Unwraps the JSON-string obj the panel uses for the frontend contract.
 func (r *Remote) GetXraySetting(ctx context.Context) (json.RawMessage, error) {
 	env, err := r.do(ctx, http.MethodPost, "panel/api/xray/", nil)
 	if err != nil {
 		return nil, err
+	}
+	var asString string
+	if err := json.Unmarshal(env.Obj, &asString); err == nil {
+		if asString == "" {
+			return nil, errors.New("remote returned an empty xray setting payload")
+		}
+		return json.RawMessage(asString), nil
 	}
 	return env.Obj, nil
 }
@@ -176,6 +183,7 @@ func (r *Remote) IssueLoginTicket(ctx context.Context) (string, error) {
 	}
 	return out.Ticket, nil
 }
+
 // LoginURL is the node panel's login page carrying ticket in the URL fragment,
 // which browsers never send to servers or in Referer headers.
 func (r *Remote) LoginURL(ticket string) (string, error) {

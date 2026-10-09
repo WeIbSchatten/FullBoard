@@ -4,6 +4,8 @@ import { Alert, Button, Card, Space, Table, Tag, Tooltip, Typography } from 'ant
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
   NodeIndexOutlined,
   PlusOutlined,
   ShareAltOutlined,
@@ -20,6 +22,7 @@ import type { Msg } from '@/utils';
 import { getMessage } from '@/utils/messageBus';
 import { isManagedProfile } from '@/lib/tgWebProxy';
 import ClientBindingsCard from './ClientBindingsCard';
+import ProfileEgressCheck from './ProfileEgressCheck';
 import ProfileFormModal from './ProfileFormModal';
 import RouteViaOutboundModal from './RouteViaOutboundModal';
 import ShareModal from './ShareModal';
@@ -57,6 +60,7 @@ export default function ProfilesTab({
   const [editing, setEditing] = useState<RelayProfile | null>(null);
   const [share, setShare] = useState<RelayShareInfo | null>(null);
   const [routeProfile, setRouteProfile] = useState<RelayProfile | null>(null);
+  const [revealSecrets, setRevealSecrets] = useState<Record<string, boolean>>({});
   const profiles = snapshot?.profiles ?? [];
 
   const onSave = async (profile: RelayProfile) => {
@@ -97,7 +101,27 @@ export default function ProfilesTab({
       title: t('pages.tgWebProxy.secret'),
       dataIndex: 'secret',
       key: 'secret',
-      render: (s: string) => <Typography.Text code>{maskSecret(s)}</Typography.Text>,
+      render: (s: string, p: RelayProfile) => {
+        const shown = !!revealSecrets[p.name];
+        return (
+          <Space size={4}>
+            <Typography.Text code copyable={shown ? { text: s } : false}>
+              {shown ? s : maskSecret(s)}
+            </Typography.Text>
+            <Button
+              type="text"
+              size="small"
+              icon={shown ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              aria-label={
+                shown
+                  ? t('pages.tgWebProxy.bindings.hideSecret')
+                  : t('pages.tgWebProxy.bindings.showSecret')
+              }
+              onClick={() => setRevealSecrets((prev) => ({ ...prev, [p.name]: !shown }))}
+            />
+          </Space>
+        );
+      },
     },
     {
       title: t('pages.tgWebProxy.profile.backend'),
@@ -121,7 +145,7 @@ export default function ProfilesTab({
       title: '',
       key: 'actions',
       render: (_: unknown, p: RelayProfile) => (
-        <Space size={4}>
+        <Space size={4} wrap>
           <Button
             size="small"
             icon={<ShareAltOutlined />}
@@ -129,6 +153,7 @@ export default function ProfilesTab({
           >
             {t('pages.tgWebProxy.share.button')}
           </Button>
+          <ProfileEgressCheck profile={p} />
           <Button
             size="small"
             icon={<NodeIndexOutlined />}

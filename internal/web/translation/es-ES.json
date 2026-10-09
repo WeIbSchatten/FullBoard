@@ -720,6 +720,7 @@
       "tabBasics": "Básico",
       "tabCredentials": "Credenciales",
       "tabLinks": "Enlaces",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "Configuración de WireGuard",
       "config": "Configuración",
       "linksHint": "Añade enlaces de terceros y URLs de suscripción remotas para incluirlos en la suscripción de este cliente.",
@@ -764,6 +765,8 @@
       "sortMostTraffic": "Mayor tráfico",
       "sortHighestRemaining": "Mayor restante",
       "sortExpiringSoonest": "Caducidad más próxima",
+      "sortManual": "Orden manual",
+      "dragToReorder": "Arrastra para reordenar",
       "has": "Tiene",
       "hasNot": "No tiene",
       "actions": "Acciones",
@@ -942,7 +945,8 @@
         "delDepleted": "{count} clientes agotados eliminados",
         "delOrphans": "{count} clientes sin entrante eliminados",
         "imported": "{count} clientes importados",
-        "importedMixed": "{ok} importados, {failed} omitidos"
+        "importedMixed": "{ok} importados, {failed} omitidos",
+        "reorder": "Orden de clientes actualizado"
       },
       "renewMax": "Renovaciones máximas",
       "renewMaxDesc": "Cuántas veces puede activarse la renovación automática antes de dejar que el cliente caduque. 0 significa sin límite. Recuperar varios periodos perdidos consume una renovación por periodo.",
@@ -1132,6 +1136,7 @@
       "pinFetchFailed": "No se pudo obtener el certificado",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Abre el control completo del panel remoto con Gestionar panel en la fila del nodo — ajustes, Xray, inbounds en vivo, reinicio e inicio de sesión.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2562,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Secreto",
+        "link": "Enlace",
+        "showSecret": "Mostrar secreto",
+        "hideSecret": "Ocultar secreto"
+      },
+      "egress": {
+        "button": "Comprobar IP de salida",
+        "hint": "Prueba el outbound al que apunta la regla route-via de este perfil y muestra la IP que ve Cloudflare.",
+        "noRoute": "Este perfil no tiene regla route-via — el tráfico usa el outbound predeterminado.",
+        "failed": "Fallo al comprobar la salida: {error}",
+        "outboundMissing": "El outbound \"{tag}\" no está en la plantilla de Xray",
+        "noIp": "El outbound \"{tag}\" responde pero no se informó IP de salida",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

@@ -332,3 +332,34 @@
   text-align: center;
   color: var(--ant-color-text-secondary);
 }
+
+.client-drag-handle {
+  cursor: grab;
+  opacity: 0.35;
+  font-size: 14px;
+  padding: 4px;
+  touch-action: none;
+  transition: opacity 0.15s;
+}
+
+.client-drag-handle:hover {
+  opacity: 0.85;
+}
+
+.client-drag-handle:active {
+  cursor: grabbing;
+}
+
+.client-row-dragging {
+  opacity: 0.4;
+}
+
+.client-drop-before > td,
+.client-card.client-drop-before {
+  box-shadow: inset 0 2px 0 0 var(--ant-color-primary);
+}
+
+.client-drop-after > td,
+.client-card.client-drop-after {
+  box-shadow: inset 0 -2px 0 0 var(--ant-color-primary);
+}

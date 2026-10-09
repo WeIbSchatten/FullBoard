@@ -110,3 +110,27 @@ export function applyTproxyBackendRule(
 export function loopbackBackend(port: number): string {
   return `127.0.0.1:${port}`;
 }
+
+export function tproxyBackendInboundTag(profileName: string): string {
+  return `tproxy-backend-${sanitizeProfileTagSlug(profileName)}`;
+}
+
+// First routing rule that matches the profile's tproxy tunnel inbound.
+export function resolveTproxyBackendOutboundTag(
+  template: XraySettingsValue | null | undefined,
+  profileName: string,
+): string | null {
+  const inboundTag = tproxyBackendInboundTag(profileName);
+  const rules = template?.routing?.rules;
+  if (!Array.isArray(rules)) return null;
+  for (const raw of rules) {
+    if (!raw || typeof raw !== 'object') continue;
+    const rule = raw as { inboundTag?: unknown; outboundTag?: unknown; balancerTag?: unknown };
+    const tags = rule.inboundTag;
+    const match = Array.isArray(tags) ? tags.some((t) => t === inboundTag) : tags === inboundTag;
+    if (!match) continue;
+    if (typeof rule.outboundTag === 'string' && rule.outboundTag) return rule.outboundTag;
+    if (typeof rule.balancerTag === 'string' && rule.balancerTag) return rule.balancerTag;
+  }
+  return null;
+}

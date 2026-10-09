@@ -35,8 +35,8 @@ const (
 var ErrRemoteInvalidRequest = errors.New("invalid remote admin request")
 
 var (
-	remoteLogLevels  = []string{"debug", "info", "notice", "warning", "err"}
-	remoteXrayVerRe  = regexp.MustCompile(`^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$`)
+	remoteLogLevels   = []string{"debug", "info", "notice", "warning", "err"}
+	remoteXrayVerRe   = regexp.MustCompile(`^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$`)
 	remoteLogFilterRe = regexp.MustCompile(`^[^\x00-\x1f]{0,200}$`)
 )
 

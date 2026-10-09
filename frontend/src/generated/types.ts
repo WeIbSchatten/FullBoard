@@ -486,6 +486,7 @@ export interface ClientRecord {
   reverse: unknown;
   secret: string;
   security: string;
+  sortOrder: number;
   subId: string;
   tgId: number;
   totalGB: number;
@@ -527,6 +528,7 @@ export interface ClientSlim {
   enable: boolean;
   expiryTime: number;
   group?: string;
+  id: number;
   inboundIds: number[];
   limitHwid: number;
   limitIp: number;
@@ -534,6 +536,7 @@ export interface ClientSlim {
   resetDay: number;
   resetMax: number;
   resetWeekday: number;
+  sortOrder: number;
   subId: string;
   totalGB: number;
   traffic?: ClientTraffic | null;
@@ -1240,7 +1243,9 @@ export interface TgWebProxyBinding {
   dedicated: boolean;
   effectiveProfile: string;
   email: string;
+  link?: string;
   profileName: string;
+  secret?: string;
 }
 
 export interface TgWebProxyBindingList {

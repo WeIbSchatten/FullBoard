@@ -348,6 +348,12 @@ export default function NodesPage() {
                   </Col>
 
                   <Col span={24}>
+                    <Alert
+                      type="info"
+                      showIcon
+                      style={{ marginBottom: 12 }}
+                      message={t('pages.nodes.remote.manageHint')}
+                    />
                     <NodeList
                       nodes={nodes}
                       loading={loading}
