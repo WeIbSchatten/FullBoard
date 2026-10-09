@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -197,10 +198,10 @@ func (s *Store) applyLocked(ctx context.Context, cfg RelayConfig, profiles []Rel
 		return err
 	}
 	if err := os.MkdirAll(filepath.Dir(s.paths.ConfigFile), 0o750); err != nil {
-		return err
+		return wrapConfigWriteError(err)
 	}
 	if err := os.MkdirAll(filepath.Dir(s.paths.ProfilesFile), 0o750); err != nil {
-		return err
+		return wrapConfigWriteError(err)
 	}
 
 	configCandidate := s.paths.ConfigFile + candidateSuffix
@@ -208,10 +209,10 @@ func (s *Store) applyLocked(ctx context.Context, cfg RelayConfig, profiles []Rel
 	defer os.Remove(configCandidate)
 	defer os.Remove(profilesCandidate)
 	if err := writeExclusive(configCandidate, configBytes, configFileMode); err != nil {
-		return err
+		return wrapConfigWriteError(err)
 	}
 	if err := writeExclusive(profilesCandidate, profileBytes, profilesFileMode); err != nil {
-		return err
+		return wrapConfigWriteError(err)
 	}
 	if err := s.checkLocked(ctx, configCandidate, profilesCandidate); err != nil {
 		return err
@@ -220,6 +221,18 @@ func (s *Store) applyLocked(ctx context.Context, cfg RelayConfig, profiles []Rel
 		return err
 	}
 	return commitFile(profilesCandidate, s.paths.ProfilesFile, profilesFileMode)
+}
+
+// wrapConfigWriteError points operators at the fullboard sandbox when /etc is
+// read-only under ProtectSystem=full without ReadWritePaths for tproxy-server.
+func wrapConfigWriteError(err error) error {
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, syscall.EROFS) || strings.Contains(strings.ToLower(err.Error()), "read-only file system") {
+		return fmt.Errorf("%w; add ReadWritePaths=-/etc/tproxy-server to fullboard.service (or a drop-in under fullboard.service.d/) and restart the panel", err)
+	}
+	return err
 }
 
 func writeExclusive(path string, data []byte, mode fs.FileMode) error {

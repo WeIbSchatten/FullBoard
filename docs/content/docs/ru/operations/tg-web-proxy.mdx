@@ -147,6 +147,25 @@ preview в sandbox). Сохранение включает `public_dir` на э�
 новом хосте без профилей форма также запрашивает первый профиль — без него релей
 не запустится.
 
+## Устранение неполадок
+
+**`read-only file system` при сохранении конфига или профиля.** Unit панели
+использует `ProtectSystem=full`, из‑за чего `/etc` только для чтения. FullBoard
+нужен `ReadWritePaths=-/etc/tproxy-server`. В актуальном релизе это уже есть; на
+старом unit добавьте drop-in и перезапустите:
+
+```bash
+sudo mkdir -p /etc/systemd/system/fullboard.service.d
+sudo tee /etc/systemd/system/fullboard.service.d/20-tproxy.conf >/dev/null <<'EOF'
+[Service]
+ReadWritePaths=-/etc/tproxy-server
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart fullboard
+```
+
+После этого снова сохраните конфиг / профиль в панели.
+
 ## Гарантии безопасности
 
 Любое сохранение (конфигурации или профиля) проходит одни и те же шаги:

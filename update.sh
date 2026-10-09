@@ -381,7 +381,9 @@ _xui_service_write_paths_dropin() {
         bin_folder="${main_folder%/}/${bin_folder#./}"
     fi
 
-    for path in "$db_folder" "$log_folder" "$bin_folder" "$main_folder"; do
+    # /etc/tproxy-server is the Telegram WEB proxy store the panel writes under
+    # ProtectSystem=full; keep it next to the XUI_* folders in every drop-in.
+    for path in "$db_folder" "$log_folder" "$bin_folder" "$main_folder" "/etc/tproxy-server"; do
         [[ "$path" == /* ]] || continue
         # ReadWritePaths= is a whitespace-separated list, and a folder whose
         # name contains whitespace cannot be written into it without relying on
