@@ -83,6 +83,29 @@ func TestInstallSecretNeverReachesCommandLineOrScript(t *testing.T) {
 	if !strings.Contains(string(script), "'--site-upstream' 'http://127.0.0.1:3000'") {
 		t.Fatalf("installer flags missing from script:\n%s", script)
 	}
+	for _, needle := range []string{
+		`export HOME="${HOME:-/root}"`,
+		`export GOMODCACHE=`,
+		`export GOPATH=`,
+	} {
+		if !strings.Contains(string(script), needle) {
+			t.Fatalf("job script missing %q:\n%s", needle, script)
+		}
+	}
+	var sawHomeSetenv bool
+	for _, c := range runner.calls {
+		if c.name != "systemd-run" {
+			continue
+		}
+		joined := strings.Join(c.args, " ")
+		if strings.Contains(joined, "--setenv HOME=/root") &&
+			strings.Contains(joined, "--setenv GOMODCACHE=/root/go/pkg/mod") {
+			sawHomeSetenv = true
+		}
+	}
+	if !sawHomeSetenv {
+		t.Fatal("systemd-run missing HOME/GOMODCACHE --setenv for the Go module cache")
+	}
 	stored, err := os.ReadFile(paths.JobDir + "/job.secret")
 	if err != nil || strings.TrimSpace(string(stored)) != secret {
 		t.Fatalf("secret file = %q, %v", stored, err)
