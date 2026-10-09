@@ -9,6 +9,7 @@ const TITLE_KEYS: Record<string, string> = {
   '/groups': 'menu.groups',
   '/nodes': 'menu.nodes',
   '/hosts': 'menu.hosts',
+  '/tg-web-proxy': 'menu.tgWebProxy',
   '/settings': 'menu.settings',
   '/xray': 'menu.xray',
   '/outbound': 'menu.outbounds',

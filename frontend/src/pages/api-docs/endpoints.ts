@@ -2655,6 +2655,149 @@ export const sections: readonly Section[] = [
   },
 
   {
+    id: 'tg-web-proxy',
+    title: 'Telegram WEB Proxy',
+    description:
+      'Manage the host-local tproxy-server relay (Telegram WEB proxy type): systemd lifecycle, config.json, profiles.json and client share links. Every write is validated (numeric loopback listeners/backends, profiles.json mode 0400) and passes `tproxy-server -check` before it is committed; a running relay is restarted afterwards. The relay admin listener is only probed server-side. Linux + systemd only.',
+    endpoints: [
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/status',
+        summary:
+          'Install state, systemd units (tproxy-server, mtproxy, caddy, tproxy-firewall), profiles.json mode and the admin /healthz, /readyz and /metrics probe.',
+        responseSchema: 'RelayStatus',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/config',
+        summary:
+          'Current config.json and profiles.json. On a host without config.json the defaults written by the upstream installer are returned with configExists=false.',
+        responseSchema: 'RelaySnapshot',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/config',
+        summary:
+          'Replace config.json. Unknown keys of the previous file are preserved. initialProfile is required only while profiles.json is empty.',
+        body: '{\n  "config": {\n    "public_hostname": "proxy.example.com",\n    "base_path": "",\n    "listen": "127.0.0.1:8080",\n    "admin_listen": "127.0.0.1:8081",\n    "public_upstream": "http://127.0.0.1:3000",\n    "static_routes": "exact",\n    "token_key_file": "/etc/tproxy-server/token.key",\n    "profiles_file": "/run/credentials/tproxy-server.service/profiles.json"\n  },\n  "initialProfile": {\n    "name": "default",\n    "secret": "000102030405060708090a0b0c0d0e0f",\n    "backend": "127.0.0.1:2398",\n    "carrier_mode": "https"\n  }\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/check',
+        summary: 'Run `tproxy-server -check` against the committed config.json and profiles.json.',
+        response: '{\n  "success": true\n}',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/profiles',
+        summary: 'List profiles.json entries, including their secrets.',
+        responseSchema: 'RelayProfile',
+        responseSchemaArray: true,
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/profiles/add',
+        summary:
+          'Add a profile. The secret must be 32 hex characters (optionally dd-prefixed) and unique; backend must be a numeric loopback host:port.',
+        body: '{\n  "name": "beta",\n  "secret": "fedcba9876543210fedcba9876543210",\n  "backend": "127.0.0.1:2399",\n  "carrier_mode": "websocket",\n  "limits": { "max_sessions": 32 }\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/profiles/update/:name',
+        summary: 'Replace the profile with the given name (the body may rename it).',
+        params: [{ name: 'name', in: 'path', type: 'string', desc: 'Current profile name.' }],
+        body: '{\n  "name": "beta",\n  "secret": "fedcba9876543210fedcba9876543210",\n  "backend": "127.0.0.1:2399",\n  "carrier_mode": "https-lanes"\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/profiles/del/:name',
+        summary: 'Delete a profile. The last remaining profile cannot be deleted.',
+        params: [{ name: 'name', in: 'path', type: 'string', desc: 'Profile name.' }],
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/share/:name',
+        summary:
+          'Client share values for a profile: server (hostname[/base_path]), typed secret, link secret and the t.me/webproxy and tg://webproxy links.',
+        params: [{ name: 'name', in: 'path', type: 'string', desc: 'Profile name.' }],
+        responseSchema: 'RelayShareInfo',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/service/:unit/:action',
+        summary:
+          'systemctl action on tproxy-server or mtproxy. Starting or restarting tproxy-server re-runs `-check` first.',
+        params: [
+          {
+            name: 'unit',
+            in: 'path',
+            type: 'string',
+            desc: 'Unit name.',
+            enum: ['tproxy-server', 'mtproxy'],
+          },
+          {
+            name: 'action',
+            in: 'path',
+            type: 'string',
+            desc: 'systemctl verb.',
+            enum: ['start', 'stop', 'restart', 'enable', 'disable'],
+          },
+        ],
+        response: '{\n  "success": true\n}',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/logs/:unit',
+        summary: 'Last journal lines of a managed unit.',
+        params: [
+          {
+            name: 'unit',
+            in: 'path',
+            type: 'string',
+            desc: 'Unit name.',
+            enum: ['tproxy-server', 'mtproxy', 'caddy', 'tproxy-firewall'],
+          },
+          {
+            name: 'lines',
+            in: 'query',
+            type: 'integer',
+            desc: 'Number of lines (10-1000).',
+            optional: true,
+            defaultValue: 200,
+          },
+        ],
+        response:
+          '{\n  "success": true,\n  "obj": "2026-10-09T18:00:00+0000 host tproxy-server[1234]: event=started ..."\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/install',
+        summary:
+          'Download the upstream tproxy-server tree and run deploy/install.sh as a detached systemd-run job. The installer takes over ports 80/443 with Caddy. The secret is passed on stdin, never on the command line.',
+        body: '{\n  "hostname": "proxy.example.com",\n  "email": "admin@example.com",\n  "secret": "000102030405060708090a0b0c0d0e0f",\n  "siteUpstream": "http://127.0.0.1:3000",\n  "siteDir": "",\n  "basePath": "none",\n  "mtproxyWorkers": 1\n}',
+        responseSchema: 'RelayJobStatus',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/update',
+        summary:
+          'Download the latest upstream tree and run deploy/update-relay.sh (tests, build, atomic swap, automatic rollback).',
+        responseSchema: 'RelayJobStatus',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/job',
+        summary: 'State and log tail of the last install/update job.',
+        responseSchema: 'RelayJobStatus',
+      },
+    ],
+  },
+
+  {
     id: 'subscription',
     title: 'Subscription Server',
     description:

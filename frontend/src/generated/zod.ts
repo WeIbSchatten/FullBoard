@@ -15,6 +15,9 @@ export type Protocol = z.infer<typeof ProtocolSchema>;
 export const addrFamilySchema = z.number().int();
 export type addrFamily = z.infer<typeof addrFamilySchema>;
 
+export const commandRunnerSchema = z.unknown();
+export type commandRunner = z.infer<typeof commandRunnerSchema>;
+
 export const staticEgressResolverSchema = z.string();
 export type staticEgressResolver = z.infer<typeof staticEgressResolverSchema>;
 
@@ -1041,6 +1044,172 @@ export const RealityScanResultSchema = z.object({
 });
 export type RealityScanResult = z.infer<typeof RealityScanResultSchema>;
 
+export const RelayAdminProbeSchema = z.object({
+  address: z.string(),
+  checkedAt: z.number().int(),
+  error: z.string(),
+  healthy: z.boolean(),
+  metrics: z.record(z.string(), z.number()),
+  reachable: z.boolean(),
+  ready: z.boolean(),
+  readyDetail: z.string(),
+});
+export type RelayAdminProbe = z.infer<typeof RelayAdminProbeSchema>;
+
+export const RelayApplyResultSchema = z.object({
+  restartError: z.string(),
+  restarted: z.boolean(),
+});
+export type RelayApplyResult = z.infer<typeof RelayApplyResultSchema>;
+
+export const RelayConfigSchema = z.object({
+  admin_listen: z.string(),
+  base_path: z.string(),
+  enable_pprof: z.boolean(),
+  limits: z.lazy(() => RelayLimitsSchema),
+  listen: z.string(),
+  profiles_file: z.string(),
+  public_dir: z.string(),
+  public_hostname: z.string(),
+  public_upstream: z.string(),
+  static_routes: z.string(),
+  timeouts: z.lazy(() => RelayTimeoutsSchema),
+  token_key_file: z.string(),
+});
+export type RelayConfig = z.infer<typeof RelayConfigSchema>;
+
+export const RelayInstallRequestSchema = z.object({
+  basePath: z.string(),
+  email: z.string(),
+  hostname: z.string(),
+  mtproxyWorkers: z.number().int(),
+  secret: z.string(),
+  siteDir: z.string(),
+  siteUpstream: z.string(),
+});
+export type RelayInstallRequest = z.infer<typeof RelayInstallRequestSchema>;
+
+export const RelayJobStatusSchema = z.object({
+  exitCode: z.number().int().nullable().optional(),
+  kind: z.string(),
+  log: z.string(),
+  startedAt: z.number().int(),
+  state: z.string(),
+  unit: z.string(),
+});
+export type RelayJobStatus = z.infer<typeof RelayJobStatusSchema>;
+
+export const RelayLimitsSchema = z.object({
+  carrier_batch_bytes: z.number().int(),
+  max_backend_dials_in_flight: z.number().int(),
+  max_body_bytes: z.number().int(),
+  max_bootstraps_global: z.number().int(),
+  max_bootstraps_per_ip: z.number().int(),
+  max_closed_stream_ids: z.number().int(),
+  max_frame_payload: z.number().int(),
+  max_header_bytes: z.number().int(),
+  max_pending_global: z.number().int(),
+  max_pending_items_global: z.number().int(),
+  max_pending_items_per_session: z.number().int(),
+  max_pending_per_session: z.number().int(),
+  max_profiles: z.number().int(),
+  max_sessions_global: z.number().int(),
+  max_sessions_per_ip: z.number().int(),
+  max_streams_global: z.number().int(),
+  max_streams_per_session: z.number().int(),
+  new_bootstraps_burst: z.number().int(),
+  new_bootstraps_per_minute: z.number().int(),
+  new_sessions_burst: z.number().int(),
+  new_sessions_per_minute: z.number().int(),
+  new_streams_burst: z.number().int(),
+  new_streams_per_minute: z.number().int(),
+});
+export type RelayLimits = z.infer<typeof RelayLimitsSchema>;
+
+export const RelayProfileSchema = z.object({
+  backend: z.string(),
+  carrier_mode: z.string().optional(),
+  limits: z.lazy(() => RelayProfileLimitsSchema).nullable().optional(),
+  name: z.string(),
+  secret: z.string(),
+});
+export type RelayProfile = z.infer<typeof RelayProfileSchema>;
+
+export const RelayProfileLimitsSchema = z.object({
+  max_backend_dials_in_flight: z.number().int().optional(),
+  max_pending_per_session: z.number().int().optional(),
+  max_sessions: z.number().int().optional(),
+  max_streams: z.number().int().optional(),
+  max_streams_per_session: z.number().int().optional(),
+  new_sessions_burst: z.number().int().optional(),
+  new_sessions_per_minute: z.number().int().optional(),
+  new_streams_burst: z.number().int().optional(),
+  new_streams_per_minute: z.number().int().optional(),
+});
+export type RelayProfileLimits = z.infer<typeof RelayProfileLimitsSchema>;
+
+export const RelayShareInfoSchema = z.object({
+  carrierMode: z.string(),
+  deepLink: z.string(),
+  link: z.string(),
+  linkSecret: z.string(),
+  profile: z.string(),
+  secret: z.string(),
+  server: z.string(),
+});
+export type RelayShareInfo = z.infer<typeof RelayShareInfoSchema>;
+
+export const RelaySnapshotSchema = z.object({
+  config: z.lazy(() => RelayConfigSchema),
+  configExists: z.boolean(),
+  profiles: z.array(z.lazy(() => RelayProfileSchema)),
+  profilesExists: z.boolean(),
+});
+export type RelaySnapshot = z.infer<typeof RelaySnapshotSchema>;
+
+export const RelayStatusSchema = z.object({
+  admin: z.lazy(() => RelayAdminProbeSchema).nullable().optional(),
+  basePath: z.string(),
+  binaryInstalled: z.boolean(),
+  binaryPath: z.string(),
+  configError: z.string(),
+  configExists: z.boolean(),
+  configPath: z.string(),
+  hostname: z.string(),
+  job: z.lazy(() => RelayJobStatusSchema),
+  platform: z.string(),
+  profileCount: z.number().int(),
+  profilesExists: z.boolean(),
+  profilesMode: z.string(),
+  profilesModeOk: z.boolean(),
+  profilesPath: z.string(),
+  supported: z.boolean(),
+  units: z.array(z.lazy(() => RelayUnitStatusSchema)),
+});
+export type RelayStatus = z.infer<typeof RelayStatusSchema>;
+
+export const RelayTimeoutsSchema = z.object({
+  backend_dial: z.string(),
+  bootstrap_lifetime: z.string(),
+  idle: z.string(),
+  long_poll: z.string(),
+  read_header: z.string(),
+  reconnect_grace: z.string(),
+  shutdown: z.string(),
+});
+export type RelayTimeouts = z.infer<typeof RelayTimeoutsSchema>;
+
+export const RelayUnitStatusSchema = z.object({
+  activeState: z.string(),
+  controllable: z.boolean(),
+  mainPid: z.number().int(),
+  since: z.string(),
+  subState: z.string(),
+  unit: z.string(),
+  unitFileState: z.string(),
+});
+export type RelayUnitStatus = z.infer<typeof RelayUnitStatusSchema>;
+
 export const ServerSettingsSchema = z.object({
   contentPaddingAddition: z.string().optional(),
   disableCookies: z.boolean(),
@@ -1101,6 +1270,12 @@ export const SubBalancerSchema = z.object({
   updatedAt: z.number().int(),
 });
 export type SubBalancer = z.infer<typeof SubBalancerSchema>;
+
+export const TgWebProxyConfigRequestSchema = z.object({
+  config: z.lazy(() => RelayConfigSchema),
+  initialProfile: z.lazy(() => RelayProfileSchema).nullable().optional(),
+});
+export type TgWebProxyConfigRequest = z.infer<typeof TgWebProxyConfigRequestSchema>;
 
 export const TrafficSchema = z.object({
   Down: z.number().int(),

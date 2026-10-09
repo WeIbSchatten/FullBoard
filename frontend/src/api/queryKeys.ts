@@ -7,6 +7,12 @@ export const keys = {
     root: () => ['nodes'] as const,
     list: () => ['nodes', 'list'] as const,
   },
+  tgWebProxy: {
+    root: () => ['tgWebProxy'] as const,
+    status: () => ['tgWebProxy', 'status'] as const,
+    config: () => ['tgWebProxy', 'config'] as const,
+    logs: (unit: string, lines: number) => ['tgWebProxy', 'logs', unit, lines] as const,
+  },
   hosts: {
     root: () => ['hosts'] as const,
     list: () => ['hosts', 'list'] as const,

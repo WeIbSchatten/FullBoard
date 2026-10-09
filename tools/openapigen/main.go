@@ -110,6 +110,7 @@ func run(root, outDir string) error {
 				"AmneziaWGLogs",
 				"PeerActivity",
 				"HwidSlotStatus",
+				"TgWebProxyConfigRequest",
 			),
 		},
 		{
@@ -123,6 +124,24 @@ func run(root, outDir string) error {
 		{
 			Path:        resolveRel(root, "internal/tuic"),
 			StructAllow: setOf("TuicServerSettings", "TuicClientSettings"),
+		},
+		{
+			Path: resolveRel(root, "internal/tgwebproxy"),
+			StructAllow: setOf(
+				"RelayConfig",
+				"RelayLimits",
+				"RelayTimeouts",
+				"RelayProfile",
+				"RelayProfileLimits",
+				"RelaySnapshot",
+				"RelayShareInfo",
+				"RelayAdminProbe",
+				"RelayUnitStatus",
+				"RelayStatus",
+				"RelayApplyResult",
+				"RelayJobStatus",
+				"RelayInstallRequest",
+			),
 		},
 	}
 

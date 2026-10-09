@@ -4330,6 +4330,662 @@
         ],
         "type": "object"
       },
+      "RelayAdminProbe": {
+        "properties": {
+          "address": {
+            "example": "127.0.0.1:8081",
+            "type": "string"
+          },
+          "checkedAt": {
+            "example": 1760000000,
+            "format": "int64",
+            "type": "integer"
+          },
+          "error": {
+            "type": "string"
+          },
+          "healthy": {
+            "example": true,
+            "type": "boolean"
+          },
+          "metrics": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object"
+          },
+          "reachable": {
+            "example": true,
+            "type": "boolean"
+          },
+          "ready": {
+            "example": true,
+            "type": "boolean"
+          },
+          "readyDetail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "checkedAt",
+          "error",
+          "healthy",
+          "metrics",
+          "reachable",
+          "ready",
+          "readyDetail"
+        ],
+        "type": "object"
+      },
+      "RelayApplyResult": {
+        "properties": {
+          "restartError": {
+            "type": "string"
+          },
+          "restarted": {
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "restartError",
+          "restarted"
+        ],
+        "type": "object"
+      },
+      "RelayConfig": {
+        "description": "RelayConfig is the on-disk config.json. Every known key is always written so\na merge over the previous file can clear a value (e.g. switch public_dir off).",
+        "properties": {
+          "admin_listen": {
+            "example": "127.0.0.1:8081",
+            "type": "string"
+          },
+          "base_path": {
+            "type": "string"
+          },
+          "enable_pprof": {
+            "example": false,
+            "type": "boolean"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/RelayLimits"
+          },
+          "listen": {
+            "example": "127.0.0.1:8080",
+            "type": "string"
+          },
+          "profiles_file": {
+            "example": "/run/credentials/tproxy-server.service/profiles.json",
+            "type": "string"
+          },
+          "public_dir": {
+            "type": "string"
+          },
+          "public_hostname": {
+            "example": "proxy.example.com",
+            "type": "string"
+          },
+          "public_upstream": {
+            "example": "http://127.0.0.1:3000",
+            "type": "string"
+          },
+          "static_routes": {
+            "example": "exact",
+            "type": "string"
+          },
+          "timeouts": {
+            "$ref": "#/components/schemas/RelayTimeouts"
+          },
+          "token_key_file": {
+            "example": "/etc/tproxy-server/token.key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "admin_listen",
+          "base_path",
+          "enable_pprof",
+          "limits",
+          "listen",
+          "profiles_file",
+          "public_dir",
+          "public_hostname",
+          "public_upstream",
+          "static_routes",
+          "timeouts",
+          "token_key_file"
+        ],
+        "type": "object"
+      },
+      "RelayInstallRequest": {
+        "properties": {
+          "basePath": {
+            "example": "none",
+            "type": "string"
+          },
+          "email": {
+            "example": "admin@example.com",
+            "type": "string"
+          },
+          "hostname": {
+            "example": "proxy.example.com",
+            "type": "string"
+          },
+          "mtproxyWorkers": {
+            "example": 1,
+            "type": "integer"
+          },
+          "secret": {
+            "description": "Secret is written to a 0400 file and fed to the installer on stdin, so it\nnever appears in a process list or unit environment.",
+            "example": "000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          },
+          "siteDir": {
+            "type": "string"
+          },
+          "siteUpstream": {
+            "example": "http://127.0.0.1:3000",
+            "type": "string"
+          }
+        },
+        "required": [
+          "basePath",
+          "email",
+          "hostname",
+          "mtproxyWorkers",
+          "secret",
+          "siteDir",
+          "siteUpstream"
+        ],
+        "type": "object"
+      },
+      "RelayJobStatus": {
+        "properties": {
+          "exitCode": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "kind": {
+            "example": "install",
+            "type": "string"
+          },
+          "log": {
+            "type": "string"
+          },
+          "startedAt": {
+            "example": 1760000000,
+            "format": "int64",
+            "type": "integer"
+          },
+          "state": {
+            "example": "running",
+            "type": "string"
+          },
+          "unit": {
+            "example": "fullboard-tproxy-install-1760000000",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "log",
+          "startedAt",
+          "state",
+          "unit"
+        ],
+        "type": "object"
+      },
+      "RelayLimits": {
+        "properties": {
+          "carrier_batch_bytes": {
+            "example": 2097152,
+            "type": "integer"
+          },
+          "max_backend_dials_in_flight": {
+            "example": 256,
+            "type": "integer"
+          },
+          "max_body_bytes": {
+            "example": 2097152,
+            "type": "integer"
+          },
+          "max_bootstraps_global": {
+            "example": 512,
+            "type": "integer"
+          },
+          "max_bootstraps_per_ip": {
+            "example": 0,
+            "type": "integer"
+          },
+          "max_closed_stream_ids": {
+            "example": 4096,
+            "type": "integer"
+          },
+          "max_frame_payload": {
+            "example": 1048576,
+            "type": "integer"
+          },
+          "max_header_bytes": {
+            "example": 16384,
+            "type": "integer"
+          },
+          "max_pending_global": {
+            "example": 536870912,
+            "type": "integer"
+          },
+          "max_pending_items_global": {
+            "example": 262144,
+            "type": "integer"
+          },
+          "max_pending_items_per_session": {
+            "example": 16384,
+            "type": "integer"
+          },
+          "max_pending_per_session": {
+            "example": 33554432,
+            "type": "integer"
+          },
+          "max_profiles": {
+            "example": 32,
+            "type": "integer"
+          },
+          "max_sessions_global": {
+            "example": 128,
+            "type": "integer"
+          },
+          "max_sessions_per_ip": {
+            "example": 0,
+            "type": "integer"
+          },
+          "max_streams_global": {
+            "example": 4096,
+            "type": "integer"
+          },
+          "max_streams_per_session": {
+            "example": 128,
+            "type": "integer"
+          },
+          "new_bootstraps_burst": {
+            "example": 256,
+            "type": "integer"
+          },
+          "new_bootstraps_per_minute": {
+            "example": 1200,
+            "type": "integer"
+          },
+          "new_sessions_burst": {
+            "example": 128,
+            "type": "integer"
+          },
+          "new_sessions_per_minute": {
+            "example": 600,
+            "type": "integer"
+          },
+          "new_streams_burst": {
+            "example": 512,
+            "type": "integer"
+          },
+          "new_streams_per_minute": {
+            "example": 6000,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "carrier_batch_bytes",
+          "max_backend_dials_in_flight",
+          "max_body_bytes",
+          "max_bootstraps_global",
+          "max_bootstraps_per_ip",
+          "max_closed_stream_ids",
+          "max_frame_payload",
+          "max_header_bytes",
+          "max_pending_global",
+          "max_pending_items_global",
+          "max_pending_items_per_session",
+          "max_pending_per_session",
+          "max_profiles",
+          "max_sessions_global",
+          "max_sessions_per_ip",
+          "max_streams_global",
+          "max_streams_per_session",
+          "new_bootstraps_burst",
+          "new_bootstraps_per_minute",
+          "new_sessions_burst",
+          "new_sessions_per_minute",
+          "new_streams_burst",
+          "new_streams_per_minute"
+        ],
+        "type": "object"
+      },
+      "RelayProfile": {
+        "properties": {
+          "backend": {
+            "example": "127.0.0.1:2398",
+            "type": "string"
+          },
+          "carrier_mode": {
+            "example": "https",
+            "type": "string"
+          },
+          "limits": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RelayProfileLimits"
+              }
+            ],
+            "nullable": true
+          },
+          "name": {
+            "example": "default",
+            "type": "string"
+          },
+          "secret": {
+            "example": "000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          }
+        },
+        "required": [
+          "backend",
+          "name",
+          "secret"
+        ],
+        "type": "object"
+      },
+      "RelayProfileLimits": {
+        "description": "RelayProfileLimits may only lower the global ceilings; zero inherits the global value.",
+        "properties": {
+          "max_backend_dials_in_flight": {
+            "example": 64,
+            "type": "integer"
+          },
+          "max_pending_per_session": {
+            "example": 8388608,
+            "type": "integer"
+          },
+          "max_sessions": {
+            "example": 32,
+            "type": "integer"
+          },
+          "max_streams": {
+            "example": 512,
+            "type": "integer"
+          },
+          "max_streams_per_session": {
+            "example": 32,
+            "type": "integer"
+          },
+          "new_sessions_burst": {
+            "example": 32,
+            "type": "integer"
+          },
+          "new_sessions_per_minute": {
+            "example": 120,
+            "type": "integer"
+          },
+          "new_streams_burst": {
+            "example": 128,
+            "type": "integer"
+          },
+          "new_streams_per_minute": {
+            "example": 1200,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "RelayShareInfo": {
+        "properties": {
+          "carrierMode": {
+            "example": "https",
+            "type": "string"
+          },
+          "deepLink": {
+            "example": "tg://webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          },
+          "link": {
+            "example": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          },
+          "linkSecret": {
+            "description": "LinkSecret is the secret form embedded in links (marked under a base path).",
+            "example": "000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          },
+          "profile": {
+            "example": "default",
+            "type": "string"
+          },
+          "secret": {
+            "description": "Secret is the value typed by hand; under a base path it stays plain hex.",
+            "example": "000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          },
+          "server": {
+            "description": "Server is what a user types into the client: hostname[/base_path].",
+            "example": "proxy.example.com",
+            "type": "string"
+          }
+        },
+        "required": [
+          "carrierMode",
+          "deepLink",
+          "link",
+          "linkSecret",
+          "profile",
+          "secret",
+          "server"
+        ],
+        "type": "object"
+      },
+      "RelaySnapshot": {
+        "description": "RelaySnapshot is the current on-disk state; Exists flags let the UI start a fresh\nhost from NewRelayConfig instead of failing.",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/RelayConfig"
+          },
+          "configExists": {
+            "example": true,
+            "type": "boolean"
+          },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/RelayProfile"
+            },
+            "type": "array"
+          },
+          "profilesExists": {
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "config",
+          "configExists",
+          "profiles",
+          "profilesExists"
+        ],
+        "type": "object"
+      },
+      "RelayStatus": {
+        "properties": {
+          "admin": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RelayAdminProbe"
+              }
+            ],
+            "nullable": true
+          },
+          "basePath": {
+            "type": "string"
+          },
+          "binaryInstalled": {
+            "example": true,
+            "type": "boolean"
+          },
+          "binaryPath": {
+            "example": "/usr/local/bin/tproxy-server",
+            "type": "string"
+          },
+          "configError": {
+            "type": "string"
+          },
+          "configExists": {
+            "example": true,
+            "type": "boolean"
+          },
+          "configPath": {
+            "example": "/etc/tproxy-server/config.json",
+            "type": "string"
+          },
+          "hostname": {
+            "example": "proxy.example.com",
+            "type": "string"
+          },
+          "job": {
+            "$ref": "#/components/schemas/RelayJobStatus"
+          },
+          "platform": {
+            "example": "linux/amd64",
+            "type": "string"
+          },
+          "profileCount": {
+            "example": 1,
+            "type": "integer"
+          },
+          "profilesExists": {
+            "example": true,
+            "type": "boolean"
+          },
+          "profilesMode": {
+            "example": "0400",
+            "type": "string"
+          },
+          "profilesModeOk": {
+            "example": true,
+            "type": "boolean"
+          },
+          "profilesPath": {
+            "example": "/etc/tproxy-server/profiles.json",
+            "type": "string"
+          },
+          "supported": {
+            "example": true,
+            "type": "boolean"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/RelayUnitStatus"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "basePath",
+          "binaryInstalled",
+          "binaryPath",
+          "configError",
+          "configExists",
+          "configPath",
+          "hostname",
+          "job",
+          "platform",
+          "profileCount",
+          "profilesExists",
+          "profilesMode",
+          "profilesModeOk",
+          "profilesPath",
+          "supported",
+          "units"
+        ],
+        "type": "object"
+      },
+      "RelayTimeouts": {
+        "properties": {
+          "backend_dial": {
+            "example": "5s",
+            "type": "string"
+          },
+          "bootstrap_lifetime": {
+            "example": "2m",
+            "type": "string"
+          },
+          "idle": {
+            "example": "75s",
+            "type": "string"
+          },
+          "long_poll": {
+            "example": "25s",
+            "type": "string"
+          },
+          "read_header": {
+            "example": "10s",
+            "type": "string"
+          },
+          "reconnect_grace": {
+            "example": "2m",
+            "type": "string"
+          },
+          "shutdown": {
+            "example": "15s",
+            "type": "string"
+          }
+        },
+        "required": [
+          "backend_dial",
+          "bootstrap_lifetime",
+          "idle",
+          "long_poll",
+          "read_header",
+          "reconnect_grace",
+          "shutdown"
+        ],
+        "type": "object"
+      },
+      "RelayUnitStatus": {
+        "properties": {
+          "activeState": {
+            "example": "active",
+            "type": "string"
+          },
+          "controllable": {
+            "example": true,
+            "type": "boolean"
+          },
+          "mainPid": {
+            "example": 1234,
+            "type": "integer"
+          },
+          "since": {
+            "example": "Fri 2026-10-09 18:00:00 UTC",
+            "type": "string"
+          },
+          "subState": {
+            "example": "running",
+            "type": "string"
+          },
+          "unit": {
+            "example": "tproxy-server",
+            "type": "string"
+          },
+          "unitFileState": {
+            "example": "enabled",
+            "type": "string"
+          }
+        },
+        "required": [
+          "activeState",
+          "controllable",
+          "mainPid",
+          "since",
+          "subState",
+          "unit",
+          "unitFileState"
+        ],
+        "type": "object"
+      },
       "ServerSettings": {
         "description": "ServerSettings is the \"server\" block of an AmneziaWG inbound's Settings\nJSON: the interface-level configuration shared by every client/peer. The\nlisten port is deliberately not duplicated here — it lives on the inbound\nrow itself (Inbound.Port), like every other protocol.",
         "properties": {
@@ -4566,6 +5222,25 @@
         ],
         "type": "object"
       },
+      "TgWebProxyConfigRequest": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/RelayConfig"
+          },
+          "initialProfile": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RelayProfile"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "config"
+        ],
+        "type": "object"
+      },
       "Traffic": {
         "description": "Traffic represents network traffic statistics for Xray connections.\nIt tracks upload and download bytes for inbound or outbound traffic.",
         "properties": {
@@ -4779,6 +5454,10 @@
     {
       "name": "Subscription Balancers",
       "description": "Client-side balancers for the JSON subscription: each enabled balancer is emitted as one extra config document whose members are the proxy outbounds of the selected inbounds (routing.balancers + burstObservatory). Managed in Settings → Sub Balancers."
+    },
+    {
+      "name": "Telegram WEB Proxy",
+      "description": "Manage the host-local tproxy-server relay (Telegram WEB proxy type): systemd lifecycle, config.json, profiles.json and client share links. Every write is validated (numeric loopback listeners/backends, profiles.json mode 0400) and passes `tproxy-server -check` before it is committed; a running relay is restarted afterwards. The relay admin listener is only probed server-side. Linux + systemd only."
     },
     {
       "name": "Subscription Server",
@@ -15141,6 +15820,818 @@
                     "sortOrder": 1,
                     "strategy": "random",
                     "updatedAt": 1710000000000
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/status": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Install state, systemd units (tproxy-server, mtproxy, caddy, tproxy-firewall), profiles.json mode and the admin /healthz, /readyz and /metrics probe.",
+        "operationId": "get_panel_api_tgWebProxy_status",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayStatus"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "admin": null,
+                    "basePath": "",
+                    "binaryInstalled": true,
+                    "binaryPath": "/usr/local/bin/tproxy-server",
+                    "configError": "",
+                    "configExists": true,
+                    "configPath": "/etc/tproxy-server/config.json",
+                    "hostname": "proxy.example.com",
+                    "job": {
+                      "exitCode": null,
+                      "kind": "install",
+                      "log": "",
+                      "startedAt": 1760000000,
+                      "state": "running",
+                      "unit": "fullboard-tproxy-install-1760000000"
+                    },
+                    "platform": "linux/amd64",
+                    "profileCount": 1,
+                    "profilesExists": true,
+                    "profilesMode": "0400",
+                    "profilesModeOk": true,
+                    "profilesPath": "/etc/tproxy-server/profiles.json",
+                    "supported": true,
+                    "units": [
+                      {
+                        "activeState": "active",
+                        "controllable": true,
+                        "mainPid": 1234,
+                        "since": "Fri 2026-10-09 18:00:00 UTC",
+                        "subState": "running",
+                        "unit": "tproxy-server",
+                        "unitFileState": "enabled"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/config": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Current config.json and profiles.json. On a host without config.json the defaults written by the upstream installer are returned with configExists=false.",
+        "operationId": "get_panel_api_tgWebProxy_config",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelaySnapshot"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "config": {
+                      "admin_listen": "127.0.0.1:8081",
+                      "base_path": "",
+                      "enable_pprof": false,
+                      "limits": {
+                        "carrier_batch_bytes": 2097152,
+                        "max_backend_dials_in_flight": 256,
+                        "max_body_bytes": 2097152,
+                        "max_bootstraps_global": 512,
+                        "max_bootstraps_per_ip": 0,
+                        "max_closed_stream_ids": 4096,
+                        "max_frame_payload": 1048576,
+                        "max_header_bytes": 16384,
+                        "max_pending_global": 536870912,
+                        "max_pending_items_global": 262144,
+                        "max_pending_items_per_session": 16384,
+                        "max_pending_per_session": 33554432,
+                        "max_profiles": 32,
+                        "max_sessions_global": 128,
+                        "max_sessions_per_ip": 0,
+                        "max_streams_global": 4096,
+                        "max_streams_per_session": 128,
+                        "new_bootstraps_burst": 256,
+                        "new_bootstraps_per_minute": 1200,
+                        "new_sessions_burst": 128,
+                        "new_sessions_per_minute": 600,
+                        "new_streams_burst": 512,
+                        "new_streams_per_minute": 6000
+                      },
+                      "listen": "127.0.0.1:8080",
+                      "profiles_file": "/run/credentials/tproxy-server.service/profiles.json",
+                      "public_dir": "",
+                      "public_hostname": "proxy.example.com",
+                      "public_upstream": "http://127.0.0.1:3000",
+                      "static_routes": "exact",
+                      "timeouts": {
+                        "backend_dial": "5s",
+                        "bootstrap_lifetime": "2m",
+                        "idle": "75s",
+                        "long_poll": "25s",
+                        "read_header": "10s",
+                        "reconnect_grace": "2m",
+                        "shutdown": "15s"
+                      },
+                      "token_key_file": "/etc/tproxy-server/token.key"
+                    },
+                    "configExists": true,
+                    "profiles": [
+                      {
+                        "backend": "127.0.0.1:2398",
+                        "carrier_mode": "https",
+                        "limits": null,
+                        "name": "default",
+                        "secret": "000102030405060708090a0b0c0d0e0f"
+                      }
+                    ],
+                    "profilesExists": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Replace config.json. Unknown keys of the previous file are preserved. initialProfile is required only while profiles.json is empty.",
+        "operationId": "post_panel_api_tgWebProxy_config",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "config": {
+                  "public_hostname": "proxy.example.com",
+                  "base_path": "",
+                  "listen": "127.0.0.1:8080",
+                  "admin_listen": "127.0.0.1:8081",
+                  "public_upstream": "http://127.0.0.1:3000",
+                  "static_routes": "exact",
+                  "token_key_file": "/etc/tproxy-server/token.key",
+                  "profiles_file": "/run/credentials/tproxy-server.service/profiles.json"
+                },
+                "initialProfile": {
+                  "name": "default",
+                  "secret": "000102030405060708090a0b0c0d0e0f",
+                  "backend": "127.0.0.1:2398",
+                  "carrier_mode": "https"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/check": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Run `tproxy-server -check` against the committed config.json and profiles.json.",
+        "operationId": "post_panel_api_tgWebProxy_check",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/profiles": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "List profiles.json entries, including their secrets.",
+        "operationId": "get_panel_api_tgWebProxy_profiles",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/RelayProfile"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": [
+                    {
+                      "backend": "127.0.0.1:2398",
+                      "carrier_mode": "https",
+                      "limits": null,
+                      "name": "default",
+                      "secret": "000102030405060708090a0b0c0d0e0f"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/profiles/add": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Add a profile. The secret must be 32 hex characters (optionally dd-prefixed) and unique; backend must be a numeric loopback host:port.",
+        "operationId": "post_panel_api_tgWebProxy_profiles_add",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "beta",
+                "secret": "fedcba9876543210fedcba9876543210",
+                "backend": "127.0.0.1:2399",
+                "carrier_mode": "websocket",
+                "limits": {
+                  "max_sessions": 32
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/profiles/update/{name}": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Replace the profile with the given name (the body may rename it).",
+        "operationId": "post_panel_api_tgWebProxy_profiles_update_name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Current profile name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "beta",
+                "secret": "fedcba9876543210fedcba9876543210",
+                "backend": "127.0.0.1:2399",
+                "carrier_mode": "https-lanes"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/profiles/del/{name}": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Delete a profile. The last remaining profile cannot be deleted.",
+        "operationId": "post_panel_api_tgWebProxy_profiles_del_name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Profile name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/share/{name}": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Client share values for a profile: server (hostname[/base_path]), typed secret, link secret and the t.me/webproxy and tg://webproxy links.",
+        "operationId": "get_panel_api_tgWebProxy_share_name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Profile name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayShareInfo"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "carrierMode": "https",
+                    "deepLink": "tg://webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                    "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                    "linkSecret": "000102030405060708090a0b0c0d0e0f",
+                    "profile": "default",
+                    "secret": "000102030405060708090a0b0c0d0e0f",
+                    "server": "proxy.example.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/service/{unit}/{action}": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "systemctl action on tproxy-server or mtproxy. Starting or restarting tproxy-server re-runs `-check` first.",
+        "operationId": "post_panel_api_tgWebProxy_service_unit_action",
+        "parameters": [
+          {
+            "name": "unit",
+            "in": "path",
+            "required": true,
+            "description": "Unit name.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tproxy-server",
+                "mtproxy"
+              ]
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "description": "systemctl verb.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "start",
+                "stop",
+                "restart",
+                "enable",
+                "disable"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/logs/{unit}": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Last journal lines of a managed unit.",
+        "operationId": "get_panel_api_tgWebProxy_logs_unit",
+        "parameters": [
+          {
+            "name": "unit",
+            "in": "path",
+            "required": true,
+            "description": "Unit name.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tproxy-server",
+                "mtproxy",
+                "caddy",
+                "tproxy-firewall"
+              ]
+            }
+          },
+          {
+            "name": "lines",
+            "in": "query",
+            "required": false,
+            "description": "Number of lines (10-1000).",
+            "schema": {
+              "type": "integer",
+              "default": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": "2026-10-09T18:00:00+0000 host tproxy-server[1234]: event=started ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/install": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Download the upstream tproxy-server tree and run deploy/install.sh as a detached systemd-run job. The installer takes over ports 80/443 with Caddy. The secret is passed on stdin, never on the command line.",
+        "operationId": "post_panel_api_tgWebProxy_install",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "hostname": "proxy.example.com",
+                "email": "admin@example.com",
+                "secret": "000102030405060708090a0b0c0d0e0f",
+                "siteUpstream": "http://127.0.0.1:3000",
+                "siteDir": "",
+                "basePath": "none",
+                "mtproxyWorkers": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayJobStatus"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "exitCode": null,
+                    "kind": "install",
+                    "log": "",
+                    "startedAt": 1760000000,
+                    "state": "running",
+                    "unit": "fullboard-tproxy-install-1760000000"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/update": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Download the latest upstream tree and run deploy/update-relay.sh (tests, build, atomic swap, automatic rollback).",
+        "operationId": "post_panel_api_tgWebProxy_update",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayJobStatus"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "exitCode": null,
+                    "kind": "install",
+                    "log": "",
+                    "startedAt": 1760000000,
+                    "state": "running",
+                    "unit": "fullboard-tproxy-install-1760000000"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/job": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "State and log tail of the last install/update job.",
+        "operationId": "get_panel_api_tgWebProxy_job",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayJobStatus"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "exitCode": null,
+                    "kind": "install",
+                    "log": "",
+                    "startedAt": 1760000000,
+                    "state": "running",
+                    "unit": "fullboard-tproxy-install-1760000000"
                   }
                 }
               }

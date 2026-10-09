@@ -4,6 +4,7 @@ export type OnlineAPISupport = number;
 export type ProcessState = string;
 export type Protocol = string;
 export type addrFamily = number;
+export type commandRunner = unknown;
 export type staticEgressResolver = string;
 export type trafficLocalApplyAction = number;
 export type transportBits = number;
@@ -980,6 +981,159 @@ export interface RealityScanResult {
   x25519: boolean;
 }
 
+export interface RelayAdminProbe {
+  address: string;
+  checkedAt: number;
+  error: string;
+  healthy: boolean;
+  metrics: Record<string, number>;
+  reachable: boolean;
+  ready: boolean;
+  readyDetail: string;
+}
+
+export interface RelayApplyResult {
+  restartError: string;
+  restarted: boolean;
+}
+
+export interface RelayConfig {
+  admin_listen: string;
+  base_path: string;
+  enable_pprof: boolean;
+  limits: RelayLimits;
+  listen: string;
+  profiles_file: string;
+  public_dir: string;
+  public_hostname: string;
+  public_upstream: string;
+  static_routes: string;
+  timeouts: RelayTimeouts;
+  token_key_file: string;
+}
+
+export interface RelayInstallRequest {
+  basePath: string;
+  email: string;
+  hostname: string;
+  mtproxyWorkers: number;
+  secret: string;
+  siteDir: string;
+  siteUpstream: string;
+}
+
+export interface RelayJobStatus {
+  exitCode?: number | null;
+  kind: string;
+  log: string;
+  startedAt: number;
+  state: string;
+  unit: string;
+}
+
+export interface RelayLimits {
+  carrier_batch_bytes: number;
+  max_backend_dials_in_flight: number;
+  max_body_bytes: number;
+  max_bootstraps_global: number;
+  max_bootstraps_per_ip: number;
+  max_closed_stream_ids: number;
+  max_frame_payload: number;
+  max_header_bytes: number;
+  max_pending_global: number;
+  max_pending_items_global: number;
+  max_pending_items_per_session: number;
+  max_pending_per_session: number;
+  max_profiles: number;
+  max_sessions_global: number;
+  max_sessions_per_ip: number;
+  max_streams_global: number;
+  max_streams_per_session: number;
+  new_bootstraps_burst: number;
+  new_bootstraps_per_minute: number;
+  new_sessions_burst: number;
+  new_sessions_per_minute: number;
+  new_streams_burst: number;
+  new_streams_per_minute: number;
+}
+
+export interface RelayProfile {
+  backend: string;
+  carrier_mode?: string;
+  limits?: RelayProfileLimits | null;
+  name: string;
+  secret: string;
+}
+
+export interface RelayProfileLimits {
+  max_backend_dials_in_flight?: number;
+  max_pending_per_session?: number;
+  max_sessions?: number;
+  max_streams?: number;
+  max_streams_per_session?: number;
+  new_sessions_burst?: number;
+  new_sessions_per_minute?: number;
+  new_streams_burst?: number;
+  new_streams_per_minute?: number;
+}
+
+export interface RelayShareInfo {
+  carrierMode: string;
+  deepLink: string;
+  link: string;
+  linkSecret: string;
+  profile: string;
+  secret: string;
+  server: string;
+}
+
+export interface RelaySnapshot {
+  config: RelayConfig;
+  configExists: boolean;
+  profiles: RelayProfile[];
+  profilesExists: boolean;
+}
+
+export interface RelayStatus {
+  admin?: RelayAdminProbe | null;
+  basePath: string;
+  binaryInstalled: boolean;
+  binaryPath: string;
+  configError: string;
+  configExists: boolean;
+  configPath: string;
+  hostname: string;
+  job: RelayJobStatus;
+  platform: string;
+  profileCount: number;
+  profilesExists: boolean;
+  profilesMode: string;
+  profilesModeOk: boolean;
+  profilesPath: string;
+  supported: boolean;
+  units: RelayUnitStatus[];
+}
+
+export interface RelayTimeouts {
+  backend_dial: string;
+  bootstrap_lifetime: string;
+  idle: string;
+  long_poll: string;
+  read_header: string;
+  reconnect_grace: string;
+  shutdown: string;
+}
+
+export interface RelayUnitStatus {
+  activeState: string;
+  controllable: boolean;
+  mainPid: number;
+  since: string;
+  subState: string;
+  unit: string;
+  unitFileState: string;
+}
+
 export interface ServerSettings {
   contentPaddingAddition?: string;
   disableCookies: boolean;
@@ -1036,6 +1190,11 @@ export interface SubBalancer {
   sortOrder: number;
   strategy: string;
   updatedAt: number;
+}
+
+export interface TgWebProxyConfigRequest {
+  config: RelayConfig;
+  initialProfile?: RelayProfile | null;
 }
 
 export interface Traffic {

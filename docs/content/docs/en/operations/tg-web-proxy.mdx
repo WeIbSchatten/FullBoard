@@ -1,0 +1,131 @@
+---
+title: Telegram WEB Proxy
+description: Install and manage a Telegram WEB proxy relay (tproxy-server) from FullBoard — config, profiles, share links, service control, health and logs.
+icon: Send
+---
+
+FullBoard can install and manage
+[tproxy-server](https://github.com/telegramdesktop/tproxy-server), the relay
+that lets Telegram clients reach MTProxy over ordinary HTTPS or WebSocket
+traffic. Open **Telegram WEB Proxy** in the sidebar (`/panel/tg-web-proxy`).
+
+<Callout type="warn">
+  Management needs a Linux host with systemd. On other hosts the page is
+  read-only. The upstream installer supports Ubuntu/Debian x86_64 and takes over
+  ports **80** and **443** with Caddy, so don't run it on a host where another
+  web server or an Xray inbound already listens on those ports.
+</Callout>
+
+## How it fits together
+
+| Unit              | Role                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| `caddy`           | Public TLS on 443, forwards the proxy path to the relay      |
+| `tproxy-server`   | The relay, listening on `127.0.0.1:8080` only                |
+| `mtproxy`         | MTProxy backends the relay forwards each profile to          |
+| `tproxy-firewall` | Firewall rules that keep the loopback ports closed to others |
+
+The relay's admin listener (`127.0.0.1:8081` by default) exposes `/healthz`,
+`/readyz` and `/metrics`. FullBoard reads it **server-side only** and shows the
+result on the Overview tab; it is never published.
+
+## Install
+
+<Steps>
+
+<Step>
+### Prepare DNS
+
+Point an A/AAAA record for the proxy hostname (for example `tg.example.com`) at
+the server, and make sure ports 80 and 443 are free and reachable.
+</Step>
+
+<Step>
+### Run the installer
+
+On the **Overview** tab click **Install** and fill in the hostname, the ACME
+email, the first profile's secret (generate one in the form), and optionally a
+base path, a site to serve on the root (`--site-dir` or `--site-upstream`) and
+the number of MTProxy workers.
+
+FullBoard downloads the latest upstream source to `/usr/local/src/tproxy-server`
+and runs `deploy/install.sh` as a transient systemd unit, so it survives a panel
+restart. The secret is passed on stdin from a `0400` file that is deleted
+afterwards; it never appears in a process list. The job log streams on the
+Overview tab.
+</Step>
+
+<Step>
+### Verify
+
+When the job succeeds the units table should show every unit as active and the
+admin probe as healthy and ready.
+</Step>
+
+</Steps>
+
+**Update relay** re-downloads the upstream source and runs `deploy/update-relay.sh`.
+
+### Adopting an existing install
+
+If tproxy-server was installed by hand with the stock layout
+(`/etc/tproxy-server/config.json`, `/etc/tproxy-server/profiles.json`,
+`/usr/local/bin/tproxy-server`), FullBoard picks it up automatically: no
+re-install is needed. Unknown keys in `config.json` are preserved on save.
+
+## Profiles
+
+Each profile is one entry in `profiles.json`:
+
+- **Name**: unique, up to 64 characters.
+- **Secret**: 32 hex characters (or `dd` + 32 hex). Secrets must be unique.
+- **Backend**: a loopback `host:port` of an MTProxy instance, such as
+  `127.0.0.1:8443`.
+- **Carrier mode** (optional): `https`, `https-lanes`, `websocket` or
+  `websocket-lanes`.
+- **Limits** (optional): per-profile caps, which can't exceed the global limits.
+
+<Callout type="info">
+  The relay only forwards traffic. Each backend must be a running MTProxy that
+  accepts the same secret, and the firewall must keep its port closed to the
+  outside.
+</Callout>
+
+## Share links
+
+Click **Share** on a profile to get the link, a `tg://` deep link and a QR code.
+For a root deployment the link is
+`https://t.me/webproxy?server=<hostname>&secret=<hex>`. With a base path the
+server becomes `<hostname>/<base>` and the secret is encoded the way Telegram
+expects for path deployments; FullBoard handles this for you.
+
+## Config
+
+The **Relay config** tab edits `config.json`: the hostname and base path, the listen
+and admin addresses, the public upstream, global limits and timeouts. On a fresh
+host with no profiles yet, the form also asks for the first profile, since the
+relay refuses to start without one.
+
+## Safety guarantees
+
+Every save (config or profile) goes through the same steps:
+
+1. The input is validated. Listeners, the admin address, the public upstream and
+   all backends must be numeric loopback addresses.
+2. Candidate files are written next to the live ones, with `profiles.json` at
+   mode `0400`.
+3. `tproxy-server -config … -profiles-file … -check` validates the candidates.
+   If it fails, the live files stay untouched and the error is shown.
+4. The previous files are kept as `*.fullboard-prev`, and the candidates replace
+   them.
+5. If the relay was running, it is restarted. **Start** and **Restart** also run
+   the check first.
+
+## Logs
+
+The **Logs** tab shows the journal of any relay unit (10 to 1000 lines).
+
+## API
+
+All routes live under `/panel/api/tgWebProxy`. See the
+[Telegram WEB Proxy API reference](/docs/reference/api/telegram-web-proxy).

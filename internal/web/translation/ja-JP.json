@@ -124,7 +124,8 @@
     "openMenu": "メニューを開く",
     "pinSidebar": "サイドバーを固定",
     "unpinSidebar": "サイドバーの固定を解除",
-    "subFormats": "Sub Formats"
+    "subFormats": "Sub Formats",
+    "tgWebProxy": "Telegram WEB Proxy"
   },
   "pages": {
     "login": {
@@ -2365,6 +2366,113 @@
         "delete": "ホストを削除",
         "badTag": "無効なタグ",
         "badVlessRoute": "0〜65535 の単一の数値を入力してください"
+      }
+    },
+    "tgWebProxy": {
+      "unsupported": "Telegram WEB proxy management requires a Linux host with systemd. Viewing is read-only here.",
+      "tabs": {
+        "overview": "Overview",
+        "profiles": "Profiles",
+        "config": "Relay config",
+        "logs": "Logs"
+      },
+      "yes": "Yes",
+      "no": "No",
+      "installed": "Installed",
+      "health": "Health",
+      "readiness": "Backend readiness",
+      "unreachable": "Unreachable",
+      "unhealthy": "Unhealthy",
+      "notReady": "Not ready",
+      "profileCount": "Profiles",
+      "services": "Services",
+      "unit": "Unit",
+      "autostart": "Autostart",
+      "since": "Since",
+      "relay": "Relay",
+      "hostname": "Public hostname",
+      "basePath": "Base path",
+      "adminListen": "Admin listener",
+      "adminError": "Admin probe error",
+      "secret": "Secret",
+      "job": "Job",
+      "updateConfirm": "Download the latest tproxy-server, run its tests and swap the binary? Active sessions reconnect automatically.",
+      "profilesModeBad": "profiles.json has mode {{mode}}; the relay refuses group/other permissions. Save any profile to rewrite it as 0400.",
+      "actions": {
+        "start": "Start",
+        "stop": "Stop",
+        "restart": "Restart",
+        "enable": "Enable",
+        "disable": "Disable",
+        "check": "Validate config",
+        "install": "Install",
+        "update": "Update relay"
+      },
+      "install": {
+        "title": "Install tproxy-server",
+        "warning": "The upstream installer is meant for Ubuntu 22.04+/Debian 12+ on x86_64. It installs Caddy on ports 80/443 and replaces the active Caddyfile, so make sure nothing else (panel, Xray inbounds) needs those ports on this host.",
+        "hostnameHint": "A dedicated lowercase hostname whose A record already points to this server.",
+        "email": "ACME contact email",
+        "site": "Public website",
+        "siteUpstream": "Loopback web app (URL)",
+        "siteDir": "Static site directory",
+        "basePathAuto": "Random slug",
+        "basePathNone": "Host root",
+        "basePathCustom": "Custom",
+        "workers": "MTProxy workers"
+      },
+      "config": {
+        "applyHint": "Saving writes candidate files, runs tproxy-server -check and only then replaces config.json. A running relay is restarted, which reconnects all carrier sessions.",
+        "basePathHint": "Optional prefix such as phcf2vfe7zgbrslg. Changing it invalidates every shared link.",
+        "listen": "Relay listener",
+        "adminHint": "Loopback only. FullBoard probes /healthz, /readyz and /metrics from the server side.",
+        "profilesFileHint": "Path the relay reads; the stock unit passes profiles.json through systemd LoadCredential.",
+        "pprofHint": "Exposes Go profiling on the admin listener. Enable only for a short diagnostic window.",
+        "initialProfile": "Initial profile",
+        "limits": "Process-wide limits",
+        "timeouts": "Timeouts"
+      },
+      "profile": {
+        "add": "Add profile",
+        "edit": "Edit profile",
+        "name": "Name",
+        "backend": "MTProxy backend",
+        "backendHint": "Numeric loopback host:port of an official MTProxy listener.",
+        "backendWarning": "Every profile backend needs its own MTProxy listener on that port, and the port must be covered by the tproxy-firewall rules.",
+        "carrierMode": "Carrier mode",
+        "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait.",
+        "limits": "Per-profile limits",
+        "limitsHint": "Leave empty to inherit the global value. Values may only lower the global limits.",
+        "deleteConfirm": "Delete profile \"{{name}}\"? Clients using its secret stop working.",
+        "needConfig": "Save the relay configuration first."
+      },
+      "share": {
+        "button": "Share",
+        "title": "Share profile \"{{name}}\"",
+        "hint": "Enter the server and secret in a WEB-proxy-capable Telegram app, or open the link.",
+        "server": "Proxy server",
+        "linkSecret": "Link secret",
+        "link": "Link"
+      },
+      "errors": {
+        "hostname": "Use a lowercase DNS hostname such as proxy.example.com",
+        "secret": "Use 32 lowercase hex characters (optionally prefixed with dd)",
+        "loopback": "Use a numeric loopback address such as 127.0.0.1:2398",
+        "loopbackUrl": "Use http:// with a numeric loopback address, e.g. http://127.0.0.1:3000",
+        "basePath": "Segments of [A-Za-z0-9_-] joined by /",
+        "absPath": "Use an absolute path",
+        "duplicateName": "A profile with this name already exists",
+        "duration": "Use a Go duration such as 5s or 2m"
+      },
+      "toasts": {
+        "load": "Failed to load tg-web-proxy state",
+        "saved": "Saved and validated",
+        "deleted": "Profile deleted",
+        "checkOk": "Configuration is valid",
+        "serviceDone": "Service command executed",
+        "jobStarted": "Job started",
+        "restarted": "tproxy-server restarted with the new configuration",
+        "restartFailed": "Saved, but restart failed: {{error}}"
       }
     }
   },
