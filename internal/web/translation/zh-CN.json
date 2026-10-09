@@ -720,6 +720,7 @@
       "tabBasics": "基本",
       "tabCredentials": "凭据",
       "tabLinks": "链接",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "WireGuard 配置",
       "config": "配置",
       "linksHint": "添加第三方分享链接和远程订阅地址，将其包含在该客户端的订阅中。",
@@ -1132,6 +1133,7 @@
       "pinFetchFailed": "无法获取证书",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "在节点行点击「管理面板」可完整管理远程面板：设置、Xray、实时入站、重启与登录。",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2559,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "密钥",
+        "link": "链接",
+        "showSecret": "显示密钥",
+        "hideSecret": "隐藏密钥"
+      },
+      "egress": {
+        "button": "检查出口 IP",
+        "hint": "测试该配置文件 route-via 规则指向的出站，并显示 Cloudflare 看到的出口 IP。",
+        "noRoute": "此配置文件没有 route-via 规则 — 流量走默认出站。",
+        "failed": "出口检查失败：{error}",
+        "outboundMissing": "出站 \"{tag}\" 不在 Xray 模板中",
+        "noIp": "出站 \"{tag}\" 可达但未报告出口 IP",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

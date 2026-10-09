@@ -720,6 +720,7 @@
       "tabBasics": "Основні",
       "tabCredentials": "Облікові дані",
       "tabLinks": "Посилання",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "Конфігурація WireGuard",
       "config": "Конфігурація",
       "linksHint": "Додайте сторонні посилання та URL віддалених підписок, щоб включити їх до підписки цього клієнта.",
@@ -1132,6 +1133,7 @@
       "pinFetchFailed": "Не вдалося отримати сертифікат",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Повне керування віддаленою панеллю — кнопка «Керувати панеллю» в рядку ноди: налаштування, Xray, live inbounds, перезапуск і вхід.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2559,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Секрет",
+        "link": "Посилання",
+        "showSecret": "Показати секрет",
+        "hideSecret": "Сховати секрет"
+      },
+      "egress": {
+        "button": "Перевірити IP виходу",
+        "hint": "Перевіряє outbound, на який вказує правило route-via цього профілю, і показує IP, який бачить Cloudflare.",
+        "noRoute": "Для цього профілю немає правила route-via — трафік йде через outbound за замовчуванням.",
+        "failed": "Перевірка виходу не вдалася: {error}",
+        "outboundMissing": "Outbound «{tag}» відсутній у шаблоні Xray",
+        "noIp": "Outbound «{tag}» доступний, але IP виходу не отримано",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

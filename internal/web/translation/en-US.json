@@ -720,6 +720,7 @@
       "tabBasics": "Basics",
       "tabCredentials": "Credentials",
       "tabLinks": "Links",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "WireGuard config",
       "config": "Config",
       "linksHint": "Add third-party share links and remote subscription URLs to include in this client's subscription.",
@@ -1272,7 +1273,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Secret",
+        "link": "Link",
+        "showSecret": "Show secret",
+        "hideSecret": "Hide secret"
+      },
+      "egress": {
+        "button": "Check egress IP",
+        "hint": "Tests the outbound that this profile's route-via rule uses and reports the exit IP Cloudflare sees.",
+        "noRoute": "No route-via-outbound rule for this profile — traffic uses the default outbound.",
+        "failed": "Egress check failed: {error}",
+        "outboundMissing": "Outbound \"{tag}\" is not in the Xray template",
+        "noIp": "Outbound \"{tag}\" is reachable but no egress IP was reported",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",
@@ -1404,6 +1418,7 @@
       "pinFetchFailed": "Could not fetch the certificate",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Open full remote panel control with Manage panel on a node row — settings, Xray, live inbounds, restart, and login.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",

@@ -720,6 +720,7 @@
       "tabBasics": "Основные",
       "tabCredentials": "Учетные данные",
       "tabLinks": "Ссылки",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "Конфигурация WireGuard",
       "config": "Конфигурация",
       "linksHint": "Добавьте сторонние ссылки и URL удалённых подписок, чтобы включить их в подписку этого клиента.",
@@ -1132,6 +1133,7 @@
       "pinFetchFailed": "Не удалось получить сертификат",
       "remote": {
         "manage": "Управление панелью",
+        "manageHint": "Полное управление удалённой панелью — кнопка «Управлять панелью» в строке ноды: настройки, Xray, live inbounds, перезапуск и вход.",
         "title": "Панель FullBoard: {name}",
         "overview": "Обзор",
         "inboundsTab": "Подключения и клиенты",
@@ -2557,7 +2559,20 @@
         "bind": "Привязать",
         "selectProfile": "Выберите профиль",
         "saveFirst": "Сначала сохраните клиента: привязка требует существующего клиента.",
-        "notConfigured": "Сначала настройте релей Telegram WEB Proxy."
+        "notConfigured": "Сначала настройте релей Telegram WEB Proxy.",
+        "secret": "Секрет",
+        "link": "Ссылка",
+        "showSecret": "Показать секрет",
+        "hideSecret": "Скрыть секрет"
+      },
+      "egress": {
+        "button": "Проверить IP выхода",
+        "hint": "Проверяет outbound, на который указывает правило route-via этого профиля, и показывает IP, который видит Cloudflare.",
+        "noRoute": "Для этого профиля нет правила route-via — трафик идёт через outbound по умолчанию.",
+        "failed": "Проверка выхода не удалась: {error}",
+        "outboundMissing": "Outbound «{tag}» отсутствует в шаблоне Xray",
+        "noIp": "Outbound «{tag}» доступен, но IP выхода не получен",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Не удалось загрузить состояние tg-web-proxy",

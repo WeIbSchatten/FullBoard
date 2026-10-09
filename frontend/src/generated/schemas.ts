@@ -5382,8 +5382,17 @@ export const SCHEMAS: Record<string, unknown> = {
         "example": "alice",
         "type": "string"
       },
+      "link": {
+        "example": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      },
       "profileName": {
         "example": "default",
+        "type": "string"
+      },
+      "secret": {
+        "description": "Secret/Link are filled from the live relay profile when available.",
+        "example": "000102030405060708090a0b0c0d0e0f",
         "type": "string"
       }
     },

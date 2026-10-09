@@ -1408,7 +1408,9 @@ export const EXAMPLES: Record<string, unknown> = {
     "dedicated": false,
     "effectiveProfile": "default",
     "email": "alice",
-    "profileName": "default"
+    "link": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+    "profileName": "default",
+    "secret": "000102030405060708090a0b0c0d0e0f"
   },
   "TgWebProxyBindingList": {
     "bindings": [
@@ -1417,7 +1419,9 @@ export const EXAMPLES: Record<string, unknown> = {
         "dedicated": false,
         "effectiveProfile": "default",
         "email": "alice",
-        "profileName": "default"
+        "link": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+        "profileName": "default",
+        "secret": "000102030405060708090a0b0c0d0e0f"
       }
     ],
     "syncError": ""

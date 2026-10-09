@@ -720,6 +720,7 @@
       "tabBasics": "Cơ bản",
       "tabCredentials": "Thông tin xác thực",
       "tabLinks": "Liên kết",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "Cấu hình WireGuard",
       "config": "Cấu hình",
       "linksHint": "Thêm liên kết chia sẻ của bên thứ ba và URL đăng ký từ xa để đưa vào đăng ký của khách hàng này.",
@@ -1132,6 +1133,7 @@
       "pinFetchFailed": "Không thể lấy chứng chỉ",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Mở điều khiển đầy đủ panel từ xa bằng Quản lý panel trên hàng node — cài đặt, Xray, inbound trực tiếp, khởi động lại và đăng nhập.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2559,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Bí mật",
+        "link": "Liên kết",
+        "showSecret": "Hiện bí mật",
+        "hideSecret": "Ẩn bí mật"
+      },
+      "egress": {
+        "button": "Kiểm tra IP thoát",
+        "hint": "Kiểm tra outbound mà quy tắc route-via của hồ sơ này trỏ tới và báo IP mà Cloudflare thấy.",
+        "noRoute": "Hồ sơ này không có quy tắc route-via — lưu lượng đi qua outbound mặc định.",
+        "failed": "Kiểm tra thoát thất bại: {error}",
+        "outboundMissing": "Outbound \"{tag}\" không có trong mẫu Xray",
+        "noIp": "Outbound \"{tag}\" kết nối được nhưng không có IP thoát",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",
