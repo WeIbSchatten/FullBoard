@@ -28,7 +28,8 @@ COPY --from=frontend /src/internal/web/dist ./internal/web/dist
 ENV CGO_ENABLED=1
 ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 RUN go build -ldflags "-w -s" -o build/fullboard main.go
-RUN ./DockerInit.sh "$TARGETARCH"
+# Windows checkouts may lack the executable bit on *.sh; invoke via sh.
+RUN sh ./DockerInit.sh "$TARGETARCH"
 
 # ========================================================
 # Stage: Final Image of FullBoard
