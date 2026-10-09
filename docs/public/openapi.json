@@ -2016,6 +2016,10 @@
           "security": {
             "type": "string"
           },
+          "sortOrder": {
+            "description": "Manual Clients-page order; backfilled from id on migrate, rewritten by /clients/reorder.",
+            "type": "integer"
+          },
           "subId": {
             "type": "string"
           },
@@ -2068,6 +2072,7 @@
           "reverse",
           "secret",
           "security",
+          "sortOrder",
           "subId",
           "tgId",
           "totalGB",
@@ -2209,6 +2214,10 @@
             "example": "staff",
             "type": "string"
           },
+          "id": {
+            "example": 1,
+            "type": "integer"
+          },
           "inboundIds": {
             "example": [
               3,
@@ -2243,6 +2252,10 @@
             "example": 0,
             "type": "integer"
           },
+          "sortOrder": {
+            "example": 1,
+            "type": "integer"
+          },
           "subId": {
             "example": "abcd1234",
             "type": "string"
@@ -2271,6 +2284,7 @@
           "email",
           "enable",
           "expiryTime",
+          "id",
           "inboundIds",
           "limitHwid",
           "limitIp",
@@ -2278,6 +2292,7 @@
           "resetDay",
           "resetMax",
           "resetWeekday",
+          "sortOrder",
           "subId",
           "totalGB",
           "updatedAt"
@@ -9106,10 +9121,11 @@
             "name": "sort",
             "in": "query",
             "required": false,
-            "description": "Sort key. An omitted or unknown value falls back to client ID ascending.",
+            "description": "Sort key. An omitted or unknown value falls back to sort_order ascending (manual drag order), then client ID.",
             "schema": {
               "type": "string",
               "enum": [
+                "sortOrder",
                 "enable",
                 "email",
                 "inboundIds",
@@ -9255,6 +9271,7 @@
                         "enable": true,
                         "expiryTime": 1735689600000,
                         "group": "staff",
+                        "id": 1,
                         "inboundIds": [
                           3,
                           5
@@ -9265,6 +9282,7 @@
                         "resetDay": 0,
                         "resetMax": 0,
                         "resetWeekday": 0,
+                        "sortOrder": 1,
                         "subId": "abcd1234",
                         "totalGB": 53687091200,
                         "traffic": null,
@@ -9373,6 +9391,68 @@
                     },
                     "obj": {}
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/clients/reorder": {
+      "post": {
+        "tags": [
+          "Clients"
+        ],
+        "summary": "Persist a drag-and-drop order for clients. Body is JSON { ids: number[] } — the listed client ids in the desired top-to-bottom order. Existing sort_order values of that set are reused (sorted), so reordering one page does not collide with clients outside it. List with sort=sortOrder to see the result.",
+        "operationId": "post_panel_api_clients_reorder",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Client record ids in the new order (top first)."
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              },
+              "example": {
+                "ids": [
+                  3,
+                  1,
+                  2
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                },
+                "example": {
+                  "success": true
                 }
               }
             }

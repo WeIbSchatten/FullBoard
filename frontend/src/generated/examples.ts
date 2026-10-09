@@ -464,6 +464,7 @@ export const EXAMPLES: Record<string, unknown> = {
         "enable": true,
         "expiryTime": 1735689600000,
         "group": "staff",
+        "id": 1,
         "inboundIds": [
           3,
           5
@@ -474,6 +475,7 @@ export const EXAMPLES: Record<string, unknown> = {
         "resetDay": 0,
         "resetMax": 0,
         "resetWeekday": 0,
+        "sortOrder": 1,
         "subId": "abcd1234",
         "totalGB": 53687091200,
         "traffic": null,
@@ -527,6 +529,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "reverse": null,
     "secret": "",
     "security": "",
+    "sortOrder": 0,
     "subId": "",
     "tgId": 0,
     "totalGB": 0,
@@ -564,6 +567,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "enable": true,
     "expiryTime": 1735689600000,
     "group": "staff",
+    "id": 1,
     "inboundIds": [
       3,
       5
@@ -574,6 +578,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "resetDay": 0,
     "resetMax": 0,
     "resetWeekday": 0,
+    "sortOrder": 1,
     "subId": "abcd1234",
     "totalGB": 53687091200,
     "traffic": null,

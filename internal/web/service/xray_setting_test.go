@@ -7,6 +7,23 @@ import (
 	"testing"
 )
 
+func TestIsMissingGeoAssetErr(t *testing.T) {
+	cases := []struct {
+		err  error
+		want bool
+	}{
+		{nil, false},
+		{errors.New("invalid outbound"), false},
+		{errors.New("failed to open geoip.dat"), true},
+		{errors.New("common/geodata: failed to open geosite.dat"), true},
+	}
+	for _, tc := range cases {
+		if got := isMissingGeoAssetErr(tc.err); got != tc.want {
+			t.Fatalf("isMissingGeoAssetErr(%v) = %v, want %v", tc.err, got, tc.want)
+		}
+	}
+}
+
 func TestShouldSkipLegacyUnencryptedOutboundRejection(t *testing.T) {
 	prohibited := errors.New("vless without TLS or other encryption is prohibited unless the server address is a private IP or domain")
 

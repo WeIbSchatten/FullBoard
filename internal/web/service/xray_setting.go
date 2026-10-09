@@ -81,6 +81,11 @@ func (s *XraySettingService) CheckXrayConfig(XrayTemplateConfig string) error {
 				if shouldSkipLegacyUnencryptedOutboundRejection(coreVersion, err) {
 					continue
 				}
+				// Default templates reference geoip:/geosite: tokens; without the
+				// .dat files beside the binary the loader fails on the asset, not the outbound.
+				if isMissingGeoAssetErr(err) {
+					continue
+				}
 				tagged := struct {
 					Tag string `json:"tag"`
 				}{}
@@ -90,6 +95,14 @@ func (s *XraySettingService) CheckXrayConfig(XrayTemplateConfig string) error {
 		}
 	}
 	return nil
+}
+
+func isMissingGeoAssetErr(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := err.Error()
+	return strings.Contains(msg, "geoip.dat") || strings.Contains(msg, "geosite.dat")
 }
 
 // shouldSkipLegacyUnencryptedOutboundRejection lets an older running Xray

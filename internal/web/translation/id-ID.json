@@ -765,6 +765,8 @@
       "sortMostTraffic": "Trafik terbanyak",
       "sortHighestRemaining": "Tersisa terbanyak",
       "sortExpiringSoonest": "Segera kedaluwarsa",
+      "sortManual": "Urutan manual",
+      "dragToReorder": "Seret untuk mengurutkan ulang",
       "has": "Memiliki",
       "hasNot": "Tidak memiliki",
       "actions": "Aksi",
@@ -943,7 +945,8 @@
         "delDepleted": "{count} klien habis dihapus",
         "delOrphans": "{count} klien tanpa inbound dihapus",
         "imported": "{count} klien diimpor",
-        "importedMixed": "{ok} diimpor, {failed} dilewati"
+        "importedMixed": "{ok} diimpor, {failed} dilewati",
+        "reorder": "Urutan klien diperbarui"
       },
       "renewMax": "Maksimum perpanjangan",
       "renewMaxDesc": "Berapa kali perpanjangan otomatis boleh berjalan sebelum klien dibiarkan kedaluwarsa. 0 berarti tanpa batas. Mengejar beberapa periode yang terlewat menghabiskan satu perpanjangan per periode.",

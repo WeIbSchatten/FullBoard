@@ -765,6 +765,8 @@
       "sortMostTraffic": "Mayor tráfico",
       "sortHighestRemaining": "Mayor restante",
       "sortExpiringSoonest": "Caducidad más próxima",
+      "sortManual": "Orden manual",
+      "dragToReorder": "Arrastra para reordenar",
       "has": "Tiene",
       "hasNot": "No tiene",
       "actions": "Acciones",
@@ -943,7 +945,8 @@
         "delDepleted": "{count} clientes agotados eliminados",
         "delOrphans": "{count} clientes sin entrante eliminados",
         "imported": "{count} clientes importados",
-        "importedMixed": "{ok} importados, {failed} omitidos"
+        "importedMixed": "{ok} importados, {failed} omitidos",
+        "reorder": "Orden de clientes actualizado"
       },
       "renewMax": "Renovaciones máximas",
       "renewMaxDesc": "Cuántas veces puede activarse la renovación automática antes de dejar que el cliente caduque. 0 significa sin límite. Recuperar varios periodos perdidos consume una renovación por periodo.",

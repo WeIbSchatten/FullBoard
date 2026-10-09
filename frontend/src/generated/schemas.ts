@@ -1990,6 +1990,10 @@ export const SCHEMAS: Record<string, unknown> = {
       "security": {
         "type": "string"
       },
+      "sortOrder": {
+        "description": "Manual Clients-page order; backfilled from id on migrate, rewritten by /clients/reorder.",
+        "type": "integer"
+      },
       "subId": {
         "type": "string"
       },
@@ -2042,6 +2046,7 @@ export const SCHEMAS: Record<string, unknown> = {
       "reverse",
       "secret",
       "security",
+      "sortOrder",
       "subId",
       "tgId",
       "totalGB",
@@ -2183,6 +2188,10 @@ export const SCHEMAS: Record<string, unknown> = {
         "example": "staff",
         "type": "string"
       },
+      "id": {
+        "example": 1,
+        "type": "integer"
+      },
       "inboundIds": {
         "example": [
           3,
@@ -2217,6 +2226,10 @@ export const SCHEMAS: Record<string, unknown> = {
         "example": 0,
         "type": "integer"
       },
+      "sortOrder": {
+        "example": 1,
+        "type": "integer"
+      },
       "subId": {
         "example": "abcd1234",
         "type": "string"
@@ -2245,6 +2258,7 @@ export const SCHEMAS: Record<string, unknown> = {
       "email",
       "enable",
       "expiryTime",
+      "id",
       "inboundIds",
       "limitHwid",
       "limitIp",
@@ -2252,6 +2266,7 @@ export const SCHEMAS: Record<string, unknown> = {
       "resetDay",
       "resetMax",
       "resetWeekday",
+      "sortOrder",
       "subId",
       "totalGB",
       "updatedAt"

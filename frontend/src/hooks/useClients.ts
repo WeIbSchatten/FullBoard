@@ -349,6 +349,17 @@ export function useClients(options: UseClientsOptions = {}) {
     return validated.obj;
   }, []);
 
+  const reorderMut = useMutation({
+    mutationFn: (ids: number[]) =>
+      HttpUtil.post('/panel/api/clients/reorder', { ids }, JSON_HEADERS),
+    onSuccess: (msg) => {
+      if (msg?.success) {
+        markLocalInvalidate('clients');
+        void queryClient.invalidateQueries({ queryKey: keys.clients.all });
+      }
+    },
+  });
+
   const createMut = useMutation({
     mutationFn: (payload: unknown) =>
       HttpUtil.post('/panel/api/clients/add', payload, JSON_HEADERS),
@@ -561,6 +572,7 @@ export function useClients(options: UseClientsOptions = {}) {
   });
 
   const create = useCallback((payload: unknown) => createMut.mutateAsync(payload), [createMut]);
+  const reorder = useCallback((ids: number[]) => reorderMut.mutateAsync(ids), [reorderMut]);
   const update = useCallback(
     (email: string, client: unknown) => {
       if (!email) return Promise.resolve(null as unknown as Msg<unknown>);
@@ -871,6 +883,7 @@ export function useClients(options: UseClientsOptions = {}) {
     settingsReady,
     refresh,
     create,
+    reorder,
     bulkCreate,
     update,
     remove,

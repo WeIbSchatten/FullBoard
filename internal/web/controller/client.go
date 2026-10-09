@@ -60,6 +60,7 @@ func (a *ClientController) initRouter(g *gin.RouterGroup) {
 	g.POST("/happLink/:id", a.generateHappLink)
 
 	g.POST("/add", a.create)
+	g.POST("/reorder", a.reorder)
 	g.POST("/renewalPreview", a.renewalPreview)
 	g.POST("/update/:email", a.update)
 	g.POST("/del/:email", a.delete)
@@ -218,6 +219,22 @@ func (a *ClientController) create(c *gin.Context) {
 		return
 	}
 	jsonMsgObj(c, I18nWeb(c, "pages.inbounds.toasts.inboundClientAddSuccess"), pendingNodeObj(a.inboundService.AnyNodePending(payload.InboundIds)), nil)
+}
+
+func (a *ClientController) reorder(c *gin.Context) {
+	var req struct {
+		Ids []int `json:"ids"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		jsonMsg(c, I18nWeb(c, "somethingWentWrong"), err)
+		return
+	}
+	if err := a.clientService.Reorder(req.Ids); err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.clients.toasts.reorder"), err)
+		return
+	}
+	notifyClientsChanged()
+	jsonMsg(c, I18nWeb(c, "pages.clients.toasts.reorder"), nil)
 }
 
 func (a *ClientController) update(c *gin.Context) {
