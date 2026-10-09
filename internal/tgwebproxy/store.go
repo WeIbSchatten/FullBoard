@@ -197,10 +197,10 @@ func (s *Store) applyLocked(ctx context.Context, cfg RelayConfig, profiles []Rel
 	if err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(s.paths.ConfigFile), 0o750); err != nil {
+	if err := ensureRelayDir(filepath.Dir(s.paths.ConfigFile)); err != nil {
 		return wrapConfigWriteError(err)
 	}
-	if err := os.MkdirAll(filepath.Dir(s.paths.ProfilesFile), 0o750); err != nil {
+	if err := ensureRelayDir(filepath.Dir(s.paths.ProfilesFile)); err != nil {
 		return wrapConfigWriteError(err)
 	}
 
@@ -229,8 +229,12 @@ func wrapConfigWriteError(err error) error {
 	if err == nil {
 		return nil
 	}
-	if errors.Is(err, syscall.EROFS) || strings.Contains(strings.ToLower(err.Error()), "read-only file system") {
+	msg := strings.ToLower(err.Error())
+	if errors.Is(err, syscall.EROFS) || strings.Contains(msg, "read-only file system") {
 		return fmt.Errorf("%w; add ReadWritePaths=-/etc/tproxy-server to fullboard.service (or a drop-in under fullboard.service.d/) and restart the panel", err)
+	}
+	if strings.Contains(msg, "operation not permitted") || strings.Contains(msg, "cap_chown") {
+		return fmt.Errorf("%w; add CAP_CHOWN to fullboard.service CapabilityBoundingSet (or a drop-in) and restart the panel", err)
 	}
 	return err
 }
@@ -256,21 +260,31 @@ func writeExclusive(path string, data []byte, mode fs.FileMode) error {
 	return os.Chmod(path, mode)
 }
 
-// commitFile keeps the previous version as *.fullboard-prev, carries over its
-// owner (root:tproxy on a stock install) and atomically renames the candidate.
+// ensureRelayDir creates the config directory and sets root:tproxy so the
+// service user can traverse it (0750 root:root would block tproxy entirely).
+func ensureRelayDir(dir string) error {
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		return err
+	}
+	return assignServiceGroup(dir)
+}
+
+// commitFile keeps the previous version as *.fullboard-prev and always sets
+// root:tproxy on the candidate before rename (copying a prior root:root owner
+// would leave the relay unable to read config.json).
 func commitFile(candidate, target string, mode fs.FileMode) error {
-	if info, err := os.Stat(target); err == nil {
-		copyOwner(info, candidate)
+	if _, err := os.Stat(target); err == nil {
 		if data, rerr := os.ReadFile(target); rerr == nil {
 			backup := target + backupSuffix
 			if werr := writeExclusive(backup, data, mode); werr == nil {
-				copyOwner(info, backup)
+				_ = assignServiceGroup(backup)
 			}
 		}
-	} else {
-		assignServiceGroup(candidate)
 	}
 	if err := os.Chmod(candidate, mode); err != nil {
+		return err
+	}
+	if err := assignServiceGroup(candidate); err != nil {
 		return err
 	}
 	prepareReplace(target)
