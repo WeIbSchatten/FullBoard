@@ -1,13 +1,6 @@
 [English](/README.md) | [Русский](/README.ru_RU.md)
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./media/fullboard-dark.png">
-    <img alt="FullBoard" src="./media/fullboard-light.png">
-  </picture>
-</p>
-
-<p align="center">
   <a href="https://github.com/WeIbSchatten/FullBoard/releases"><img src="https://img.shields.io/github/v/release/WeIbSchatten/FullBoard" alt="Release"></a>
   <a href="https://github.com/WeIbSchatten/FullBoard/actions"><img src="https://img.shields.io/github/actions/workflow/status/WeIbSchatten/FullBoard/release.yml.svg" alt="Build"></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GPL%20V3-blue.svg?longCache=true" alt="License"></a>
