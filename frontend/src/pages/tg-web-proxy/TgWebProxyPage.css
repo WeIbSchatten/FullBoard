@@ -1,0 +1,49 @@
+.tg-web-proxy-page {
+  --bg-page: #e6e8ec;
+  --bg-card: #ffffff;
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+.tg-web-proxy-page.is-dark {
+  --bg-page: #1a1b1f;
+  --bg-card: #23252b;
+}
+
+.tg-web-proxy-page.is-dark.is-ultra {
+  --bg-page: #000;
+  --bg-card: #101013;
+}
+
+.tg-web-proxy-page .ant-layout,
+.tg-web-proxy-page .ant-layout-content,
+.tg-web-proxy-page .content-shell {
+  background: transparent;
+}
+
+.tg-web-proxy-page .content-area {
+  padding: 24px;
+}
+
+.tg-web-proxy-page .summary-card {
+  padding: 16px;
+}
+
+.tg-web-proxy-log {
+  max-height: 420px;
+  overflow: auto;
+  margin: 0;
+  padding: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  background: var(--bg-page);
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .tg-web-proxy-page .content-area,
+  .tg-web-proxy-page .summary-card {
+    padding: 8px;
+  }
+}

@@ -120,13 +120,12 @@
     "routing": "Routing",
     "outbounds": "Outbounds",
     "apiDocs": "API Docs",
-    "donate": "Donate",
-    "sponsors": "Sponsors",
     "docs": "Documentation",
     "openMenu": "Open menu",
     "pinSidebar": "Pin sidebar",
     "unpinSidebar": "Unpin sidebar",
-    "subFormats": "Sub Formats"
+    "subFormats": "Sub Formats",
+    "tgWebProxy": "Telegram WEB Proxy"
   },
   "pages": {
     "login": {
@@ -153,7 +152,7 @@
       "xrayUpdates": "Xray Updates",
       "xraySwitchClickDesk": "Choose carefully, as older versions may not be compatible with current configurations.",
       "updatePanel": "Update Panel",
-      "panelUpdateDesc": "This will update 3X-UI itself to the latest release and restart the panel service.",
+      "panelUpdateDesc": "This will update FullBoard itself to the latest release and restart the panel service.",
       "currentPanelVersion": "Current panel version",
       "latestPanelVersion": "Latest panel version",
       "panelUpToDate": "Panel is up to date",
@@ -217,10 +216,10 @@
       "xraySwitchVersionDialogDesc": "This will change the Xray version to #version#.",
       "xraySwitchVersionPopover": "Xray updated successfully",
       "panelUpdateDialog": "Do you really want to update the panel?",
-      "panelUpdateDialogDesc": "This will update 3X-UI to #version# and restart the panel service.",
+      "panelUpdateDialogDesc": "This will update FullBoard to #version# and restart the panel service.",
       "panelUpdateStartedPopover": "Panel update started",
       "panelUpdateFailedTitle": "Panel update failed",
-      "panelUpdateFailedDesc": "The update did not finish successfully. Check the server logs, or run 'x-ui update' from the command line.",
+      "panelUpdateFailedDesc": "The update did not finish successfully. Check the server logs, or run 'fullboard update' from the command line.",
       "panelUpdateUnknownTitle": "Couldn't confirm the update finished",
       "panelUpdateUnknownDesc": "The panel didn't report a result in time. Reload to check the current version, or check the server logs.",
       "geofileUpdateDialog": "Do you really want to update the geofile?",
@@ -785,7 +784,7 @@
       "deleteHwidConfirm": "Remove this device? It will need to re-register on its next subscription fetch.",
       "hwidDeleted": "Device removed.",
       "clearHwidsConfirm": "Remove all registered devices? Every device will need to re-register on its next subscription fetch.",
-      "limitIpFail2banMissing": "Fail2ban is not installed, so the IP limit cannot be enforced. Install Fail2ban from the x-ui bash menu to enable this option.",
+      "limitIpFail2banMissing": "Fail2ban is not installed, so the IP limit cannot be enforced. Install Fail2ban from the fullboard bash menu to enable this option.",
       "limitIpFail2banWindows": "Fail2ban is not available on Windows, so the IP limit cannot be enforced.",
       "limitIpDisabled": "The IP limit feature is disabled on this server.",
       "password": "Password",
@@ -1131,6 +1130,113 @@
         "badVlessRoute": "Enter a single number between 0 and 65535"
       }
     },
+    "tgWebProxy": {
+      "unsupported": "Telegram WEB proxy management requires a Linux host with systemd. Viewing is read-only here.",
+      "tabs": {
+        "overview": "Overview",
+        "profiles": "Profiles",
+        "config": "Relay config",
+        "logs": "Logs"
+      },
+      "yes": "Yes",
+      "no": "No",
+      "installed": "Installed",
+      "health": "Health",
+      "readiness": "Backend readiness",
+      "unreachable": "Unreachable",
+      "unhealthy": "Unhealthy",
+      "notReady": "Not ready",
+      "profileCount": "Profiles",
+      "services": "Services",
+      "unit": "Unit",
+      "autostart": "Autostart",
+      "since": "Since",
+      "relay": "Relay",
+      "hostname": "Public hostname",
+      "basePath": "Base path",
+      "adminListen": "Admin listener",
+      "adminError": "Admin probe error",
+      "secret": "Secret",
+      "job": "Job",
+      "updateConfirm": "Download the latest tproxy-server, run its tests and swap the binary? Active sessions reconnect automatically.",
+      "profilesModeBad": "profiles.json has mode {{mode}}; the relay refuses group/other permissions. Save any profile to rewrite it as 0400.",
+      "actions": {
+        "start": "Start",
+        "stop": "Stop",
+        "restart": "Restart",
+        "enable": "Enable",
+        "disable": "Disable",
+        "check": "Validate config",
+        "install": "Install",
+        "update": "Update relay"
+      },
+      "install": {
+        "title": "Install tproxy-server",
+        "warning": "The upstream installer is meant for Ubuntu 22.04+/Debian 12+ on x86_64. It installs Caddy on ports 80/443 and replaces the active Caddyfile, so make sure nothing else (panel, Xray inbounds) needs those ports on this host.",
+        "hostnameHint": "A dedicated lowercase hostname whose A record already points to this server.",
+        "email": "ACME contact email",
+        "site": "Public website",
+        "siteUpstream": "Loopback web app (URL)",
+        "siteDir": "Static site directory",
+        "basePathAuto": "Random slug",
+        "basePathNone": "Host root",
+        "basePathCustom": "Custom",
+        "workers": "MTProxy workers"
+      },
+      "config": {
+        "applyHint": "Saving writes candidate files, runs tproxy-server -check and only then replaces config.json. A running relay is restarted, which reconnects all carrier sessions.",
+        "basePathHint": "Optional prefix such as phcf2vfe7zgbrslg. Changing it invalidates every shared link.",
+        "listen": "Relay listener",
+        "adminHint": "Loopback only. FullBoard probes /healthz, /readyz and /metrics from the server side.",
+        "profilesFileHint": "Path the relay reads; the stock unit passes profiles.json through systemd LoadCredential.",
+        "pprofHint": "Exposes Go profiling on the admin listener. Enable only for a short diagnostic window.",
+        "initialProfile": "Initial profile",
+        "limits": "Process-wide limits",
+        "timeouts": "Timeouts"
+      },
+      "profile": {
+        "add": "Add profile",
+        "edit": "Edit profile",
+        "name": "Name",
+        "backend": "MTProxy backend",
+        "backendHint": "Numeric loopback host:port of an official MTProxy listener.",
+        "backendWarning": "Every profile backend needs its own MTProxy listener on that port, and the port must be covered by the tproxy-firewall rules.",
+        "carrierMode": "Carrier mode",
+        "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait.",
+        "limits": "Per-profile limits",
+        "limitsHint": "Leave empty to inherit the global value. Values may only lower the global limits.",
+        "deleteConfirm": "Delete profile \"{{name}}\"? Clients using its secret stop working.",
+        "needConfig": "Save the relay configuration first."
+      },
+      "share": {
+        "button": "Share",
+        "title": "Share profile \"{{name}}\"",
+        "hint": "Enter the server and secret in a WEB-proxy-capable Telegram app, or open the link.",
+        "server": "Proxy server",
+        "linkSecret": "Link secret",
+        "link": "Link"
+      },
+      "errors": {
+        "hostname": "Use a lowercase DNS hostname such as proxy.example.com",
+        "secret": "Use 32 lowercase hex characters (optionally prefixed with dd)",
+        "loopback": "Use a numeric loopback address such as 127.0.0.1:2398",
+        "loopbackUrl": "Use http:// with a numeric loopback address, e.g. http://127.0.0.1:3000",
+        "basePath": "Segments of [A-Za-z0-9_-] joined by /",
+        "absPath": "Use an absolute path",
+        "duplicateName": "A profile with this name already exists",
+        "duration": "Use a Go duration such as 5s or 2m"
+      },
+      "toasts": {
+        "load": "Failed to load tg-web-proxy state",
+        "saved": "Saved and validated",
+        "deleted": "Profile deleted",
+        "checkOk": "Configuration is valid",
+        "serviceDone": "Service command executed",
+        "jobStarted": "Job started",
+        "restarted": "tproxy-server restarted with the new configuration",
+        "restartFailed": "Saved, but restart failed: {{error}}"
+      }
+    },
     "nodes": {
       "addNode": "Add Node",
       "editNode": "Edit Node",
@@ -1369,7 +1475,7 @@
       "subAnnounce": "Announce",
       "subAnnounceDesc": "The announcement text displayed in the VPN client. Supports client identity tokens: {{EMAIL}}, {{ID}}, {{SHORT_ID}}, {{SUB_ID}}, {{TELEGRAM_ID}}.",
       "subThemeDir": "Sub Theme Directory",
-      "subThemeDirDesc": "Absolute path to a folder containing a custom index.html/sub.html subscription page template (e.g. /etc/3x-ui/sub_templates/my-theme/). Leave empty to use the default page.",
+      "subThemeDirDesc": "Absolute path to a folder containing a custom index.html/sub.html subscription page template (e.g. /etc/fullboard/sub_templates/my-theme/). Leave empty to use the default page.",
       "subThemeDirDocs": "Template guide ↗",
       "subEnableRouting": "Enable routing",
       "happLinkEnable": "Encrypted subscription links",
@@ -2368,27 +2474,6 @@
       },
       "defaultOutbound": "Default Outbound",
       "defaultOutboundDesc": "Traffic that does not match any routing rule uses this outbound (Xray uses the first outbound in the list)."
-    },
-    "sponsors": {
-      "title": "Sponsors",
-      "intro": "Companies that support 3X-UI development. Sponsored links open in a new tab.",
-      "become": "Become a sponsor",
-      "tag": "Sponsor",
-      "visit": "Visit",
-      "yourBrand": "Your brand here",
-      "yourBrandText": "Put your company in front of thousands of server admins who open 3X-UI every day.",
-      "placements": "Available placements",
-      "placementDashboard": "Overview banner",
-      "placementDashboardDesc": "Premium spot at the top of the dashboard, one sponsor at a time.",
-      "placementSidebar": "Sidebar card",
-      "placementSidebarDesc": "Shown on every panel page, rotating between sponsors.",
-      "placementLogin": "Login page",
-      "placementLoginDesc": "Seen by the admin at every sign-in.",
-      "placementPage": "Sponsors page",
-      "placementPageDesc": "Listed here with logo, description and link.",
-      "available": "Available",
-      "takenUntil": "Taken until {date}",
-      "activeCount": "{count} active"
     }
   },
   "tgbot": {
@@ -2444,7 +2529,7 @@
       "report": "🕰 Scheduled Reports: {{ .RunTime }}\r\n",
       "datetime": "⏰ Date&Time: {{ .DateTime }}\r\n",
       "hostname": "💻 Host: {{ .Hostname }}\r\n",
-      "version": "🚀 3X-UI Version: {{ .Version }}\r\n",
+      "version": "🚀 FullBoard Version: {{ .Version }}\r\n",
       "xrayVersion": "📡 Xray Version: {{ .XrayVersion }}\r\n",
       "ipv6": "🌐 IPv6: {{ .IPv6 }}\r\n",
       "ipv4": "🌐 IPv4: {{ .IPv4 }}\r\n",
@@ -2592,10 +2677,10 @@
   },
   "discord": {
     "test": {
-      "title": "3x-ui Discord Notification Test",
+      "title": "FullBoard Discord Notification Test",
       "body": "This is a test notification confirming that Discord notifications are configured correctly."
     },
-    "footer": "3x-ui Panel",
+    "footer": "FullBoard Panel",
     "fields": {
       "panelVersion": "Panel Version",
       "xrayCore": "Xray Core",
@@ -2630,13 +2715,13 @@
       "loginFailed": "Login Failed"
     },
     "report": {
-      "title": "📊 3x-ui Status Report",
+      "title": "📊 FullBoard Status Report",
       "summary": "Periodic server and proxy status report for **{{ .Host }}**",
-      "footer": "3x-ui Scheduled Report • Schedule: {{ .RunTime }}"
+      "footer": "FullBoard Scheduled Report • Schedule: {{ .RunTime }}"
     },
     "commands": {
-      "helpTitle": "🤖 3x-ui Discord Bot Commands",
-      "helpDescription": "Available commands for monitoring and managing the 3x-ui server:",
+      "helpTitle": "🤖 FullBoard Discord Bot Commands",
+      "helpDescription": "Available commands for monitoring and managing the FullBoard server:",
       "helpStatus": "Display system load, RAM, CPU, connections, and online users",
       "helpReport": "Generate a full status report (with DB backup if configured)",
       "helpBackup": "Send the database backup file immediately",
@@ -2644,10 +2729,10 @@
       "helpInbounds": "List all configured inbounds with ports and client stats",
       "helpRestart": "Restart the Xray core",
       "helpHelp": "Display this list of available commands",
-      "statusTitle": "⚡ 3x-ui Server Status",
+      "statusTitle": "⚡ FullBoard Server Status",
       "statusDescription": "Current operational metrics for **{{ .Host }}**",
       "backupTitle": "🗄️ Database Backup",
-      "backupDescription": "Backup archive for 3x-ui generated at `{{ .Time }}`",
+      "backupDescription": "Backup archive for FullBoard generated at `{{ .Time }}`",
       "backupUnavailable": "❌ Backup service unavailable",
       "backupFailed": "❌ Failed to read database backup: {{ .Error }}",
       "usageHint": "⚠️ Usage: `!usage <email>` or `/usage <email>`",

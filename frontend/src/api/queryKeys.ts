@@ -1,5 +1,4 @@
 export const keys = {
-  sponsors: () => ['sponsors'] as const,
   server: {
     status: () => ['server', 'status'] as const,
     fail2banStatus: () => ['server', 'fail2banStatus'] as const,
@@ -7,6 +6,12 @@ export const keys = {
   nodes: {
     root: () => ['nodes'] as const,
     list: () => ['nodes', 'list'] as const,
+  },
+  tgWebProxy: {
+    root: () => ['tgWebProxy'] as const,
+    status: () => ['tgWebProxy', 'status'] as const,
+    config: () => ['tgWebProxy', 'config'] as const,
+    logs: (unit: string, lines: number) => ['tgWebProxy', 'logs', unit, lines] as const,
   },
   hosts: {
     root: () => ['hosts'] as const,

@@ -11,9 +11,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 )
 
 func initHwidSubRouter(t *testing.T, limit int) (*gin.Engine, string) {
@@ -28,7 +28,7 @@ func initHwidSubRouter(t *testing.T, limit int) (*gin.Engine, string) {
 	}
 
 	t.Setenv("XUI_DB_FOLDER", tmp)
-	dbtest.InitDB(t, filepath.Join(tmp, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(tmp, "fullboard.db"))
 
 	const subID = "sub-hwid-route"
 	const email = "route@example.com"

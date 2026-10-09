@@ -9,12 +9,12 @@ const TITLE_KEYS: Record<string, string> = {
   '/groups': 'menu.groups',
   '/nodes': 'menu.nodes',
   '/hosts': 'menu.hosts',
+  '/tg-web-proxy': 'menu.tgWebProxy',
   '/settings': 'menu.settings',
   '/xray': 'menu.xray',
   '/outbound': 'menu.outbounds',
   '/routing': 'menu.routing',
   '/api-docs': 'menu.apiDocs',
-  '/sponsors': 'menu.sponsors',
 };
 
 export function usePageTitle() {
@@ -23,7 +23,7 @@ export function usePageTitle() {
 
   useEffect(() => {
     const key = TITLE_KEYS[pathname];
-    const title = key ? t(key) : '3X-UI';
+    const title = key ? t(key) : 'FullBoard';
     const host = window.location.hostname;
     document.title = host ? `${host} - ${title}` : title;
   }, [pathname, t]);
