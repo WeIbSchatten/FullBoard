@@ -216,6 +216,7 @@ describe('generated OpenAPI runtime contracts', () => {
       expect(params[name].description).toContain('CSV');
     }
     expect(params.sort.schema.enum).toEqual([
+      'sortOrder',
       'enable',
       'email',
       'inboundIds',
