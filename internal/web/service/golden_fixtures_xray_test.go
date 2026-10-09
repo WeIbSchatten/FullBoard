@@ -343,4 +343,3 @@ func TestGoldenDNSFixturesBuildInXray(t *testing.T) {
 		})
 	}
 }
-
