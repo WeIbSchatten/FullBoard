@@ -45,6 +45,69 @@ func (a *NodeController) initRouter(g *gin.RouterGroup) {
 	g.POST("/mtls/ca", a.mtlsCa)
 	g.POST("/mtls/trustCA", a.setMtlsTrustCA)
 	g.POST("/mtls/reloadClient", a.reloadMtlsClient)
+
+	g.GET("/remote/:id/status", a.remoteStatus)
+	g.GET("/remote/:id/settings", a.remoteSettings)
+	g.POST("/remote/:id/settings", a.updateRemoteSettings)
+	g.POST("/remote/:id/restartXray", a.restartRemoteXray)
+	g.POST("/remote/:id/restartPanel", a.restartRemotePanel)
+}
+
+func remoteNodeID(c *gin.Context) (int, bool) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		jsonMsg(c, I18nWeb(c, "get"), fmt.Errorf("invalid node id"))
+		return 0, false
+	}
+	return id, true
+}
+
+func (a *NodeController) remoteStatus(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	status, err := a.nodeService.RemoteServerStatus(id)
+	jsonObj(c, status, err)
+}
+
+func (a *NodeController) remoteSettings(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	settings, err := a.nodeService.RemotePanelSettings(id)
+	jsonObj(c, settings, err)
+}
+
+func (a *NodeController) updateRemoteSettings(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	body, err := c.GetRawData()
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.nodes.toasts.remoteSettingsSaved"), err)
+		return
+	}
+	err = a.nodeService.UpdateRemotePanelSettings(id, body)
+	jsonMsg(c, I18nWeb(c, "pages.nodes.toasts.remoteSettingsSaved"), err)
+}
+
+func (a *NodeController) restartRemoteXray(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	jsonMsg(c, I18nWeb(c, "pages.nodes.toasts.remoteXrayRestarted"), a.nodeService.RestartRemoteXray(id))
+}
+
+func (a *NodeController) restartRemotePanel(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	jsonMsg(c, I18nWeb(c, "pages.nodes.toasts.remotePanelRestarted"), a.nodeService.RestartRemotePanel(id))
 }
 
 // reloadMtlsClient validates the credential currently stored by the master and

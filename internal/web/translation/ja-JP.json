@@ -1095,7 +1095,10 @@
         "updateResult": "{ok} 個のノードで更新を開始、{failed} 個失敗",
         "updateNoneEligible": "オンラインで有効なノードを少なくとも1つ選択してください",
         "saveMtls": "ノード mTLS を保存",
-        "reloadMtls": "Reload master mTLS credential"
+        "reloadMtls": "Reload master mTLS credential",
+        "remoteSettingsSaved": "Remote panel settings saved",
+        "remoteXrayRestarted": "Xray restarted on the remote panel",
+        "remotePanelRestarted": "Remote panel restart requested"
       },
       "tlsVerifyMode": "TLS 検証",
       "tlsVerifyModeHint": "パネルがノードの HTTPS 証明書を検証する方法。ピン留めやスキップは自己署名証明書向け（https ノードのみ）。",
@@ -1123,7 +1126,29 @@
       "pinnedCertPlaceholder": "base64 または hex の SHA-256",
       "fetchPin": "取得",
       "pinFetched": "ノードの現在の証明書を取得しました",
-      "pinFetchFailed": "証明書を取得できませんでした"
+      "pinFetchFailed": "証明書を取得できませんでした",
+      "remote": {
+        "manage": "Manage panel",
+        "title": "FullBoard panel: {{ name }}",
+        "overview": "Overview",
+        "inboundsTab": "Inbounds & clients",
+        "settings": "Settings",
+        "clients": "Clients",
+        "inbound": "Inbound",
+        "restartXray": "Restart Xray",
+        "restartPanel": "Restart panel",
+        "restartPanelConfirm": "Restart the FullBoard panel on {{ name }}?",
+        "restartPanelDesc": "The remote panel goes offline for a few seconds. Traffic served by its Xray core is not interrupted.",
+        "openPanel": "Open panel",
+        "memory": "Memory",
+        "disk": "Disk",
+        "inboundsHint": "Inbounds and clients assigned to this node. Changes are made on this panel and synced to the node, so both panels stay consistent.",
+        "openInbounds": "Open Inbounds page",
+        "routeVia": "Route traffic via this server",
+        "settingsHint": "Reads and saves the remote FullBoard panel's own settings. This needs an admin-scope API token on that panel. Secrets stay hidden: leave them blank to keep the stored values. Some changes take effect only after a panel restart.",
+        "loadSettings": "Load settings",
+        "jsonMode": "Edit all settings as JSON"
+      }
     },
     "settings": {
       "defaultTag": "デフォルト",
@@ -1741,7 +1766,18 @@
       "subIncyResolveDnsDomainDesc": "DoH サーバー URL。通常は /dns-query で終わります。",
       "subIncyResolveDnsIp": "DoH サーバー IP",
       "subIncyResolveDnsIpDesc": "ブートストラップ用の DoH サーバー IP。",
-      "subIncyGroupRouting": "ルーティング"
+      "subIncyGroupRouting": "ルーティング",
+      "customCss": {
+        "tab": "Appearance",
+        "intro": "Custom CSS is loaded as a separate stylesheet after the FullBoard theme. It is never inserted into the page HTML, so it cannot run scripts. Save the settings, then reload the page to apply.",
+        "panel": "Panel CSS",
+        "panelDesc": "Applied to every FullBoard panel page for signed-in operators.",
+        "login": "Login page CSS",
+        "loginDesc": "Applied to the public FullBoard login page.",
+        "preview": "Preview panel CSS",
+        "previewDesc": "Temporarily applies the panel CSS in this browser tab without saving.",
+        "size": "{{ size }} / {{ max }} bytes"
+      }
     },
     "xray": {
       "importRules": "ルールをインポート",
@@ -2248,7 +2284,34 @@
         "poolSize": "プールサイズ"
       },
       "defaultOutbound": "デフォルトアウトバウンド",
-      "defaultOutboundDesc": "ルーティング規則に一致しないトラフィックはこのアウトバウンドを使います（一覧の先頭）。"
+      "defaultOutboundDesc": "ルーティング規則に一致しないトラフィックはこのアウトバウンドを使います（一覧の先頭）。",
+      "chain": {
+        "menu": "Chain to another server",
+        "title": "Route traffic through another server",
+        "apply": "Add outbound",
+        "intro": "Creates an outbound that connects to another FullBoard node (or any share link), plus an optional routing rule that sends matching traffic there. Save the Xray configuration afterwards.",
+        "source": "Connect to",
+        "sourceNode": "FullBoard node",
+        "sourceLink": "Share link",
+        "node": "Node",
+        "inbound": "Node inbound",
+        "inboundHint": "An inbound on that node that this server will connect to as a client.",
+        "client": "Client used by this server",
+        "link": "Share link",
+        "tag": "Outbound tag",
+        "addRule": "Add routing rule",
+        "ruleInbounds": "Traffic from these inbounds",
+        "ruleDomains": "Domains",
+        "ruleIps": "IPs / CIDRs",
+        "allTraffic": "All TCP and UDP traffic that reaches this rule",
+        "position": "Rule position",
+        "positionTop": "First (highest priority)",
+        "positionBottom": "Last",
+        "tagTaken": "Choose a unique, non-empty outbound tag",
+        "invalidSource": "Could not build an outbound from this source",
+        "noMatcher": "Select at least one inbound, domain or IP, or enable \"All traffic\"",
+        "added": "Outbound and routing rule added. Save the Xray configuration to apply them."
+      }
     },
     "hosts": {
       "addHost": "ホストを追加",

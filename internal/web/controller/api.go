@@ -35,18 +35,8 @@ func NewAPIController(g *gin.RouterGroup) *APIController {
 }
 
 func (a *APIController) checkAPIAuth(c *gin.Context) {
-	// A verified client certificate (a completed mTLS handshake) authenticates
-	// the caller, equivalent to a valid bearer token. api_authed must be set so
-	// the CSRF middleware lets cert-authed mutations through.
-	if c.Request.TLS != nil && len(c.Request.TLS.VerifiedChains) > 0 {
-		if u, err := a.userService.GetFirstUser(); err == nil {
-			session.SetAPIAuthUser(c, u)
-		}
-		c.Set("api_authed", true)
-		c.Set("api_token_scope", model.ApiScopeNodeSync)
-		c.Next()
-		return
-	}
+	// A valid bearer token is checked first so an mTLS master that also sends an
+	// admin token keeps that token's scope; the cert alone stays node-sync.
 	auth := c.GetHeader("Authorization")
 	if after, ok := strings.CutPrefix(auth, "Bearer "); ok {
 		tok := after
@@ -59,6 +49,17 @@ func (a *APIController) checkAPIAuth(c *gin.Context) {
 			c.Next()
 			return
 		}
+	}
+	// A verified client certificate (a completed mTLS handshake) authenticates
+	// the caller; api_authed lets cert-authed mutations past CSRF.
+	if c.Request.TLS != nil && len(c.Request.TLS.VerifiedChains) > 0 {
+		if u, err := a.userService.GetFirstUser(); err == nil {
+			session.SetAPIAuthUser(c, u)
+		}
+		c.Set("api_authed", true)
+		c.Set("api_token_scope", model.ApiScopeNodeSync)
+		c.Next()
+		return
 	}
 	if !session.IsLogin(c) {
 		// A presented Bearer token is not an anonymous scan: return 401 so

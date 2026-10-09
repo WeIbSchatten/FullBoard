@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -301,6 +302,10 @@ func TestMasterNodeContract(t *testing.T) {
 					_, err := master.ListRemoteTags(ctx)
 					return err
 				}, nil},
+				{"GetServerStatus is readable", []string{"GetServerStatus"}, func() error {
+					_, err := master.GetServerStatus(ctx)
+					return err
+				}, nil},
 				{"RestartXray is accepted by the node", []string{"RestartXray"}, func() error {
 					// No core binary here: only the node's own restart failure may come back.
 					if err := master.RestartXray(ctx); err != nil && !strings.Contains(err.Error(), "rebooting the Xray") {
@@ -330,13 +335,75 @@ func TestMasterNodeContract(t *testing.T) {
 					}
 				}},
 			}
+			restarted := make(chan struct{}, 1)
+			global.SetRestartHook(func() { restarted <- struct{}{} })
+			t.Cleanup(func() { global.SetRestartHook(nil) })
+			// Remote panel control needs an admin token on the node; node-sync must be refused.
+			adminCells := []struct {
+				name   string
+				covers []string
+				run    func() error
+				check  func(t *testing.T)
+			}{
+				{"panel settings round-trip changes a node setting", []string{"GetPanelSettings", "UpdatePanelSettings"}, func() error {
+					raw, err := master.GetPanelSettings(ctx)
+					if err != nil {
+						return err
+					}
+					var settings map[string]any
+					if err := json.Unmarshal(raw, &settings); err != nil {
+						return err
+					}
+					settings["pageSize"] = 77
+					body, _ := json.Marshal(settings)
+					return master.UpdatePanelSettings(ctx, body)
+				}, func(t *testing.T) {
+					if got, _ := (&service.SettingService{}).GetPageSize(); got != 77 {
+						t.Fatalf("node pageSize = %d, want 77", got)
+					}
+				}},
+				{"RestartPanel fires the node's restart hook", []string{"RestartPanel"}, func() error {
+					return master.RestartPanel(ctx)
+				}, func(t *testing.T) {
+					select {
+					case <-restarted:
+					case <-time.After(10 * time.Second):
+						t.Fatal("node panel restart hook never fired")
+					}
+				}},
+			}
 			covered := map[string]bool{}
 			for _, c := range cells {
 				for _, m := range c.covers {
 					covered[m] = true
 				}
 			}
+			for _, c := range adminCells {
+				for _, m := range c.covers {
+					covered[m] = true
+				}
+			}
 			assertEveryRemoteCallCovered(t, covered)
+			for _, c := range adminCells {
+				t.Run(c.name, func(t *testing.T) {
+					node.takeRefused()
+					err := c.run()
+					refused := node.takeRefused()
+					if scope == model.ApiScopeNodeSync {
+						if err == nil || !strings.Contains(err.Error(), "HTTP 403") || len(refused) == 0 {
+							t.Fatalf("node-sync token must be refused, got err=%v refused=%v", err, refused)
+						}
+						return
+					}
+					if err != nil {
+						t.Fatalf("master call failed: %v", err)
+					}
+					if len(refused) != 0 {
+						t.Fatalf("node refused master requests: %v", refused)
+					}
+					c.check(t)
+				})
+			}
 			for _, c := range cells {
 				t.Run(c.name, func(t *testing.T) {
 					node.takeRefused()

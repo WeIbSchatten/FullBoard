@@ -137,6 +137,35 @@ func TestCheckAPIAuth_AcceptsVerifiedClientCert(t *testing.T) {
 	}
 }
 
+// An mTLS master that also presents an admin token must manage node settings,
+// while a bogus token on the same connection must not widen the cert's scope.
+func TestCheckAPIAuth_BearerScopeWinsOverClientCert(t *testing.T) {
+	engine, _ := newAPIAuthTestEngine(t)
+	const plaintext = "mtls-admin-token"
+	if err := database.GetDB().Create(&model.ApiToken{
+		Name: "admin", Token: crypto.HashTokenSHA256(plaintext), Enabled: true, Scope: model.ApiScopeAdmin,
+	}).Error; err != nil {
+		t.Fatalf("seed token: %v", err)
+	}
+	for _, tc := range []struct {
+		name, token, want string
+	}{
+		{"valid admin token", plaintext, `{"api_authed":true,"scope":"admin"}`},
+		{"unknown token falls back to cert", "not-a-token", `{"api_authed":true,"scope":"node-sync"}`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/panel/api/server/status", nil)
+			req.TLS = &tls.ConnectionState{VerifiedChains: [][]*x509.Certificate{{&x509.Certificate{}}}}
+			req.Header.Set("Authorization", "Bearer "+tc.token)
+			w := httptest.NewRecorder()
+			engine.ServeHTTP(w, req)
+			if got := w.Body.String(); got != tc.want {
+				t.Fatalf("body = %s, want %s", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestNodeSyncScopeUsesFullPathPatterns(t *testing.T) {
 	engine, _ := newAPIAuthTestEngine(t)
 	cases := []struct {

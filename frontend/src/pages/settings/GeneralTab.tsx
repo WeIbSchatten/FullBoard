@@ -4,6 +4,7 @@ import { Input, InputNumber, Select, Switch, Tabs } from 'antd';
 import {
   ApartmentOutlined,
   BellOutlined,
+  BgColorsOutlined,
   ClockCircleOutlined,
   GlobalOutlined,
   SafetyCertificateOutlined,
@@ -18,6 +19,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { catTabLabel } from './catTabLabel';
 import { sanitizePath } from './uriPath';
 import SecretInput from './SecretInput';
+import CustomCssSettings from './CustomCssSettings';
 
 interface ApiMsg<T = unknown> {
   success?: boolean;
@@ -692,6 +694,11 @@ export default function GeneralTab({ allSetting, updateSetting }: GeneralTabProp
               </SettingListItem>
             </>
           ),
+        },
+        {
+          key: 'appearance',
+          label: catTabLabel(<BgColorsOutlined />, t('pages.settings.customCss.tab'), isMobile),
+          children: <CustomCssSettings allSetting={allSetting} updateSetting={updateSetting} />,
         },
       ]}
     />

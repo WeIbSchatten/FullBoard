@@ -30,6 +30,8 @@ type AllSetting struct {
 	RealityScanCandidates string `json:"realityScanCandidates" form:"realityScanCandidates"`
 	IpLimitAllowlist      string `json:"ipLimitAllowlist" form:"ipLimitAllowlist"`
 	PanelOutbound         string `json:"panelOutbound" form:"panelOutbound"`
+	CustomCss             string `json:"customCss" form:"customCss"`
+	CustomLoginCss        string `json:"customLoginCss" form:"customLoginCss"`
 
 	PageSize                   int    `json:"pageSize" form:"pageSize" validate:"gte=0,lte=1000"`
 	ExpireDiff                 int    `json:"expireDiff" form:"expireDiff" validate:"gte=0"`
