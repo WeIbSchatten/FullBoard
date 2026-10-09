@@ -765,6 +765,8 @@
       "sortMostTraffic": "Most traffic",
       "sortHighestRemaining": "Highest remaining",
       "sortExpiringSoonest": "Expiring soonest",
+      "sortManual": "Manual order",
+      "dragToReorder": "Drag to reorder",
       "has": "Has",
       "hasNot": "Doesn't have",
       "actions": "Actions",
@@ -943,7 +945,8 @@
         "delDepleted": "{count} depleted clients deleted",
         "delOrphans": "{count} unattached clients deleted",
         "imported": "{count} clients imported",
-        "importedMixed": "{ok} imported, {failed} skipped"
+        "importedMixed": "{ok} imported, {failed} skipped",
+        "reorder": "Client order updated"
       },
       "renewMax": "Max renewals",
       "renewMaxDesc": "How many times auto-renew may fire before the client is left to expire. 0 means no limit. Catching up several missed periods spends one renewal per period.",

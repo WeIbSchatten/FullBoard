@@ -765,6 +765,8 @@
       "sortMostTraffic": "En Çok Trafik",
       "sortHighestRemaining": "En Çok Kalan",
       "sortExpiringSoonest": "Yakında Biten",
+      "sortManual": "Manuel sıra",
+      "dragToReorder": "Yeniden sıralamak için sürükleyin",
       "has": "Var",
       "hasNot": "Yok",
       "actions": "İşlemler",
@@ -943,7 +945,8 @@
         "delDepleted": "{count} tükenmiş kullanıcı silindi",
         "delOrphans": "{count} bağsız kullanıcı silindi",
         "imported": "{count} kullanıcı içe aktarıldı",
-        "importedMixed": "{ok} içe aktarıldı, {failed} atlandı"
+        "importedMixed": "{ok} içe aktarıldı, {failed} atlandı",
+        "reorder": "Kullanıcı sırası güncellendi"
       },
       "renewMax": "En fazla yenileme",
       "renewMaxDesc": "İstemcinin süresi dolmaya bırakılmadan önce otomatik yenilemenin kaç kez çalışabileceği. 0 sınırsız demektir. Kaçırılan birden fazla dönemi telafi etmek, dönem başına bir yenileme harcar.",

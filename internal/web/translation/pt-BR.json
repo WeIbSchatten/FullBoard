@@ -765,6 +765,8 @@
       "sortMostTraffic": "Mais tráfego",
       "sortHighestRemaining": "Maior restante",
       "sortExpiringSoonest": "Expira em breve",
+      "sortManual": "Ordem manual",
+      "dragToReorder": "Arraste para reordenar",
       "has": "Tem",
       "hasNot": "Não tem",
       "actions": "Ações",
@@ -943,7 +945,8 @@
         "delDepleted": "{count} clientes esgotados excluídos",
         "delOrphans": "{count} clientes sem inbound excluídos",
         "imported": "{count} clientes importados",
-        "importedMixed": "{ok} importados, {failed} ignorados"
+        "importedMixed": "{ok} importados, {failed} ignorados",
+        "reorder": "Ordem dos clientes atualizada"
       },
       "renewMax": "Renovações máximas",
       "renewMaxDesc": "Quantas vezes a renovação automática pode ocorrer antes de o cliente ser deixado a expirar. 0 significa sem limite. Recuperar vários períodos perdidos consome uma renovação por período.",

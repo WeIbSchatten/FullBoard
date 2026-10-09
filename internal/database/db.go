@@ -200,6 +200,9 @@ func initModels() error {
 	if err := migrateClientEmailLowerIndex(); err != nil {
 		return err
 	}
+	if err := migrateClientSortOrder(); err != nil {
+		return err
+	}
 	if IsPostgres() {
 		if err := resyncPostgresSequences(db, models); err != nil {
 			log.Printf("Error resyncing postgres sequences: %v", err)
@@ -400,6 +403,27 @@ func migrateClientEmailLowerIndex() error {
 		return nil
 	}
 	return db.Exec("CREATE INDEX IF NOT EXISTS idx_clients_email_lower ON clients (LOWER(email))").Error
+}
+
+// AutoMigrate adds sort_order; seed zeros from id once so the Clients page
+// keeps the previous id-ASC order until an admin drag-reorders.
+func migrateClientSortOrder() error {
+	if !db.Migrator().HasTable(&model.ClientRecord{}) {
+		return nil
+	}
+	if !db.Migrator().HasColumn(&model.ClientRecord{}, "sort_order") {
+		if err := db.Migrator().AddColumn(&model.ClientRecord{}, "SortOrder"); err != nil {
+			return err
+		}
+	}
+	var customized int64
+	if err := db.Model(&model.ClientRecord{}).Where("sort_order <> 0").Limit(1).Count(&customized).Error; err != nil {
+		return err
+	}
+	if customized > 0 {
+		return nil
+	}
+	return db.Exec("UPDATE clients SET sort_order = id WHERE sort_order = 0").Error
 }
 
 func migrateHostVerifyPeerCertByNameColumn() error {

@@ -765,6 +765,8 @@
       "sortMostTraffic": "بیشترین ترافیک",
       "sortHighestRemaining": "بیشترین باقی‌مانده",
       "sortExpiringSoonest": "نزدیک‌ترین انقضا",
+      "sortManual": "ترتیب دستی",
+      "dragToReorder": "برای تغییر ترتیب بکشید",
       "has": "دارد",
       "hasNot": "ندارد",
       "actions": "عملیات",
@@ -943,7 +945,8 @@
         "delDepleted": "{count} کلاینت اتمام‌یافته حذف شد",
         "delOrphans": "{count} کلاینت بدون اینباند حذف شد",
         "imported": "{count} کلاینت وارد شد",
-        "importedMixed": "{ok} وارد شد، {failed} رد شد"
+        "importedMixed": "{ok} وارد شد، {failed} رد شد",
+        "reorder": "ترتیب کاربران به‌روز شد"
       },
       "renewMax": "حداکثر تعداد تمدید",
       "renewMaxDesc": "تمدید خودکار حداکثر چند بار اجرا شود پیش از آنکه کلاینت منقضی بماند. مقدار ۰ یعنی بدون محدودیت. جبران چند دورهٔ ازدست‌رفته، برای هر دوره یک تمدید مصرف می‌کند.",
