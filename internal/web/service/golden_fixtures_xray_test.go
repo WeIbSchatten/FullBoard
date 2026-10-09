@@ -344,7 +344,3 @@ func TestGoldenDNSFixturesBuildInXray(t *testing.T) {
 	}
 }
 
-func isMissingGeoAssetErr(err error) bool {
-	msg := err.Error()
-	return strings.Contains(msg, "geoip.dat") || strings.Contains(msg, "geosite.dat")
-}

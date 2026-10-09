@@ -1,5 +1,5 @@
 import { lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, PointerEvent as ReactPointerEvent, ReactNode } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -44,6 +44,7 @@ import {
   RestOutlined,
   RetweetOutlined,
   SearchOutlined,
+  HolderOutlined,
   SortAscendingOutlined,
   StopOutlined,
   TagsOutlined,
@@ -255,6 +256,12 @@ const SORT_OPTIONS: {
   labelKey: string;
 }[] = [
   {
+    value: 'sortOrder:ascend',
+    column: 'sortOrder',
+    order: 'ascend',
+    labelKey: 'pages.clients.sortManual',
+  },
+  {
     value: 'createdAt:ascend',
     column: 'createdAt',
     order: 'ascend',
@@ -347,6 +354,7 @@ export default function ClientsPage() {
     pageSize,
     settingsReady,
     create,
+    reorder,
     update,
     remove,
     bulkDelete,
@@ -622,9 +630,85 @@ export default function ClientsPage() {
   // a rename.
   const filteredClients = clients;
 
-  // Sort is server-side now; the page already arrives in the requested
-  // order, so we just hand it through.
-  const sortedClients = filteredClients;
+  // Optimistic order while a drag is in flight / until the next fetch lands.
+  const [localOrder, setLocalOrder] = useState<ClientRecord[] | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const dragRef = useRef<{
+    from: number | null;
+    to: number | null;
+    startY: number;
+    moved: boolean;
+  }>({ from: null, to: null, startY: 0, moved: false });
+  const displayListRef = useRef<ClientRecord[]>([]);
+
+  useEffect(() => {
+    setLocalOrder(null);
+  }, [clients]);
+
+  const sortedClients = localOrder ?? filteredClients;
+  displayListRef.current = sortedClients;
+  const canDragReorder = sortColumn === 'sortOrder' && sortOrder === 'ascend';
+
+  function onHandlePointerDown(idx: number, ev: ReactPointerEvent) {
+    if (!canDragReorder) return;
+    if (ev.button != null && ev.button !== 0) return;
+    ev.preventDefault();
+    try {
+      (ev.currentTarget as Element).setPointerCapture(ev.pointerId);
+    } catch {
+      /* ignore */
+    }
+    dragRef.current = { from: idx, to: idx, startY: ev.clientY, moved: false };
+    setDraggedIndex(idx);
+    setDropTargetIndex(idx);
+
+    const onMove = (e: PointerEvent) => {
+      const state = dragRef.current;
+      if (state.from == null) return;
+      if (!state.moved && Math.abs(e.clientY - state.startY) < 5) return;
+      state.moved = true;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (!el) return;
+      const target = el.closest('[data-client-drag-index]');
+      if (!target) return;
+      const newIdx = Number(target.getAttribute('data-client-drag-index'));
+      if (Number.isFinite(newIdx) && newIdx !== state.to) {
+        state.to = newIdx;
+        setDropTargetIndex(newIdx);
+      }
+    };
+
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
+      const { from, to, moved } = dragRef.current;
+      dragRef.current = { from: null, to: null, startY: 0, moved: false };
+      setDraggedIndex(null);
+      setDropTargetIndex(null);
+      if (!moved || from == null || to == null || from === to) return;
+      const list = [...displayListRef.current];
+      const [item] = list.splice(from, 1);
+      list.splice(to, 0, item);
+      setLocalOrder(list);
+      const ids = list
+        .map((c) => c.id)
+        .filter((id): id is number => typeof id === 'number' && id > 0);
+      if (ids.length !== list.length) {
+        setLocalOrder(null);
+        messageApi.error(t('pages.clients.toasts.reorder'));
+        return;
+      }
+      void reorder(ids).then((msg) => {
+        if (!msg?.success) setLocalOrder(null);
+      });
+    };
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onUp);
+  }
 
   function remainingLabel(row: ClientRecord) {
     const total = row.totalGB || 0;
@@ -1057,6 +1141,24 @@ export default function ClientsPage() {
 
   const columns = useMemo<ColumnsType<ClientRecord>>(
     () => [
+      ...(canDragReorder
+        ? [
+            {
+              title: '',
+              key: 'drag',
+              width: 36,
+              align: 'center' as const,
+              render: (_v: unknown, _r: ClientRecord, index: number) => (
+                <HolderOutlined
+                  className="client-drag-handle"
+                  title={t('pages.clients.dragToReorder')}
+                  aria-hidden="true"
+                  onPointerDown={(ev: ReactPointerEvent) => onHandlePointerDown(index, ev)}
+                />
+              ),
+            },
+          ]
+        : []),
       {
         title: t('pages.clients.actions'),
         key: 'actions',
@@ -1233,6 +1335,7 @@ export default function ClientsPage() {
       datepicker,
       trafficDiff,
       clientSpeed,
+      canDragReorder,
     ],
   );
 
@@ -1706,6 +1809,23 @@ export default function ClientsPage() {
                           size="small"
                           scroll={{ x: 1200 }}
                           onChange={onTableChange}
+                          onRow={(_record, index) => {
+                            const classes: string[] = [];
+                            if (draggedIndex === index) classes.push('client-row-dragging');
+                            if (
+                              dropTargetIndex === index &&
+                              draggedIndex != null &&
+                              draggedIndex !== index
+                            ) {
+                              classes.push(
+                                index > draggedIndex ? 'client-drop-after' : 'client-drop-before',
+                              );
+                            }
+                            return {
+                              className: classes.join(' '),
+                              'data-client-drag-index': index,
+                            } as HTMLAttributes<HTMLElement>;
+                          }}
                           locale={{
                             emptyText: (
                               <div className="clients-empty">
@@ -1756,14 +1876,35 @@ export default function ClientsPage() {
                                 />
                               </div>
                             )}
-                            {filteredClients.map((row) => {
+                            {sortedClients.map((row, index) => {
                               const bucket = clientBucket(row);
+                              const dragClasses = [
+                                draggedIndex === index ? 'client-row-dragging' : '',
+                                dropTargetIndex === index &&
+                                draggedIndex != null &&
+                                draggedIndex !== index
+                                  ? index > draggedIndex
+                                    ? 'client-drop-after'
+                                    : 'client-drop-before'
+                                  : '',
+                              ]
+                                .filter(Boolean)
+                                .join(' ');
                               return (
                                 <div
                                   key={row.email}
-                                  className={`client-card${selectedRowKeys.includes(row.email) ? ' is-selected' : ''}`}
+                                  data-client-drag-index={index}
+                                  className={`client-card${selectedRowKeys.includes(row.email) ? ' is-selected' : ''}${dragClasses ? ` ${dragClasses}` : ''}`}
                                 >
                                   <div className="card-head">
+                                    {canDragReorder && (
+                                      <HolderOutlined
+                                        className="client-drag-handle"
+                                        title={t('pages.clients.dragToReorder')}
+                                        aria-hidden="true"
+                                        onPointerDown={(ev) => onHandlePointerDown(index, ev)}
+                                      />
+                                    )}
                                     <Checkbox
                                       checked={selectedRowKeys.includes(row.email)}
                                       onChange={(e) => toggleSelect(row.email, e.target.checked)}

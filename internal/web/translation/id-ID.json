@@ -720,6 +720,7 @@
       "tabBasics": "Dasar",
       "tabCredentials": "Kredensial",
       "tabLinks": "Tautan",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "Konfigurasi WireGuard",
       "config": "Konfigurasi",
       "linksHint": "Tambahkan tautan berbagi pihak ketiga dan URL langganan jarak jauh untuk disertakan dalam langganan klien ini.",
@@ -764,6 +765,8 @@
       "sortMostTraffic": "Trafik terbanyak",
       "sortHighestRemaining": "Tersisa terbanyak",
       "sortExpiringSoonest": "Segera kedaluwarsa",
+      "sortManual": "Urutan manual",
+      "dragToReorder": "Seret untuk mengurutkan ulang",
       "has": "Memiliki",
       "hasNot": "Tidak memiliki",
       "actions": "Aksi",
@@ -942,7 +945,8 @@
         "delDepleted": "{count} klien habis dihapus",
         "delOrphans": "{count} klien tanpa inbound dihapus",
         "imported": "{count} klien diimpor",
-        "importedMixed": "{ok} diimpor, {failed} dilewati"
+        "importedMixed": "{ok} diimpor, {failed} dilewati",
+        "reorder": "Urutan klien diperbarui"
       },
       "renewMax": "Maksimum perpanjangan",
       "renewMaxDesc": "Berapa kali perpanjangan otomatis boleh berjalan sebelum klien dibiarkan kedaluwarsa. 0 berarti tanpa batas. Mengejar beberapa periode yang terlewat menghabiskan satu perpanjangan per periode.",
@@ -1132,6 +1136,7 @@
       "pinFetchFailed": "Tidak dapat mengambil sertifikat",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Buka kontrol penuh panel jarak jauh dengan Kelola panel pada baris node — pengaturan, Xray, inbound langsung, mulai ulang, dan masuk.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2562,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Rahasia",
+        "link": "Tautan",
+        "showSecret": "Tampilkan rahasia",
+        "hideSecret": "Sembunyikan rahasia"
+      },
+      "egress": {
+        "button": "Periksa IP keluar",
+        "hint": "Menguji outbound yang ditunjuk aturan route-via profil ini dan melaporkan IP yang dilihat Cloudflare.",
+        "noRoute": "Profil ini tidak punya aturan route-via — lalu lintas memakai outbound default.",
+        "failed": "Pemeriksaan keluar gagal: {error}",
+        "outboundMissing": "Outbound \"{tag}\" tidak ada di templat Xray",
+        "noIp": "Outbound \"{tag}\" terjangkau tetapi IP keluar tidak dilaporkan",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

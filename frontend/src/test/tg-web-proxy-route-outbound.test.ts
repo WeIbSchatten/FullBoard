@@ -7,7 +7,9 @@ import {
   loopbackBackend,
   parseBackendHostPort,
   pickLoopbackListenPort,
+  resolveTproxyBackendOutboundTag,
   sanitizeProfileTagSlug,
+  tproxyBackendInboundTag,
 } from '@/lib/tgWebProxyRouteOutbound';
 import type { XraySettingsValue } from '@/hooks/useXraySetting';
 
@@ -74,5 +76,31 @@ describe('helpers', () => {
   it('sanitizes tags and formats loopback backend', () => {
     expect(sanitizeProfileTagSlug('My Profile!')).toBe('my-profile');
     expect(loopbackBackend(32001)).toBe('127.0.0.1:32001');
+    expect(tproxyBackendInboundTag('Alpha Beta')).toBe('tproxy-backend-alpha-beta');
+  });
+});
+
+describe('resolveTproxyBackendOutboundTag', () => {
+  it('returns the outbound tagged by the profile tunnel rule', () => {
+    const template: XraySettingsValue = {
+      routing: {
+        rules: [
+          {
+            type: 'field',
+            inboundTag: ['tproxy-backend-alpha-beta'],
+            outboundTag: 'proxy-de',
+          },
+          { type: 'field', outboundTag: 'direct', network: 'udp' },
+        ],
+      },
+    };
+    expect(resolveTproxyBackendOutboundTag(template, 'Alpha Beta')).toBe('proxy-de');
+  });
+
+  it('returns null when no route-via rule exists', () => {
+    const template: XraySettingsValue = {
+      routing: { rules: [{ type: 'field', outboundTag: 'direct' }] },
+    };
+    expect(resolveTproxyBackendOutboundTag(template, 'default')).toBeNull();
   });
 });

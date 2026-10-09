@@ -720,6 +720,7 @@
       "tabBasics": "Temel",
       "tabCredentials": "Kimlik Bilgileri",
       "tabLinks": "Bağlantılar",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "WireGuard yapılandırması",
       "config": "Yapılandırma",
       "linksHint": "Bu istemcinin aboneliğine dahil etmek için üçüncü taraf paylaşım bağlantıları ve uzak abonelik URL'leri ekleyin.",
@@ -764,6 +765,8 @@
       "sortMostTraffic": "En Çok Trafik",
       "sortHighestRemaining": "En Çok Kalan",
       "sortExpiringSoonest": "Yakında Biten",
+      "sortManual": "Manuel sıra",
+      "dragToReorder": "Yeniden sıralamak için sürükleyin",
       "has": "Var",
       "hasNot": "Yok",
       "actions": "İşlemler",
@@ -942,7 +945,8 @@
         "delDepleted": "{count} tükenmiş kullanıcı silindi",
         "delOrphans": "{count} bağsız kullanıcı silindi",
         "imported": "{count} kullanıcı içe aktarıldı",
-        "importedMixed": "{ok} içe aktarıldı, {failed} atlandı"
+        "importedMixed": "{ok} içe aktarıldı, {failed} atlandı",
+        "reorder": "Kullanıcı sırası güncellendi"
       },
       "renewMax": "En fazla yenileme",
       "renewMaxDesc": "İstemcinin süresi dolmaya bırakılmadan önce otomatik yenilemenin kaç kez çalışabileceği. 0 sınırsız demektir. Kaçırılan birden fazla dönemi telafi etmek, dönem başına bir yenileme harcar.",
@@ -1132,6 +1136,7 @@
       "pinFetchFailed": "Sertifika alınamadı",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Düğüm satırındaki Panel yönet ile uzak paneli tam yönetin — ayarlar, Xray, canlı inbound'lar, yeniden başlatma ve giriş.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2562,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Gizli anahtar",
+        "link": "Bağlantı",
+        "showSecret": "Gizli anahtarı göster",
+        "hideSecret": "Gizli anahtarı gizle"
+      },
+      "egress": {
+        "button": "Çıkış IP'sini kontrol et",
+        "hint": "Bu profilin route-via kuralının işaret ettiği outbound'ı test eder ve Cloudflare'in gördüğü IP'yi gösterir.",
+        "noRoute": "Bu profil için route-via kuralı yok — trafik varsayılan outbound'ı kullanır.",
+        "failed": "Çıkış kontrolü başarısız: {error}",
+        "outboundMissing": "\"{tag}\" outbound'ı Xray şablonunda yok",
+        "noIp": "\"{tag}\" outbound'ı erişilebilir ancak çıkış IP'si bildirilmedi",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

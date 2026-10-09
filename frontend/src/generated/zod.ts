@@ -512,6 +512,7 @@ export const ClientRecordSchema = z.object({
   reverse: z.unknown(),
   secret: z.string(),
   security: z.string(),
+  sortOrder: z.number().int(),
   subId: z.string(),
   tgId: z.number().int(),
   totalGB: z.number().int(),
@@ -557,6 +558,7 @@ export const ClientSlimSchema = z.object({
   enable: z.boolean(),
   expiryTime: z.number().int(),
   group: z.string().optional(),
+  id: z.number().int(),
   inboundIds: z.array(z.number().int()),
   limitHwid: z.number().int(),
   limitIp: z.number().int(),
@@ -564,6 +566,7 @@ export const ClientSlimSchema = z.object({
   resetDay: z.number().int(),
   resetMax: z.number().int(),
   resetWeekday: z.number().int(),
+  sortOrder: z.number().int(),
   subId: z.string(),
   totalGB: z.number().int(),
   traffic: z.lazy(() => ClientTrafficSchema).nullable().optional(),
@@ -1325,7 +1328,9 @@ export const TgWebProxyBindingSchema = z.object({
   dedicated: z.boolean(),
   effectiveProfile: z.string(),
   email: z.string(),
+  link: z.string().optional(),
   profileName: z.string(),
+  secret: z.string().optional(),
 });
 export type TgWebProxyBinding = z.infer<typeof TgWebProxyBindingSchema>;
 

@@ -1057,9 +1057,10 @@ export const sections: readonly Section[] = [
             name: 'sort',
             in: 'query',
             type: 'string',
-            desc: 'Sort key. An omitted or unknown value falls back to client ID ascending.',
+            desc: 'Sort key. An omitted or unknown value falls back to sort_order ascending (manual drag order), then client ID.',
             optional: true,
             enum: [
+              'sortOrder',
               'enable',
               'email',
               'inboundIds',
@@ -1162,6 +1163,22 @@ export const sections: readonly Section[] = [
         ],
         response:
           '{\n  "success": true,\n  "obj": [\n    {\n      "client": { "id": 1, "email": "alice@example.com", ... },\n      "inboundIds": [3, 5],\n      "externalLinks": [],\n      "usedTraffic": 1048576\n    }\n  ]\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/clients/reorder',
+        summary:
+          'Persist a drag-and-drop order for clients. Body is JSON { ids: number[] } — the listed client ids in the desired top-to-bottom order. Existing sort_order values of that set are reused (sorted), so reordering one page does not collide with clients outside it. List with sort=sortOrder to see the result.',
+        params: [
+          {
+            name: 'ids',
+            in: 'body (json)',
+            type: 'integer[]',
+            desc: 'Client record ids in the new order (top first).',
+          },
+        ],
+        body: '{\n  "ids": [3, 1, 2]\n}',
+        response: '{\n  "success": true\n}',
       },
       {
         method: 'POST',
