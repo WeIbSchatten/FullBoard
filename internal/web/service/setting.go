@@ -203,6 +203,8 @@ var defaultValueMap = map[string]string{
 	"restartXrayOnClientDisable":  "true",
 	"xrayOutboundTestUrl":         "https://www.google.com/generate_204",
 	"panelOutbound":               "",
+	"customCss":                   "",
+	"customLoginCss":              "",
 	"devChannelEnable":            "false",
 
 	// LDAP defaults
@@ -1663,6 +1665,9 @@ func (s *SettingService) UpdateAllSetting(allSetting *entity.AllSetting, clears 
 		return err
 	}
 	if err := validateSubJsonDnsSetting(allSetting); err != nil {
+		return err
+	}
+	if err := validateCustomCssSettings(allSetting); err != nil {
 		return err
 	}
 	if err := allSetting.CheckValid(); err != nil {

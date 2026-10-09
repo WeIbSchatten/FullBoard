@@ -28,6 +28,12 @@
     "schemas": {
       "AllSetting": {
         "properties": {
+          "customCss": {
+            "type": "string"
+          },
+          "customLoginCss": {
+            "type": "string"
+          },
           "datepicker": {
             "type": "string"
           },
@@ -598,6 +604,8 @@
           }
         },
         "required": [
+          "customCss",
+          "customLoginCss",
           "datepicker",
           "discordAdminIds",
           "discordBotBackup",
@@ -780,6 +788,12 @@
       },
       "AllSettingView": {
         "properties": {
+          "customCss": {
+            "type": "string"
+          },
+          "customLoginCss": {
+            "type": "string"
+          },
           "datepicker": {
             "type": "string"
           },
@@ -1374,6 +1388,8 @@
           }
         },
         "required": [
+          "customCss",
+          "customLoginCss",
           "datepicker",
           "discordAdminIds",
           "discordBotBackup",
@@ -11623,6 +11639,225 @@
         ],
         "summary": "Validate the stored master mTLS client credential and invalidate cached transports. Each transport closes its old idle pool and rebuilds with the rotated certificate before its next request.",
         "operationId": "post_panel_api_nodes_mtls_reloadClient",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/status": {
+      "get": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Read the remote FullBoard panel's live server status (CPU, memory, disk, Xray state and version), proxied verbatim from the node.",
+        "operationId": "get_panel_api_nodes_remote_id_status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/settings": {
+      "get": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Read the remote FullBoard panel's settings in their redacted view (secrets blank, has* flags set). Requires an admin-scope API token on the node.",
+        "operationId": "get_panel_api_nodes_remote_id_settings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Save a full settings object on the remote FullBoard panel. Send the object read from GET first; blank secrets keep their stored value. Requires an admin-scope API token on the node.",
+        "operationId": "post_panel_api_nodes_remote_id_settings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "webPort": 2053,
+                "pageSize": 50,
+                "customCss": ".ant-layout { background: #0b1020; }",
+                "...": "every other field from GET /remote/:id/settings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/restartXray": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Restart the Xray core on the remote FullBoard panel.",
+        "operationId": "post_panel_api_nodes_remote_id_restartXray",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/restartPanel": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Restart the remote FullBoard panel process. Requires an admin-scope API token on the node.",
+        "operationId": "post_panel_api_nodes_remote_id_restartPanel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
