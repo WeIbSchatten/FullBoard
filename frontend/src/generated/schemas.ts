@@ -4304,6 +4304,662 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "RelayAdminProbe": {
+    "properties": {
+      "address": {
+        "example": "127.0.0.1:8081",
+        "type": "string"
+      },
+      "checkedAt": {
+        "example": 1760000000,
+        "format": "int64",
+        "type": "integer"
+      },
+      "error": {
+        "type": "string"
+      },
+      "healthy": {
+        "example": true,
+        "type": "boolean"
+      },
+      "metrics": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "type": "object"
+      },
+      "reachable": {
+        "example": true,
+        "type": "boolean"
+      },
+      "ready": {
+        "example": true,
+        "type": "boolean"
+      },
+      "readyDetail": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "address",
+      "checkedAt",
+      "error",
+      "healthy",
+      "metrics",
+      "reachable",
+      "ready",
+      "readyDetail"
+    ],
+    "type": "object"
+  },
+  "RelayApplyResult": {
+    "properties": {
+      "restartError": {
+        "type": "string"
+      },
+      "restarted": {
+        "example": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "restartError",
+      "restarted"
+    ],
+    "type": "object"
+  },
+  "RelayConfig": {
+    "description": "RelayConfig is the on-disk config.json. Every known key is always written so\na merge over the previous file can clear a value (e.g. switch public_dir off).",
+    "properties": {
+      "admin_listen": {
+        "example": "127.0.0.1:8081",
+        "type": "string"
+      },
+      "base_path": {
+        "type": "string"
+      },
+      "enable_pprof": {
+        "example": false,
+        "type": "boolean"
+      },
+      "limits": {
+        "$ref": "#/components/schemas/RelayLimits"
+      },
+      "listen": {
+        "example": "127.0.0.1:8080",
+        "type": "string"
+      },
+      "profiles_file": {
+        "example": "/run/credentials/tproxy-server.service/profiles.json",
+        "type": "string"
+      },
+      "public_dir": {
+        "type": "string"
+      },
+      "public_hostname": {
+        "example": "proxy.example.com",
+        "type": "string"
+      },
+      "public_upstream": {
+        "example": "http://127.0.0.1:3000",
+        "type": "string"
+      },
+      "static_routes": {
+        "example": "exact",
+        "type": "string"
+      },
+      "timeouts": {
+        "$ref": "#/components/schemas/RelayTimeouts"
+      },
+      "token_key_file": {
+        "example": "/etc/tproxy-server/token.key",
+        "type": "string"
+      }
+    },
+    "required": [
+      "admin_listen",
+      "base_path",
+      "enable_pprof",
+      "limits",
+      "listen",
+      "profiles_file",
+      "public_dir",
+      "public_hostname",
+      "public_upstream",
+      "static_routes",
+      "timeouts",
+      "token_key_file"
+    ],
+    "type": "object"
+  },
+  "RelayInstallRequest": {
+    "properties": {
+      "basePath": {
+        "example": "none",
+        "type": "string"
+      },
+      "email": {
+        "example": "admin@example.com",
+        "type": "string"
+      },
+      "hostname": {
+        "example": "proxy.example.com",
+        "type": "string"
+      },
+      "mtproxyWorkers": {
+        "example": 1,
+        "type": "integer"
+      },
+      "secret": {
+        "description": "Secret is written to a 0400 file and fed to the installer on stdin, so it\nnever appears in a process list or unit environment.",
+        "example": "000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      },
+      "siteDir": {
+        "type": "string"
+      },
+      "siteUpstream": {
+        "example": "http://127.0.0.1:3000",
+        "type": "string"
+      }
+    },
+    "required": [
+      "basePath",
+      "email",
+      "hostname",
+      "mtproxyWorkers",
+      "secret",
+      "siteDir",
+      "siteUpstream"
+    ],
+    "type": "object"
+  },
+  "RelayJobStatus": {
+    "properties": {
+      "exitCode": {
+        "nullable": true,
+        "type": "integer"
+      },
+      "kind": {
+        "example": "install",
+        "type": "string"
+      },
+      "log": {
+        "type": "string"
+      },
+      "startedAt": {
+        "example": 1760000000,
+        "format": "int64",
+        "type": "integer"
+      },
+      "state": {
+        "example": "running",
+        "type": "string"
+      },
+      "unit": {
+        "example": "fullboard-tproxy-install-1760000000",
+        "type": "string"
+      }
+    },
+    "required": [
+      "kind",
+      "log",
+      "startedAt",
+      "state",
+      "unit"
+    ],
+    "type": "object"
+  },
+  "RelayLimits": {
+    "properties": {
+      "carrier_batch_bytes": {
+        "example": 2097152,
+        "type": "integer"
+      },
+      "max_backend_dials_in_flight": {
+        "example": 256,
+        "type": "integer"
+      },
+      "max_body_bytes": {
+        "example": 2097152,
+        "type": "integer"
+      },
+      "max_bootstraps_global": {
+        "example": 512,
+        "type": "integer"
+      },
+      "max_bootstraps_per_ip": {
+        "example": 0,
+        "type": "integer"
+      },
+      "max_closed_stream_ids": {
+        "example": 4096,
+        "type": "integer"
+      },
+      "max_frame_payload": {
+        "example": 1048576,
+        "type": "integer"
+      },
+      "max_header_bytes": {
+        "example": 16384,
+        "type": "integer"
+      },
+      "max_pending_global": {
+        "example": 536870912,
+        "type": "integer"
+      },
+      "max_pending_items_global": {
+        "example": 262144,
+        "type": "integer"
+      },
+      "max_pending_items_per_session": {
+        "example": 16384,
+        "type": "integer"
+      },
+      "max_pending_per_session": {
+        "example": 33554432,
+        "type": "integer"
+      },
+      "max_profiles": {
+        "example": 32,
+        "type": "integer"
+      },
+      "max_sessions_global": {
+        "example": 128,
+        "type": "integer"
+      },
+      "max_sessions_per_ip": {
+        "example": 0,
+        "type": "integer"
+      },
+      "max_streams_global": {
+        "example": 4096,
+        "type": "integer"
+      },
+      "max_streams_per_session": {
+        "example": 128,
+        "type": "integer"
+      },
+      "new_bootstraps_burst": {
+        "example": 256,
+        "type": "integer"
+      },
+      "new_bootstraps_per_minute": {
+        "example": 1200,
+        "type": "integer"
+      },
+      "new_sessions_burst": {
+        "example": 128,
+        "type": "integer"
+      },
+      "new_sessions_per_minute": {
+        "example": 600,
+        "type": "integer"
+      },
+      "new_streams_burst": {
+        "example": 512,
+        "type": "integer"
+      },
+      "new_streams_per_minute": {
+        "example": 6000,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "carrier_batch_bytes",
+      "max_backend_dials_in_flight",
+      "max_body_bytes",
+      "max_bootstraps_global",
+      "max_bootstraps_per_ip",
+      "max_closed_stream_ids",
+      "max_frame_payload",
+      "max_header_bytes",
+      "max_pending_global",
+      "max_pending_items_global",
+      "max_pending_items_per_session",
+      "max_pending_per_session",
+      "max_profiles",
+      "max_sessions_global",
+      "max_sessions_per_ip",
+      "max_streams_global",
+      "max_streams_per_session",
+      "new_bootstraps_burst",
+      "new_bootstraps_per_minute",
+      "new_sessions_burst",
+      "new_sessions_per_minute",
+      "new_streams_burst",
+      "new_streams_per_minute"
+    ],
+    "type": "object"
+  },
+  "RelayProfile": {
+    "properties": {
+      "backend": {
+        "example": "127.0.0.1:2398",
+        "type": "string"
+      },
+      "carrier_mode": {
+        "example": "https",
+        "type": "string"
+      },
+      "limits": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RelayProfileLimits"
+          }
+        ],
+        "nullable": true
+      },
+      "name": {
+        "example": "default",
+        "type": "string"
+      },
+      "secret": {
+        "example": "000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      }
+    },
+    "required": [
+      "backend",
+      "name",
+      "secret"
+    ],
+    "type": "object"
+  },
+  "RelayProfileLimits": {
+    "description": "RelayProfileLimits may only lower the global ceilings; zero inherits the global value.",
+    "properties": {
+      "max_backend_dials_in_flight": {
+        "example": 64,
+        "type": "integer"
+      },
+      "max_pending_per_session": {
+        "example": 8388608,
+        "type": "integer"
+      },
+      "max_sessions": {
+        "example": 32,
+        "type": "integer"
+      },
+      "max_streams": {
+        "example": 512,
+        "type": "integer"
+      },
+      "max_streams_per_session": {
+        "example": 32,
+        "type": "integer"
+      },
+      "new_sessions_burst": {
+        "example": 32,
+        "type": "integer"
+      },
+      "new_sessions_per_minute": {
+        "example": 120,
+        "type": "integer"
+      },
+      "new_streams_burst": {
+        "example": 128,
+        "type": "integer"
+      },
+      "new_streams_per_minute": {
+        "example": 1200,
+        "type": "integer"
+      }
+    },
+    "type": "object"
+  },
+  "RelayShareInfo": {
+    "properties": {
+      "carrierMode": {
+        "example": "https",
+        "type": "string"
+      },
+      "deepLink": {
+        "example": "tg://webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      },
+      "link": {
+        "example": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      },
+      "linkSecret": {
+        "description": "LinkSecret is the secret form embedded in links (marked under a base path).",
+        "example": "000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      },
+      "profile": {
+        "example": "default",
+        "type": "string"
+      },
+      "secret": {
+        "description": "Secret is the value typed by hand; under a base path it stays plain hex.",
+        "example": "000102030405060708090a0b0c0d0e0f",
+        "type": "string"
+      },
+      "server": {
+        "description": "Server is what a user types into the client: hostname[/base_path].",
+        "example": "proxy.example.com",
+        "type": "string"
+      }
+    },
+    "required": [
+      "carrierMode",
+      "deepLink",
+      "link",
+      "linkSecret",
+      "profile",
+      "secret",
+      "server"
+    ],
+    "type": "object"
+  },
+  "RelaySnapshot": {
+    "description": "RelaySnapshot is the current on-disk state; Exists flags let the UI start a fresh\nhost from NewRelayConfig instead of failing.",
+    "properties": {
+      "config": {
+        "$ref": "#/components/schemas/RelayConfig"
+      },
+      "configExists": {
+        "example": true,
+        "type": "boolean"
+      },
+      "profiles": {
+        "items": {
+          "$ref": "#/components/schemas/RelayProfile"
+        },
+        "type": "array"
+      },
+      "profilesExists": {
+        "example": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "config",
+      "configExists",
+      "profiles",
+      "profilesExists"
+    ],
+    "type": "object"
+  },
+  "RelayStatus": {
+    "properties": {
+      "admin": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RelayAdminProbe"
+          }
+        ],
+        "nullable": true
+      },
+      "basePath": {
+        "type": "string"
+      },
+      "binaryInstalled": {
+        "example": true,
+        "type": "boolean"
+      },
+      "binaryPath": {
+        "example": "/usr/local/bin/tproxy-server",
+        "type": "string"
+      },
+      "configError": {
+        "type": "string"
+      },
+      "configExists": {
+        "example": true,
+        "type": "boolean"
+      },
+      "configPath": {
+        "example": "/etc/tproxy-server/config.json",
+        "type": "string"
+      },
+      "hostname": {
+        "example": "proxy.example.com",
+        "type": "string"
+      },
+      "job": {
+        "$ref": "#/components/schemas/RelayJobStatus"
+      },
+      "platform": {
+        "example": "linux/amd64",
+        "type": "string"
+      },
+      "profileCount": {
+        "example": 1,
+        "type": "integer"
+      },
+      "profilesExists": {
+        "example": true,
+        "type": "boolean"
+      },
+      "profilesMode": {
+        "example": "0400",
+        "type": "string"
+      },
+      "profilesModeOk": {
+        "example": true,
+        "type": "boolean"
+      },
+      "profilesPath": {
+        "example": "/etc/tproxy-server/profiles.json",
+        "type": "string"
+      },
+      "supported": {
+        "example": true,
+        "type": "boolean"
+      },
+      "units": {
+        "items": {
+          "$ref": "#/components/schemas/RelayUnitStatus"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "basePath",
+      "binaryInstalled",
+      "binaryPath",
+      "configError",
+      "configExists",
+      "configPath",
+      "hostname",
+      "job",
+      "platform",
+      "profileCount",
+      "profilesExists",
+      "profilesMode",
+      "profilesModeOk",
+      "profilesPath",
+      "supported",
+      "units"
+    ],
+    "type": "object"
+  },
+  "RelayTimeouts": {
+    "properties": {
+      "backend_dial": {
+        "example": "5s",
+        "type": "string"
+      },
+      "bootstrap_lifetime": {
+        "example": "2m",
+        "type": "string"
+      },
+      "idle": {
+        "example": "75s",
+        "type": "string"
+      },
+      "long_poll": {
+        "example": "25s",
+        "type": "string"
+      },
+      "read_header": {
+        "example": "10s",
+        "type": "string"
+      },
+      "reconnect_grace": {
+        "example": "2m",
+        "type": "string"
+      },
+      "shutdown": {
+        "example": "15s",
+        "type": "string"
+      }
+    },
+    "required": [
+      "backend_dial",
+      "bootstrap_lifetime",
+      "idle",
+      "long_poll",
+      "read_header",
+      "reconnect_grace",
+      "shutdown"
+    ],
+    "type": "object"
+  },
+  "RelayUnitStatus": {
+    "properties": {
+      "activeState": {
+        "example": "active",
+        "type": "string"
+      },
+      "controllable": {
+        "example": true,
+        "type": "boolean"
+      },
+      "mainPid": {
+        "example": 1234,
+        "type": "integer"
+      },
+      "since": {
+        "example": "Fri 2026-10-09 18:00:00 UTC",
+        "type": "string"
+      },
+      "subState": {
+        "example": "running",
+        "type": "string"
+      },
+      "unit": {
+        "example": "tproxy-server",
+        "type": "string"
+      },
+      "unitFileState": {
+        "example": "enabled",
+        "type": "string"
+      }
+    },
+    "required": [
+      "activeState",
+      "controllable",
+      "mainPid",
+      "since",
+      "subState",
+      "unit",
+      "unitFileState"
+    ],
+    "type": "object"
+  },
   "ServerSettings": {
     "description": "ServerSettings is the \"server\" block of an AmneziaWG inbound's Settings\nJSON: the interface-level configuration shared by every client/peer. The\nlisten port is deliberately not duplicated here — it lives on the inbound\nrow itself (Inbound.Port), like every other protocol.",
     "properties": {
@@ -4537,6 +5193,25 @@ export const SCHEMAS: Record<string, unknown> = {
       "sortOrder",
       "strategy",
       "updatedAt"
+    ],
+    "type": "object"
+  },
+  "TgWebProxyConfigRequest": {
+    "properties": {
+      "config": {
+        "$ref": "#/components/schemas/RelayConfig"
+      },
+      "initialProfile": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RelayProfile"
+          }
+        ],
+        "nullable": true
+      }
+    },
+    "required": [
+      "config"
     ],
     "type": "object"
   },

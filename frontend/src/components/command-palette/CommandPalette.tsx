@@ -28,6 +28,7 @@ import {
   ReloadOutlined,
   SafetyOutlined,
   SearchOutlined,
+  SendOutlined,
   SettingOutlined,
   SunOutlined,
   SwapOutlined,
@@ -388,6 +389,12 @@ export default function CommandPalette() {
         title: t('menu.hosts'),
         keywords: ['hosts', 'sni', 'domains'],
         icon: <GlobalOutlined />,
+      },
+      {
+        path: '/tg-web-proxy',
+        title: t('menu.tgWebProxy'),
+        keywords: ['telegram', 'web proxy', 'tproxy', 'mtproxy', 'webview'],
+        icon: <SendOutlined />,
       },
       {
         path: '/outbound',
