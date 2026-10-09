@@ -42,6 +42,13 @@ func TestEnsureTgWebProxyManagedBackendCreatesAndReuses(t *testing.T) {
 	if !strings.Contains(ib.Settings, secret) {
 		t.Fatalf("settings missing secret: %s", ib.Settings)
 	}
+	var rec model.ClientRecord
+	if err := database.GetDB().Where("email = ?", email).First(&rec).Error; err != nil {
+		t.Fatalf("reload client: %v", err)
+	}
+	if rec.SubID != "subalice" {
+		t.Fatalf("SubID cleared by managed sync: got %q, want subalice", rec.SubID)
+	}
 
 	again, err := ensureTgWebProxyManagedBackend(inboundSvc, email, secret)
 	if err != nil {

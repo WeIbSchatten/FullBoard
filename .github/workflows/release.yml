@@ -15,6 +15,7 @@ on:
       - "go.sum"
       - "**.sh"
       - "frontend/**"
+      - "internal/config/version"
       - "fullboard.service.debian"
       - "fullboard.service.arch"
       - "fullboard.service.rhel"
@@ -40,6 +41,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      # Tagged releases embed internal/config/version into the UI; a mismatch
+      # ships binaries that still show the previous number in the sidebar.
+      - name: Check embedded version matches tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          file="$(tr -d '[:space:]' < internal/config/version)"
+          if [ "$file" != "$tag" ]; then
+            echo "internal/config/version is '$file' but tag is 'v$tag' — bump the file before tagging" >&2
+            exit 1
+          fi
 
       - name: Setup Go
         uses: actions/setup-go@v7
