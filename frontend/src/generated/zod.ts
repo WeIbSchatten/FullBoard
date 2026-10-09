@@ -845,6 +845,12 @@ export const LogEntrySchema = z.object({
 });
 export type LogEntry = z.infer<typeof LogEntrySchema>;
 
+export const LoginTicketResponseSchema = z.object({
+  expiresIn: z.number().int(),
+  ticket: z.string(),
+});
+export type LoginTicketResponse = z.infer<typeof LoginTicketResponseSchema>;
+
 export const MLDSA65ResponseSchema = z.object({
   seed: z.string(),
   verify: z.string(),
@@ -1022,6 +1028,22 @@ export const ProbeResultUISchema = z.object({
   xrayVersion: z.string(),
 });
 export type ProbeResultUI = z.infer<typeof ProbeResultUISchema>;
+
+export const PublicSiteFileSchema = z.object({
+  name: z.string(),
+  size: z.number().int(),
+});
+export type PublicSiteFile = z.infer<typeof PublicSiteFileSchema>;
+
+export const PublicSiteSnapshotSchema = z.object({
+  active: z.boolean(),
+  configPublicDir: z.string(),
+  defaultHtml: z.string(),
+  dir: z.string(),
+  files: z.array(z.lazy(() => PublicSiteFileSchema)),
+  indexHtml: z.string(),
+});
+export type PublicSiteSnapshot = z.infer<typeof PublicSiteSnapshotSchema>;
 
 export const RealityScanResultSchema = z.object({
   alpn: z.string(),
@@ -1214,6 +1236,22 @@ export const RelayUnitStatusSchema = z.object({
 });
 export type RelayUnitStatus = z.infer<typeof RelayUnitStatusSchema>;
 
+export const RemoteLiveInboundSchema = z.object({
+  adopted: z.boolean(),
+  id: z.number().int(),
+  listen: z.string(),
+  port: z.number().int(),
+  protocol: z.string(),
+  remark: z.string(),
+  tag: z.string(),
+});
+export type RemoteLiveInbound = z.infer<typeof RemoteLiveInboundSchema>;
+
+export const RemoteLoginURLSchema = z.object({
+  url: z.string(),
+});
+export type RemoteLoginURL = z.infer<typeof RemoteLoginURLSchema>;
+
 export const ServerSettingsSchema = z.object({
   contentPaddingAddition: z.string().optional(),
   disableCookies: z.boolean(),
@@ -1275,11 +1313,38 @@ export const SubBalancerSchema = z.object({
 });
 export type SubBalancer = z.infer<typeof SubBalancerSchema>;
 
+export const TgWebProxyBindRequestSchema = z.object({
+  dedicated: z.boolean(),
+  email: z.string(),
+  profileName: z.string(),
+});
+export type TgWebProxyBindRequest = z.infer<typeof TgWebProxyBindRequestSchema>;
+
+export const TgWebProxyBindingSchema = z.object({
+  clientId: z.number().int(),
+  dedicated: z.boolean(),
+  effectiveProfile: z.string(),
+  email: z.string(),
+  profileName: z.string(),
+});
+export type TgWebProxyBinding = z.infer<typeof TgWebProxyBindingSchema>;
+
+export const TgWebProxyBindingListSchema = z.object({
+  bindings: z.array(z.lazy(() => TgWebProxyBindingSchema)),
+  syncError: z.string(),
+});
+export type TgWebProxyBindingList = z.infer<typeof TgWebProxyBindingListSchema>;
+
 export const TgWebProxyConfigRequestSchema = z.object({
   config: z.lazy(() => RelayConfigSchema),
   initialProfile: z.lazy(() => RelayProfileSchema).nullable().optional(),
 });
 export type TgWebProxyConfigRequest = z.infer<typeof TgWebProxyConfigRequestSchema>;
+
+export const TgWebProxyUnbindRequestSchema = z.object({
+  email: z.string(),
+});
+export type TgWebProxyUnbindRequest = z.infer<typeof TgWebProxyUnbindRequestSchema>;
 
 export const TrafficSchema = z.object({
   Down: z.number().int(),

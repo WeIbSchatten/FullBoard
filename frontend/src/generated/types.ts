@@ -794,6 +794,11 @@ export interface LogEntry {
   ToAddress: string;
 }
 
+export interface LoginTicketResponse {
+  expiresIn: number;
+  ticket: string;
+}
+
 export interface MLDSA65Response {
   seed: string;
   verify: string;
@@ -959,6 +964,20 @@ export interface ProbeResultUI {
   xrayError: string;
   xrayState: string;
   xrayVersion: string;
+}
+
+export interface PublicSiteFile {
+  name: string;
+  size: number;
+}
+
+export interface PublicSiteSnapshot {
+  active: boolean;
+  configPublicDir: string;
+  defaultHtml: string;
+  dir: string;
+  files: PublicSiteFile[];
+  indexHtml: string;
 }
 
 export interface RealityScanResult {
@@ -1138,6 +1157,20 @@ export interface RelayUnitStatus {
   unitFileState: string;
 }
 
+export interface RemoteLiveInbound {
+  adopted: boolean;
+  id: number;
+  listen: string;
+  port: number;
+  protocol: string;
+  remark: string;
+  tag: string;
+}
+
+export interface RemoteLoginURL {
+  url: string;
+}
+
 export interface ServerSettings {
   contentPaddingAddition?: string;
   disableCookies: boolean;
@@ -1196,9 +1229,32 @@ export interface SubBalancer {
   updatedAt: number;
 }
 
+export interface TgWebProxyBindRequest {
+  dedicated: boolean;
+  email: string;
+  profileName: string;
+}
+
+export interface TgWebProxyBinding {
+  clientId: number;
+  dedicated: boolean;
+  effectiveProfile: string;
+  email: string;
+  profileName: string;
+}
+
+export interface TgWebProxyBindingList {
+  bindings: TgWebProxyBinding[];
+  syncError: string;
+}
+
 export interface TgWebProxyConfigRequest {
   config: RelayConfig;
   initialProfile?: RelayProfile | null;
+}
+
+export interface TgWebProxyUnbindRequest {
+  email: string;
 }
 
 export interface Traffic {

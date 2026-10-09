@@ -99,6 +99,45 @@ For a root deployment the link is
 server becomes `<hostname>/<base>` and the secret is encoded the way Telegram
 expects for path deployments; FullBoard handles this for you.
 
+## Client bindings
+
+Bind a client to a profile so its **raw** subscription carries a web-proxy link
+next to its inbound links. Open the client's form, go to the **Links** tab and
+pick a profile, or review every binding under **Profiles → Client bindings**.
+JSON and Clash subscriptions never include the link.
+
+- **Shared binding.** The client advertises the chosen profile's own secret.
+  Everyone bound to that profile shares one secret.
+- **Dedicated secret.** FullBoard creates a profile named `fb:<email>`, cloned
+  from the chosen one (backend, carrier mode, limits) with a fresh random secret,
+  so the client's access can be revoked on its own. The profile is written to
+  `profiles.json` by a background sync a few seconds after you save, in one batch
+  (and one relay restart) however many clients changed. The link appears once it
+  exists.
+- Disabled clients and clients without a matching relay profile get no link.
+- A profile that clients are bound to cannot be deleted or renamed, and `fb:`
+  profiles are managed by FullBoard: edit them by unbinding the client.
+- Deleting a client drops its binding and its `fb:` profile.
+
+Per-client secrets are only entries in `profiles.json`; the MTProxy backend is
+not touched, so it must still accept the profile's backend port as before.
+
+## Route backend via outbound
+
+On a profile row, **Route via outbound** creates a loopback tunnel inbound
+(dokodemo-style) that rewrites to the profile's current MTProxy backend, adds a
+routing rule that sends that inbound's traffic to a chosen Xray outbound, then
+rewrites the profile `backend` to `127.0.0.1:<tunnel-port>`. The remote MTProxy
+must still accept the profile secret; private/geoip rules on the outbound can
+block Telegram — verify after applying.
+
+## Public site
+
+The **Public site** tab manages a panel-owned landing page under
+`/var/lib/fullboard/tproxy-site` (`index.html` editor, asset upload, sandbox
+preview). Saving activates `public_dir` on that directory and clears
+`public_upstream`.
+
 ## Config
 
 The **Relay config** tab edits `config.json`: the hostname and base path, the listen

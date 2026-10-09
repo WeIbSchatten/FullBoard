@@ -45,6 +45,7 @@ func (a *IndexController) initRouter(g *gin.RouterGroup) {
 	g.GET("/"+customLoginCssPath, a.customLoginCss)
 
 	g.POST("/login", middleware.CSRFMiddleware(), a.login)
+	g.POST("/login/ticket", middleware.CSRFMiddleware(), a.loginWithTicket)
 	g.POST("/logout", middleware.CSRFMiddleware(), a.logout)
 	g.POST("/getTwoFactorEnable", middleware.CSRFMiddleware(), a.getTwoFactorEnable)
 }
@@ -132,6 +133,60 @@ func (a *IndexController) login(c *gin.Context) {
 		return
 	}
 
+	jsonMsg(c, I18nWeb(c, "pages.login.toasts.successLogin"), nil)
+}
+
+// loginTicketForm carries the one-time ticket a managing master obtained from
+// this panel's admin API (see SettingController.issueLoginTicket).
+type loginTicketForm struct {
+	Ticket string `json:"ticket" form:"ticket"`
+}
+
+// loginTicketLimiterUser keys ticket guesses apart from password guesses so a
+// ticket flood cannot lock the admin out of the password form.
+const loginTicketLimiterUser = "login-ticket"
+
+// loginWithTicket signs the browser in as the panel admin by redeeming a ticket
+// minted for an admin API token. It skips the password and 2FA prompts on purpose:
+// the master already proved admin authority, and the ticket is single-use.
+func (a *IndexController) loginWithTicket(c *gin.Context) {
+	var form loginTicketForm
+	if err := c.ShouldBind(&form); err != nil {
+		pureJsonMsg(c, http.StatusOK, false, I18nWeb(c, "pages.login.toasts.invalidFormData"))
+		return
+	}
+	remoteIP := getRemoteIp(c)
+	invalid := func(reason string) {
+		logger.Warningf("failed ticket login: IP=%q, reason=%q", remoteIP, reason)
+		pureJsonMsg(c, http.StatusOK, false, I18nWeb(c, "pages.login.toasts.invalidLoginTicket"))
+	}
+	if _, ok := defaultLoginLimiter.allow(remoteIP, loginTicketLimiterUser); !ok {
+		invalid("too many failed attempts")
+		return
+	}
+	if !session.ConsumeLoginTicket(form.Ticket) {
+		defaultLoginLimiter.registerFailure(remoteIP, loginTicketLimiterUser)
+		invalid("unknown or expired ticket")
+		return
+	}
+	user, err := a.userService.GetFirstUser()
+	if err != nil || user == nil {
+		logger.Warning("ticket login: no admin user:", err)
+		pureJsonMsg(c, http.StatusOK, false, I18nWeb(c, "pages.login.toasts.invalidLoginTicket"))
+		return
+	}
+	defaultLoginLimiter.registerSuccess(remoteIP, loginTicketLimiterUser)
+	logger.Infof("logged in via login ticket: username=%q, IP=%q", user.Username, remoteIP)
+	a.tgbot.UserLoginNotify(tgbot.LoginAttempt{
+		Username: template.HTMLEscapeString(user.Username),
+		IP:       remoteIP,
+		Time:     time.Now().Format("2006-01-02 15:04:05"),
+		Status:   tgbot.LoginSuccess,
+	})
+	if err := session.SetLoginUser(c, user); err != nil {
+		logger.Warning("Unable to save session:", err)
+		return
+	}
 	jsonMsg(c, I18nWeb(c, "pages.login.toasts.successLogin"), nil)
 }
 

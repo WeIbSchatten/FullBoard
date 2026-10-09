@@ -1,0 +1,83 @@
+---
+title: Custom CSS
+description: Restyle the FullBoard panel and login page with operator-owned stylesheets — limits, selectors, and examples.
+icon: Palette
+---
+
+FullBoard lets you inject custom CSS for the authenticated panel and for the
+public login page. Open **Settings → General → Appearance**.
+
+## How it works
+
+| Field | Applied to | URL |
+| --- | --- | --- |
+| **Panel CSS** | Every page under `/panel` after login | `/panel/custom.css` |
+| **Login CSS** | The login / 2FA page only | `/custom-login.css` |
+
+Both stylesheets are served as separate files with `Content-Type: text/css` and
+`X-Content-Type-Options: nosniff`. They are **never** inlined into HTML, so they
+cannot run scripts or inject markup. Save the settings, then reload the browser
+to pick up the new version (the panel appends a content-hash query parameter).
+
+## Limits
+
+- Maximum size: **64 KiB** per field (UTF-8 byte length).
+- NUL bytes are rejected.
+- Live preview (toggle on the Appearance tab) injects a temporary `<style>`
+  element via `textContent` — still not HTML — and is discarded when you leave
+  the page.
+
+## Useful selectors
+
+The panel is Ant Design 6 inside a FullBoard layout. Stable hooks:
+
+```css
+/* Page background */
+.ant-layout {
+  background: #0b1020;
+}
+
+/* Sidebar */
+.ant-layout-sider {
+  background: #111827;
+}
+
+/* Primary buttons */
+.ant-btn-primary {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* Cards / tables */
+.ant-card,
+.ant-table {
+  border-radius: 8px;
+}
+```
+
+Prefer Ant Design class names and layout wrappers over brittle generated
+hashes. Avoid `!important` unless you are overriding a theme variable that
+already uses it.
+
+## Login page
+
+Login CSS is loaded on the unauthenticated page only. Keep it small — visitors
+see this stylesheet before any session cookie is set. Example:
+
+```css
+body {
+  background: radial-gradient(circle at top, #1e293b, #020617);
+}
+.ant-card {
+  backdrop-filter: blur(8px);
+}
+```
+
+## Tips
+
+- Test on both light and dark themes (the panel theme switch lives in the
+  header).
+- Do not paste third-party HTML or JavaScript into these fields — only CSS is
+  accepted and applied.
+- Remote nodes can receive the same fields through **Nodes → Manage →
+  Settings** when the node token has admin scope.

@@ -878,6 +878,10 @@ export const EXAMPLES: Record<string, unknown> = {
     "Outbound": "direct",
     "ToAddress": "example.com:443"
   },
+  "LoginTicketResponse": {
+    "expiresIn": 45,
+    "ticket": "q3dKx0m7uZ1pYb2l9sVwQeR5tN8aHc4F6gJ_iLoPzXk"
+  },
   "MLDSA65Response": {
     "seed": "mldsa65-seed",
     "verify": "mldsa65-verify"
@@ -1039,6 +1043,23 @@ export const EXAMPLES: Record<string, unknown> = {
     "xrayError": "",
     "xrayState": "",
     "xrayVersion": "25.10.31"
+  },
+  "PublicSiteFile": {
+    "name": "index.html",
+    "size": 2048
+  },
+  "PublicSiteSnapshot": {
+    "active": true,
+    "configPublicDir": "/var/lib/fullboard/tproxy-site",
+    "defaultHtml": "",
+    "dir": "/var/lib/fullboard/tproxy-site",
+    "files": [
+      {
+        "name": "index.html",
+        "size": 2048
+      }
+    ],
+    "indexHtml": ""
   },
   "RealityScanResult": {
     "alpn": "h2",
@@ -1307,6 +1328,18 @@ export const EXAMPLES: Record<string, unknown> = {
     "unit": "tproxy-server",
     "unitFileState": "enabled"
   },
+  "RemoteLiveInbound": {
+    "adopted": false,
+    "id": 3,
+    "listen": "",
+    "port": 443,
+    "protocol": "vless",
+    "remark": "edge-vless",
+    "tag": "in-443-tcp"
+  },
+  "RemoteLoginURL": {
+    "url": "https://node.example.com:2053/#loginTicket=abc123"
+  },
   "ServerSettings": {
     "contentPaddingAddition": "",
     "disableCookies": false,
@@ -1365,6 +1398,30 @@ export const EXAMPLES: Record<string, unknown> = {
     "strategy": "random",
     "updatedAt": 1710000000000
   },
+  "TgWebProxyBindRequest": {
+    "dedicated": false,
+    "email": "alice",
+    "profileName": "default"
+  },
+  "TgWebProxyBinding": {
+    "clientId": 7,
+    "dedicated": false,
+    "effectiveProfile": "default",
+    "email": "alice",
+    "profileName": "default"
+  },
+  "TgWebProxyBindingList": {
+    "bindings": [
+      {
+        "clientId": 7,
+        "dedicated": false,
+        "effectiveProfile": "default",
+        "email": "alice",
+        "profileName": "default"
+      }
+    ],
+    "syncError": ""
+  },
   "TgWebProxyConfigRequest": {
     "config": {
       "admin_listen": "127.0.0.1:8081",
@@ -1413,6 +1470,9 @@ export const EXAMPLES: Record<string, unknown> = {
       "token_key_file": "/etc/tproxy-server/token.key"
     },
     "initialProfile": null
+  },
+  "TgWebProxyUnbindRequest": {
+    "email": "alice"
   },
   "Traffic": {
     "Down": 2097152,
