@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -22,7 +23,7 @@ func tgWebProxyManagedRemark(email string) string {
 }
 
 func allocateLoopbackPort() (int, error) {
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	ln, err := (&net.ListenConfig{}).Listen(context.Background(), "tcp", "127.0.0.1:0")
 	if err != nil {
 		return 0, err
 	}
@@ -109,11 +110,7 @@ func ensureTgWebProxyManagedBackend(inboundSvc *InboundService, email, secret st
 	if err != nil {
 		return "", err
 	}
-	if err := inboundSvc.clientService.SyncInbound(nil, created.Id, []model.Client{{
-		Email:  email,
-		Secret: secret,
-		Enable: true,
-	}}); err != nil {
+	if err := syncManagedMtprotoSecret(inboundSvc, created, email, secret); err != nil {
 		_, _ = inboundSvc.DelInbound(created.Id)
 		return "", err
 	}
@@ -121,26 +118,26 @@ func ensureTgWebProxyManagedBackend(inboundSvc *InboundService, email, secret st
 	return loopbackBackend(created.Port), nil
 }
 
+// syncManagedMtprotoSecret writes settings and links the panel client; starts
+// from the full ClientRecord so SyncInbound cannot zero SubID.
 func syncManagedMtprotoSecret(inboundSvc *InboundService, ib *model.Inbound, email, secret string) error {
-	var parsed map[string]any
-	if err := json.Unmarshal([]byte(ib.Settings), &parsed); err != nil {
+	rec, err := inboundSvc.clientService.GetRecordByEmail(nil, email)
+	if err != nil {
 		return err
 	}
-	clients, _ := parsed["clients"].([]any)
-	for _, raw := range clients {
-		c, ok := raw.(map[string]any)
-		if !ok {
-			continue
-		}
-		if strings.EqualFold(fmt.Sprint(c["email"]), email) && fmt.Sprint(c["secret"]) == secret {
-			return nil
-		}
+	client := *rec.ToClient()
+	client.Secret = secret
+	client.Enable = true
+
+	settings, err := json.Marshal(map[string][]model.Client{"clients": {client}})
+	if err != nil {
+		return err
 	}
-	return inboundSvc.clientService.SyncInbound(nil, ib.Id, []model.Client{{
-		Email:  email,
-		Secret: secret,
-		Enable: true,
-	}})
+	ib.Settings = string(settings)
+	if err := database.GetDB().Model(&model.Inbound{}).Where("id = ?", ib.Id).Update("settings", ib.Settings).Error; err != nil {
+		return err
+	}
+	return inboundSvc.clientService.SyncInbound(nil, ib.Id, []model.Client{client})
 }
 
 func (s *TgWebProxyService) cleanupManagedBackends(wantedEmails map[string]struct{}) {
