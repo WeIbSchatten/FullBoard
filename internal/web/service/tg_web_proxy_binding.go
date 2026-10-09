@@ -155,11 +155,20 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 	if err := tgBindingRows(db).Where("b.dedicated = ?", true).Scan(&rows).Error; err != nil {
 		return tgwebproxy.RelayApplyResult{}, err
 	}
-	specs := make([]tgwebproxy.DedicatedSpec, len(rows))
-	for i, r := range rows {
-		specs[i] = tgwebproxy.DedicatedSpec{Email: r.Email, Base: r.ProfileName}
+	specs, err := s.prepareDedicatedSpecs(rows)
+	if err != nil {
+		return tgwebproxy.RelayApplyResult{}, err
 	}
-	return tgWebProxy().SyncDedicatedProfiles(ctx, specs)
+	res, err := tgWebProxy().SyncDedicatedProfiles(ctx, specs)
+	if err != nil {
+		return res, err
+	}
+	wanted := make(map[string]struct{}, len(rows))
+	for _, r := range rows {
+		wanted[strings.ToLower(r.Email)] = struct{}{}
+	}
+	s.cleanupManagedBackends(wanted)
+	return res, nil
 }
 
 func (s *TgWebProxyService) ListBindings() (TgWebProxyBindingList, error) {

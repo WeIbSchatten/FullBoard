@@ -17,11 +17,14 @@ const DedicatedPrefix = "fb:"
 
 const maxProfileNameLength = 64
 
-// DedicatedSpec asks for one per-client profile cloned from Base (backend,
-// carrier mode and limits) with a secret of its own.
+// DedicatedSpec asks for one per-client profile cloned from Base (carrier mode
+// and limits). Secret/Backend override the generated secret and base backend
+// when the panel has already provisioned a matching MTProto listener.
 type DedicatedSpec struct {
-	Email string
-	Base  string
+	Email   string
+	Base    string
+	Secret  string // optional; empty keeps/creates the usual random secret
+	Backend string // optional; empty inherits Base's backend
 }
 
 // DedicatedProfileName is deterministic so a binding finds its profile again
@@ -46,6 +49,10 @@ func newProfileSecret() (string, error) {
 	return hex.EncodeToString(buf), nil
 }
 
+// NewProfileSecret is the exported form used when the panel pre-provisions a
+// matching MTProto backend before writing profiles.json.
+func NewProfileSecret() (string, error) { return newProfileSecret() }
+
 // syncDedicated returns the desired profile list, whether it differs from list,
 // and the specs whose base profile no longer exists.
 func syncDedicated(list []RelayProfile, specs []DedicatedSpec) ([]RelayProfile, bool, []DedicatedSpec, error) {
@@ -65,18 +72,26 @@ func syncDedicated(list []RelayProfile, specs []DedicatedSpec) ([]RelayProfile, 
 			continue
 		}
 		next := RelayProfile{Name: name, Backend: base.Backend, CarrierMode: base.CarrierMode}
+		if spec.Backend != "" {
+			next.Backend = spec.Backend
+		}
 		if base.Limits != nil {
 			limits := *base.Limits
 			next.Limits = &limits
 		}
-		if existing, found := byName[name]; found {
-			next.Secret = existing.Secret
-		} else {
-			secret, err := newProfileSecret()
-			if err != nil {
-				return nil, false, nil, err
+		switch {
+		case spec.Secret != "":
+			next.Secret = spec.Secret
+		default:
+			if existing, found := byName[name]; found {
+				next.Secret = existing.Secret
+			} else {
+				secret, err := newProfileSecret()
+				if err != nil {
+					return nil, false, nil, err
+				}
+				next.Secret = secret
 			}
-			next.Secret = secret
 		}
 		derived[name] = next
 	}

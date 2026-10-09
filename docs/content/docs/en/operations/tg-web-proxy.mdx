@@ -101,26 +101,29 @@ expects for path deployments; FullBoard handles this for you.
 
 ## Client bindings
 
-Bind a client to a profile so its **raw** subscription carries a web-proxy link
-next to its inbound links. Open the client's form, go to the **Links** tab and
-pick a profile, or review every binding under **Profiles → Client bindings**.
-JSON and Clash subscriptions never include the link.
+Bind a client to a profile so its **raw** subscription and the client **QR code**
+menu carry a web-proxy link next to inbound links. Open the client's form, go to
+the **Telegram WEB Proxy** tab and pick a profile, or review bindings under
+**Profiles → Client bindings**. JSON and Clash subscriptions never include the
+link.
 
 - **Shared binding.** The client advertises the chosen profile's own secret.
-  Everyone bound to that profile shares one secret.
+  Everyone bound to that profile shares one secret; the profile's existing
+  MTProxy backend must already accept that secret.
 - **Dedicated secret.** FullBoard creates a profile named `fb:<email>`, cloned
-  from the chosen one (backend, carrier mode, limits) with a fresh random secret,
-  so the client's access can be revoked on its own. The profile is written to
-  `profiles.json` by a background sync a few seconds after you save, in one batch
-  (and one relay restart) however many clients changed. The link appears once it
-  exists.
+  from the chosen one (carrier mode, limits) with a fresh random secret, and
+  automatically provisions a loopback MTProto inbound (`fb-tgwp:<email>`) that
+  accepts it — no hand-built inbound per secret. The profile is written to
+  `profiles.json` by a background sync a few seconds after you save. The link
+  appears once the sync finishes.
 - Disabled clients and clients without a matching relay profile get no link.
 - A profile that clients are bound to cannot be deleted or renamed, and `fb:`
   profiles are managed by FullBoard: edit them by unbinding the client.
 - Deleting a client drops its binding and its `fb:` profile.
 
-Per-client secrets are only entries in `profiles.json`; the MTProxy backend is
-not touched, so it must still accept the profile's backend port as before.
+Shared bindings still require the chosen profile's backend to accept that
+shared secret. Dedicated bindings own their backends: unbinding deletes the
+`fb-tgwp:` inbound.
 
 ## Route backend via outbound
 
