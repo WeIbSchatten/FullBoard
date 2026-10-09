@@ -140,7 +140,16 @@ func (j *jobRunner) start(ctx context.Context, kind, command, secret string) (Re
 	}
 	now := time.Now().Unix()
 	unit := fmt.Sprintf("fullboard-tproxy-%s-%d", kind, now)
-	out, err := j.run(ctx, "systemd-run", "--unit", unit, "--collect", "--quiet", "/bin/bash", j.file("job.sh"))
+	out, err := j.run(ctx, "systemd-run",
+		"--unit", unit,
+		"--collect",
+		"--quiet",
+		"--setenv", "HOME=/root",
+		"--setenv", "GOPATH=/root/go",
+		"--setenv", "GOMODCACHE=/root/go/pkg/mod",
+		"--setenv", "GOCACHE=/root/.cache/go-build",
+		"/bin/bash", j.file("job.sh"),
+	)
 	if err != nil {
 		_ = os.Remove(j.file("job.secret"))
 		return RelayJobStatus{}, fmt.Errorf("systemd-run: %s", firstNonEmpty(strings.TrimSpace(string(out)), err.Error()))
@@ -160,6 +169,13 @@ func buildJobScript(sourceDir, command, stdin, secretFile, logFile, exitFile str
 		"#!/bin/bash",
 		"set -uo pipefail",
 		"umask 077",
+		// systemd-run starts with a stripped environment: without HOME, `go`
+		// cannot derive GOMODCACHE/GOPATH and aborts the upstream build.
+		`export HOME="${HOME:-/root}"`,
+		`export GOPATH="${GOPATH:-$HOME/go}"`,
+		`export GOMODCACHE="${GOMODCACHE:-$GOPATH/pkg/mod}"`,
+		`export GOCACHE="${GOCACHE:-$HOME/.cache/go-build}"`,
+		`export PATH="/usr/local/go/bin:/opt/go/bin:$PATH"`,
 		"(",
 		"  set -e",
 		"  src=" + q(sourceDir),
