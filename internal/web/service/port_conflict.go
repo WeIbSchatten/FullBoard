@@ -6,12 +6,12 @@ import (
 	"net"
 	"strings"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/amneziawg"
-	"github.com/mhsanaei/3x-ui/v3/internal/amneziawgnet"
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/tuic"
-	"github.com/mhsanaei/3x-ui/v3/internal/util/common"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawgnet"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/tuic"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
 
 	"gorm.io/gorm"
 )

@@ -1,9 +1,8 @@
 name: Docs Deploy (GitHub Pages)
 
 # Static-export deploy of docs/ to GitHub Pages. Pages must be enabled in repo
-# settings (Source: GitHub Actions) and the docs.sanaei.dev custom domain
-# attached to this repository. The site URL defaults to the production domain in
-# docs/lib/shared.ts, so NEXT_PUBLIC_SITE_URL is optional.
+# settings (Source: GitHub Actions). The site URL defaults to the GitHub Pages
+# URL in docs/lib/shared.ts; set NEXT_PUBLIC_SITE_URL when using a custom domain.
 on:
   push:
     branches: [main]

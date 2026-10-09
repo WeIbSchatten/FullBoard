@@ -2,46 +2,43 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./media/3x-ui-dark.png">
-    <img alt="3x-ui" src="./media/3x-ui-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./media/fullboard-dark.png">
+    <img alt="FullBoard" src="./media/fullboard-light.png">
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://github.com/MHSanaei/3x-ui/releases"><img src="https://img.shields.io/github/v/release/mhsanaei/3x-ui" alt="Release"></a>
-  <a href="https://github.com/MHSanaei/3x-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/mhsanaei/3x-ui/release.yml.svg" alt="Build"></a>
-  <a href="#"><img src="https://img.shields.io/github/go-mod/go-version/mhsanaei/3x-ui.svg" alt="GO Version"></a>
-  <a href="https://github.com/MHSanaei/3x-ui/releases/latest"><img src="https://img.shields.io/github/downloads/mhsanaei/3x-ui/total.svg" alt="Downloads"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/releases"><img src="https://img.shields.io/github/v/release/WeIbSchatten/FullBoard" alt="Release"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/actions"><img src="https://img.shields.io/github/actions/workflow/status/WeIbSchatten/FullBoard/release.yml.svg" alt="Build"></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GPL%20V3-blue.svg?longCache=true" alt="License"></a>
-  <a href="https://pkg.go.dev/github.com/mhsanaei/3x-ui/v3"><img src="https://pkg.go.dev/badge/github.com/mhsanaei/3x-ui/v3.svg" alt="Go Reference"></a>
-  <a href="https://docs.sanaei.dev"><img src="https://img.shields.io/badge/docs-docs.sanaei.dev-22d3ee" alt="Documentation"></a>
+  <a href="https://pkg.go.dev/github.com/WeIbSchatten/FullBoard/v3"><img src="https://pkg.go.dev/badge/github.com/WeIbSchatten/FullBoard/v3.svg" alt="Go Reference"></a>
 </p>
 
-**3X-UI** هي لوحة تحكم ويب متقدمة ومفتوحة المصدر لإدارة خوادم [Xray-core](https://github.com/XTLS/Xray-core). توفّر واجهة نظيفة ومتعددة اللغات لنشر وتكوين ومراقبة مجموعة واسعة من بروتوكولات الوكيل وVPN — من خادم VPS واحد إلى عمليات النشر متعددة العقد.
+<div dir="rtl">
 
-تم بناء 3X-UI كنسخة محسّنة (fork) من مشروع X-UI الأصلي، وتضيف دعمًا أوسع للبروتوكولات، واستقرارًا محسّنًا، ومحاسبة للترافيك لكل عميل، والعديد من ميزات تحسين تجربة الاستخدام.
+**FullBoard** لوحة تحكم ويب مفتوحة المصدر لإدارة خوادم [Xray-core](https://github.com/XTLS/Xray-core). توفر واجهة واحدة متعددة اللغات لنشر وتهيئة ومراقبة مجموعة واسعة من بروتوكولات البروكسي و VPN، من خادم VPS واحد حتى عمليات النشر متعددة العقد.
 
 > [!IMPORTANT]
-> هذا المشروع مخصص للاستخدام الشخصي فقط. يرجى عدم استخدامه لأغراض غير قانونية أو في بيئة إنتاجية.
+> هذا المشروع مخصص للاستخدام الشخصي. لا تستخدمه لأغراض غير قانونية.
 
-## الميزات
+## المميزات
 
-- **اتصالات واردة متعددة البروتوكولات** — VLESS، VMess، Trojan، Shadowsocks، WireGuard، AmneziaWG، TUIC v5، Hysteria2، MTProto، HTTP، SOCKS (Mixed)، Dokodemo-door / Tunnel و TUN.
-- **وسائل نقل وأمان حديثة** — TCP (Raw)، mKCP، WebSocket، gRPC، HTTPUpgrade و XHTTP، مؤمَّنة بـ TLS و XTLS و REALITY.
-- **AmneziaWG مدمج** — نسخة WireGuard المقاومة للفحص العميق للحزم (DPI) تعمل داخل اللوحة على مكدس شبكة في فضاء المستخدم، دون وحدة نواة أو DKMS أو حزم إضافية.
-- **TUIC v5 مدمج** — بروكسي عالي الأداء يعتمد على QUIC مع قياس حركة المرور عبر مرحل UDP أصلي، ومصافحات 0-RTT، والتحكم في الازدحام BBR.
-- **وكلاء MTProto** — أسرار FakeTLS وعلامات الإعلانات والحصص لكل عميل، تُطبَّق مباشرةً دون قطع الاتصالات القائمة.
-- **Fallback** — تقديم عدة بروتوكولات على منفذ واحد (مثل VLESS و Trojan على المنفذ 443) باستخدام ميزة fallback في Xray.
-- **إدارة لكل عميل** — حصص الترافيك، تواريخ انتهاء الصلاحية، حدود IP مع استثناء العناوين الموثوقة، حدود الأجهزة (HWID)، دورات تجديد مجدولة، حالة الاتصال المباشرة، وروابط مشاركة وأكواد QR واشتراكات بنقرة واحدة.
-- **إحصائيات الترافيك** — لكل اتصال وارد، ولكل عميل، ولكل اتصال صادر، مع عناصر تحكم لإعادة التعيين.
-- **دعم العقد المتعددة** — إدارة وتوسيع عبر عدة خوادم من لوحة واحدة، بما في ذلك استنساخ الاتصالات الواردة على عقد أخرى.
-- **الاتصالات الصادرة والتوجيه** — WARP، NordVPN، PIA، قواعد توجيه مخصصة، موازنات تحميل مع تجاوز الفشل بين الموازنات، وتسلسل الوكلاء الصادرة. ويمكن تصفّح فئات geosite و geoip المضمّنة مباشرةً من محرر القواعد.
-- **خادم اشتراك مدمج** — إخراج raw و JSON و Clash يُختار تلقائيًا حسب User-Agent الخاص بالعميل، مع [قوالب صفحات مخصصة](docs/custom-subscription-templates.md).
-- **روبوتات تيليجرام وديسكورد** للمراقبة والإدارة عن بُعد.
-- **واجهة RESTful API** مع رموز وصول محدودة النطاق وقابلة لانتهاء الصلاحية، ومرجع API داخل اللوحة.
-- **لوحة قابلة للتثبيت (PWA)** — ثبّت 3X-UI على سطح المكتب أو شاشة هاتفك الرئيسية.
-- **تخزين مرن** — SQLite (افتراضي) أو PostgreSQL.
-- **13 لغة لواجهة المستخدم** مع سمات داكنة وفاتحة.
+- **مداخل متعددة البروتوكولات**: VLESS و VMess و Trojan و Shadowsocks و WireGuard و AmneziaWG و TUIC v5 و Hysteria2 و MTProto و HTTP و SOCKS (Mixed) و Dokodemo-door / Tunnel و TUN.
+- **وسائل نقل وأمان حديثة**: TCP (Raw) و mKCP و WebSocket و gRPC و HTTPUpgrade و XHTTP مع TLS و XTLS و REALITY.
+- **AmneziaWG مدمج**: WireGuard مقاوم لـ DPI يعمل داخل اللوحة على مكدس شبكة في مساحة المستخدم، دون وحدة نواة أو DKMS أو حزم إضافية.
+- **خادم TUIC v5 أصلي**: خادم QUIC داخل العملية مع توجيه Xray واحتساب الحركة لكل عميل (BBR و New Reno).
+- **بروكسي MTProto**: أسرار FakeTLS و ad-tag وحصص لكل عميل، تُطبّق مباشرة دون قطع الاتصالات.
+- **Fallback**: عدة بروتوكولات على منفذ واحد (مثل VLESS و Trojan على 443).
+- **إدارة العملاء**: حصص الحركة، تواريخ الانتهاء، حدود IP مع استثناء العناوين الموثوقة، حدود أجهزة HWID، تجديد مجدول، حالة الاتصال، روابط مشاركة، رموز QR واشتراكات.
+- **إحصائيات الحركة** لكل مدخل وعميل ومخرج، مع إمكانية التصفير.
+- **تعدد العقد**: إدارة عدة خوادم من لوحة واحدة، بما في ذلك نسخ المداخل إلى عقد أخرى.
+- **المخارج والتوجيه**: WARP و NordVPN و PIA وقواعد مخصصة وموازنات حمل مع سلاسل fallback وتسلسل البروكسي. يمكن تصفح فئات geosite/geoip من محرر القواعد.
+- **خادم الاشتراكات**: مخرجات raw و JSON و Clash حسب User-Agent العميل، إضافة إلى [قوالب صفحات مخصصة](docs/custom-subscription-templates.md).
+- **بوتات Telegram و Discord** للمراقبة والإدارة عن بُعد.
+- **REST API** برموز محددة الصلاحيات واختيارية الانتهاء، ومرجع API داخل اللوحة.
+- **لوحة قابلة للتثبيت (PWA)** لسطح المكتب والهاتف.
+- **التخزين**: SQLite (افتراضي) أو PostgreSQL.
+- **13 لغة للواجهة** مع سمات داكنة وفاتحة.
 - **تكامل مع Fail2ban** لفرض حدود IP لكل عميل.
 
 ## لقطات الشاشة
@@ -66,165 +63,178 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./media/05-add-nodes-dark.png">
-  <img alt="Configs" src="./media/05-add-nodes-light.png">
+  <img alt="Nodes" src="./media/05-add-nodes-light.png">
 </picture>
 
 </details>
 
 ## البدء السريع
 
-```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-```
-
-لتثبيت إصدار محدد، أضِف وسمه (مثل `v3.7.0`):
+</div>
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v3.7.0
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh)
 ```
 
-لتثبيت بنية **dev** المتجددة (أحدث إصدار أولي لكل التزام (commit) من `main`، وليس إصدارًا مستقرًا)، مرّر `dev-latest`:
+<div dir="rtl">
+
+لتثبيت إصدار محدد، أضف وسمه:
+
+</div>
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) dev-latest
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v3.7.0
 ```
 
-أثناء التثبيت، يتم إنشاء اسم مستخدم وكلمة مرور ومسار وصول عشوائية. بعد التثبيت، شغّل `x-ui` لفتح قائمة الإدارة، حيث يمكنك بدء/إيقاف الخدمة، وعرض أو إعادة تعيين بيانات تسجيل الدخول، وإدارة شهادات SSL، والمزيد.
+<div dir="rtl">
 
-يُنشر مع كل ملف إصدار مجموع تحقق `.sha256` بجانبه، ويتحقق كل من `install.sh` وأداة التحديث من الأرشيف مقابل هذا المجموع ويتوقفان عند عدم التطابق.
+لتثبيت نسخة **dev** (أحدث إصدار تجريبي من فرع `main`)، مرّر `dev-latest`:
 
-للحصول على الوثائق الكاملة — التثبيت والإعداد والتشغيل ومرجع API الكامل — قم بزيارة **[docs.sanaei.dev](https://docs.sanaei.dev)**.
+</div>
 
-### التثبيت غير التفاعلي
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) dev-latest
+```
 
-يعمل المثبِّت أيضًا **بشكل غير تفاعلي** لـ cloud-init.
-عيّن `XUI_NONINTERACTIVE=1` (أو مرّره عبر أنبوب دون TTY) وسيتولى التثبيت من البداية إلى النهاية
-دون أي مطالبات، مُنشئًا بيانات اعتماد عشوائية وكاتبًا إياها في
-`/etc/x-ui/install-result.env`. راجع [`deploy/`](deploy/) لـ:
+<div dir="rtl">
 
-- [بيانات مستخدم cloud-init](deploy/cloud-init/) — تثبيت غير تفاعلي على أي سحابة (Hetzner/AWS/DO/Vultr/GCP/Azure/Oracle)
-- [ملاحظات Hetzner Cloud](deploy/marketplace/hetzner/) — نشر يعتمد على cloud-init على Hetzner
+يولّد المثبّت اسم مستخدم وكلمة مرور ومسار وصول عشوائية. بعد التثبيت شغّل `fullboard` لفتح قائمة الإدارة: تشغيل/إيقاف الخدمة، عرض بيانات الدخول أو إعادة تعيينها، إدارة شهادات SSL والمزيد.
+
+يُنشر كل ملف إصدار مع ملف `.sha256`. يتحقق كل من `install.sh` والمحدّث من الأرشيف ويتوقف عند عدم التطابق.
+
+التوثيق الكامل (التثبيت، التهيئة، التشغيل، مرجع API) موجود في مجلد [`docs/`](docs/).
+
+### التثبيت التلقائي
+
+يعمل المثبّت أيضًا **دون تفاعل** (مثلًا من cloud-init). اضبط `XUI_NONINTERACTIVE=1` أو شغّله دون TTY، فيولّد بيانات دخول عشوائية ويكتبها في `/etc/fullboard/install-result.env`. راجع [`deploy/`](deploy/):
+
+- [Cloud-init user-data](deploy/cloud-init/) لأي مزود سحابي
+- [ملاحظات Hetzner Cloud](deploy/marketplace/hetzner/)
+
+### الإدارة
+
+| الأمر | الوظيفة |
+| --- | --- |
+| `fullboard` | قائمة الإدارة التفاعلية |
+| `fullboard start` / `stop` / `restart` | التحكم في الخدمة |
+| `fullboard status` | حالة الخدمة |
+| `fullboard settings` | إعدادات اللوحة الحالية |
+| `fullboard log` | أحدث السجلات |
+| `fullboard update` | التحديث إلى أحدث إصدار |
+| `fullboard uninstall` | إزالة اللوحة |
+
+المسارات: الملف التنفيذي وموارد Xray في `/usr/local/fullboard`، قاعدة البيانات والحالة في `/etc/fullboard`، السجلات في `/var/log/fullboard`، الخدمة `fullboard.service`.
 
 ## المنصات المدعومة
 
-**أنظمة التشغيل:** Ubuntu، Debian، Armbian، Fedora، CentOS، RHEL، AlmaLinux، Rocky Linux، Oracle Linux، Amazon Linux، Virtuozzo، Arch، Manjaro، Parch، openSUSE (Tumbleweed / Leap)، Alpine و Windows.
+**أنظمة التشغيل:** Ubuntu و Debian و Armbian و Fedora و CentOS و RHEL و AlmaLinux و Rocky Linux و Oracle Linux و Amazon Linux و Virtuozzo و Arch و Manjaro و Parch و openSUSE (Tumbleweed / Leap) و Alpine و Windows.
 
 **المعماريات:** `amd64` · `386` · `arm64` (aarch64) · `armv7` · `armv6` · `armv5` · `s390x`.
 
-## خيارات قاعدة البيانات
+## قاعدة البيانات
 
-يدعم 3X-UI خلفيتين (backends) يتم اختيارهما أثناء التثبيت:
+يدعم FullBoard واجهتين خلفيتين تُختاران أثناء التثبيت:
 
-- **SQLite** (افتراضي) — ملف واحد في `/etc/x-ui/x-ui.db`. بدون إعداد، مثالي لعمليات النشر الصغيرة والمتوسطة.
-- **PostgreSQL** — موصى به لأعداد العملاء الكبيرة أو الإعدادات متعددة العقد. يمكن للمثبِّت تثبيت PostgreSQL محليًا لك، أو قبول DSN لخادم موجود.
+- **SQLite** (افتراضي): ملف واحد في `/etc/fullboard/fullboard.db`. دون إعداد، مناسب للنشر الصغير والمتوسط.
+- **PostgreSQL**: موصى به لعدد كبير من العملاء أو عدة عقد. يمكن للمثبّت تثبيته محليًا أو استخدام DSN لخادم موجود.
 
-في وقت التشغيل، يتم اختيار الخلفية عبر متغيرات البيئة (يكتبها المثبِّت لك في `/etc/default/x-ui`):
+تُختار الواجهة الخلفية عبر متغيرات البيئة (يكتبها المثبّت في `/etc/default/fullboard`):
+
+</div>
 
 ```
 XUI_DB_TYPE=postgres
 XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 ```
 
-### ترحيل تثبيت SQLite موجود إلى PostgreSQL
+<div dir="rtl">
+
+### الترحيل من SQLite إلى PostgreSQL
+
+</div>
 
 ```bash
-x-ui migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
-# ثم عيّن XUI_DB_TYPE و XUI_DB_DSN في /etc/default/x-ui وأعد التشغيل:
-systemctl restart x-ui
+fullboard migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
+# then set XUI_DB_TYPE and XUI_DB_DSN in /etc/default/fullboard and restart:
+systemctl restart fullboard
 ```
 
-يبقى ملف SQLite الأصلي دون تغيير؛ احذفه يدويًا بعد التحقق من الخلفية الجديدة.
+<div dir="rtl">
 
-### Docker
+يبقى ملف SQLite الأصلي دون تغيير؛ احذفه يدويًا بعد التحقق من الواجهة الجديدة.
 
-يستمر الأمر الافتراضي `docker compose up -d` في استخدام SQLite. للتشغيل مع خدمة PostgreSQL المرفقة، أزِل التعليق عن سطري متغيرات البيئة `XUI_DB_*` في `docker-compose.yml` وشغّل باستخدام البروفايل:
+## Docker
+
+</div>
+
+```bash
+docker compose up -d
+```
+
+<div dir="rtl">
+
+الإعداد الافتراضي يستخدم SQLite. لاستخدام خدمة PostgreSQL المرفقة، أزل التعليق عن سطري `XUI_DB_*` في `docker-compose.yml` وشغّل مع الملف الشخصي:
+
+</div>
 
 ```bash
 docker compose --profile postgres up -d
 ```
 
-تتضمن الصورة Fail2ban (مُفعَّل افتراضيًا) لفرض **حدود IP** لكل عميل. يحظر Fail2ban المخالفين باستخدام `iptables`، الذي يتطلب صلاحية `NET_ADMIN`. يمنح `docker-compose.yml` هذه الصلاحية مسبقًا عبر `cap_add`؛ إذا شغّلت الحاوية باستخدام `docker run` بدلاً من ذلك، فأضِف الصلاحيات بنفسك، وإلا فسيتم تسجيل عمليات الحظر دون تطبيقها أبدًا:
+<div dir="rtl">
+
+تتضمن الصورة Fail2ban (مفعّل افتراضيًا) لفرض **حدود IP** لكل عميل. يتم الحظر عبر `iptables` ويتطلب صلاحية `NET_ADMIN`. يمنحها `docker-compose.yml` مسبقًا؛ عند استخدام `docker run` أضفها بنفسك، وإلا سيُسجَّل الحظر دون تطبيقه:
+
+</div>
 
 ```bash
-docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW ... ghcr.io/mhsanaei/3x-ui
+docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW -p 2053:2053 -v $PWD/db/:/etc/fullboard/ ghcr.io/weibschatten/fullboard
 ```
+
+<div dir="rtl">
 
 ## متغيرات البيئة
 
 | المتغير | الوصف | الافتراضي |
 | --- | --- | --- |
-| `XUI_DB_TYPE` | خلفية قاعدة البيانات: `sqlite` أو `postgres` | `sqlite` |
-| `XUI_DB_DSN` | سلسلة اتصال PostgreSQL (عندما `XUI_DB_TYPE=postgres`) | — |
-| `XUI_DB_FOLDER` | مجلد ملف قاعدة بيانات SQLite | `/etc/x-ui` |
-| `XUI_DB_MAX_OPEN_CONNS` | الحد الأقصى للاتصالات المفتوحة (تجمّع PostgreSQL) | — |
-| `XUI_DB_MAX_IDLE_CONNS` | الحد الأقصى للاتصالات الخاملة (تجمّع PostgreSQL) | — |
-| `XUI_INIT_WEB_BASE_PATH` | مسار URI الأولي للوحة الويب | `/` |
-| `XUI_ENABLE_FAIL2BAN` | تفعيل فرض حدود IP المعتمد على Fail2ban | `true` |
+| `XUI_DB_TYPE` | قاعدة البيانات: `sqlite` أو `postgres` | `sqlite` |
+| `XUI_DB_DSN` | سلسلة اتصال PostgreSQL | — |
+| `XUI_DB_FOLDER` | مجلد ملف SQLite | `/etc/fullboard` |
+| `XUI_DB_MAX_OPEN_CONNS` | أقصى عدد للاتصالات المفتوحة (تجمع PostgreSQL) | — |
+| `XUI_DB_MAX_IDLE_CONNS` | أقصى عدد للاتصالات الخاملة (تجمع PostgreSQL) | — |
+| `XUI_INIT_WEB_BASE_PATH` | مسار URI الأولي للوحة | `/` |
+| `XUI_PORT` | تجاوز منفذ اللوحة | — |
+| `XUI_ENABLE_FAIL2BAN` | حدود IP عبر Fail2ban | `true` |
 | `XUI_LOG_LEVEL` | مستوى السجل (`debug`، `info`، `warning`، `error`) | `info` |
-| `XUI_DEBUG` | تفعيل وضع التصحيح | `false` |
-| `XUI_TUNNEL_HEALTH_MONITOR` | تفعيل مراقب صحة النفق (يفحص عنوان URL ويعيد تشغيل xray بعد فشل متكرر؛ إعادة التشغيل تقطع جميع العملاء) | `false` |
-| `XUI_TUNNEL_HEALTH_PROXY` | الوكيل الذي يُرسَل عبره الفحص؛ وجّهه إلى اتصال xray وارد محلي ليختبر الفحص النفق (مثل `socks5://127.0.0.1:1080`). القيمة الفارغة تعني أن الفحص يتحقق فقط من اتصال المضيف | — |
-| `XUI_TUNNEL_HEALTH_URL` | عنوان URL الذي يُفحَص لمعرفة صحة النفق | `https://www.cloudflare.com/cdn-cgi/trace` |
-| `XUI_TUNNEL_HEALTH_INTERVAL` | الفترة بين عمليات الفحص | `30s` |
-| `XUI_TUNNEL_HEALTH_TIMEOUT` | مهلة كل عملية فحص | `10s` |
-| `XUI_TUNNEL_HEALTH_FAILURES` | عدد حالات الفشل المتتالية قبل تشغيل إعادة التشغيل | `3` |
-| `XUI_TUNNEL_HEALTH_COOLDOWN` | الحد الأدنى للتأخير بين عمليات إعادة التشغيل المتتالية | `5m` |
-| `NODE_TOKEN_ENCRYPTION` | تشفير رموز API الخاصة بالعقد أثناء التخزين: `off` أو `migration` أو `required` (بدون البادئة `XUI_`) | `off` |
-| `XUI_NODE_TOKEN_KEY_FILE` | حلقة مفاتيح JSON (بأذونات `0600`) تضم معرّف المفتاح النشط ومفاتيح 32 بايت بترميز base64 | `/etc/x-ui/node_token_key.json` |
-| `XUI_NODE_TOKEN_KEY` | مفتاح واحد بطول 32 بايت بترميز base64، يُستخدم فقط عند تعذّر تحميل ملف المفاتيح | — |
+| `XUI_DEBUG` | وضع التصحيح | `false` |
+| `XUI_TUNNEL_HEALTH_MONITOR` | فحص URL وإعادة تشغيل Xray بعد إخفاقات متكررة (يقطع جميع العملاء) | `false` |
+| `XUI_TUNNEL_HEALTH_PROXY` | بروكسي الفحص، مثل مدخل محلي (`socks5://127.0.0.1:1080`) | — |
+| `XUI_TUNNEL_HEALTH_URL` | عنوان الفحص | `https://www.cloudflare.com/cdn-cgi/trace` |
+| `XUI_TUNNEL_HEALTH_INTERVAL` | الفاصل بين الفحوص | `30s` |
+| `XUI_TUNNEL_HEALTH_TIMEOUT` | مهلة كل فحص | `10s` |
+| `XUI_TUNNEL_HEALTH_FAILURES` | عدد الإخفاقات المتتالية قبل إعادة التشغيل | `3` |
+| `XUI_TUNNEL_HEALTH_COOLDOWN` | أدنى مدة بين عمليات إعادة التشغيل | `5m` |
+| `NODE_TOKEN_ENCRYPTION` | تشفير رموز العقد: `off` أو `migration` أو `required` | `off` |
+| `XUI_NODE_TOKEN_KEY_FILE` | حلقة مفاتيح JSON (صلاحية `0600`) | `/etc/fullboard/node_token_key.json` |
+| `XUI_NODE_TOKEN_KEY` | مفتاح base64 واحد بطول 32 بايت عند تعذّر تحميل ملف المفاتيح | — |
 
-القائمة الكاملة متوفرة في [مرجع متغيرات البيئة](https://docs.sanaei.dev/docs/reference/env-vars).
+القائمة الكاملة في [مرجع متغيرات البيئة](docs/content/docs/en/reference/env-vars.mdx).
 
-## اللغات المدعومة
-
-تتوفر واجهة اللوحة بـ 13 لغة:
+## اللغات
 
 English · فارسی · العربية · 中文（简体） · 中文（繁體） · Español · Русский · Українська · Türkçe · Tiếng Việt · 日本語 · Bahasa Indonesia · Português (Brasil)
 
 ## المساهمة
 
-المساهمات مرحب بها. يرجى قراءة [دليل المساهمة](/CONTRIBUTING.md) قبل فتح مشكلة (issue) أو طلب سحب (pull request).
+المساهمات مرحب بها. اقرأ [دليل المساهمة](/CONTRIBUTING.md) قبل فتح issue أو pull request. للمشكلات الأمنية راجع [SECURITY.md](/SECURITY.md).
 
-## شكر خاص إلى
+## شكر وتقدير
 
-- [alireza0](https://github.com/alireza0/)
+- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (GPL-3.0): قواعد توجيه محسّنة مع نطاقات إيرانية مدمجة، تركّز على الأمان وحجب الإعلانات.
+- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0): قواعد تُحدَّث تلقائيًا بناءً على النطاقات والعناوين المحجوبة في روسيا.
 
-## الاعتراف
+## الترخيص
 
-- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (الترخيص: **GPL-3.0**): _قواعد توجيه v2ray/xray و v2ray/xray-clients المحسنة مع النطاقات الإيرانية المدمجة وتركيز على الأمان وحظر الإعلانات._
-- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (الترخيص: **GPL-3.0**): _يحتوي هذا المستودع على قواعد توجيه V2Ray محدثة تلقائيًا بناءً على بيانات النطاقات والعناوين المحظورة في روسيا._
+يُرخَّص FullBoard بموجب [GNU General Public License v3.0](/LICENSE).
 
-## أدوات المجتمع
-
-أدوات وتكاملات بناها المجتمع حول 3x-ui.
-
-- [terraform-provider-3x-ui](https://github.com/batonogov/terraform-provider-threexui) (الترخيص: **MIT**): _إدارة الاتصالات الواردة والعملاء وإعدادات اللوحة وتكوين Xray كرمز باستخدام Terraform / OpenTofu._
-- [3X-UI Manager](https://github.com/yukh975/3X-UI-Manager) (الترخيص: **MIT**): _عميل أندرويد أصلي لـ 3x-ui — لوحة التحكم، الاتصالات الواردة، العملاء مع مشاركة رمز QR، العقد وإدارة عدة لوحات. متاح على F-Droid._
-
-## دعم المشروع
-
-**إذا كان هذا المشروع مفيدًا لك، فقد ترغب في إعطائه**:star2:
-
-<a href="https://www.buymeacoffee.com/MHSanaei" target="_blank">
-<img src="./media/default-yellow.png" alt="Buy Me A Coffee" style="height: 70px !important;width: 277px !important;" >
-</a>
-</br>
-<a href="https://nowpayments.io/donation/hsanaei" target="_blank" rel="noreferrer noopener">
-   <img src="./media/donation-button-black.svg" alt="Crypto donation button by NOWPayments">
-</a>
-
-## سجل النجوم
-
-<a href="https://www.star-history.com/?repos=mhsanaei%2F3x-ui&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mhsanaei/3x-ui&type=date&legend=top-left" />
- </picture>
-</a>
-
-<p align="center">
- <a href="https://www.star-history.com/mhsanaei/3x-ui">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank&theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank" /><img alt="Star History Rank" src="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=rank" /></picture> <picture><source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending&theme=dark" /><source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending" /><img alt="GitHub Trending Repository of the Day" src="https://api.star-history.com/badge?repo=MHSanaei/3x-ui&type=trending" /></picture>
- </a>
-</p>
+</div>

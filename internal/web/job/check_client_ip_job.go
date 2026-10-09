@@ -13,11 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/logger"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service"
-	"github.com/mhsanaei/3x-ui/v3/internal/xray"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
 
 	"gorm.io/gorm"
 )
@@ -612,7 +612,7 @@ func (j *CheckClientIpJob) publishBans(bans []pendingBan) []pendingBan {
 }
 
 // writeBanLines emits one line per address; the wording is load-bearing, since
-// x-ui.sh create_iplimit_jails builds filter.d/3x-ipl.conf failregex from it.
+// fullboard.sh create_iplimit_jails builds filter.d/3x-ipl.conf failregex from it.
 func writeBanLines(w io.Writer, clientEmail string, actionable []IPWithTimestamp) error {
 	stamp := time.Now().Format("2006/01/02 15:04:05")
 	for _, ipTime := range actionable {

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/xray"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
 )
 
 // TestRepairOverflowedTrafficCounters_HealsSQLiteRealPromotion reproduces
@@ -15,7 +15,7 @@ import (
 func TestRepairOverflowedTrafficCounters_HealsSQLiteRealPromotion(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	if err := InitDB(filepath.Join(dbDir, "x-ui.db")); err != nil {
+	if err := InitDB(filepath.Join(dbDir, "fullboard.db")); err != nil {
 		t.Fatalf("InitDB failed: %v", err)
 	}
 	t.Cleanup(func() { _ = CloseDB() })
@@ -75,7 +75,7 @@ func TestRepairOverflowedTrafficCounters_HealsSQLiteRealPromotion(t *testing.T) 
 func TestClampedAddExpr_CapsAtTrafficMax(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	if err := InitDB(filepath.Join(dbDir, "x-ui.db")); err != nil {
+	if err := InitDB(filepath.Join(dbDir, "fullboard.db")); err != nil {
 		t.Fatalf("InitDB failed: %v", err)
 	}
 	t.Cleanup(func() { _ = CloseDB() })

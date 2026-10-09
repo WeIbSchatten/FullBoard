@@ -1,4 +1,4 @@
-// Package logger provides logging functionality for the 3x-ui panel with
+// Package logger provides logging functionality for the FullBoard panel with
 // dual-backend logging (console/syslog and file) and buffered log storage for web UI.
 package logger
 
@@ -12,14 +12,14 @@ import (
 
 	"github.com/op/go-logging"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/config"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
 
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 const (
 	maxLogBufferSize = 10240                 // Maximum log entries kept in memory
-	logFileName      = "3xui.log"            // Log file name
+	logFileName      = "fullboard.log"       // Log file name
 	timeFormat       = "2006/01/02 15:04:05" // Log timestamp format
 
 	// On-disk rotation limits — single file capped, old segments pruned automatically.
@@ -51,25 +51,25 @@ var (
 // A usable default so logging never nil-derefs before InitLogger runs — the
 // "migrate" and "setting" CLI subcommands log without calling it.
 func init() {
-	logger.Store(logging.MustGetLogger("x-ui"))
+	logger.Store(logging.MustGetLogger("fullboard"))
 }
 
 // InitLogger initializes dual logging backends: console/syslog and file.
 // Console logging uses the specified level, file logging always uses DEBUG level.
 func InitLogger(level logging.Level) {
-	newLogger := logging.MustGetLogger("x-ui")
+	newLogger := logging.MustGetLogger("fullboard")
 	backends := make([]logging.Backend, 0, 2)
 
 	// Console/syslog backend with configurable level
 	consoleBackend := initDefaultBackend()
 	leveledBackend := logging.AddModuleLevel(consoleBackend)
-	leveledBackend.SetLevel(level, "x-ui")
+	leveledBackend.SetLevel(level, "fullboard")
 	backends = append(backends, leveledBackend)
 
 	// File backend with DEBUG level for comprehensive logging
 	if fileBackend := initFileBackend(); fileBackend != nil {
 		leveledBackend := logging.AddModuleLevel(fileBackend)
-		leveledBackend.SetLevel(logging.DEBUG, "x-ui")
+		leveledBackend.SetLevel(logging.DEBUG, "fullboard")
 		backends = append(backends, leveledBackend)
 	}
 

@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/eventbus"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/locale"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/eventbus"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
 )
 
 type fixedTgLang struct{}

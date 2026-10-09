@@ -5,16 +5,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
 )
 
 func TestSetRemoteTraffic_PreservesPanelLocalGroupAndComment(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 
 	db := database.GetDB()
 
@@ -80,7 +80,7 @@ func TestSetRemoteTraffic_PreservesPanelLocalGroupAndComment(t *testing.T) {
 func TestSyncInbound_KeepsGroupWhenIncomingEmpty(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 
 	db := database.GetDB()
 
@@ -120,7 +120,7 @@ func TestSyncInbound_KeepsGroupWhenIncomingEmpty(t *testing.T) {
 func TestClientUpdate_ClearsGroup(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
 
 	db := database.GetDB()
 

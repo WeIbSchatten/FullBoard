@@ -7,8 +7,8 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/xray"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
 )
 
 func TestClientWeeklyRenewMigration(t *testing.T) {
@@ -18,7 +18,7 @@ func TestClientWeeklyRenewMigration(t *testing.T) {
 			name = "nullable columns and configured weekday"
 		}
 		t.Run(name, func(t *testing.T) {
-			path := filepath.Join(t.TempDir(), "x-ui.db")
+			path := filepath.Join(t.TempDir(), "fullboard.db")
 			legacy, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
 			if err != nil {
 				t.Fatal(err)

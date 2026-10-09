@@ -11,13 +11,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/mhsanaei/3x-ui/v3/internal/database"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/dbtest"
-	"github.com/mhsanaei/3x-ui/v3/internal/database/model"
-	"github.com/mhsanaei/3x-ui/v3/internal/util/crypto"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/locale"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service"
-	"github.com/mhsanaei/3x-ui/v3/internal/web/service/discord"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/discord"
 )
 
 func TestValidateRegex(t *testing.T) {
@@ -58,7 +58,7 @@ func TestValidateRegex(t *testing.T) {
 
 func TestAPITokenMutationRoutesEnforceExpectedScope(t *testing.T) {
 	t.Setenv("XUI_DB_FOLDER", t.TempDir())
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	row := &model.ApiToken{Name: "route-scope", Token: crypto.HashTokenSHA256("token"), Enabled: true, Scope: model.ApiScopeNodeSync}
 	if err := database.GetDB().Create(row).Error; err != nil {
 		t.Fatalf("seed token: %v", err)
@@ -93,7 +93,7 @@ func TestAPITokenMutationRoutesEnforceExpectedScope(t *testing.T) {
 // rebind the authenticator without presenting a current code.
 func TestUpdateSettingRequiresCodeToReplaceTwoFactorToken(t *testing.T) {
 	t.Setenv("XUI_DB_FOLDER", t.TempDir())
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 
 	settingService := service.SettingService{}
 	if err := settingService.SetTwoFactorToken("ORIGINALSECRET234567"); err != nil {
@@ -190,7 +190,7 @@ func TestTestDiscordEndpoint(t *testing.T) {
 
 	// Setup DB
 	t.Setenv("XUI_DB_FOLDER", t.TempDir())
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	t.Cleanup(func() { SetDiscordService(nil) })
 
 	settingService := service.SettingService{}
