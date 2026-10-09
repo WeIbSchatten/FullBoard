@@ -6,7 +6,7 @@ import { appName, productRepoUrl, telegramChannel, telegramChannelUrl, siteUrl }
 import { getSiteMessages } from './site-i18n';
 
 // Build locale-aware shared layout options. With `hideLocale: 'default-locale'`,
-// English URLs have no prefix while other locales are prefixed (`/fa`, `/ru`, `/zh`).
+// English URLs have no prefix while other locales are prefixed (`/ru`).
 export function baseOptions(lang: string): BaseLayoutProps {
   const prefix = lang === 'en' ? '' : `/${lang}`;
   const m = getSiteMessages(lang);
