@@ -148,6 +148,25 @@ and admin addresses, the public upstream, global limits and timeouts. On a fresh
 host with no profiles yet, the form also asks for the first profile, since the
 relay refuses to start without one.
 
+## Troubleshooting
+
+**`read-only file system` when saving config or a profile.** The panel unit uses
+`ProtectSystem=full`, which makes `/etc` read-only. FullBoard needs
+`ReadWritePaths=-/etc/tproxy-server`. Stock installs from a current release
+include it; if you see this error on an older unit, add a drop-in and restart:
+
+```bash
+sudo mkdir -p /etc/systemd/system/fullboard.service.d
+sudo tee /etc/systemd/system/fullboard.service.d/20-tproxy.conf >/dev/null <<'EOF'
+[Service]
+ReadWritePaths=-/etc/tproxy-server
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart fullboard
+```
+
+Then save the relay config / profile again in the panel.
+
 ## Safety guarantees
 
 Every save (config or profile) goes through the same steps:

@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
 	"testing"
 )
 
@@ -137,6 +139,20 @@ func TestStoreApplyFailedCheckLeavesLiveFilesUntouched(t *testing.T) {
 		if _, err := os.Stat(p); !errors.Is(err, os.ErrNotExist) {
 			t.Fatalf("candidate %s left behind", p)
 		}
+	}
+}
+
+func TestWrapConfigWriteErrorHintsSandbox(t *testing.T) {
+	err := wrapConfigWriteError(fmt.Errorf("open candidate: %w", syscall.EROFS))
+	if err == nil || !strings.Contains(err.Error(), "ReadWritePaths=-/etc/tproxy-server") {
+		t.Fatalf("error = %v, want ReadWritePaths hint", err)
+	}
+	if !errors.Is(err, syscall.EROFS) {
+		t.Fatalf("wrapped error must still match EROFS, got %v", err)
+	}
+	plain := errors.New("permission denied")
+	if wrapConfigWriteError(plain) != plain {
+		t.Fatal("non-EROFS errors must pass through unchanged")
 	}
 }
 
