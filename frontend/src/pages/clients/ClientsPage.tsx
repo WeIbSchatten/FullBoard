@@ -651,7 +651,13 @@ export default function ClientsPage() {
   const canDragReorder = sortColumn === 'sortOrder' && sortOrder === 'ascend';
 
   function onHandlePointerDown(idx: number, ev: ReactPointerEvent) {
-    if (!canDragReorder) return;
+    // First grab while another sort is active only switches to manual order; the
+    // next drag then reorders against a stable list (a mid-drag refetch would jump rows).
+    if (!canDragReorder) {
+      setSortColumn('sortOrder');
+      setSortOrder('ascend');
+      return;
+    }
     if (ev.button != null && ev.button !== 0) return;
     ev.preventDefault();
     try {
@@ -1141,24 +1147,20 @@ export default function ClientsPage() {
 
   const columns = useMemo<ColumnsType<ClientRecord>>(
     () => [
-      ...(canDragReorder
-        ? [
-            {
-              title: '',
-              key: 'drag',
-              width: 36,
-              align: 'center' as const,
-              render: (_v: unknown, _r: ClientRecord, index: number) => (
-                <HolderOutlined
-                  className="client-drag-handle"
-                  title={t('pages.clients.dragToReorder')}
-                  aria-hidden="true"
-                  onPointerDown={(ev: ReactPointerEvent) => onHandlePointerDown(index, ev)}
-                />
-              ),
-            },
-          ]
-        : []),
+      {
+        title: '',
+        key: 'drag',
+        width: 36,
+        align: 'center' as const,
+        render: (_v: unknown, _r: ClientRecord, index: number) => (
+          <HolderOutlined
+            className="client-drag-handle"
+            title={t('pages.clients.dragToReorder')}
+            aria-hidden="true"
+            onPointerDown={(ev: ReactPointerEvent) => onHandlePointerDown(index, ev)}
+          />
+        ),
+      },
       {
         title: t('pages.clients.actions'),
         key: 'actions',
@@ -1335,7 +1337,6 @@ export default function ClientsPage() {
       datepicker,
       trafficDiff,
       clientSpeed,
-      canDragReorder,
     ],
   );
 
@@ -1897,14 +1898,12 @@ export default function ClientsPage() {
                                   className={`client-card${selectedRowKeys.includes(row.email) ? ' is-selected' : ''}${dragClasses ? ` ${dragClasses}` : ''}`}
                                 >
                                   <div className="card-head">
-                                    {canDragReorder && (
-                                      <HolderOutlined
-                                        className="client-drag-handle"
-                                        title={t('pages.clients.dragToReorder')}
-                                        aria-hidden="true"
-                                        onPointerDown={(ev) => onHandlePointerDown(index, ev)}
-                                      />
-                                    )}
+                                    <HolderOutlined
+                                      className="client-drag-handle"
+                                      title={t('pages.clients.dragToReorder')}
+                                      aria-hidden="true"
+                                      onPointerDown={(ev) => onHandlePointerDown(index, ev)}
+                                    />
                                     <Checkbox
                                       checked={selectedRowKeys.includes(row.email)}
                                       onChange={(e) => toggleSelect(row.email, e.target.checked)}

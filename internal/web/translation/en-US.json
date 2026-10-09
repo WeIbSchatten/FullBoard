@@ -1261,11 +1261,11 @@
       },
       "bindings": {
         "title": "Client bindings",
-        "hint": "A bound client gets a https://t.me/webproxy link in its raw subscription. JSON and Clash subscriptions do not carry it.",
+        "hint": "A bound client gets a https://t.me/webproxy link in its raw subscription and in the QR code menu. JSON and Clash subscriptions do not carry it.",
         "client": "Client",
         "profile": "Profile",
         "dedicated": "Dedicated secret",
-        "dedicatedHint": "Gives the client a profile of its own, cloned from the selected one, with a unique secret. It appears a few seconds after saving.",
+        "dedicatedHint": "Gives the client its own profile and a unique secret, and auto-creates a loopback MTProto inbound for that secret. The link appears a few seconds after saving.",
         "effective": "Effective profile",
         "empty": "No clients are bound yet.",
         "unbind": "Unbind",

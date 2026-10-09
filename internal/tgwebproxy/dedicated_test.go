@@ -127,6 +127,33 @@ func TestSyncDedicatedNeedsRelayConfigWhenSomethingDesired(t *testing.T) {
 	}
 }
 
+func TestSyncDedicatedHonoursSecretAndBackendOverrides(t *testing.T) {
+	m := seedManager(t, validProfile())
+	const secret = "aabbccddeeff00112233445566778899"
+	const backend = "127.0.0.1:46111"
+	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{
+		Email: "a@x", Base: "default", Secret: secret, Backend: backend,
+	}}); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	got, ok := profileByName(t, m, DedicatedProfileName("a@x"))
+	if !ok {
+		t.Fatal("dedicated profile missing")
+	}
+	if got.Secret != secret || got.Backend != backend {
+		t.Fatalf("profile = %+v, want secret=%s backend=%s", got, secret, backend)
+	}
+	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{
+		Email: "a@x", Base: "default", Secret: secret, Backend: backend,
+	}}); err != nil {
+		t.Fatalf("second sync: %v", err)
+	}
+	again, _ := profileByName(t, m, DedicatedProfileName("a@x"))
+	if again.Secret != secret || again.Backend != backend {
+		t.Fatalf("override not stable across sync: %+v", again)
+	}
+}
+
 func TestSyncDedicatedReportsMissingBaseButAppliesTheRest(t *testing.T) {
 	m := seedManager(t, validProfile())
 	_, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{
