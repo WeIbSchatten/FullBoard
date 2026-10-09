@@ -720,6 +720,7 @@
       "tabBasics": "基本",
       "tabCredentials": "認證資訊",
       "tabLinks": "連結",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "WireGuard 設定",
       "config": "設定",
       "linksHint": "新增第三方分享連結和遠端訂閱網址，將其包含在此用戶端的訂閱中。",
@@ -1132,6 +1133,7 @@
       "pinFetchFailed": "無法取得憑證",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "在節點列點「管理面板」可完整管理遠端面版：設定、Xray、即時入站、重啟與登入。",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2559,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "密鑰",
+        "link": "連結",
+        "showSecret": "顯示密鑰",
+        "hideSecret": "隱藏密鑰"
+      },
+      "egress": {
+        "button": "檢查出口 IP",
+        "hint": "測試此設定檔 route-via 規則指向的出站，並顯示 Cloudflare 看到的出口 IP。",
+        "noRoute": "此設定檔沒有 route-via 規則 — 流量走預設出站。",
+        "failed": "出口檢查失敗：{error}",
+        "outboundMissing": "出站 \"{tag}\" 不在 Xray 範本中",
+        "noIp": "出站 \"{tag}\" 可達但未回報出口 IP",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

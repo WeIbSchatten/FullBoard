@@ -720,6 +720,7 @@
       "tabBasics": "Básico",
       "tabCredentials": "Credenciais",
       "tabLinks": "Links",
+      "tabTgWebProxy": "TG WEB Proxy",
       "wireguardConfig": "Configuração do WireGuard",
       "config": "Configuração",
       "linksHint": "Adicione links de terceiros e URLs de assinatura remotas para incluir na assinatura deste cliente.",
@@ -1132,6 +1133,7 @@
       "pinFetchFailed": "Não foi possível obter o certificado",
       "remote": {
         "manage": "Manage panel",
+        "manageHint": "Abra o controle completo do painel remoto com Gerenciar painel na linha do nó — configurações, Xray, inbounds ao vivo, reinício e login.",
         "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
@@ -2557,7 +2559,20 @@
         "bind": "Bind",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
-        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+        "notConfigured": "Configure the Telegram WEB Proxy relay first.",
+        "secret": "Segredo",
+        "link": "Link",
+        "showSecret": "Mostrar segredo",
+        "hideSecret": "Ocultar segredo"
+      },
+      "egress": {
+        "button": "Verificar IP de saída",
+        "hint": "Testa o outbound indicado pela regra route-via deste perfil e mostra o IP que a Cloudflare vê.",
+        "noRoute": "Este perfil não tem regra route-via — o tráfego usa o outbound padrão.",
+        "failed": "Falha ao verificar a saída: {error}",
+        "outboundMissing": "O outbound \"{tag}\" não está no modelo do Xray",
+        "noIp": "O outbound \"{tag}\" responde, mas nenhum IP de saída foi informado",
+        "result": "{tag}: {detail}"
       },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",

@@ -5408,8 +5408,17 @@
             "example": "alice",
             "type": "string"
           },
+          "link": {
+            "example": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+            "type": "string"
+          },
           "profileName": {
             "example": "default",
+            "type": "string"
+          },
+          "secret": {
+            "description": "Secret/Link are filled from the live relay profile when available.",
+            "example": "000102030405060708090a0b0c0d0e0f",
             "type": "string"
           }
         },
@@ -18103,7 +18112,9 @@
                         "dedicated": false,
                         "effectiveProfile": "default",
                         "email": "alice",
-                        "profileName": "default"
+                        "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                        "profileName": "default",
+                        "secret": "000102030405060708090a0b0c0d0e0f"
                       }
                     ],
                     "syncError": ""
@@ -18163,7 +18174,9 @@
                     "dedicated": false,
                     "effectiveProfile": "default",
                     "email": "alice",
-                    "profileName": "default"
+                    "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                    "profileName": "default",
+                    "secret": "000102030405060708090a0b0c0d0e0f"
                   }
                 }
               }

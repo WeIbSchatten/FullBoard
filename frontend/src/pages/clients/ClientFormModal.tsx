@@ -1499,9 +1499,13 @@ export default function ClientFormModal({
                           ))
                         )}
                       </div>
-                      <ClientTgWebProxySection email={isEdit ? client?.email : undefined} />
                     </>
                   ),
+                },
+                {
+                  key: 'tgWebProxy',
+                  label: t('pages.clients.tabTgWebProxy'),
+                  children: <ClientTgWebProxySection email={isEdit ? client?.email : undefined} />,
                 },
               ]}
             />

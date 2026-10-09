@@ -155,12 +155,21 @@ func TestBindClientReplacesExistingBinding(t *testing.T) {
 	if _, err := svc.BindClient(TgWebProxyBindRequest{Email: "alice", ProfileName: "default", Dedicated: true}); err != nil {
 		t.Fatal(err)
 	}
+	if _, err := svc.SyncBindings(context.Background()); err != nil {
+		t.Fatal(err)
+	}
 	list, err := svc.ListBindings()
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(list.Bindings) != 1 || !list.Bindings[0].Dedicated || list.Bindings[0].EffectiveProfile != tgwebproxy.DedicatedProfileName("alice") {
 		t.Fatalf("bindings = %+v, want one dedicated binding", list.Bindings)
+	}
+	if list.Bindings[0].Secret == "" || list.Bindings[0].Link == "" {
+		t.Fatalf("bindings should expose live secret/link, got %+v", list.Bindings[0])
+	}
+	if list.Bindings[0].Secret == bindingBaseSecret {
+		t.Fatalf("dedicated binding must not reuse the shared secret: %q", list.Bindings[0].Secret)
 	}
 }
 

@@ -41,7 +41,12 @@ const PROTOCOL_COLORS: Record<string, string> = {
   MTProto: 'blue',
   AmneziaWG: 'yellow',
   TUIC: 'orange',
+  'WEB Proxy': 'processing',
 };
+
+function isTgWebProxyLink(link: string): boolean {
+  return /^(https:\/\/t\.me\/webproxy|tg:\/\/webproxy)\?/i.test(link);
+}
 
 const SECURITY_COLORS: Record<string, string> = {
   TLS: 'green',
@@ -77,6 +82,16 @@ function fromBase64Url(value: string): string {
    into the body a client app imports, so there is nothing to strip here. */
 export function parseLinkParts(link: string): LinkParts | null {
   const trimmed = link.trim();
+  // https://t.me/webproxy and tg://webproxy must win over generic https/tg labels.
+  if (isTgWebProxyLink(trimmed)) {
+    let remark = '';
+    try {
+      remark = new URL(trimmed).searchParams.get('server')?.trim() ?? '';
+    } catch {
+      /* keep empty remark */
+    }
+    return { protocol: 'WEB Proxy', network: '', security: '', remark, port: '' };
+  }
   const scheme = /^([a-z0-9]+):\/\//i.exec(trimmed)?.[1]?.toLowerCase() ?? '';
   if (!scheme) return null;
   const protocol = PROTOCOL_LABELS[scheme] ?? scheme.charAt(0).toUpperCase() + scheme.slice(1);

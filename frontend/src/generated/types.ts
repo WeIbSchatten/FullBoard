@@ -1240,7 +1240,9 @@ export interface TgWebProxyBinding {
   dedicated: boolean;
   effectiveProfile: string;
   email: string;
+  link?: string;
   profileName: string;
+  secret?: string;
 }
 
 export interface TgWebProxyBindingList {

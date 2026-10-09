@@ -1325,7 +1325,9 @@ export const TgWebProxyBindingSchema = z.object({
   dedicated: z.boolean(),
   effectiveProfile: z.string(),
   email: z.string(),
+  link: z.string().optional(),
   profileName: z.string(),
+  secret: z.string().optional(),
 });
 export type TgWebProxyBinding = z.infer<typeof TgWebProxyBindingSchema>;
 

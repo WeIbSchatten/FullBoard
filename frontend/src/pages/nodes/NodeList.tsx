@@ -262,16 +262,15 @@ export default function NodeList({
           ) : (
             <Space>
               {onManage && (
-                <Tooltip title={t('pages.nodes.remote.manage')}>
-                  <Button
-                    type="text"
-                    size="small"
-                    style={{ fontSize: 16 }}
-                    icon={<ControlOutlined />}
-                    aria-label={t('pages.nodes.remote.manage')}
-                    onClick={() => onManage(record)}
-                  />
-                </Tooltip>
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<ControlOutlined />}
+                  aria-label={t('pages.nodes.remote.manage')}
+                  onClick={() => onManage(record)}
+                >
+                  {t('pages.nodes.remote.manage')}
+                </Button>
               )}
               <Tooltip title={t('pages.nodes.probe')}>
                 <Button

@@ -57,6 +57,22 @@ function Editor({ email }: { email: string }) {
           <Typography.Text code>{binding.effectiveProfile}</Typography.Text>
         </Typography.Text>
       )}
+      {binding?.secret && (
+        <Typography.Text type="secondary">
+          {t('pages.tgWebProxy.bindings.secret')}:{' '}
+          <Typography.Text code copyable>
+            {binding.secret}
+          </Typography.Text>
+        </Typography.Text>
+      )}
+      {binding?.link && (
+        <Typography.Text type="secondary">
+          {t('pages.tgWebProxy.bindings.link')}:{' '}
+          <Typography.Text copyable={{ text: binding.link }} ellipsis style={{ maxWidth: '100%' }}>
+            {binding.link}
+          </Typography.Text>
+        </Typography.Text>
+      )}
       {bindings.data?.syncError && (
         <Alert
           type="error"
@@ -90,9 +106,8 @@ function Editor({ email }: { email: string }) {
 export default function ClientTgWebProxySection({ email }: { email?: string }) {
   const { t } = useTranslation();
   return (
-    <div style={{ marginTop: 24 }}>
-      <Typography.Title level={5}>{t('pages.tgWebProxy.bindings.title')}</Typography.Title>
-      <Typography.Paragraph type="secondary">
+    <div>
+      <Typography.Paragraph type="secondary" style={{ marginTop: 4 }}>
         {t('pages.tgWebProxy.bindings.hint')}
       </Typography.Paragraph>
       {email ? (
