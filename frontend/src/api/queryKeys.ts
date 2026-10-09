@@ -6,11 +6,15 @@ export const keys = {
   nodes: {
     root: () => ['nodes'] as const,
     list: () => ['nodes', 'list'] as const,
+    remoteLive: (nodeId: number) => ['nodes', 'remote', nodeId, 'liveInbounds'] as const,
+    remoteXray: (nodeId: number) => ['nodes', 'remote', nodeId, 'xray'] as const,
   },
   tgWebProxy: {
     root: () => ['tgWebProxy'] as const,
     status: () => ['tgWebProxy', 'status'] as const,
     config: () => ['tgWebProxy', 'config'] as const,
+    publicSite: () => ['tgWebProxy', 'publicSite'] as const,
+    bindings: () => ['tgWebProxy', 'bindings'] as const,
     logs: (unit: string, lines: number) => ['tgWebProxy', 'logs', unit, lines] as const,
   },
   hosts: {

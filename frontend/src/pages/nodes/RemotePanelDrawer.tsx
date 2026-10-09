@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
@@ -26,6 +26,7 @@ import type { ColumnsType } from 'antd/es/table';
 import {
   BranchesOutlined,
   ExportOutlined,
+  LoginOutlined,
   PoweroffOutlined,
   ReloadOutlined,
   RetweetOutlined,
@@ -33,7 +34,12 @@ import {
 } from '@ant-design/icons';
 
 import type { NodeRecord } from '@/api/queries/useNodesQuery';
+import type { RemoteLoginURL } from '@/generated/types';
 import { HttpUtil, SizeFormatter } from '@/utils';
+import RemoteBackupTab from './RemoteBackupTab';
+import RemoteLiveInbounds from './RemoteLiveInbounds';
+import RemoteLogsTab from './RemoteLogsTab';
+import RemoteXrayTab from './RemoteXrayTab';
 
 interface RemoteStatus {
   cpu?: number;
@@ -103,6 +109,7 @@ export default function RemotePanelDrawer({ node, onClose }: RemotePanelDrawerPr
   const [modal, modalContextHolder] = Modal.useModal();
   const [messageApi, messageContextHolder] = message.useMessage();
   const nodeId = node?.id ?? 0;
+  const queryClient = useQueryClient();
 
   const [settings, setSettings] = useState<RemoteSettings | null>(null);
   const [settingsError, setSettingsError] = useState('');
@@ -176,6 +183,30 @@ export default function RemotePanelDrawer({ node, onClose }: RemotePanelDrawerPr
       setBusy(null);
     }
   }, []);
+
+  const loginAs = useCallback(async () => {
+    // Opened synchronously so the popup blocker treats it as a user gesture.
+    const win = window.open('about:blank', '_blank');
+    if (win) win.opener = null;
+    setBusy('loginAs');
+    try {
+      const msg = await HttpUtil.post<RemoteLoginURL>(`/panel/api/nodes/remote/${nodeId}/loginAs`);
+      if (msg?.success && msg.obj?.url) {
+        if (win) win.location.href = msg.obj.url;
+        else window.location.assign(msg.obj.url);
+      } else {
+        win?.close();
+      }
+    } catch {
+      win?.close();
+    } finally {
+      setBusy(null);
+    }
+  }, [nodeId]);
+
+  const refreshAll = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ['nodes', 'remote', nodeId] });
+  }, [queryClient, nodeId]);
 
   const confirmRestartPanel = useCallback(() => {
     modal.confirm({
@@ -372,6 +403,14 @@ export default function RemotePanelDrawer({ node, onClose }: RemotePanelDrawerPr
           >
             {t('pages.nodes.remote.restartPanel')}
           </Button>
+          <Button
+            type="primary"
+            icon={<LoginOutlined />}
+            loading={busy === 'loginAs'}
+            onClick={() => void loginAs()}
+          >
+            {t('pages.nodes.remote.loginAs')}
+          </Button>
           {node && (
             <Button
               icon={<ExportOutlined />}
@@ -441,6 +480,7 @@ export default function RemotePanelDrawer({ node, onClose }: RemotePanelDrawerPr
         scroll={{ x: 'max-content' }}
         locale={{ emptyText: <Empty description={t('noData')} /> }}
       />
+      <RemoteLiveInbounds nodeId={nodeId} />
       <Typography.Title level={5}>{t('pages.nodes.remote.clients')}</Typography.Title>
       <Table
         rowKey={(c) => `${c.inbound}-${c.email}`}
@@ -547,6 +587,21 @@ export default function RemotePanelDrawer({ node, onClose }: RemotePanelDrawerPr
             key: 'settings',
             label: t('pages.nodes.remote.settings'),
             children: settingsTab,
+          },
+          {
+            key: 'logs',
+            label: t('pages.index.logs'),
+            children: <RemoteLogsTab nodeId={nodeId} />,
+          },
+          {
+            key: 'xray',
+            label: 'Xray',
+            children: <RemoteXrayTab nodeId={nodeId} onChanged={loadStatus} />,
+          },
+          {
+            key: 'backup',
+            label: t('pages.index.backupTitle'),
+            children: <RemoteBackupTab nodeId={nodeId} onChanged={refreshAll} />,
           },
         ]}
       />

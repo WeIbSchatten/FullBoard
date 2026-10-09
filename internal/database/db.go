@@ -78,6 +78,7 @@ func allModels() []any {
 		&model.ClientInbound{},
 		&model.ClientHwid{},
 		&model.ClientExternalLink{},
+		&model.ClientTgWebProxy{},
 		&model.ClientGroup{},
 		&model.InboundFallback{},
 		&model.Host{},

@@ -1,6 +1,13 @@
 export const CARRIER_MODES = ['https', 'https-lanes', 'websocket', 'websocket-lanes'] as const;
 export type CarrierMode = (typeof CARRIER_MODES)[number];
 
+// Must match tgwebproxy.DedicatedPrefix: the server owns profiles with this prefix.
+export const MANAGED_PROFILE_PREFIX = 'fb:';
+
+export function isManagedProfile(name: string): boolean {
+  return name.startsWith(MANAGED_PROFILE_PREFIX);
+}
+
 export const SECRET_PATTERN = /^(dd)?[0-9a-f]{32}$/;
 export const HOSTNAME_PATTERN =
   /^(?=.{1,253}$)(?!-)[a-z0-9-]{1,63}(?<!-)(\.(?!-)[a-z0-9-]{1,63}(?<!-))+$/;

@@ -225,6 +225,24 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'POST',
+        path: '/login/ticket',
+        summary:
+          'Redeem a one-time login ticket (minted by POST /panel/api/setting/loginTicket for an admin API token) and receive a session cookie. Single use, expires after 45 seconds, and shares the failed-login lockout. Used by the "Login to panel" button of a managing panel.',
+        params: [
+          {
+            name: 'ticket',
+            in: 'body',
+            type: 'string',
+            desc: 'Ticket from the login URL fragment.',
+          },
+        ],
+        body: '{\n  "ticket": "q3dKx0m7uZ1pYb2l9sVwQeR5tN8aHc4F6gJ_iLoPzXk"\n}',
+        response: '{\n  "success": true,\n  "msg": "Logged in successfully"\n}',
+        errorResponse:
+          '{\n  "success": false,\n  "msg": "This sign-in link is invalid or has expired."\n}',
+      },
+      {
+        method: 'POST',
         path: '/logout',
         summary: 'Clear the session cookie. Requires the CSRF header for browser sessions.',
         response: '{\n  "success": true\n}',
@@ -1721,6 +1739,163 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'GET',
+        path: '/panel/api/nodes/remote/:id/xray',
+        summary:
+          "Read the remote panel's Xray template with its inbound tags and outbound test URL, proxied verbatim from the node. Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/xray',
+        summary:
+          "Save the remote panel's Xray template. The node restarts a running core itself. Requires an admin-scope API token on the node.",
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          {
+            name: 'xraySetting',
+            in: 'body',
+            type: 'string',
+            desc: 'The Xray template as a JSON object serialized to a string.',
+          },
+          {
+            name: 'outboundTestUrl',
+            in: 'body',
+            type: 'string',
+            desc: 'URL the node uses to test outbounds.',
+            optional: true,
+          },
+        ],
+        body: '{\n  "xraySetting": "{\\"log\\":{},\\"outbounds\\":[]}",\n  "outboundTestUrl": "https://www.google.com/generate_204"\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/logs',
+        summary:
+          "Tail the remote panel's own log or its Xray access log. Count is 1-10000 (default 100); level applies to the panel stream only (debug, info, notice, warning, err); filter applies to the Xray stream only. Requires an admin-scope API token on the node.",
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          {
+            name: 'source',
+            in: 'body',
+            type: 'string',
+            desc: '"panel" or "xray".',
+          },
+          { name: 'count', in: 'body', type: 'number', desc: 'Lines to return.', optional: true },
+          { name: 'level', in: 'body', type: 'string', desc: 'Panel log level.', optional: true },
+          {
+            name: 'syslog',
+            in: 'body',
+            type: 'boolean',
+            desc: 'Read the node systemd journal instead of the panel buffer.',
+            optional: true,
+          },
+          {
+            name: 'filter',
+            in: 'body',
+            type: 'string',
+            desc: 'Xray log text filter.',
+            optional: true,
+          },
+        ],
+        body: '{\n  "source": "panel",\n  "count": 100,\n  "level": "info"\n}',
+        response:
+          '{\n  "success": true,\n  "obj": [\n    "2026/01/01 12:00:00 INFO - panel started"\n  ]\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/stopXray',
+        summary:
+          'Stop the Xray core on the remote FullBoard panel. Requires an admin-scope API token on the node.',
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/installXray',
+        summary:
+          "Switch the remote panel's Xray core to a release version; the node validates it against its own release list. Can take a minute. Requires an admin-scope API token on the node.",
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          { name: 'version', in: 'body', type: 'string', desc: 'Xray release, e.g. "v25.10.31".' },
+        ],
+        body: '{\n  "version": "v25.10.31"\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/geofile',
+        summary:
+          'Refresh one geo data file on the remote panel, or every geo file when fileName is omitted. Requires an admin-scope API token on the node.',
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          {
+            name: 'fileName',
+            in: 'body',
+            type: 'string',
+            desc: 'A .dat file name such as "geoip.dat".',
+            optional: true,
+          },
+        ],
+        body: '{\n  "fileName": "geoip.dat"\n}',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/nodes/remote/:id/backup',
+        summary:
+          "Download the remote panel's database as an attachment (up to 64 MiB). Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/backup/import',
+        summary:
+          'Replace the remote panel\'s data with an uploaded backup (multipart form, field name "db", up to 64 MiB). The remote panel restarts afterwards. Destructive. Requires an admin-scope API token on the node.',
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          {
+            name: 'db',
+            in: 'body (multipart)',
+            type: 'file',
+            desc: 'Database backup file to upload.',
+          },
+          {
+            name: 'keepHostSettings',
+            in: 'body (multipart)',
+            type: 'boolean',
+            desc: "Keep the node's own addresses, certificates and node identity. Default true.",
+            optional: true,
+            defaultValue: true,
+          },
+        ],
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/nodes/remote/:id/inbounds',
+        summary:
+          'List the inbounds the node serves right now, each flagged with whether this panel already manages it (adopted).',
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        responseSchema: 'RemoteLiveInbound',
+        responseSchemaArray: true,
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/adopt',
+        summary:
+          'Adopt an inbound served by the node so this panel manages it. In "selected" sync mode the tag joins the node selection; the next sync imports it. Nodes syncing all inbounds import it on their own.',
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          { name: 'tag', in: 'body', type: 'string', desc: "The inbound's tag on the node." },
+        ],
+        body: '{\n  "tag": "in-443-tcp"\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/loginAs',
+        summary:
+          "Mint a one-time sign-in URL for the remote panel (valid 45 seconds, single use; the ticket rides in the URL fragment). Open it in a browser to land in the node's panel as its admin. Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        responseSchema: 'RemoteLoginURL',
+      },
+      {
+        method: 'GET',
         path: '/panel/api/nodes/get/:id',
         summary: 'Fetch a single node by ID.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
@@ -1990,6 +2165,13 @@ export const sections: readonly Section[] = [
         path: '/panel/api/setting/restartPanel',
         summary:
           'Restart the entire FullBoard process after a 3-second grace period. The connection drops immediately; the panel comes back online ~5-10 seconds later.',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/setting/loginTicket',
+        summary:
+          'Mint a single-use browser sign-in ticket (valid 45 seconds) for POST /login/ticket. Admin-scope API tokens only: a browser session, node-sync or monitor token gets 403. A managing panel calls this for its "Login to panel" button.',
+        responseSchema: 'LoginTicketResponse',
       },
       {
         method: 'POST',
@@ -2828,6 +3010,65 @@ export const sections: readonly Section[] = [
         path: '/panel/api/tgWebProxy/job',
         summary: 'State and log tail of the last install/update job.',
         responseSchema: 'RelayJobStatus',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/publicSite',
+        summary:
+          'Panel-managed static site under /var/lib/fullboard/tproxy-site: index.html, asset list and whether config public_dir points at it.',
+        responseSchema: 'PublicSiteSnapshot',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/publicSite',
+        summary:
+          'Write index.html and set config public_dir to the managed directory (clears public_upstream).',
+        body: '{\n  "indexHtml": "<!DOCTYPE html><html><body>Welcome</body></html>"\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/publicSite/reset',
+        summary: 'Restore the built-in landing page template and activate managed public_dir.',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/publicSite/upload',
+        summary:
+          'Upload an allowlisted asset (html/css/js/images/fonts/txt) into the managed public directory. Multipart field "file"; optional "name".',
+        body: '(multipart)',
+        response: '{\n  "success": true\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/publicSite/del/:name',
+        summary: 'Delete a non-index asset from the managed public directory.',
+        params: [{ name: 'name', in: 'path', type: 'string', desc: 'File name (single segment).' }],
+        response: '{\n  "success": true\n}',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/tgWebProxy/bindings',
+        summary:
+          'Client-to-profile bindings plus the last background sync error. A bound client gets a https://t.me/webproxy link in its raw subscription.',
+        responseSchema: 'TgWebProxyBindingList',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/bindings/bind',
+        summary:
+          'Bind a client (by email) to an existing profile; calling it again replaces the binding. With dedicated=true the client gets its own "fb:<email>" profile, cloned from the named one with a fresh secret, created by a debounced background sync (the link appears once it ran).',
+        body: '{\n  "email": "alice",\n  "profileName": "default",\n  "dedicated": true\n}',
+        responseSchema: 'TgWebProxyBinding',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/bindings/unbind',
+        summary:
+          'Remove a client binding (idempotent). A dedicated client profile is removed by the background sync.',
+        body: '{\n  "email": "alice"\n}',
+        response: '{\n  "success": true\n}',
       },
     ],
   },

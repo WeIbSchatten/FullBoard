@@ -9,6 +9,7 @@ import { useTgWebProxySnapshot, useTgWebProxyStatus } from '@/api/queries/useTgW
 import OverviewTab from './OverviewTab';
 import ProfilesTab from './ProfilesTab';
 import ConfigTab from './ConfigTab';
+import PublicSiteTab from './PublicSiteTab';
 import LogsTab from './LogsTab';
 import './TgWebProxyPage.css';
 
@@ -97,6 +98,11 @@ export default function TgWebProxyPage() {
                         ) : (
                           <Spin />
                         ),
+                      },
+                      {
+                        key: 'publicSite',
+                        label: t('pages.tgWebProxy.tabs.publicSite'),
+                        children: <PublicSiteTab disabled={!status.supported} />,
                       },
                       {
                         key: 'logs',

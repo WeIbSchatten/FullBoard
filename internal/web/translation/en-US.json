@@ -137,7 +137,8 @@
         "emptyUsername": "Username is required",
         "emptyPassword": "Password is required",
         "wrongUsernameOrPassword": "Invalid username or password or two-factor code.",
-        "successLogin": "You have successfully logged into your account."
+        "successLogin": "You have successfully logged into your account.",
+        "invalidLoginTicket": "The login link is invalid or has expired. Open it again from the master panel."
       }
     },
     "index": {
@@ -1136,7 +1137,35 @@
         "overview": "Overview",
         "profiles": "Profiles",
         "config": "Relay config",
+        "publicSite": "Public site",
         "logs": "Logs"
+      },
+      "publicSite": {
+        "hint": "Saving writes index.html under the managed directory and points the relay public_dir at it (replacing public_upstream).",
+        "dir": "Directory",
+        "active": "Active as public_dir",
+        "inactive": "Not active — save to activate",
+        "editor": "index.html",
+        "preview": "Preview",
+        "assets": "Assets",
+        "upload": "Upload file",
+        "reset": "Reset template",
+        "save": "Save & activate",
+        "size": "Size"
+      },
+      "routeVia": {
+        "button": "Route via outbound",
+        "title": "Route backend via outbound — {name}",
+        "outbound": "Outbound",
+        "outboundPlaceholder": "Select an outbound tag",
+        "listenPort": "Local tunnel port",
+        "resultBackend": "New profile backend",
+        "portInUse": "That port is already used by an inbound",
+        "apply": "Create tunnel & update profile",
+        "done": "Tunnel inbound and routing rule created; profile backend updated",
+        "failed": "Failed to route backend via outbound",
+        "hint": "Creates a loopback tunnel inbound that rewrites to the current MTProxy backend, adds a routing rule to the chosen outbound, then sets the profile backend to 127.0.0.1:port.",
+        "warning": "The remote MTProxy must still accept this profile secret. Private / geoip routing rules on the chosen outbound can block Telegram traffic — verify connectivity after applying."
       },
       "yes": "Yes",
       "no": "No",
@@ -1159,7 +1188,7 @@
       "secret": "Secret",
       "job": "Job",
       "updateConfirm": "Download the latest tproxy-server, run its tests and swap the binary? Active sessions reconnect automatically.",
-      "profilesModeBad": "profiles.json has mode {{mode}}; the relay refuses group/other permissions. Save any profile to rewrite it as 0400.",
+      "profilesModeBad": "profiles.json has mode {mode}; the relay refuses group/other permissions. Save any profile to rewrite it as 0400.",
       "actions": {
         "start": "Start",
         "stop": "Stop",
@@ -1205,12 +1234,12 @@
         "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait.",
         "limits": "Per-profile limits",
         "limitsHint": "Leave empty to inherit the global value. Values may only lower the global limits.",
-        "deleteConfirm": "Delete profile \"{{name}}\"? Clients using its secret stop working.",
+        "deleteConfirm": "Delete profile \"{name}\"? Clients using its secret stop working.",
         "needConfig": "Save the relay configuration first."
       },
       "share": {
         "button": "Share",
-        "title": "Share profile \"{{name}}\"",
+        "title": "Share profile \"{name}\"",
         "hint": "Enter the server and secret in a WEB-proxy-capable Telegram app, or open the link.",
         "server": "Proxy server",
         "linkSecret": "Link secret",
@@ -1226,6 +1255,25 @@
         "duplicateName": "A profile with this name already exists",
         "duration": "Use a Go duration such as 5s or 2m"
       },
+      "bindings": {
+        "title": "Client bindings",
+        "hint": "A bound client gets a https://t.me/webproxy link in its raw subscription. JSON and Clash subscriptions do not carry it.",
+        "client": "Client",
+        "profile": "Profile",
+        "dedicated": "Dedicated secret",
+        "dedicatedHint": "Gives the client a profile of its own, cloned from the selected one, with a unique secret. It appears a few seconds after saving.",
+        "effective": "Effective profile",
+        "empty": "No clients are bound yet.",
+        "unbind": "Unbind",
+        "unbindConfirm": "Unbind client \"{email}\"? Its web-proxy link disappears from the subscription.",
+        "syncError": "Last profile sync failed: {error}",
+        "managed": "Managed",
+        "managedHint": "Created for a client binding. Unbind the client to remove it.",
+        "bind": "Bind",
+        "selectProfile": "Select a profile",
+        "saveFirst": "Save the client first; a binding needs an existing client.",
+        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+      },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",
         "saved": "Saved and validated",
@@ -1234,7 +1282,7 @@
         "serviceDone": "Service command executed",
         "jobStarted": "Job started",
         "restarted": "tproxy-server restarted with the new configuration",
-        "restartFailed": "Saved, but restart failed: {{error}}"
+        "restartFailed": "Saved, but restart failed: {error}"
       }
     },
     "nodes": {
@@ -1269,7 +1317,7 @@
       "inboundTagsHint": "Selection is matched by the inbound tag. An empty selection imports none.",
       "inboundTagsPlaceholder": "Load and select inbounds",
       "loadInbounds": "Load inbounds from node",
-      "inboundsLoaded": "Loaded {{count}} inbounds",
+      "inboundsLoaded": "Loaded {count} inbounds",
       "inboundsLoadFailed": "Failed to load inbounds",
       "enable": "Enabled",
       "status": "Status",
@@ -1323,7 +1371,9 @@
         "reloadMtls": "Reload master mTLS credential",
         "remoteSettingsSaved": "Remote panel settings saved",
         "remoteXrayRestarted": "Xray restarted on the remote panel",
-        "remotePanelRestarted": "Remote panel restart requested"
+        "remotePanelRestarted": "Remote panel restart requested",
+        "remoteXraySaved": "Node Xray template saved",
+        "remoteInboundAdopted": "Inbound adopted"
       },
       "tlsVerifyMode": "TLS verification",
       "tlsVerifyModeHint": "How the panel validates the node's HTTPS certificate. Pin or Skip are for self-signed certs (https nodes only).",
@@ -1354,7 +1404,7 @@
       "pinFetchFailed": "Could not fetch the certificate",
       "remote": {
         "manage": "Manage panel",
-        "title": "FullBoard panel: {{ name }}",
+        "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
         "settings": "Settings",
@@ -1362,7 +1412,7 @@
         "inbound": "Inbound",
         "restartXray": "Restart Xray",
         "restartPanel": "Restart panel",
-        "restartPanelConfirm": "Restart the FullBoard panel on {{ name }}?",
+        "restartPanelConfirm": "Restart the FullBoard panel on {name}?",
         "restartPanelDesc": "The remote panel goes offline for a few seconds. Traffic served by its Xray core is not interrupted.",
         "openPanel": "Open panel",
         "memory": "Memory",
@@ -1372,7 +1422,16 @@
         "routeVia": "Route traffic via this server",
         "settingsHint": "Reads and saves the remote FullBoard panel's own settings. This needs an admin-scope API token on that panel. Secrets stay hidden: leave them blank to keep the stored values. Some changes take effect only after a panel restart.",
         "loadSettings": "Load settings",
-        "jsonMode": "Edit all settings as JSON"
+        "jsonMode": "Edit all settings as JSON",
+        "loginAs": "Log in to panel",
+        "liveInbounds": "Live inbounds on the node",
+        "liveInboundsHint": "Inbounds that exist on the node itself. Adopt one to manage it from this master.",
+        "adopt": "Adopt",
+        "adopted": "Adopted",
+        "logLines": "Lines",
+        "xrayTemplateHint": "Edits the node's own Xray template. The node restarts Xray itself after saving.",
+        "stopXrayConfirm": "Stop Xray on this node? Its clients lose connectivity until Xray is started again.",
+        "importBackupConfirm": "Restore the node's database from {name}? This replaces all of the node's data."
       }
     },
     "settings": {
@@ -2001,7 +2060,7 @@
         "loginDesc": "Applied to the public FullBoard login page.",
         "preview": "Preview panel CSS",
         "previewDesc": "Temporarily applies the panel CSS in this browser tab without saving.",
-        "size": "{{ size }} / {{ max }} bytes"
+        "size": "{size} / {max} bytes"
       }
     },
     "xray": {

@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Card, Space, Table, Tag, Typography } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Space, Table, Tag, Tooltip, Typography } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  NodeIndexOutlined,
+  PlusOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons';
 
 import type {
   RelayApplyResult,
@@ -12,7 +18,10 @@ import type {
 import { fetchShare, useTgWebProxyMutations } from '@/api/queries/useTgWebProxy';
 import type { Msg } from '@/utils';
 import { getMessage } from '@/utils/messageBus';
+import { isManagedProfile } from '@/lib/tgWebProxy';
+import ClientBindingsCard from './ClientBindingsCard';
 import ProfileFormModal from './ProfileFormModal';
+import RouteViaOutboundModal from './RouteViaOutboundModal';
 import ShareModal from './ShareModal';
 import type { ModalApi } from './types';
 
@@ -47,6 +56,7 @@ export default function ProfilesTab({
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<RelayProfile | null>(null);
   const [share, setShare] = useState<RelayShareInfo | null>(null);
+  const [routeProfile, setRouteProfile] = useState<RelayProfile | null>(null);
   const profiles = snapshot?.profiles ?? [];
 
   const onSave = async (profile: RelayProfile) => {
@@ -67,7 +77,22 @@ export default function ProfilesTab({
     });
 
   const columns = [
-    { title: t('pages.tgWebProxy.profile.name'), dataIndex: 'name', key: 'name' },
+    {
+      title: t('pages.tgWebProxy.profile.name'),
+      dataIndex: 'name',
+      key: 'name',
+      render: (name: string) =>
+        isManagedProfile(name) ? (
+          <Space size={4}>
+            {name}
+            <Tooltip title={t('pages.tgWebProxy.bindings.managedHint')}>
+              <Tag color="purple">{t('pages.tgWebProxy.bindings.managed')}</Tag>
+            </Tooltip>
+          </Space>
+        ) : (
+          name
+        ),
+    },
     {
       title: t('pages.tgWebProxy.secret'),
       dataIndex: 'secret',
@@ -106,8 +131,17 @@ export default function ProfilesTab({
           </Button>
           <Button
             size="small"
+            icon={<NodeIndexOutlined />}
+            disabled={isManagedProfile(p.name)}
+            onClick={() => setRouteProfile(p)}
+          >
+            {t('pages.tgWebProxy.routeVia.button')}
+          </Button>
+          <Button
+            size="small"
             icon={<EditOutlined />}
             aria-label={t('edit')}
+            disabled={isManagedProfile(p.name)}
             onClick={() => {
               setEditing(p);
               setFormOpen(true);
@@ -118,7 +152,7 @@ export default function ProfilesTab({
             danger
             icon={<DeleteOutlined />}
             aria-label={t('delete')}
-            disabled={profiles.length <= 1}
+            disabled={profiles.length <= 1 || isManagedProfile(p.name)}
             onClick={() => onDelete(p)}
           />
         </Space>
@@ -127,56 +161,67 @@ export default function ProfilesTab({
   ];
 
   return (
-    <Card
-      size="small"
-      title={t('pages.tgWebProxy.tabs.profiles')}
-      extra={
-        <Button
-          type="primary"
-          size="small"
-          icon={<PlusOutlined />}
-          disabled={!snapshot?.configExists}
-          onClick={() => {
-            setEditing(null);
-            setFormOpen(true);
-          }}
-        >
-          {t('add')}
-        </Button>
-      }
-    >
-      {!snapshot?.configExists && (
+    <>
+      <Card
+        size="small"
+        title={t('pages.tgWebProxy.tabs.profiles')}
+        extra={
+          <Button
+            type="primary"
+            size="small"
+            icon={<PlusOutlined />}
+            disabled={!snapshot?.configExists}
+            onClick={() => {
+              setEditing(null);
+              setFormOpen(true);
+            }}
+          >
+            {t('add')}
+          </Button>
+        }
+      >
+        {!snapshot?.configExists && (
+          <Alert
+            type="info"
+            showIcon
+            style={{ marginBottom: 12 }}
+            message={t('pages.tgWebProxy.profile.needConfig')}
+          />
+        )}
         <Alert
-          type="info"
+          type="warning"
           showIcon
           style={{ marginBottom: 12 }}
-          message={t('pages.tgWebProxy.profile.needConfig')}
+          message={t('pages.tgWebProxy.profile.backendWarning')}
         />
-      )}
-      <Alert
-        type="warning"
-        showIcon
-        style={{ marginBottom: 12 }}
-        message={t('pages.tgWebProxy.profile.backendWarning')}
-      />
-      <Table
-        rowKey="name"
-        size="small"
-        loading={loading}
-        dataSource={profiles}
-        columns={columns}
-        pagination={false}
-        scroll={{ x: true }}
-      />
-      <ProfileFormModal
-        open={formOpen}
-        profile={editing}
-        existing={profiles}
-        saving={pending}
-        onCancel={() => setFormOpen(false)}
-        onSave={onSave}
-      />
-      <ShareModal share={share} onClose={() => setShare(null)} />
-    </Card>
+        <Table
+          rowKey="name"
+          size="small"
+          loading={loading}
+          dataSource={profiles}
+          columns={columns}
+          pagination={false}
+          scroll={{ x: true }}
+        />
+        <ProfileFormModal
+          open={formOpen}
+          profile={editing}
+          existing={profiles}
+          saving={pending}
+          onCancel={() => setFormOpen(false)}
+          onSave={onSave}
+        />
+        <ShareModal share={share} onClose={() => setShare(null)} />
+        <RouteViaOutboundModal
+          profile={routeProfile}
+          open={!!routeProfile}
+          onClose={() => setRouteProfile(null)}
+          onApplied={async (updated) => {
+            reportApply(await updateProfile(updated.name, updated), t);
+          }}
+        />
+      </Card>
+      <ClientBindingsCard modal={modal} />
+    </>
   );
 }

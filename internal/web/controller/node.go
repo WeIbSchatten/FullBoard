@@ -51,6 +51,8 @@ func (a *NodeController) initRouter(g *gin.RouterGroup) {
 	g.POST("/remote/:id/settings", a.updateRemoteSettings)
 	g.POST("/remote/:id/restartXray", a.restartRemoteXray)
 	g.POST("/remote/:id/restartPanel", a.restartRemotePanel)
+
+	a.initRemoteAdminRouter(g)
 }
 
 func remoteNodeID(c *gin.Context) (int, bool) {

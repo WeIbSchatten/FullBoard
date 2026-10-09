@@ -49,6 +49,7 @@ import type {
 } from '@/hooks/useClients';
 import { useFail2banStatusQuery, getLimitIpNotice } from '@/api/queries/useFail2banStatusQuery';
 import ClientRenewalFields from './ClientRenewalFields';
+import ClientTgWebProxySection from './ClientTgWebProxySection';
 import { ClientFormSchema, ClientCreateFormSchema, type ClientFormValues } from '@/schemas/client';
 import './ClientFormModal.css';
 
@@ -1498,6 +1499,7 @@ export default function ClientFormModal({
                           ))
                         )}
                       </div>
+                      <ClientTgWebProxySection email={isEdit ? client?.email : undefined} />
                     </>
                   ),
                 },
