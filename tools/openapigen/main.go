@@ -110,7 +110,14 @@ func run(root, outDir string) error {
 				"AmneziaWGLogs",
 				"PeerActivity",
 				"HwidSlotStatus",
+				"RemoteLiveInbound",
+				"RemoteLoginURL",
+				"LoginTicketResponse",
 				"TgWebProxyConfigRequest",
+				"TgWebProxyBinding",
+				"TgWebProxyBindingList",
+				"TgWebProxyBindRequest",
+				"TgWebProxyUnbindRequest",
 			),
 		},
 		{
@@ -141,6 +148,8 @@ func run(root, outDir string) error {
 				"RelayApplyResult",
 				"RelayJobStatus",
 				"RelayInstallRequest",
+				"PublicSiteFile",
+				"PublicSiteSnapshot",
 			),
 		},
 	}

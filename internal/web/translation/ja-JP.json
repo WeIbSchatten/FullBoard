@@ -137,7 +137,8 @@
         "emptyUsername": "ユーザー名を入力してください",
         "emptyPassword": "パスワードを入力してください",
         "wrongUsernameOrPassword": "ユーザー名、パスワード、または二段階認証コードが無効です。",
-        "successLogin": "アカウントに正常にログインしました。"
+        "successLogin": "アカウントに正常にログインしました。",
+        "invalidLoginTicket": "ログインリンクが無効か、有効期限が切れています。マスターパネルからもう一度開いてください。"
       }
     },
     "index": {
@@ -1044,7 +1045,7 @@
       "inboundTagsHint": "インバウンドタグで照合します。何も選択しない場合はインポートされません。",
       "inboundTagsPlaceholder": "インバウンドを読み込んで選択",
       "loadInbounds": "ノードからインバウンドを読み込む",
-      "inboundsLoaded": "{{count}}件のインバウンドを読み込みました",
+      "inboundsLoaded": "{count}件のインバウンドを読み込みました",
       "inboundsLoadFailed": "インバウンドを読み込めませんでした",
       "enable": "有効",
       "status": "ステータス",
@@ -1098,7 +1099,9 @@
         "reloadMtls": "Reload master mTLS credential",
         "remoteSettingsSaved": "Remote panel settings saved",
         "remoteXrayRestarted": "Xray restarted on the remote panel",
-        "remotePanelRestarted": "Remote panel restart requested"
+        "remotePanelRestarted": "Remote panel restart requested",
+        "remoteXraySaved": "ノードの Xray テンプレートを保存しました",
+        "remoteInboundAdopted": "インバウンドを取り込みました"
       },
       "tlsVerifyMode": "TLS 検証",
       "tlsVerifyModeHint": "パネルがノードの HTTPS 証明書を検証する方法。ピン留めやスキップは自己署名証明書向け（https ノードのみ）。",
@@ -1129,7 +1132,7 @@
       "pinFetchFailed": "証明書を取得できませんでした",
       "remote": {
         "manage": "Manage panel",
-        "title": "FullBoard panel: {{ name }}",
+        "title": "FullBoard panel: {name}",
         "overview": "Overview",
         "inboundsTab": "Inbounds & clients",
         "settings": "Settings",
@@ -1137,7 +1140,7 @@
         "inbound": "Inbound",
         "restartXray": "Restart Xray",
         "restartPanel": "Restart panel",
-        "restartPanelConfirm": "Restart the FullBoard panel on {{ name }}?",
+        "restartPanelConfirm": "Restart the FullBoard panel on {name}?",
         "restartPanelDesc": "The remote panel goes offline for a few seconds. Traffic served by its Xray core is not interrupted.",
         "openPanel": "Open panel",
         "memory": "Memory",
@@ -1147,7 +1150,16 @@
         "routeVia": "Route traffic via this server",
         "settingsHint": "Reads and saves the remote FullBoard panel's own settings. This needs an admin-scope API token on that panel. Secrets stay hidden: leave them blank to keep the stored values. Some changes take effect only after a panel restart.",
         "loadSettings": "Load settings",
-        "jsonMode": "Edit all settings as JSON"
+        "jsonMode": "Edit all settings as JSON",
+        "loginAs": "パネルにログイン",
+        "liveInbounds": "ノード上のライブインバウンド",
+        "liveInboundsHint": "ノード自体に存在するインバウンドです。取り込むと、このマスターから管理できます。",
+        "adopt": "取り込む",
+        "adopted": "取り込み済み",
+        "logLines": "行数",
+        "xrayTemplateHint": "ノード自身の Xray テンプレートを編集します。保存後、ノードが自動的に Xray を再起動します。",
+        "stopXrayConfirm": "このノードの Xray を停止しますか？Xray を再起動するまで、クライアントは接続できなくなります。",
+        "importBackupConfirm": "{name} からノードのデータベースを復元しますか？ノードの全データが置き換えられます。"
       }
     },
     "settings": {
@@ -1776,7 +1788,7 @@
         "loginDesc": "Applied to the public FullBoard login page.",
         "preview": "Preview panel CSS",
         "previewDesc": "Temporarily applies the panel CSS in this browser tab without saving.",
-        "size": "{{ size }} / {{ max }} bytes"
+        "size": "{size} / {max} bytes"
       }
     },
     "xray": {
@@ -2437,7 +2449,8 @@
         "overview": "Overview",
         "profiles": "Profiles",
         "config": "Relay config",
-        "logs": "Logs"
+        "logs": "Logs",
+        "publicSite": "Public site"
       },
       "yes": "Yes",
       "no": "No",
@@ -2460,7 +2473,7 @@
       "secret": "Secret",
       "job": "Job",
       "updateConfirm": "Download the latest tproxy-server, run its tests and swap the binary? Active sessions reconnect automatically.",
-      "profilesModeBad": "profiles.json has mode {{mode}}; the relay refuses group/other permissions. Save any profile to rewrite it as 0400.",
+      "profilesModeBad": "profiles.json has mode {mode}; the relay refuses group/other permissions. Save any profile to rewrite it as 0400.",
       "actions": {
         "start": "Start",
         "stop": "Stop",
@@ -2506,12 +2519,12 @@
         "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait.",
         "limits": "Per-profile limits",
         "limitsHint": "Leave empty to inherit the global value. Values may only lower the global limits.",
-        "deleteConfirm": "Delete profile \"{{name}}\"? Clients using its secret stop working.",
+        "deleteConfirm": "Delete profile \"{name}\"? Clients using its secret stop working.",
         "needConfig": "Save the relay configuration first."
       },
       "share": {
         "button": "Share",
-        "title": "Share profile \"{{name}}\"",
+        "title": "Share profile \"{name}\"",
         "hint": "Enter the server and secret in a WEB-proxy-capable Telegram app, or open the link.",
         "server": "Proxy server",
         "linkSecret": "Link secret",
@@ -2527,6 +2540,25 @@
         "duplicateName": "A profile with this name already exists",
         "duration": "Use a Go duration such as 5s or 2m"
       },
+      "bindings": {
+        "title": "Client bindings",
+        "hint": "A bound client gets a https://t.me/webproxy link in its raw subscription. JSON and Clash subscriptions do not carry it.",
+        "client": "Client",
+        "profile": "Profile",
+        "dedicated": "Dedicated secret",
+        "dedicatedHint": "Gives the client a profile of its own, cloned from the selected one, with a unique secret. It appears a few seconds after saving.",
+        "effective": "Effective profile",
+        "empty": "No clients are bound yet.",
+        "unbind": "Unbind",
+        "unbindConfirm": "Unbind client \"{email}\"? Its web-proxy link disappears from the subscription.",
+        "syncError": "Last profile sync failed: {error}",
+        "managed": "Managed",
+        "managedHint": "Created for a client binding. Unbind the client to remove it.",
+        "bind": "Bind",
+        "selectProfile": "Select a profile",
+        "saveFirst": "Save the client first; a binding needs an existing client.",
+        "notConfigured": "Configure the Telegram WEB Proxy relay first."
+      },
       "toasts": {
         "load": "Failed to load tg-web-proxy state",
         "saved": "Saved and validated",
@@ -2535,7 +2567,34 @@
         "serviceDone": "Service command executed",
         "jobStarted": "Job started",
         "restarted": "tproxy-server restarted with the new configuration",
-        "restartFailed": "Saved, but restart failed: {{error}}"
+        "restartFailed": "Saved, but restart failed: {error}"
+      },
+      "publicSite": {
+        "hint": "Saving writes index.html under the managed directory and points the relay public_dir at it (replacing public_upstream).",
+        "dir": "Directory",
+        "active": "Active as public_dir",
+        "inactive": "Not active — save to activate",
+        "editor": "index.html",
+        "preview": "Preview",
+        "assets": "Assets",
+        "upload": "Upload file",
+        "reset": "Reset template",
+        "save": "Save & activate",
+        "size": "Size"
+      },
+      "routeVia": {
+        "button": "Route via outbound",
+        "title": "Route backend via outbound — {name}",
+        "outbound": "Outbound",
+        "outboundPlaceholder": "Select an outbound tag",
+        "listenPort": "Local tunnel port",
+        "resultBackend": "New profile backend",
+        "portInUse": "That port is already used by an inbound",
+        "apply": "Create tunnel & update profile",
+        "done": "Tunnel inbound and routing rule created; profile backend updated",
+        "failed": "Failed to route backend via outbound",
+        "hint": "Creates a loopback tunnel inbound that rewrites to the current MTProxy backend, adds a routing rule to the chosen outbound, then sets the profile backend to 127.0.0.1:port.",
+        "warning": "The remote MTProxy must still accept this profile secret. Private / geoip routing rules on the chosen outbound can block Telegram traffic — verify connectivity after applying."
       }
     }
   },

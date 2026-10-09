@@ -137,7 +137,8 @@
         "emptyUsername": "Введите имя пользователя",
         "emptyPassword": "Введите пароль",
         "wrongUsernameOrPassword": "Неверные данные учетной записи.",
-        "successLogin": "Вход выполнен успешно"
+        "successLogin": "Вход выполнен успешно",
+        "invalidLoginTicket": "Ссылка для входа недействительна или истекла. Откройте её заново из мастер-панели."
       }
     },
     "index": {
@@ -1044,7 +1045,7 @@
       "inboundTagsHint": "Выбор сопоставляется по тегу инбаунда. Пустой список не импортирует ничего.",
       "inboundTagsPlaceholder": "Загрузите и выберите инбаунды",
       "loadInbounds": "Загрузить инбаунды с ноды",
-      "inboundsLoaded": "Загружено инбаундов: {{count}}",
+      "inboundsLoaded": "Загружено инбаундов: {count}",
       "inboundsLoadFailed": "Не удалось загрузить инбаунды",
       "enable": "Включён",
       "status": "Статус",
@@ -1098,7 +1099,9 @@
         "reloadMtls": "Reload master mTLS credential",
         "remoteSettingsSaved": "Настройки удалённой панели сохранены",
         "remoteXrayRestarted": "Xray перезапущен на удалённой панели",
-        "remotePanelRestarted": "Запрошен перезапуск удалённой панели"
+        "remotePanelRestarted": "Запрошен перезапуск удалённой панели",
+        "remoteXraySaved": "Шаблон Xray ноды сохранён",
+        "remoteInboundAdopted": "Инбаунд принят"
       },
       "tlsVerifyMode": "Проверка TLS",
       "tlsVerifyModeHint": "Как панель проверяет HTTPS-сертификат узла. Закрепление или Пропуск — для самоподписанных сертификатов (только https-узлы).",
@@ -1129,7 +1132,7 @@
       "pinFetchFailed": "Не удалось получить сертификат",
       "remote": {
         "manage": "Управление панелью",
-        "title": "Панель FullBoard: {{ name }}",
+        "title": "Панель FullBoard: {name}",
         "overview": "Обзор",
         "inboundsTab": "Подключения и клиенты",
         "settings": "Настройки",
@@ -1137,7 +1140,7 @@
         "inbound": "Подключение",
         "restartXray": "Перезапустить Xray",
         "restartPanel": "Перезапустить панель",
-        "restartPanelConfirm": "Перезапустить панель FullBoard на {{ name }}?",
+        "restartPanelConfirm": "Перезапустить панель FullBoard на {name}?",
         "restartPanelDesc": "Удалённая панель будет недоступна несколько секунд. Трафик, обслуживаемый её ядром Xray, не прерывается.",
         "openPanel": "Открыть панель",
         "memory": "Память",
@@ -1147,7 +1150,16 @@
         "routeVia": "Направить трафик через этот сервер",
         "settingsHint": "Чтение и сохранение собственных настроек удалённой панели FullBoard. Требуется API-токен с правами администратора на той панели. Секреты скрыты: оставьте их пустыми, чтобы сохранить текущие значения. Некоторые изменения вступают в силу только после перезапуска панели.",
         "loadSettings": "Загрузить настройки",
-        "jsonMode": "Редактировать все настройки как JSON"
+        "jsonMode": "Редактировать все настройки как JSON",
+        "loginAs": "Войти в панель",
+        "liveInbounds": "Живые инбаунды на ноде",
+        "liveInboundsHint": "Инбаунды, существующие на самой ноде. Возьмите инбаунд под управление, чтобы работать с ним с этого мастера.",
+        "adopt": "Принять",
+        "adopted": "Принят",
+        "logLines": "Строк",
+        "xrayTemplateHint": "Редактирует собственный шаблон Xray ноды. После сохранения нода сама перезапускает Xray.",
+        "stopXrayConfirm": "Остановить Xray на этой ноде? Её клиенты потеряют связь, пока Xray не будет запущен снова.",
+        "importBackupConfirm": "Восстановить базу данных ноды из {name}? Все данные ноды будут заменены."
       }
     },
     "settings": {
@@ -1776,7 +1788,7 @@
         "loginDesc": "Применяется к публичной странице входа FullBoard.",
         "preview": "Предпросмотр CSS панели",
         "previewDesc": "Временно применяет CSS панели в этой вкладке без сохранения.",
-        "size": "{{ size }} / {{ max }} байт"
+        "size": "{size} / {max} байт"
       }
     },
     "xray": {
@@ -2437,7 +2449,8 @@
         "overview": "Обзор",
         "profiles": "Профили",
         "config": "Конфигурация релея",
-        "logs": "Журналы"
+        "logs": "Журналы",
+        "publicSite": "Public site"
       },
       "yes": "Да",
       "no": "Нет",
@@ -2460,7 +2473,7 @@
       "secret": "Секрет",
       "job": "Задача",
       "updateConfirm": "Скачать последнюю версию tproxy-server, прогнать тесты и заменить бинарник? Активные сессии переподключатся автоматически.",
-      "profilesModeBad": "У profiles.json права {{mode}}; релей не принимает права для группы/остальных. Сохраните любой профиль, чтобы перезаписать файл с правами 0400.",
+      "profilesModeBad": "У profiles.json права {mode}; релей не принимает права для группы/остальных. Сохраните любой профиль, чтобы перезаписать файл с правами 0400.",
       "actions": {
         "start": "Запустить",
         "stop": "Остановить",
@@ -2506,12 +2519,12 @@
         "carrierHint": "https — консервативный вариант по умолчанию; websocket убирает ожидание HTTP-ответов.",
         "limits": "Лимиты профиля",
         "limitsHint": "Оставьте пустым, чтобы наследовать общее значение. Значения могут только уменьшать общие лимиты.",
-        "deleteConfirm": "Удалить профиль «{{name}}»? Клиенты с этим секретом перестанут работать.",
+        "deleteConfirm": "Удалить профиль «{name}»? Клиенты с этим секретом перестанут работать.",
         "needConfig": "Сначала сохраните конфигурацию релея."
       },
       "share": {
         "button": "Поделиться",
-        "title": "Профиль «{{name}}»",
+        "title": "Профиль «{name}»",
         "hint": "Укажите сервер и секрет в приложении Telegram с поддержкой WEB-прокси или откройте ссылку.",
         "server": "Сервер прокси",
         "linkSecret": "Секрет для ссылки",
@@ -2527,6 +2540,25 @@
         "duplicateName": "Профиль с таким именем уже существует",
         "duration": "Укажите длительность Go, например 5s или 2m"
       },
+      "bindings": {
+        "title": "Привязки клиентов",
+        "hint": "Привязанный клиент получает ссылку https://t.me/webproxy в «сыром» списке подписки. В подписках JSON и Clash её нет.",
+        "client": "Клиент",
+        "profile": "Профиль",
+        "dedicated": "Отдельный секрет",
+        "dedicatedHint": "Создаёт для клиента собственный профиль, скопированный с выбранного, с уникальным секретом. Появляется через несколько секунд после сохранения.",
+        "effective": "Действующий профиль",
+        "empty": "Пока нет привязанных клиентов.",
+        "unbind": "Отвязать",
+        "unbindConfirm": "Отвязать клиента «{email}»? Его ссылка web-proxy исчезнет из подписки.",
+        "syncError": "Не удалось синхронизировать профили: {error}",
+        "managed": "Управляется",
+        "managedHint": "Создан для привязки клиента. Отвяжите клиента, чтобы удалить профиль.",
+        "bind": "Привязать",
+        "selectProfile": "Выберите профиль",
+        "saveFirst": "Сначала сохраните клиента: привязка требует существующего клиента.",
+        "notConfigured": "Сначала настройте релей Telegram WEB Proxy."
+      },
       "toasts": {
         "load": "Не удалось загрузить состояние tg-web-proxy",
         "saved": "Сохранено и проверено",
@@ -2535,7 +2567,34 @@
         "serviceDone": "Команда службы выполнена",
         "jobStarted": "Задача запущена",
         "restarted": "tproxy-server перезапущен с новой конфигурацией",
-        "restartFailed": "Сохранено, но перезапуск не удался: {{error}}"
+        "restartFailed": "Сохранено, но перезапуск не удался: {error}"
+      },
+      "publicSite": {
+        "hint": "Saving writes index.html under the managed directory and points the relay public_dir at it (replacing public_upstream).",
+        "dir": "Directory",
+        "active": "Active as public_dir",
+        "inactive": "Not active — save to activate",
+        "editor": "index.html",
+        "preview": "Preview",
+        "assets": "Assets",
+        "upload": "Upload file",
+        "reset": "Reset template",
+        "save": "Save & activate",
+        "size": "Size"
+      },
+      "routeVia": {
+        "button": "Route via outbound",
+        "title": "Route backend via outbound — {name}",
+        "outbound": "Outbound",
+        "outboundPlaceholder": "Select an outbound tag",
+        "listenPort": "Local tunnel port",
+        "resultBackend": "New profile backend",
+        "portInUse": "That port is already used by an inbound",
+        "apply": "Create tunnel & update profile",
+        "done": "Tunnel inbound and routing rule created; profile backend updated",
+        "failed": "Failed to route backend via outbound",
+        "hint": "Creates a loopback tunnel inbound that rewrites to the current MTProxy backend, adds a routing rule to the chosen outbound, then sets the profile backend to 127.0.0.1:port.",
+        "warning": "The remote MTProxy must still accept this profile secret. Private / geoip routing rules on the chosen outbound can block Telegram traffic — verify connectivity after applying."
       }
     }
   },

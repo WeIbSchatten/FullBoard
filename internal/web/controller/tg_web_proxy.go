@@ -10,6 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type tgWebProxyPublicSitePutRequest struct {
+	IndexHTML string `json:"indexHtml" example:"<!DOCTYPE html><html><body>Welcome</body></html>"`
+}
+
 // TgWebProxyController exposes tproxy-server management under
 // /panel/api/tgWebProxy. The relay admin listener is only ever probed server-side.
 type TgWebProxyController struct {
@@ -37,6 +41,41 @@ func (a *TgWebProxyController) initRouter(g *gin.RouterGroup) {
 	g.POST("/install", a.install)
 	g.POST("/update", a.update)
 	g.GET("/job", a.job)
+	g.GET("/publicSite", a.getPublicSite)
+	g.POST("/publicSite", a.putPublicSite)
+	g.POST("/publicSite/reset", a.resetPublicSite)
+	g.POST("/publicSite/upload", a.uploadPublicSite)
+	g.POST("/publicSite/del/:name", a.deletePublicSiteAsset)
+	g.GET("/bindings", a.listBindings)
+	g.POST("/bindings/bind", a.bindClient)
+	g.POST("/bindings/unbind", a.unbindClient)
+}
+
+func (a *TgWebProxyController) listBindings(c *gin.Context) {
+	list, err := a.svc.ListBindings()
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.load"), err)
+		return
+	}
+	jsonObj(c, list, nil)
+}
+
+func (a *TgWebProxyController) bindClient(c *gin.Context) {
+	req, ok := middleware.BindJSONAndValidate[service.TgWebProxyBindRequest](c)
+	if !ok {
+		return
+	}
+	binding, err := a.svc.BindClient(*req)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), binding, err)
+}
+
+func (a *TgWebProxyController) unbindClient(c *gin.Context) {
+	req, ok := middleware.BindJSONAndValidate[service.TgWebProxyUnbindRequest](c)
+	if !ok {
+		return
+	}
+	err := a.svc.UnbindClient(req.Email)
+	jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.deleted"), err)
 }
 
 func (a *TgWebProxyController) status(c *gin.Context) {
@@ -138,4 +177,52 @@ func (a *TgWebProxyController) update(c *gin.Context) {
 
 func (a *TgWebProxyController) job(c *gin.Context) {
 	jsonObj(c, a.svc.Job(c.Request.Context()), nil)
+}
+
+func (a *TgWebProxyController) getPublicSite(c *gin.Context) {
+	snap, err := a.svc.GetPublicSite()
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.load"), err)
+		return
+	}
+	jsonObj(c, snap, nil)
+}
+
+func (a *TgWebProxyController) putPublicSite(c *gin.Context) {
+	req, ok := middleware.BindJSONAndValidate[tgWebProxyPublicSitePutRequest](c)
+	if !ok {
+		return
+	}
+	res, err := a.svc.PutPublicSiteIndex(c.Request.Context(), req.IndexHTML)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
+}
+
+func (a *TgWebProxyController) resetPublicSite(c *gin.Context) {
+	res, err := a.svc.ResetPublicSite(c.Request.Context())
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
+}
+
+func (a *TgWebProxyController) uploadPublicSite(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.load"), err)
+		return
+	}
+	f, err := file.Open()
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.load"), err)
+		return
+	}
+	defer f.Close()
+	name := c.PostForm("name")
+	if name == "" {
+		name = file.Filename
+	}
+	err = a.svc.UploadPublicSiteAsset(name, f, file.Size)
+	jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), err)
+}
+
+func (a *TgWebProxyController) deletePublicSiteAsset(c *gin.Context) {
+	err := a.svc.DeletePublicSiteAsset(c.Param("name"))
+	jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.deleted"), err)
 }

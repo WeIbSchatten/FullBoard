@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -23,6 +24,7 @@ import (
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/global"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
 )
 
@@ -339,11 +341,16 @@ func TestMasterNodeContract(t *testing.T) {
 			global.SetRestartHook(func() { restarted <- struct{}{} })
 			t.Cleanup(func() { global.SetRestartHook(nil) })
 			// Remote panel control needs an admin token on the node; node-sync must be refused.
+			// refusalOnly cells would download Xray/geo files for real or replace the
+			// database, so an admin token never runs them; node-sync is still refused.
+			// nodeMustAnswer: the node's handler must run and reject the payload.
 			adminCells := []struct {
-				name   string
-				covers []string
-				run    func() error
-				check  func(t *testing.T)
+				name           string
+				covers         []string
+				run            func() error
+				check          func(t *testing.T)
+				refusalOnly    bool
+				nodeMustAnswer bool
 			}{
 				{"panel settings round-trip changes a node setting", []string{"GetPanelSettings", "UpdatePanelSettings"}, func() error {
 					raw, err := master.GetPanelSettings(ctx)
@@ -361,7 +368,7 @@ func TestMasterNodeContract(t *testing.T) {
 					if got, _ := (&service.SettingService{}).GetPageSize(); got != 77 {
 						t.Fatalf("node pageSize = %d, want 77", got)
 					}
-				}},
+				}, false, false},
 				{"RestartPanel fires the node's restart hook", []string{"RestartPanel"}, func() error {
 					return master.RestartPanel(ctx)
 				}, func(t *testing.T) {
@@ -370,7 +377,64 @@ func TestMasterNodeContract(t *testing.T) {
 					case <-time.After(10 * time.Second):
 						t.Fatal("node panel restart hook never fired")
 					}
-				}},
+				}, false, false},
+				{"Xray template round-trip changes the node's outbound test URL", []string{"GetXraySetting", "UpdateXraySetting"}, func() error {
+					raw, err := master.GetXraySetting(ctx)
+					if err != nil {
+						return err
+					}
+					var got struct {
+						XraySetting json.RawMessage `json:"xraySetting"`
+					}
+					if err := json.Unmarshal(raw, &got); err != nil {
+						return err
+					}
+					return master.UpdateXraySetting(ctx, string(got.XraySetting), "https://probe.example/204")
+				}, func(t *testing.T) {
+					if got, _ := (&service.SettingService{}).GetXrayOutboundTestUrl(); got != "https://probe.example/204" {
+						t.Fatalf("node outbound test URL = %q", got)
+					}
+				}, false, false},
+				{"panel and Xray logs are readable", []string{"GetPanelLogs", "GetXrayLogs"}, func() error {
+					if _, err := master.GetPanelLogs(ctx, 10, "info", false); err != nil {
+						return err
+					}
+					_, err := master.GetXrayLogs(ctx, 10, "")
+					return err
+				}, func(t *testing.T) {}, false, false},
+				{"GetBackup downloads the node's SQLite database", []string{"GetBackup"}, func() error {
+					data, err := master.GetBackup(ctx)
+					if err == nil && !strings.HasPrefix(string(data), "SQLite format 3") {
+						return fmt.Errorf("backup is not a SQLite file: %.16q", data)
+					}
+					return err
+				}, func(t *testing.T) {}, false, false},
+				{"ImportBackup reaches the node's importer, which rejects a non-database", []string{"ImportBackup"}, func() error {
+					return master.ImportBackup(ctx, []byte("definitely not a database"), true)
+				}, func(t *testing.T) {}, false, true},
+				{"IssueLoginTicket mints a ticket the node redeems once", []string{"IssueLoginTicket"}, func() error {
+					ticket, err := master.IssueLoginTicket(ctx)
+					if err != nil {
+						return err
+					}
+					if !session.ConsumeLoginTicket(ticket) {
+						return fmt.Errorf("node issued a ticket it does not honour")
+					}
+					if session.ConsumeLoginTicket(ticket) {
+						return fmt.Errorf("node honoured a ticket twice")
+					}
+					return nil
+				}, func(t *testing.T) {}, false, false},
+				{"StopXray reaches the node", []string{"StopXray"}, func() error {
+					// No core runs here, so the node answers with its own "not running" failure.
+					return master.StopXray(ctx)
+				}, func(t *testing.T) {}, false, true},
+				{"InstallXray is refused without admin scope", []string{"InstallXray"}, func() error {
+					return master.InstallXray(ctx, "v0.0.0-contract")
+				}, func(t *testing.T) {}, true, false},
+				{"UpdateGeofile is refused without admin scope", []string{"UpdateGeofile"}, func() error {
+					return master.UpdateGeofile(ctx, "geoip.dat")
+				}, func(t *testing.T) {}, true, false},
 			}
 			covered := map[string]bool{}
 			for _, c := range cells {
@@ -387,6 +451,9 @@ func TestMasterNodeContract(t *testing.T) {
 			for _, c := range adminCells {
 				t.Run(c.name, func(t *testing.T) {
 					node.takeRefused()
+					if c.refusalOnly && scope != model.ApiScopeNodeSync {
+						return
+					}
 					err := c.run()
 					refused := node.takeRefused()
 					if scope == model.ApiScopeNodeSync {
@@ -395,11 +462,17 @@ func TestMasterNodeContract(t *testing.T) {
 						}
 						return
 					}
-					if err != nil {
-						t.Fatalf("master call failed: %v", err)
-					}
 					if len(refused) != 0 {
 						t.Fatalf("node refused master requests: %v", refused)
+					}
+					if c.nodeMustAnswer {
+						if err == nil || !strings.HasPrefix(err.Error(), "remote: ") {
+							t.Fatalf("want the node's own rejection (remote: ...), got %v", err)
+						}
+						return
+					}
+					if err != nil {
+						t.Fatalf("master call failed: %v", err)
 					}
 					c.check(t)
 				})
@@ -431,6 +504,7 @@ var remoteMethodsOutsideContract = map[string]string{
 	"AdvancePushedInbound":  "local fingerprint bookkeeping",
 	"ForgetPushedInbound":   "local fingerprint bookkeeping",
 	"UpdatePanel":           "replaces the node binary; node-sync is denied it on purpose (#6201)",
+	"LoginURL":              "local URL formatting",
 }
 
 // A Remote method with no cell is how activeInbounds and bulkResetTraffic

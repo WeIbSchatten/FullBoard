@@ -891,6 +891,7 @@ func (s *ClientService) Delete(inboundSvc *InboundService, id int, keepTraffic b
 		return needRestart, errors.Join(delErrs...)
 	}
 
+	var droppedBindings int64
 	if err := runSerializedTx(func(tx *gorm.DB) error {
 		if existing.Email != "" {
 			if err := adjustGroupBaselinesForRemovedTraffic(tx, []string{existing.Email}); err != nil {
@@ -903,6 +904,11 @@ func (s *ClientService) Delete(inboundSvc *InboundService, id int, keepTraffic b
 		if err := tx.Where("client_id = ?", id).Delete(&model.ClientExternalLink{}).Error; err != nil {
 			return err
 		}
+		n, err := deleteClientTgWebProxyBindings(tx, []int{id})
+		if err != nil {
+			return err
+		}
+		droppedBindings = n
 		if err := clearClientHwidsBySubIDTx(tx, existing.SubID); err != nil {
 			return err
 		}
@@ -924,6 +930,9 @@ func (s *ClientService) Delete(inboundSvc *InboundService, id int, keepTraffic b
 	}); err != nil {
 		withdrawClientTombstones(existing.Email)
 		return needRestart, err
+	}
+	if droppedBindings > 0 {
+		scheduleTgWebProxySync()
 	}
 	return needRestart, nil
 }

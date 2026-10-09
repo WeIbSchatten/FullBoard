@@ -24,6 +24,7 @@ import {
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { HttpUtil, LanguageManager } from '@/utils';
+import { parseLoginTicket } from '@/lib/loginTicket';
 import { FormField, rhfZodValidate } from '@/components/form/rhf';
 import { setMessageInstance } from '@/utils/messageBus';
 import { pauseAnimationsUntilLeave, useTheme } from '@/hooks/useTheme';
@@ -36,6 +37,14 @@ type LoginForm = LoginFormValues;
 
 const basePath = window.X_UI_BASE_PATH || '';
 
+// Read once at load and scrub the URL, so the ticket never sits in history.
+const loginTicket = parseLoginTicket(window.location.hash);
+if (loginTicket) {
+  window.history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+// StrictMode runs effects twice; a second redeem would burn the single-use ticket.
+let ticketRedeem: Promise<boolean> | null = null;
+
 export default function LoginPage() {
   const { t } = useTranslation();
   const { isDark, isUltra, toggleTheme, toggleUltra, antdThemeConfig } = useTheme();
@@ -46,6 +55,7 @@ export default function LoginPage() {
   }, [messageApi]);
 
   const [fetched, setFetched] = useState(false);
+  const [redeeming, setRedeeming] = useState(loginTicket !== '');
   const [submitting, setSubmitting] = useState(false);
   const [twoFactorEnable, setTwoFactorEnable] = useState(false);
   const [headlineIndex, setHeadlineIndex] = useState(0);
@@ -62,6 +72,17 @@ export default function LoginPage() {
     }, HEADLINE_INTERVAL_MS);
     return () => window.clearInterval(timer);
   }, [headlineWords.length]);
+
+  useEffect(() => {
+    if (!loginTicket) return;
+    ticketRedeem ??= HttpUtil.post('/login/ticket', { ticket: loginTicket }).then(
+      (msg) => !!msg?.success,
+    );
+    void ticketRedeem.then((ok) => {
+      if (ok) window.location.href = basePath + 'panel/';
+      else setRedeeming(false);
+    });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -172,7 +193,7 @@ export default function LoginPage() {
           </div>
 
           <div className="login-wrapper">
-            {!fetched ? (
+            {!fetched || redeeming ? (
               <div className="login-loading">
                 <Spin size="large" />
               </div>
