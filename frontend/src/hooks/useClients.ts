@@ -354,8 +354,8 @@ export function useClients(options: UseClientsOptions = {}) {
       HttpUtil.post('/panel/api/clients/reorder', { ids }, JSON_HEADERS),
     onSuccess: (msg) => {
       if (msg?.success) {
-        markLocalInvalidate('clients');
-        void queryClient.invalidateQueries({ queryKey: keys.clients.all });
+        markLocalInvalidate();
+        void queryClient.invalidateQueries({ queryKey: keys.clients.root() });
       }
     },
   });
