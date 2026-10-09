@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +13,14 @@ import (
 
 	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 )
+
+func mustQuoteJSON(payload string) string {
+	b, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
 
 type recordedCall struct {
 	method string
@@ -53,16 +62,30 @@ func okEnvelope(obj string) func(w http.ResponseWriter, _ *http.Request) {
 }
 
 func TestRemoteGetXraySettingReturnsNodeObject(t *testing.T) {
-	r, rec := controlNode(t, okEnvelope(`{"xraySetting":{"log":{}},"outboundTestUrl":"u"}`))
-	raw, err := r.GetXraySetting(context.Background())
-	if err != nil {
-		t.Fatal(err)
+	// Production encodes the payload as a JSON string inside obj (frontend
+	// contract: typeof msg.obj === "string"). A bare object must still work.
+	const payload = `{"xraySetting":{"log":{}},"outboundTestUrl":"u"}`
+	cases := []struct {
+		name string
+		obj  string
+	}{
+		{"string-wrapped", mustQuoteJSON(payload)},
+		{"bare-object", payload},
 	}
-	if rec.method != http.MethodPost || rec.path != "/panel/api/xray/" {
-		t.Fatalf("called %s %s, want POST /panel/api/xray/", rec.method, rec.path)
-	}
-	if string(raw) != `{"xraySetting":{"log":{}},"outboundTestUrl":"u"}` {
-		t.Fatalf("obj = %s, want the node's object verbatim", raw)
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			r, rec := controlNode(t, okEnvelope(tc.obj))
+			raw, err := r.GetXraySetting(context.Background())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if rec.method != http.MethodPost || rec.path != "/panel/api/xray/" {
+				t.Fatalf("called %s %s, want POST /panel/api/xray/", rec.method, rec.path)
+			}
+			if string(raw) != payload {
+				t.Fatalf("obj = %s, want unwrapped payload %s", raw, payload)
+			}
+		})
 	}
 }
 
