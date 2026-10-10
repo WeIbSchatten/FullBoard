@@ -1168,8 +1168,9 @@
         "apply": "Create tunnel & update profile",
         "done": "Tunnel inbound and routing rule created; profile backend updated",
         "failed": "Failed to route backend via outbound",
-        "hint": "Creates a loopback tunnel inbound that rewrites to the current MTProxy backend, adds a routing rule to the chosen outbound, then sets the profile backend to 127.0.0.1:port.",
-        "warning": "The remote MTProxy must still accept this profile secret. Private / geoip routing rules on the chosen outbound can block Telegram traffic — verify connectivity after applying."
+        "hint": "For a public MTProxy address, creates a loopback tunnel that rewrites to that address and sends it through the chosen outbound. A loopback or private MTProxy is dialed on this host: the stock direct outbound blocks private addresses, so the hop uses its own outbound that allows 127.0.0.1. A remote outbound would dial 127.0.0.1 on the far side.",
+        "warning": "The MTProxy must accept this profile secret. Loopback and private addresses stay on direct so geoip:private cannot blackhole them.",
+        "doneLocal": "Local MTProxy is dialed on this host. A remote outbound cannot carry 127.0.0.1."
       },
       "yes": "Yes",
       "no": "No",

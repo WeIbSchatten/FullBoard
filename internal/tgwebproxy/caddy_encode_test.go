@@ -21,11 +21,11 @@ func TestPatchCaddyEncodeForH2WS(t *testing.T) {
 	if !changed {
 		t.Fatal("expected patch to change a bare encode line")
 	}
-	if !strings.Contains(out, "@not_h2_ws not {") {
-		t.Fatalf("missing matcher:\n%s", out)
+	if strings.Contains(out, "\n\tencode ") || strings.Contains(out, "\nencode ") {
+		t.Fatalf("active encode must be removed:\n%s", out)
 	}
-	if !strings.Contains(out, "encode @not_h2_ws zstd gzip") {
-		t.Fatalf("encode not gated:\n%s", out)
+	if !strings.Contains(out, "fullboard-h2-ws-begin") || !strings.Contains(out, "encode disabled") {
+		t.Fatalf("missing disabled marker block:\n%s", out)
 	}
 	if CaddyEncodeNeedsH2WSPatch(out) {
 		t.Fatal("patched file still reported as needing a fix")
@@ -36,19 +36,44 @@ func TestPatchCaddyEncodeForH2WS(t *testing.T) {
 	}
 }
 
-func TestPatchCaddyEncodeSkipsAlreadyGated(t *testing.T) {
+func TestPatchCaddyEncodeUpgradesPartialH2OnlyGate(t *testing.T) {
 	in := `example.com {
+	# fullboard-h2-ws-begin
 	@not_h2_ws not {
 		header :protocol *
 		method CONNECT
 		protocol http/2
 	}
 	encode @not_h2_ws zstd gzip
+	# fullboard-h2-ws-end
+}
+`
+	if !CaddyEncodeNeedsH2WSPatch(in) {
+		t.Fatal("partial h2-only gate must still need a fix (classic Upgrade stays compressed)")
+	}
+	out, changed := PatchCaddyEncodeForH2WS(in)
+	if !changed {
+		t.Fatal("expected upgrade of partial gate")
+	}
+	if strings.Contains(out, "encode @not_h2_ws") || activeEncode.MatchString(out) {
+		t.Fatalf("active encode survived:\n%s", out)
+	}
+	if CaddyEncodeNeedsH2WSPatch(out) {
+		t.Fatal("upgraded file still needs a fix")
+	}
+}
+
+func TestPatchCaddyEncodeSkipsAlreadyDisabled(t *testing.T) {
+	in := `example.com {
+	# fullboard-h2-ws-begin
+	# encode disabled: stock encode stalls Telegram web-proxy WebSocket carrier
+	# (classic Upgrade /api/v1/ws and h2 CONNECT). HTTPS long-poll unaffected.
+	# fullboard-h2-ws-end
 }
 `
 	_, changed := PatchCaddyEncodeForH2WS(in)
 	if changed {
-		t.Fatal("already-gated encode must not be rewritten")
+		t.Fatal("already-disabled encode must not be rewritten")
 	}
 }
 
@@ -76,7 +101,10 @@ func TestApplyCaddyEncodeH2WSPatchRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(raw), "encode @not_h2_ws gzip") {
+	if activeEncode.Match(raw) {
+		t.Fatalf("active encode left in file: %s", raw)
+	}
+	if !strings.Contains(string(raw), "encode disabled") {
 		t.Fatalf("file not patched: %s", raw)
 	}
 	if runtime.GOOS != "windows" {

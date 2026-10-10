@@ -1784,7 +1784,7 @@
       "subIncyResolveDnsIp": "IP DoH-сервера",
       "subIncyResolveDnsIpDesc": "IP DoH-сервера, нужен для bootstrap.",
       "subIncyGroupRouting": "Маршрутизация",
-            "navPosition": "Primary navigation",
+      "navPosition": "Primary navigation",
       "navPositionDesc": "Side keeps the classic left sidebar. Top moves primary nav into the header and puts page tabs on the left.",
       "navPositionSide": "Side",
       "navPositionTop": "Top",
@@ -1797,7 +1797,6 @@
         "loginDesc": "Применяется к публичной странице входа FullBoard.",
         "preview": "Предпросмотр CSS панели",
         "previewDesc": "Временно применяет CSS панели в этой вкладке без сохранения.",
-        "size": "{size} / {max} байт",
         "size": "{size} / {max} bytes",
         "preset": "Active stylesheet",
         "presetDesc": "Default uses the stock theme. Presets store panel and login CSS separately.",
@@ -2628,8 +2627,9 @@
         "apply": "Create tunnel & update profile",
         "done": "Tunnel inbound and routing rule created; profile backend updated",
         "failed": "Failed to route backend via outbound",
-        "hint": "Creates a loopback tunnel inbound that rewrites to the current MTProxy backend, adds a routing rule to the chosen outbound, then sets the profile backend to 127.0.0.1:port.",
-        "warning": "The remote MTProxy must still accept this profile secret. Private / geoip routing rules on the chosen outbound can block Telegram traffic — verify connectivity after applying."
+        "hint": "Для публичного адреса MTProxy создаёт локальный туннель до этого адреса и отправляет его через выбранное исходящее. Локальный или частный MTProxy набирается на этом сервере: стандартный direct блокирует частные адреса, поэтому для этого шага используется отдельное исходящее, которому разрешён 127.0.0.1. Удалённое исходящее открыло бы 127.0.0.1 уже на дальней стороне.",
+        "warning": "MTProxy должен принимать секрет этого профиля. Локальные и частные адреса остаются на direct, иначе правило geoip:private их блокирует.",
+        "doneLocal": "Локальный MTProxy набирается на этом сервере. Удалённое исходящее не может достучаться до 127.0.0.1."
       }
     }
   },

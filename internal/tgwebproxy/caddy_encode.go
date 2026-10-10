@@ -24,8 +24,10 @@ const (
 )
 
 var (
-	encodeLine   = regexp.MustCompile(`(?m)^([ \t]*)encode[ \t]+([^\n#]+)`)
-	hasH2WSPatch = regexp.MustCompile(`(?m)^\s*@not_h2_ws\b|fullboard-h2-ws-begin`)
+	encodeLine = regexp.MustCompile(`(?m)^([ \t]*)encode[ \t]+([^\n#]+)`)
+	// Active encode still applies compression; marker-only "disabled" blocks are fine.
+	hasWSSafeEncode = regexp.MustCompile(`(?m)^\s*# fullboard-h2-ws-begin[\s\S]*?# fullboard-h2-ws-end`)
+	activeEncode    = regexp.MustCompile(`(?m)^[ \t]*encode[ \t]+`)
 )
 
 func bareEncodeArgs(args string) bool {
@@ -33,42 +35,74 @@ func bareEncodeArgs(args string) bool {
 	return args != "" && !strings.HasPrefix(args, "@")
 }
 
-// CaddyEncodeNeedsH2WSPatch reports whether the Caddyfile still has a bare
-// encode that can stall HTTP/2 WebSocket upgrades (caddyserver/caddy#6733).
+// CaddyEncodeNeedsH2WSPatch reports whether the Caddyfile still has an active
+// encode that can stall Telegram web-proxy WebSocket (classic Upgrade on
+// /api/v1/ws and h2 CONNECT — caddyserver/caddy#6733).
 func CaddyEncodeNeedsH2WSPatch(content string) bool {
-	if hasH2WSPatch.FindStringIndex(content) != nil {
+	if hasWSSafeEncode.FindStringIndex(content) != nil && !activeEncode.MatchString(content) {
 		return false
 	}
 	for _, m := range encodeLine.FindAllStringSubmatch(content, -1) {
-		if bareEncodeArgs(m[2]) {
+		if bareEncodeArgs(m[2]) || strings.HasPrefix(strings.TrimSpace(m[2]), "@") {
 			return true
 		}
 	}
 	return false
 }
 
-// PatchCaddyEncodeForH2WS rewrites bare `encode …` lines so HTTP/2 WebSocket
-// CONNECT upgrades skip compression. Returns the new content and whether it changed.
+// PatchCaddyEncodeForH2WS disables stock `encode` (commented marker block).
+// Gating encode for only h2 CONNECT still left classic Upgrade /api/v1/ws
+// compressed; dropping encode is the reliable fix for the Telegram carrier.
 func PatchCaddyEncodeForH2WS(content string) (string, bool) {
 	if !CaddyEncodeNeedsH2WSPatch(content) {
 		return content, false
 	}
+	disabled := caddyH2WSBegin + "\n" +
+		"# encode disabled: stock encode stalls Telegram web-proxy WebSocket carrier\n" +
+		"# (classic Upgrade /api/v1/ws and h2 CONNECT). HTTPS long-poll unaffected.\n" +
+		caddyH2WSEnd
+
+	// Replace a previous marker block (partial h2-only patch) in place.
+	if hasWSSafeEncode.FindStringIndex(content) != nil {
+		out := hasWSSafeEncode.ReplaceAllStringFunc(content, func(block string) string {
+			indent := ""
+			if i := strings.IndexFunc(block, func(r rune) bool { return r != ' ' && r != '\t' }); i > 0 {
+				indent = block[:i]
+			}
+			var b strings.Builder
+			for _, line := range strings.Split(disabled, "\n") {
+				b.WriteString(indent)
+				b.WriteString(line)
+				b.WriteByte('\n')
+			}
+			return strings.TrimSuffix(b.String(), "\n")
+		})
+		// Drop any leftover active encode lines outside the block.
+		out2 := encodeLine.ReplaceAllStringFunc(out, func(line string) string {
+			m := encodeLine.FindStringSubmatch(line)
+			if m == nil {
+				return line
+			}
+			return m[1] + "# encode removed for websocket"
+		})
+		return out2, out2 != content
+	}
+
 	replaced := false
 	out := encodeLine.ReplaceAllStringFunc(content, func(line string) string {
 		m := encodeLine.FindStringSubmatch(line)
-		if m == nil || !bareEncodeArgs(m[2]) {
+		if m == nil {
 			return line
 		}
-		indent, args := m[1], strings.TrimSpace(m[2])
+		indent := m[1]
 		replaced = true
-		return indent + caddyH2WSBegin + "\n" +
-			indent + "@not_h2_ws not {\n" +
-			indent + "\theader :protocol *\n" +
-			indent + "\tmethod CONNECT\n" +
-			indent + "\tprotocol http/2\n" +
-			indent + "}\n" +
-			indent + "encode @not_h2_ws " + args + "\n" +
-			indent + caddyH2WSEnd
+		var b strings.Builder
+		for _, l := range strings.Split(disabled, "\n") {
+			b.WriteString(indent)
+			b.WriteString(l)
+			b.WriteByte('\n')
+		}
+		return strings.TrimSuffix(b.String(), "\n")
 	})
 	return out, replaced
 }

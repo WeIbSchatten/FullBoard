@@ -95,14 +95,14 @@ Each profile is one entry in `profiles.json`:
 
 ### WebSocket carrier and stock Caddy
 
-Stock Caddy installs often enable `encode`. Combined with HTTP/2 WebSocket
-upgrades that can stall the bridge's `GET /api/v1/ws` (see
+Stock Caddy installs often enable `encode`. That stalls the bridge's
+`GET /api/v1/ws` (classic Upgrade) and HTTP/2 `CONNECT` upgrades (see
 [caddyserver/caddy#6733](https://github.com/caddyserver/caddy/issues/6733));
-HTTPS long-poll still works. FullBoard patches `/etc/caddy/Caddyfile` so
-`encode` skips h2 `CONNECT` upgrades:
+HTTPS long-poll still works. FullBoard patches `/etc/caddy/Caddyfile` to
+**disable `encode`** on the site block:
 
-- automatically when you save a `websocket` / `websocket-lanes` profile, and
-- via **Fix Caddy for WebSocket** on the Overview tab.
+- via **Fix Caddy for WebSocket** on the Overview tab (and when a prior
+  partial h2-only gate is still active).
 
 The patch is idempotent. Re-run it after an upstream install/update that
 rewrites the Caddyfile.
@@ -144,11 +144,17 @@ shared secret. Dedicated bindings own their backends: unbinding deletes the
 ## Route backend via outbound
 
 On a profile row, **Route via outbound** creates a loopback tunnel inbound
-(dokodemo-style) that rewrites to the profile's current MTProxy backend, adds a
-routing rule that sends that inbound's traffic to a chosen Xray outbound, then
-rewrites the profile `backend` to `127.0.0.1:<tunnel-port>`. The remote MTProxy
-must still accept the profile secret; private/geoip rules on the outbound can
-block Telegram — verify after applying.
+(dokodemo-style) that rewrites to the profile's current MTProxy backend and
+points the profile `backend` at `127.0.0.1:<tunnel-port>`.
+
+A **public** MTProxy address is sent through the chosen Xray outbound. A
+**loopback or private** address is dialed on this host through a freedom
+outbound that allows `127.0.0.1`. The stock `direct` outbound blocks
+`geoip:private`, so that hop never reaches a local MTProxy. Sending
+`127.0.0.1` through a remote outbound dials the far side's loopback instead.
+Either way the proxy stays dead while an outbound connectivity check can
+still pass, because that check only probes the outbound itself. The MTProxy
+must accept the profile secret.
 
 ## Public site
 

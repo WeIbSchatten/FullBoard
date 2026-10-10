@@ -6,7 +6,10 @@ import { GlobalOutlined } from '@ant-design/icons';
 import type { RelayProfile } from '@/generated/types';
 import { OutboundTestResultSchema } from '@/schemas/xray';
 import { fetchXrayConfig, type XraySettingsValue } from '@/hooks/useXraySetting';
-import { resolveTproxyBackendOutboundTag } from '@/lib/tgWebProxyRouteOutbound';
+import {
+  resolveProfileEgressOutbound,
+  type ProfileEgressInbound,
+} from '@/lib/tgWebProxyRouteOutbound';
 import { HttpUtil } from '@/utils';
 import { getMessage } from '@/utils/messageBus';
 
@@ -26,7 +29,19 @@ export default function ProfileEgressCheck({ profile }: { profile: RelayProfile 
     try {
       const cfg = await fetchXrayConfig();
       const template = cfg.xraySetting as XraySettingsValue;
-      const tag = resolveTproxyBackendOutboundTag(template, profile.name);
+      const listMsg = await HttpUtil.get<ProfileEgressInbound[]>(
+        '/panel/api/inbounds/list',
+        undefined,
+        {
+          silent: true,
+        },
+      );
+      const inbounds = Array.isArray(listMsg?.obj) ? listMsg.obj : [];
+      const tag = resolveProfileEgressOutbound(template, {
+        profileName: profile.name,
+        backend: profile.backend,
+        inbounds,
+      });
       if (!tag) {
         const msg = t('pages.tgWebProxy.egress.noRoute');
         setLast(msg);

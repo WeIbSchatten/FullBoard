@@ -2,6 +2,18 @@ import type { WireInboundPayload } from '@/lib/xray/inbound-form-adapter';
 import { buildChainRule, type ChainRoutingRule } from '@/pages/xray/outbounds/cross-server-chain';
 import type { XraySettingsValue } from '@/hooks/useXraySetting';
 
+// Loopback listener that receives the official MTProxy process's Telegram
+// connections (followRedirect) and sends them through the chosen outbound.
+export const MTPROXY_EGRESS_INBOUND_TAG = 'mtproxy-egress';
+
+// Stock freedom "direct" blocks geoip:private, so a rewrite to 127.0.0.1 never
+// dials. This outbound allows only that loopback.
+export const TPROXY_LOCAL_OUTBOUND_TAG = 'tproxy-local';
+
+export interface TproxyRouteRule extends ChainRoutingRule {
+  port?: string;
+}
+
 export interface BackendEndpoint {
   host: string;
   port: number;
@@ -87,7 +99,7 @@ export function buildTproxyTunnelInbound(input: {
 export function buildTproxyBackendRule(
   inboundTag: string,
   outboundTag: string,
-): ChainRoutingRule | null {
+): TproxyRouteRule | null {
   return buildChainRule({
     outboundTag,
     inboundTags: [inboundTag],
@@ -97,14 +109,127 @@ export function buildTproxyBackendRule(
   });
 }
 
+// A remote outbound dials this address on the far side. Loopback and private
+// MTProxy targets are only reachable here, and geoip:private would blackhole them.
+export function isHostLocalOnly(host: string): boolean {
+  const h = host
+    .trim()
+    .toLowerCase()
+    .replace(/^\[|\]$/g, '');
+  if (h === 'localhost' || h === '::1' || h === '0.0.0.0' || h === '::') return true;
+  if (h.startsWith('fe80:') || h.startsWith('fc') || h.startsWith('fd')) return true;
+  const parts = h.split('.');
+  if (parts.length !== 4) return false;
+  const nums = parts.map((p) => Number(p));
+  if (nums.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return false;
+  const [a, b] = nums;
+  if (a === 127 || a === 10 || a === 0) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 169 && b === 254) return true;
+  return false;
+}
+
+export function outboundTagForBackendRewrite(host: string, selectedOutbound: string): string {
+  return isHostLocalOnly(host) ? TPROXY_LOCAL_OUTBOUND_TAG : selectedOutbound;
+}
+
+export function tproxyLocalOutbound(): Record<string, unknown> {
+  return {
+    tag: TPROXY_LOCAL_OUTBOUND_TAG,
+    protocol: 'freedom',
+    settings: {
+      finalRules: [{ action: 'allow', ip: ['127.0.0.1'] }, { action: 'block' }],
+    },
+  };
+}
+
+export function ensureTproxyLocalOutbound(template: XraySettingsValue): void {
+  const outbounds = Array.isArray(template.outbounds) ? [...template.outbounds] : [];
+  const exists = outbounds.some(
+    (o) => o && typeof o === 'object' && 'tag' in o && o.tag === TPROXY_LOCAL_OUTBOUND_TAG,
+  );
+  if (exists) return;
+  outbounds.push(tproxyLocalOutbound() as (typeof outbounds)[number]);
+  template.outbounds = outbounds;
+}
+
+export function assignedInboundTag(
+  created: { tag?: unknown } | null | undefined,
+  fallback: string,
+): string {
+  if (created && typeof created.tag === 'string' && created.tag.trim()) return created.tag.trim();
+  return fallback;
+}
+
+export function unwrapBackendTarget(
+  backend: string,
+  inbounds: ProfileEgressInbound[],
+): BackendEndpoint | null {
+  const parsed = parseBackendHostPort(backend);
+  if (!parsed) return null;
+  const match = inbounds.find((ib) => ib.port === parsed.port && listensOnProfileHost(ib.listen));
+  const rewriteHost = match ? rewriteHostOf(match) : '';
+  if (!match || !isHostLocalOnly(rewriteHost)) return parsed;
+  const raw = match.settings;
+  let port = 0;
+  if (typeof raw === 'string') {
+    try {
+      const body = JSON.parse(raw) as { rewritePort?: unknown };
+      port = typeof body.rewritePort === 'number' ? body.rewritePort : 0;
+    } catch {
+      port = 0;
+    }
+  } else if (raw && typeof raw.rewritePort === 'number') {
+    port = raw.rewritePort;
+  }
+  if (port < 1 || port > 65535) return parsed;
+  return { host: rewriteHost, port };
+}
+
+export function buildLocalMtproxyDirectRule(rewrite: BackendEndpoint): TproxyRouteRule | null {
+  if (!isHostLocalOnly(rewrite.host)) return null;
+  return {
+    type: 'field',
+    outboundTag: TPROXY_LOCAL_OUTBOUND_TAG,
+    ip: [rewrite.host],
+    port: String(rewrite.port),
+  };
+}
+
+function inboundTagsOf(rule: unknown): string[] {
+  if (!rule || typeof rule !== 'object') return [];
+  const tags = (rule as { inboundTag?: unknown }).inboundTag;
+  if (typeof tags === 'string') return [tags];
+  if (!Array.isArray(tags)) return [];
+  return tags.filter((t): t is string => typeof t === 'string');
+}
+
+function isSameLocalCatch(existing: unknown, rule: TproxyRouteRule): boolean {
+  if (inboundTagsOf(rule).length > 0 || inboundTagsOf(existing).length > 0) return false;
+  if (!rule.ip || !rule.port) return false;
+  if (!existing || typeof existing !== 'object') return false;
+  const prev = existing as { ip?: unknown; port?: unknown };
+  if (String(prev.port ?? '') !== rule.port) return false;
+  const ips = Array.isArray(prev.ip) ? prev.ip.map(String) : [];
+  return rule.ip.every((ip) => ips.includes(ip));
+}
+
 export function applyTproxyBackendRule(
   template: XraySettingsValue,
-  rule: ChainRoutingRule,
+  rule: TproxyRouteRule,
   position: 'top' | 'bottom' = 'top',
 ): void {
   if (!template.routing) template.routing = {};
   const rules = (template.routing.rules ?? []) as unknown[];
-  template.routing.rules = (position === 'top' ? [rule, ...rules] : [...rules, rule]) as never;
+  const replaceTags = new Set(inboundTagsOf(rule));
+  const kept = rules.filter((existing) => {
+    if (replaceTags.size > 0 && inboundTagsOf(existing).some((t) => replaceTags.has(t)))
+      return false;
+    if (isSameLocalCatch(existing, rule)) return false;
+    return true;
+  });
+  template.routing.rules = (position === 'top' ? [rule, ...kept] : [...kept, rule]) as never;
 }
 
 export function loopbackBackend(port: number): string {
@@ -115,22 +240,77 @@ export function tproxyBackendInboundTag(profileName: string): string {
   return `tproxy-backend-${sanitizeProfileTagSlug(profileName)}`;
 }
 
-// First routing rule that matches the profile's tproxy tunnel inbound.
-export function resolveTproxyBackendOutboundTag(
+export function outboundForInboundTag(
   template: XraySettingsValue | null | undefined,
-  profileName: string,
+  inboundTag: string,
 ): string | null {
-  const inboundTag = tproxyBackendInboundTag(profileName);
   const rules = template?.routing?.rules;
-  if (!Array.isArray(rules)) return null;
+  if (!Array.isArray(rules) || !inboundTag) return null;
   for (const raw of rules) {
+    if (!inboundTagsOf(raw).includes(inboundTag)) continue;
     if (!raw || typeof raw !== 'object') continue;
-    const rule = raw as { inboundTag?: unknown; outboundTag?: unknown; balancerTag?: unknown };
-    const tags = rule.inboundTag;
-    const match = Array.isArray(tags) ? tags.some((t) => t === inboundTag) : tags === inboundTag;
-    if (!match) continue;
+    const rule = raw as { outboundTag?: unknown; balancerTag?: unknown };
     if (typeof rule.outboundTag === 'string' && rule.outboundTag) return rule.outboundTag;
     if (typeof rule.balancerTag === 'string' && rule.balancerTag) return rule.balancerTag;
   }
   return null;
+}
+
+// actualInboundTag is the inbound the profile dials. A stale tproxy-backend-*
+// rule must not be reported when that port belongs to a different inbound.
+export function resolveTproxyBackendOutboundTag(
+  template: XraySettingsValue | null | undefined,
+  profileName: string,
+  actualInboundTag?: string | null,
+): string | null {
+  const inboundTag = actualInboundTag?.trim() || tproxyBackendInboundTag(profileName);
+  return outboundForInboundTag(template, inboundTag);
+}
+
+export interface ProfileEgressInbound {
+  tag: string;
+  port: number;
+  listen?: string;
+  settings?: { rewriteAddress?: string; rewritePort?: number } | string;
+}
+
+function listensOnProfileHost(listen: string | undefined): boolean {
+  const value = (listen ?? '').trim();
+  return value === '' || value === '127.0.0.1' || value === '0.0.0.0' || value === 'localhost';
+}
+
+function rewriteHostOf(inbound: ProfileEgressInbound): string {
+  const raw = inbound.settings;
+  if (!raw) return '';
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw) as { rewriteAddress?: unknown };
+      return typeof parsed.rewriteAddress === 'string' ? parsed.rewriteAddress : '';
+    } catch {
+      return '';
+    }
+  }
+  return raw.rewriteAddress ?? '';
+}
+
+// The outbound the connectivity check should probe. A loopback MTProxy hop is
+// not that outbound: Telegram leaves via mtproxy-egress when that rule exists.
+export function resolveProfileEgressOutbound(
+  template: XraySettingsValue | null | undefined,
+  input: { profileName: string; backend: string; inbounds: ProfileEgressInbound[] },
+): string | null {
+  const parsed = parseBackendHostPort(input.backend);
+  const match = parsed
+    ? input.inbounds.find((ib) => ib.port === parsed.port && listensOnProfileHost(ib.listen))
+    : undefined;
+  const rewriteHost = match ? rewriteHostOf(match) : '';
+  const hopIsLocal =
+    (rewriteHost !== '' && isHostLocalOnly(rewriteHost)) ||
+    (!match && !!parsed && isHostLocalOnly(parsed.host));
+  if (hopIsLocal) {
+    const egress = outboundForInboundTag(template, MTPROXY_EGRESS_INBOUND_TAG);
+    if (egress && egress !== 'direct' && egress !== 'blocked') return egress;
+  }
+  if (match) return outboundForInboundTag(template, match.tag);
+  return resolveTproxyBackendOutboundTag(template, input.profileName);
 }

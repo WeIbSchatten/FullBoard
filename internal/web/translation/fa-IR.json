@@ -1784,7 +1784,7 @@
       "subIncyResolveDnsIp": "آیپی سرور DoH",
       "subIncyResolveDnsIpDesc": "آیپی سرور DoH برای بوتاسترپ.",
       "subIncyGroupRouting": "مسیریابی",
-            "navPosition": "Primary navigation",
+      "navPosition": "Primary navigation",
       "navPositionDesc": "Side keeps the classic left sidebar. Top moves primary nav into the header and puts page tabs on the left.",
       "navPositionSide": "Side",
       "navPositionTop": "Top",
@@ -1797,7 +1797,6 @@
         "loginDesc": "Applied to the public FullBoard login page.",
         "preview": "Preview panel CSS",
         "previewDesc": "Temporarily applies the panel CSS in this browser tab without saving.",
-        "size": "{size} / {max} bytes",
         "size": "{size} / {max} bytes",
         "preset": "Active stylesheet",
         "presetDesc": "Default uses the stock theme. Presets store panel and login CSS separately.",
@@ -2628,8 +2627,9 @@
         "apply": "Create tunnel & update profile",
         "done": "Tunnel inbound and routing rule created; profile backend updated",
         "failed": "Failed to route backend via outbound",
-        "hint": "Creates a loopback tunnel inbound that rewrites to the current MTProxy backend, adds a routing rule to the chosen outbound, then sets the profile backend to 127.0.0.1:port.",
-        "warning": "The remote MTProxy must still accept this profile secret. Private / geoip routing rules on the chosen outbound can block Telegram traffic — verify connectivity after applying."
+        "hint": "For a public MTProxy address, creates a loopback tunnel that rewrites to that address and sends it through the chosen outbound. A loopback or private MTProxy is dialed on this host: the stock direct outbound blocks private addresses, so the hop uses its own outbound that allows 127.0.0.1. A remote outbound would dial 127.0.0.1 on the far side.",
+        "warning": "The MTProxy must accept this profile secret. Loopback and private addresses stay on direct so geoip:private cannot blackhole them.",
+        "doneLocal": "Local MTProxy is dialed on this host. A remote outbound cannot carry 127.0.0.1."
       }
     }
   },
