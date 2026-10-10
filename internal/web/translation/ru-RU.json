@@ -2505,7 +2505,6 @@
         "update": "Обновить релей"
       },
       "caddyEncodeWarn": "Stock encode в Caddy может блокировать HTTP/2 WebSocket. Нажмите «Исправить Caddy для WebSocket» (или пересохраните websocket-профиль), чтобы encode пропускал h2 CONNECT.",
-      "caddyEncodeFixed": "Caddyfile исправлен для WebSocket",
       "install": {
         "title": "Установка tproxy-server",
         "warning": "Установщик upstream рассчитан на Ubuntu 22.04+/Debian 12+ (x86_64). Он ставит Caddy на порты 80/443 и заменяет активный Caddyfile — убедитесь, что панели и входящим Xray на этом хосте эти порты не нужны.",
