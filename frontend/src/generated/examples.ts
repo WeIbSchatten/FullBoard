@@ -2,6 +2,7 @@
 export const EXAMPLES: Record<string, unknown> = {
   "AllSetting": {
     "customCss": "",
+    "customCssBundle": "",
     "customLoginCss": "",
     "datepicker": "",
     "discordAdminIds": "",
@@ -41,6 +42,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "ldapUserAttr": "",
     "ldapUserFilter": "",
     "ldapVlessField": "",
+    "navPosition": "",
     "outboundDownThreshold": 1,
     "pageSize": 0,
     "panelOutbound": "",
@@ -183,6 +185,7 @@ export const EXAMPLES: Record<string, unknown> = {
   },
   "AllSettingView": {
     "customCss": "",
+    "customCssBundle": "",
     "customLoginCss": "",
     "datepicker": "",
     "discordAdminIds": "",
@@ -230,6 +233,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "ldapUserAttr": "",
     "ldapUserFilter": "",
     "ldapVlessField": "",
+    "navPosition": "",
     "outboundDownThreshold": 1,
     "pageSize": 0,
     "panelOutbound": "",
@@ -407,6 +411,12 @@ export const EXAMPLES: Record<string, unknown> = {
     "name": "central-panel-a",
     "scope": "admin",
     "token": "new-token-string"
+  },
+  "CaddyH2WSStatus": {
+    "exists": true,
+    "lastError": "",
+    "needsFix": true,
+    "path": "/etc/caddy/Caddyfile"
   },
   "Client": {
     "adTag": "0123456789abcdef0123456789abcdef",
@@ -1102,6 +1112,9 @@ export const EXAMPLES: Record<string, unknown> = {
     "readyDetail": ""
   },
   "RelayApplyResult": {
+    "caddyPatchError": "",
+    "caddyPatched": false,
+    "caddyWarning": "",
     "restartError": "",
     "restarted": true
   },
@@ -1284,6 +1297,12 @@ export const EXAMPLES: Record<string, unknown> = {
     "basePath": "",
     "binaryInstalled": true,
     "binaryPath": "/usr/local/bin/tproxy-server",
+    "caddyEncode": {
+      "exists": true,
+      "lastError": "",
+      "needsFix": true,
+      "path": "/etc/caddy/Caddyfile"
+    },
     "configError": "",
     "configExists": true,
     "configPath": "/etc/tproxy-server/config.json",
@@ -1313,7 +1332,8 @@ export const EXAMPLES: Record<string, unknown> = {
         "unit": "tproxy-server",
         "unitFileState": "enabled"
       }
-    ]
+    ],
+    "usesWebSocket": false
   },
   "RelayTimeouts": {
     "backend_dial": "5s",

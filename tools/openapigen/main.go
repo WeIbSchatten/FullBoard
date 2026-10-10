@@ -150,6 +150,7 @@ func run(root, outDir string) error {
 				"RelayInstallRequest",
 				"PublicSiteFile",
 				"PublicSiteSnapshot",
+				"CaddyH2WSStatus",
 			),
 		},
 	}

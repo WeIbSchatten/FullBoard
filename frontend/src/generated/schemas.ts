@@ -5,6 +5,9 @@ export const SCHEMAS: Record<string, unknown> = {
       "customCss": {
         "type": "string"
       },
+      "customCssBundle": {
+        "type": "string"
+      },
       "customLoginCss": {
         "type": "string"
       },
@@ -130,6 +133,9 @@ export const SCHEMAS: Record<string, unknown> = {
         "type": "string"
       },
       "ldapVlessField": {
+        "type": "string"
+      },
+      "navPosition": {
         "type": "string"
       },
       "outboundDownThreshold": {
@@ -579,6 +585,7 @@ export const SCHEMAS: Record<string, unknown> = {
     },
     "required": [
       "customCss",
+      "customCssBundle",
       "customLoginCss",
       "datepicker",
       "discordAdminIds",
@@ -618,6 +625,7 @@ export const SCHEMAS: Record<string, unknown> = {
       "ldapUserAttr",
       "ldapUserFilter",
       "ldapVlessField",
+      "navPosition",
       "outboundDownThreshold",
       "pageSize",
       "panelOutbound",
@@ -763,6 +771,9 @@ export const SCHEMAS: Record<string, unknown> = {
   "AllSettingView": {
     "properties": {
       "customCss": {
+        "type": "string"
+      },
+      "customCssBundle": {
         "type": "string"
       },
       "customLoginCss": {
@@ -916,6 +927,9 @@ export const SCHEMAS: Record<string, unknown> = {
       "ldapVlessField": {
         "type": "string"
       },
+      "navPosition": {
+        "type": "string"
+      },
       "outboundDownThreshold": {
         "maximum": 100,
         "minimum": 1,
@@ -1363,6 +1377,7 @@ export const SCHEMAS: Record<string, unknown> = {
     },
     "required": [
       "customCss",
+      "customCssBundle",
       "customLoginCss",
       "datepicker",
       "discordAdminIds",
@@ -1410,6 +1425,7 @@ export const SCHEMAS: Record<string, unknown> = {
       "ldapUserAttr",
       "ldapUserFilter",
       "ldapVlessField",
+      "navPosition",
       "outboundDownThreshold",
       "pageSize",
       "panelOutbound",
@@ -1660,6 +1676,32 @@ export const SCHEMAS: Record<string, unknown> = {
       "id",
       "name",
       "scope"
+    ],
+    "type": "object"
+  },
+  "CaddyH2WSStatus": {
+    "description": "CaddyH2WSStatus describes whether the stock Caddyfile needs the encode patch.",
+    "properties": {
+      "exists": {
+        "example": true,
+        "type": "boolean"
+      },
+      "lastError": {
+        "type": "string"
+      },
+      "needsFix": {
+        "example": true,
+        "type": "boolean"
+      },
+      "path": {
+        "example": "/etc/caddy/Caddyfile",
+        "type": "string"
+      }
+    },
+    "required": [
+      "exists",
+      "needsFix",
+      "path"
     ],
     "type": "object"
   },
@@ -4460,6 +4502,16 @@ export const SCHEMAS: Record<string, unknown> = {
   },
   "RelayApplyResult": {
     "properties": {
+      "caddyPatchError": {
+        "type": "string"
+      },
+      "caddyPatched": {
+        "example": false,
+        "type": "boolean"
+      },
+      "caddyWarning": {
+        "type": "string"
+      },
       "restartError": {
         "type": "string"
       },
@@ -4909,6 +4961,9 @@ export const SCHEMAS: Record<string, unknown> = {
         "example": "/usr/local/bin/tproxy-server",
         "type": "string"
       },
+      "caddyEncode": {
+        "$ref": "#/components/schemas/CaddyH2WSStatus"
+      },
       "configError": {
         "type": "string"
       },
@@ -4960,12 +5015,17 @@ export const SCHEMAS: Record<string, unknown> = {
           "$ref": "#/components/schemas/RelayUnitStatus"
         },
         "type": "array"
+      },
+      "usesWebSocket": {
+        "example": false,
+        "type": "boolean"
       }
     },
     "required": [
       "basePath",
       "binaryInstalled",
       "binaryPath",
+      "caddyEncode",
       "configError",
       "configExists",
       "configPath",
@@ -4978,7 +5038,8 @@ export const SCHEMAS: Record<string, unknown> = {
       "profilesModeOk",
       "profilesPath",
       "supported",
-      "units"
+      "units",
+      "usesWebSocket"
     ],
     "type": "object"
   },

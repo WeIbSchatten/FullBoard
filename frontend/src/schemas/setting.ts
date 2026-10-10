@@ -22,6 +22,8 @@ export const AllSettingSchema = z
     panelOutbound: z.string().optional(),
     customCss: z.string().max(65536).optional(),
     customLoginCss: z.string().max(65536).optional(),
+    customCssBundle: z.string().optional(),
+    navPosition: z.enum(['side', 'top']).optional(),
     pageSize: z.number().int().min(0).max(1000).optional(),
     expireDiff: nonNegativeInt.optional(),
     trafficDiff: nonNegativeInt.max(100).optional(),

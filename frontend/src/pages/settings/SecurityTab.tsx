@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Empty, Form, Input, Modal, Space, Spin, Switch, Tabs, message } from 'antd';
+import { Button, Empty, Form, Input, Modal, Space, Spin, Switch, message } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import { ApiOutlined, SafetyOutlined, UserOutlined } from '@ant-design/icons';
 import { ClipboardManager, HttpUtil, IntlUtil, RandomUtil } from '@/utils';
 import type { AllSetting } from '@/models/setting';
@@ -262,7 +263,7 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
     <>
       {messageContextHolder}
       {modalContextHolder}
-      <Tabs
+      <PanelTabs
         defaultActiveKey="1"
         items={[
           {

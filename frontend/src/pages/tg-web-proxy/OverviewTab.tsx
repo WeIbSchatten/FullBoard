@@ -44,10 +44,11 @@ function unitBadge(state: string): 'success' | 'processing' | 'error' | 'default
 
 export default function OverviewTab({ status, modal }: { status: RelayStatus; modal: ModalApi }) {
   const { t } = useTranslation();
-  const { controlUnit, check, update, pending } = useTgWebProxyMutations();
+  const { controlUnit, check, update, fixCaddy, pending } = useTgWebProxyMutations();
   const [installOpen, setInstallOpen] = useState(false);
   const admin = status.admin;
   const job = status.job;
+  const caddyNeedsFix = !!status.caddyEncode?.needsFix && !!status.usesWebSocket;
 
   const confirmUpdate = () =>
     modal.confirm({
@@ -143,6 +144,20 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
             type="error"
             showIcon
             message={t('pages.tgWebProxy.profilesModeBad', { mode: status.profilesMode })}
+          />
+        </Col>
+      )}
+      {caddyNeedsFix && (
+        <Col span={24}>
+          <Alert
+            type="warning"
+            showIcon
+            message={t('pages.tgWebProxy.caddyEncodeWarn')}
+            action={
+              <Button size="small" type="primary" disabled={pending} onClick={() => fixCaddy()}>
+                {t('pages.tgWebProxy.actions.fixCaddy')}
+              </Button>
+            }
           />
         </Col>
       )}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Input, InputNumber, Select, Space, Switch, Tabs } from 'antd';
+import { Alert, Button, Input, InputNumber, Select, Space, Switch } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import { MailOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { HttpUtil } from '@/utils';
 import { onNumber } from '@/utils/onNumber';
@@ -51,7 +52,7 @@ export default function EmailTab({ allSetting, updateSetting }: EmailTabProps) {
   }
 
   return (
-    <Tabs
+    <PanelTabs
       defaultActiveKey="1"
       items={[
         {

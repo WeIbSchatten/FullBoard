@@ -52,6 +52,8 @@ type RelayStatus struct {
 	Units           []RelayUnitStatus `json:"units"`
 	Admin           *RelayAdminProbe  `json:"admin"`
 	Job             RelayJobStatus    `json:"job"`
+	CaddyEncode     CaddyH2WSStatus   `json:"caddyEncode"`
+	UsesWebSocket   bool              `json:"usesWebSocket" example:"false"`
 }
 
 func (m *Manager) Status(ctx context.Context) RelayStatus {
@@ -76,6 +78,7 @@ func (m *Manager) Status(ctx context.Context) RelayStatus {
 		st.ConfigExists, st.ProfilesExists = snap.ConfigExists, snap.ProfilesExists
 		st.ProfileCount = len(snap.Profiles)
 		st.Hostname, st.BasePath = snap.Config.PublicHostname, snap.Config.BasePath
+		st.UsesWebSocket = profilesUseWebSocket(snap.Profiles)
 		if snap.ConfigExists {
 			probe := ProbeAdmin(ctx, snap.Config.AdminListen)
 			st.Admin = &probe
@@ -85,9 +88,20 @@ func (m *Manager) Status(ctx context.Context) RelayStatus {
 		for _, unit := range statusUnits {
 			st.Units = append(st.Units, m.unitStatus(ctx, unit))
 		}
+		st.CaddyEncode = inspectCaddyEncode(DefaultCaddyfile)
 	}
 	st.Job = m.jobs.status(ctx)
 	return st
+}
+
+func profilesUseWebSocket(profiles []RelayProfile) bool {
+	for _, p := range profiles {
+		switch p.CarrierMode {
+		case "websocket", "websocket-lanes":
+			return true
+		}
+	}
+	return false
 }
 
 // profilesModeSafe matches the relay's rule: no group/other permission bits.
@@ -100,19 +114,65 @@ func profilesModeSafe(mode string) bool {
 }
 
 type RelayApplyResult struct {
-	Restarted    bool   `json:"restarted" example:"true"`
-	RestartError string `json:"restartError" example:""`
+	Restarted       bool   `json:"restarted" example:"true"`
+	RestartError    string `json:"restartError" example:""`
+	CaddyWarning    string `json:"caddyWarning,omitempty" example:""`
+	CaddyPatched    bool   `json:"caddyPatched,omitempty" example:"false"`
+	CaddyPatchError string `json:"caddyPatchError,omitempty" example:""`
 }
 
 // afterCommit restarts a running relay: it reads its config only at start-up.
 func (m *Manager) afterCommit(ctx context.Context) RelayApplyResult {
+	res := RelayApplyResult{}
+	res = m.maybeWarnOrPatchCaddy(ctx, res)
 	if !m.supported() || !m.relayActive(ctx) {
-		return RelayApplyResult{}
+		return res
 	}
 	if err := m.systemctl(ctx, "restart", RelayUnit+".service"); err != nil {
-		return RelayApplyResult{RestartError: err.Error()}
+		res.RestartError = err.Error()
+		return res
 	}
-	return RelayApplyResult{Restarted: true}
+	res.Restarted = true
+	return res
+}
+
+func (m *Manager) maybeWarnOrPatchCaddy(ctx context.Context, res RelayApplyResult) RelayApplyResult {
+	snap, err := m.store.Load()
+	if err != nil || !profilesUseWebSocket(snap.Profiles) {
+		return res
+	}
+	st := inspectCaddyEncode(DefaultCaddyfile)
+	if !st.Exists || !st.NeedsFix {
+		return res
+	}
+	// Auto-patch stock Caddy when a WebSocket carrier profile is saved.
+	patched, perr := m.FixCaddyEncode(ctx)
+	res.CaddyPatched = patched
+	if perr != nil {
+		res.CaddyPatchError = perr.Error()
+		res.CaddyWarning = "Caddy encode still blocks HTTP/2 WebSocket upgrades; use Fix Caddy for WebSocket"
+	}
+	return res
+}
+
+// FixCaddyEncode patches the stock Caddyfile so encode skips h2 WS CONNECT, then reloads caddy.
+func (m *Manager) FixCaddyEncode(ctx context.Context) (bool, error) {
+	changed, err := ApplyCaddyEncodeH2WSPatch(DefaultCaddyfile)
+	if err != nil {
+		return false, err
+	}
+	if !changed {
+		return false, nil
+	}
+	if m.supported() {
+		if err := m.systemctl(ctx, "reload", "caddy.service"); err != nil {
+			// Fall back to restart — some units lack ExecReload.
+			if rerr := m.systemctl(ctx, "restart", "caddy.service"); rerr != nil {
+				return true, fmt.Errorf("Caddyfile patched but reload failed: %w", err)
+			}
+		}
+	}
+	return true, nil
 }
 
 func (m *Manager) SaveConfig(ctx context.Context, cfg RelayConfig, initial *RelayProfile) (RelayApplyResult, error) {

@@ -83,13 +83,30 @@ FullBoard скачивает актуальные исходники в `/usr/lo
 - **Бэкенд** — loopback `host:port` экземпляра MTProxy, например
   `127.0.0.1:8443`.
 - **Режим транспорта** (необязательно) — `https`, `https-lanes`, `websocket`
-  или `websocket-lanes`.
+  или `websocket-lanes`. Это настройка **только на сервере** — в ссылках
+  остаются `server` + `secret`; клиент узнаёт режим после
+  `POST /api/v1/session`. На macOS Desktop лучше `websocket`, а не
+  `websocket-lanes`.
 - **Лимиты** (необязательно) — не могут превышать глобальные.
 
 <Callout type="info">
   Релей только пересылает трафик. Каждый бэкенд должен быть запущенным MTProxy с
   тем же секретом, а файрвол должен закрывать его порт снаружи.
 </Callout>
+
+### WebSocket и stock Caddy
+
+В типовой установке Caddy включает `encode`. Вместе с HTTP/2 WebSocket это
+может «зависать» на `GET /api/v1/ws`
+([caddyserver/caddy#6733](https://github.com/caddyserver/caddy/issues/6733));
+HTTPS long-poll при этом работает. FullBoard правит `/etc/caddy/Caddyfile`,
+чтобы `encode` пропускал h2 `CONNECT`:
+
+- автоматически при сохранении профиля с `websocket` / `websocket-lanes`, и
+- кнопкой **Исправить Caddy для WebSocket** на вкладке Overview.
+
+Патч идемпотентен. Повторите его после install/update, если upstream
+перезаписал Caddyfile.
 
 ## Ссылки для клиентов
 

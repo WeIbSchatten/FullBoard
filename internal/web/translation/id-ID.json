@@ -1784,6 +1784,10 @@
       "subIncyResolveDnsIp": "IP server DoH",
       "subIncyResolveDnsIpDesc": "IP server DoH untuk bootstrap.",
       "subIncyGroupRouting": "Perutean",
+            "navPosition": "Primary navigation",
+      "navPositionDesc": "Side keeps the classic left sidebar. Top moves primary nav into the header and puts page tabs on the left.",
+      "navPositionSide": "Side",
+      "navPositionTop": "Top",
       "customCss": {
         "tab": "Appearance",
         "intro": "Custom CSS is loaded as a separate stylesheet after the FullBoard theme. It is never inserted into the page HTML, so it cannot run scripts. Save the settings, then reload the page to apply.",
@@ -1793,7 +1797,17 @@
         "loginDesc": "Applied to the public FullBoard login page.",
         "preview": "Preview panel CSS",
         "previewDesc": "Temporarily applies the panel CSS in this browser tab without saving.",
-        "size": "{size} / {max} bytes"
+        "size": "{size} / {max} bytes",
+        "size": "{size} / {max} bytes",
+        "preset": "Active stylesheet",
+        "presetDesc": "Default uses the stock theme. Presets store panel and login CSS separately.",
+        "default": "Default",
+        "defaultHint": "Default is selected — stock Ant Design with no custom stylesheet.",
+        "presetName": "Preset {n}",
+        "createPreset": "New preset",
+        "deletePreset": "Delete preset",
+        "rename": "Preset name",
+        "renameDesc": "Shown in the stylesheet switcher."
       }
     },
     "xray": {
@@ -2486,9 +2500,12 @@
         "enable": "Enable",
         "disable": "Disable",
         "check": "Validate config",
+        "fixCaddy": "Fix Caddy for WebSocket",
         "install": "Install",
         "update": "Update relay"
       },
+      "caddyEncodeWarn": "Stock Caddy encode can stall HTTP/2 WebSocket upgrades. Click Fix Caddy for WebSocket (or re-save a websocket profile) so encode skips h2 CONNECT.",
+      "caddyEncodeFixed": "Caddyfile patched for WebSocket",
       "install": {
         "title": "Install tproxy-server",
         "warning": "The upstream installer is meant for Ubuntu 22.04+/Debian 12+ on x86_64. It installs Caddy on ports 80/443 and replaces the active Caddyfile, so make sure nothing else (panel, Xray inbounds) needs those ports on this host.",
@@ -2521,7 +2538,7 @@
         "backendHint": "Numeric loopback host:port of an official MTProxy listener.",
         "backendWarning": "Every profile backend needs its own MTProxy listener on that port, and the port must be covered by the tproxy-firewall rules.",
         "carrierMode": "Carrier mode",
-        "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait.",
+        "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait. Prefer websocket over websocket-lanes on macOS Desktop. Carrier mode is server-side only — share links stay server+secret.",
         "limits": "Per-profile limits",
         "limitsHint": "Leave empty to inherit the global value. Values may only lower the global limits.",
         "deleteConfirm": "Delete profile \"{name}\"? Clients using its secret stop working.",
@@ -2582,6 +2599,7 @@
         "saved": "Saved and validated",
         "deleted": "Profile deleted",
         "checkOk": "Configuration is valid",
+        "caddyFixed": "Caddyfile patched for WebSocket",
         "serviceDone": "Service command executed",
         "jobStarted": "Job started",
         "restarted": "tproxy-server restarted with the new configuration",

@@ -118,6 +118,10 @@ export function useTgWebProxyMutations() {
     onSuccess,
   });
   const check = useMutation({ mutationFn: () => HttpUtil.post(`${BASE}/check`) });
+  const fixCaddy = useMutation({
+    mutationFn: () => HttpUtil.post(`${BASE}/fixCaddy`),
+    onSuccess,
+  });
   const addProfile = useMutation({
     mutationFn: (profile: RelayProfile) =>
       HttpUtil.post<RelayApplyResult>(`${BASE}/profiles/add`, profile, JSON_HEADERS),
@@ -155,6 +159,7 @@ export function useTgWebProxyMutations() {
   return {
     saveConfig: saveConfig.mutateAsync,
     check: check.mutateAsync,
+    fixCaddy: fixCaddy.mutateAsync,
     addProfile: addProfile.mutateAsync,
     updateProfile: (name: string, profile: RelayProfile) =>
       updateProfile.mutateAsync({ name, profile }),
@@ -164,6 +169,8 @@ export function useTgWebProxyMutations() {
     update: update.mutateAsync,
     pending:
       saveConfig.isPending ||
+      check.isPending ||
+      fixCaddy.isPending ||
       addProfile.isPending ||
       updateProfile.isPending ||
       deleteProfile.isPending ||

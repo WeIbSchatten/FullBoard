@@ -10,10 +10,10 @@ import {
   Space,
   Switch,
   Table,
-  Tabs,
   Tag,
   Tooltip,
 } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   DeleteOutlined,
   DeploymentUnitOutlined,
@@ -326,7 +326,7 @@ export default function SubscriptionBalancersTab({
 
   return (
     <>
-      <Tabs
+      <PanelTabs
         defaultActiveKey="balancers"
         items={[
           {

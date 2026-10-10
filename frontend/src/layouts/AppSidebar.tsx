@@ -43,6 +43,7 @@ import { formatPanelVersion } from '@/lib/panel-version';
 import { pauseAnimationsUntilLeave, useTheme } from '@/hooks/useTheme';
 import { useAllSettings } from '@/api/queries/useAllSettings';
 import { useCommandPalette } from '@/components/command-palette/useCommandPalette';
+import { useNavLayout } from '@/layouts/NavLayoutContext';
 import './AppSidebar.css';
 
 // The palette listens for Ctrl as well as Cmd, so the chip must not show a
@@ -170,13 +171,15 @@ export default function AppSidebar() {
   const navigate = useNavigate();
   const { pathname, hash } = useLocation();
   const { allSetting } = useAllSettings();
+  const { navPosition } = useNavLayout();
+  const topNav = navPosition === 'top';
   const showSubFormats = !!(allSetting.subJsonEnable || allSetting.subClashEnable);
   const showSubBalancers = !!allSetting.subJsonEnable;
 
   const [hovered, setHovered] = useState(() => hoveredAcrossRemounts);
   const [pinned, setPinned] = useState(readSidebarPinned);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const railCollapsed = !hovered && !pinned;
+  const railCollapsed = topNav ? false : !hovered && !pinned;
   const railStyle = useMemo(
     () => ({ '--sider-rail': `${pinned ? SIDER_WIDTH : RAIL_WIDTH}px` }) as CSSProperties,
     [pinned],
@@ -349,93 +352,118 @@ export default function AppSidebar() {
     [isDark, isUltra, toggleTheme, toggleUltra],
   );
 
+  const brandActions = (
+    <div className="brand-actions">
+      {!topNav && (
+        <button
+          type="button"
+          className="sidebar-pin"
+          aria-label={t('menu.pinSidebar')}
+          aria-pressed={pinned}
+          title={t(pinned ? 'menu.unpinSidebar' : 'menu.pinSidebar')}
+          onClick={togglePinned}
+        >
+          {pinned ? <PushpinFilled /> : <PushpinOutlined />}
+        </button>
+      )}
+      <DocsButton ariaLabel={t('menu.docs') || 'Documentation'} />
+      <ThemeCycleButton
+        id="theme-cycle"
+        isDark={isDark}
+        isUltra={isUltra}
+        onCycle={() => cycleTheme('theme-cycle')}
+        ariaLabel={t('menu.theme')}
+      />
+    </div>
+  );
+
+  const commandTrigger = (
+    <Tooltip
+      title={railCollapsed ? t('commandPalette.title') || 'Command Palette (Ctrl + K)' : undefined}
+      placement="right"
+    >
+      <button
+        type="button"
+        className={`sidebar-command-trigger${railCollapsed ? ' collapsed' : ''}`}
+        onClick={openCommandPalette}
+        aria-label={t('commandPalette.title') || 'Command Palette (Ctrl + K)'}
+      >
+        <span className="sidebar-command-left">
+          <SearchOutlined className="sidebar-command-icon" />
+          <span className="sidebar-command-text">{t('commandPalette.search') || 'Search...'}</span>
+        </span>
+        <span className="sidebar-command-kbd">
+          <span className="kbd-cmd">{SHORTCUT_MODIFIER}</span>
+          <span className="kbd-key">K</span>
+        </span>
+      </button>
+    </Tooltip>
+  );
+
   return (
     <div
       ref={rootRef}
-      className={`ant-sidebar${pinned ? ' sidebar-pinned' : ''}`}
-      style={railStyle}
-      onMouseEnter={() => updateHovered(true)}
-      onMouseLeave={() => updateHovered(false)}
+      className={`ant-sidebar${pinned ? ' sidebar-pinned' : ''}${topNav ? ' ant-sidebar--top' : ''}`}
+      style={topNav ? undefined : railStyle}
+      onMouseEnter={topNav ? undefined : () => updateHovered(true)}
+      onMouseLeave={topNav ? undefined : () => updateHovered(false)}
     >
-      <Layout.Sider
-        theme={currentTheme}
-        width={SIDER_WIDTH}
-        collapsedWidth={RAIL_WIDTH}
-        collapsed={railCollapsed}
-      >
-        <div className="sider-brand">
-          <div className="brand-block">
-            <span className="brand-text">{railCollapsed ? 'FB' : 'FullBoard'}</span>
+      {topNav ? (
+        <Layout.Header className={`top-nav-header top-nav-header--${currentTheme}`}>
+          <div className="top-nav-brand">
+            <span className="brand-text">FullBoard</span>
+            {brandActions}
           </div>
-          {!railCollapsed && (
-            <div className="brand-actions">
-              <button
-                type="button"
-                className="sidebar-pin"
-                aria-label={t('menu.pinSidebar')}
-                aria-pressed={pinned}
-                title={t(pinned ? 'menu.unpinSidebar' : 'menu.pinSidebar')}
-                onClick={togglePinned}
-              >
-                {pinned ? <PushpinFilled /> : <PushpinOutlined />}
-              </button>
-              <DocsButton ariaLabel={t('menu.docs') || 'Documentation'} />
-              <ThemeCycleButton
-                id="theme-cycle"
-                isDark={isDark}
-                isUltra={isUltra}
-                onCycle={() => cycleTheme('theme-cycle')}
-                ariaLabel={t('menu.theme')}
-              />
-            </div>
-          )}
-        </div>
-        <Tooltip
-          title={
-            railCollapsed ? t('commandPalette.title') || 'Command Palette (Ctrl + K)' : undefined
-          }
-          placement="right"
+          <Menu
+            theme={currentTheme}
+            mode="horizontal"
+            selectedKeys={[selectedKey]}
+            className="top-nav-menu"
+            items={[...(toMenuItems(navItems) ?? []), ...(toMenuItems(utilItems) ?? [])]}
+            onClick={onMenuClick}
+          />
+          <div className="top-nav-tools">
+            {commandTrigger}
+            <VersionBadge version={panelVersion} />
+          </div>
+        </Layout.Header>
+      ) : (
+        <Layout.Sider
+          theme={currentTheme}
+          width={SIDER_WIDTH}
+          collapsedWidth={RAIL_WIDTH}
+          collapsed={railCollapsed}
         >
-          <button
-            type="button"
-            className={`sidebar-command-trigger${railCollapsed ? ' collapsed' : ''}`}
-            onClick={openCommandPalette}
-            aria-label={t('commandPalette.title') || 'Command Palette (Ctrl + K)'}
-          >
-            <span className="sidebar-command-left">
-              <SearchOutlined className="sidebar-command-icon" />
-              <span className="sidebar-command-text">
-                {t('commandPalette.search') || 'Search...'}
-              </span>
-            </span>
-            <span className="sidebar-command-kbd">
-              <span className="kbd-cmd">{SHORTCUT_MODIFIER}</span>
-              <span className="kbd-key">K</span>
-            </span>
-          </button>
-        </Tooltip>
-        <Menu
-          theme={currentTheme}
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          openKeys={railCollapsed ? undefined : openKeys}
-          onOpenChange={(keys) => setOpenKeys(keys as string[])}
-          className="sider-nav"
-          items={toMenuItems(navItems)}
-          onClick={onMenuClick}
-        />
-        <Menu
-          theme={currentTheme}
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          className="sider-utility"
-          items={toMenuItems(utilItems)}
-          onClick={onMenuClick}
-        />
-        <div className="sider-footer">
-          <VersionBadge version={panelVersion} collapsed={railCollapsed} />
-        </div>
-      </Layout.Sider>
+          <div className="sider-brand">
+            <div className="brand-block">
+              <span className="brand-text">{railCollapsed ? 'FB' : 'FullBoard'}</span>
+            </div>
+            {!railCollapsed && brandActions}
+          </div>
+          {commandTrigger}
+          <Menu
+            theme={currentTheme}
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            openKeys={railCollapsed ? undefined : openKeys}
+            onOpenChange={(keys) => setOpenKeys(keys as string[])}
+            className="sider-nav"
+            items={toMenuItems(navItems)}
+            onClick={onMenuClick}
+          />
+          <Menu
+            theme={currentTheme}
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            className="sider-utility"
+            items={toMenuItems(utilItems)}
+            onClick={onMenuClick}
+          />
+          <div className="sider-footer">
+            <VersionBadge version={panelVersion} collapsed={railCollapsed} />
+          </div>
+        </Layout.Sider>
+      )}
 
       <Drawer
         placement="left"

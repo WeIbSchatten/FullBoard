@@ -82,7 +82,9 @@ Each profile is one entry in `profiles.json`:
 - **Backend**: a loopback `host:port` of an MTProxy instance, such as
   `127.0.0.1:8443`.
 - **Carrier mode** (optional): `https`, `https-lanes`, `websocket` or
-  `websocket-lanes`.
+  `websocket-lanes`. This is **server-side only** — share links stay
+  `server` + `secret`; the client learns the mode after `POST /api/v1/session`.
+  Prefer `websocket` over `websocket-lanes` on macOS Desktop.
 - **Limits** (optional): per-profile caps, which can't exceed the global limits.
 
 <Callout type="info">
@@ -90,6 +92,20 @@ Each profile is one entry in `profiles.json`:
   accepts the same secret, and the firewall must keep its port closed to the
   outside.
 </Callout>
+
+### WebSocket carrier and stock Caddy
+
+Stock Caddy installs often enable `encode`. Combined with HTTP/2 WebSocket
+upgrades that can stall the bridge's `GET /api/v1/ws` (see
+[caddyserver/caddy#6733](https://github.com/caddyserver/caddy/issues/6733));
+HTTPS long-poll still works. FullBoard patches `/etc/caddy/Caddyfile` so
+`encode` skips h2 `CONNECT` upgrades:
+
+- automatically when you save a `websocket` / `websocket-lanes` profile, and
+- via **Fix Caddy for WebSocket** on the Overview tab.
+
+The patch is idempotent. Re-run it after an upstream install/update that
+rewrites the Caddyfile.
 
 ## Share links
 

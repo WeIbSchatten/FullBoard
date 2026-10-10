@@ -29,6 +29,7 @@ export type transportBits = z.infer<typeof transportBitsSchema>;
 
 export const AllSettingSchema = z.object({
   customCss: z.string(),
+  customCssBundle: z.string(),
   customLoginCss: z.string(),
   datepicker: z.string(),
   discordAdminIds: z.string(),
@@ -68,6 +69,7 @@ export const AllSettingSchema = z.object({
   ldapUserAttr: z.string(),
   ldapUserFilter: z.string(),
   ldapVlessField: z.string(),
+  navPosition: z.string(),
   outboundDownThreshold: z.number().int().min(1).max(100),
   pageSize: z.number().int().min(0).max(1000),
   panelOutbound: z.string(),
@@ -212,6 +214,7 @@ export type AllSetting = z.infer<typeof AllSettingSchema>;
 
 export const AllSettingViewSchema = z.object({
   customCss: z.string(),
+  customCssBundle: z.string(),
   customLoginCss: z.string(),
   datepicker: z.string(),
   discordAdminIds: z.string(),
@@ -259,6 +262,7 @@ export const AllSettingViewSchema = z.object({
   ldapUserAttr: z.string(),
   ldapUserFilter: z.string(),
   ldapVlessField: z.string(),
+  navPosition: z.string(),
   outboundDownThreshold: z.number().int().min(1).max(100),
   pageSize: z.number().int().min(0).max(1000),
   panelOutbound: z.string(),
@@ -429,6 +433,14 @@ export const ApiTokenViewSchema = z.object({
   token: z.string().optional(),
 });
 export type ApiTokenView = z.infer<typeof ApiTokenViewSchema>;
+
+export const CaddyH2WSStatusSchema = z.object({
+  exists: z.boolean(),
+  lastError: z.string().optional(),
+  needsFix: z.boolean(),
+  path: z.string(),
+});
+export type CaddyH2WSStatus = z.infer<typeof CaddyH2WSStatusSchema>;
 
 export const ClientSchema = z.object({
   adTag: z.string().optional(),
@@ -1086,6 +1098,9 @@ export const RelayAdminProbeSchema = z.object({
 export type RelayAdminProbe = z.infer<typeof RelayAdminProbeSchema>;
 
 export const RelayApplyResultSchema = z.object({
+  caddyPatchError: z.string().optional(),
+  caddyPatched: z.boolean().optional(),
+  caddyWarning: z.string().optional(),
   restartError: z.string(),
   restarted: z.boolean(),
 });
@@ -1201,6 +1216,7 @@ export const RelayStatusSchema = z.object({
   basePath: z.string(),
   binaryInstalled: z.boolean(),
   binaryPath: z.string(),
+  caddyEncode: z.lazy(() => CaddyH2WSStatusSchema),
   configError: z.string(),
   configExists: z.boolean(),
   configPath: z.string(),
@@ -1214,6 +1230,7 @@ export const RelayStatusSchema = z.object({
   profilesPath: z.string(),
   supported: z.boolean(),
   units: z.array(z.lazy(() => RelayUnitStatusSchema)),
+  usesWebSocket: z.boolean(),
 });
 export type RelayStatus = z.infer<typeof RelayStatusSchema>;
 

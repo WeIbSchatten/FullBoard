@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, Input, InputNumber, Select, Switch, Tabs } from 'antd';
+import { Card, Input, InputNumber, Select, Switch } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   FileTextOutlined,
   NodeIndexOutlined,
@@ -153,7 +154,7 @@ export default function SubscriptionFormatsTab({
   }
 
   return (
-    <Tabs
+    <PanelTabs
       defaultActiveKey="1"
       items={[
         {

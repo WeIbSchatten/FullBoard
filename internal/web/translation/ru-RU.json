@@ -1784,6 +1784,10 @@
       "subIncyResolveDnsIp": "IP DoH-сервера",
       "subIncyResolveDnsIpDesc": "IP DoH-сервера, нужен для bootstrap.",
       "subIncyGroupRouting": "Маршрутизация",
+            "navPosition": "Primary navigation",
+      "navPositionDesc": "Side keeps the classic left sidebar. Top moves primary nav into the header and puts page tabs on the left.",
+      "navPositionSide": "Side",
+      "navPositionTop": "Top",
       "customCss": {
         "tab": "Оформление",
         "intro": "Пользовательский CSS подключается отдельной таблицей стилей после темы FullBoard. Он никогда не вставляется в HTML страницы, поэтому не может выполнять скрипты. Сохраните настройки и перезагрузите страницу.",
@@ -1793,7 +1797,17 @@
         "loginDesc": "Применяется к публичной странице входа FullBoard.",
         "preview": "Предпросмотр CSS панели",
         "previewDesc": "Временно применяет CSS панели в этой вкладке без сохранения.",
-        "size": "{size} / {max} байт"
+        "size": "{size} / {max} байт",
+        "size": "{size} / {max} bytes",
+        "preset": "Active stylesheet",
+        "presetDesc": "Default uses the stock theme. Presets store panel and login CSS separately.",
+        "default": "Default",
+        "defaultHint": "Default is selected — stock Ant Design with no custom stylesheet.",
+        "presetName": "Preset {n}",
+        "createPreset": "New preset",
+        "deletePreset": "Delete preset",
+        "rename": "Preset name",
+        "renameDesc": "Shown in the stylesheet switcher."
       }
     },
     "xray": {
@@ -2486,9 +2500,12 @@
         "enable": "Включить",
         "disable": "Отключить",
         "check": "Проверить конфиг",
+        "fixCaddy": "Исправить Caddy для WebSocket",
         "install": "Установить",
         "update": "Обновить релей"
       },
+      "caddyEncodeWarn": "Stock encode в Caddy может блокировать HTTP/2 WebSocket. Нажмите «Исправить Caddy для WebSocket» (или пересохраните websocket-профиль), чтобы encode пропускал h2 CONNECT.",
+      "caddyEncodeFixed": "Caddyfile исправлен для WebSocket",
       "install": {
         "title": "Установка tproxy-server",
         "warning": "Установщик upstream рассчитан на Ubuntu 22.04+/Debian 12+ (x86_64). Он ставит Caddy на порты 80/443 и заменяет активный Caddyfile — убедитесь, что панели и входящим Xray на этом хосте эти порты не нужны.",
@@ -2582,6 +2599,7 @@
         "saved": "Сохранено и проверено",
         "deleted": "Профиль удалён",
         "checkOk": "Конфигурация корректна",
+        "caddyFixed": "Caddyfile исправлен для WebSocket",
         "serviceDone": "Команда службы выполнена",
         "jobStarted": "Задача запущена",
         "restarted": "tproxy-server перезапущен с новой конфигурацией",

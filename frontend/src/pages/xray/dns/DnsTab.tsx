@@ -11,8 +11,8 @@ import {
   Space,
   Switch,
   Table,
-  Tabs,
 } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   DatabaseOutlined,
   DeleteOutlined,
@@ -498,7 +498,7 @@ export default function DnsTab({ templateSettings, setTemplateSettings }: DnsTab
   return (
     <>
       {modalContextHolder}
-      <Tabs defaultActiveKey="1" items={items} />
+      <PanelTabs defaultActiveKey="1" items={items} />
       <DnsServerModal
         open={serverModalOpen}
         server={editingServer}

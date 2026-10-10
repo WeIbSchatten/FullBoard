@@ -21,7 +21,6 @@ import { useTheme } from '@/hooks/useTheme';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useXraySetting } from '@/hooks/useXraySetting';
 import type { XraySettingsValue } from '@/hooks/useXraySetting';
-import AppSidebar from '@/layouts/AppSidebar';
 import { JsonEditor } from '@/components/form';
 import { setMessageInstance } from '@/utils/messageBus';
 
@@ -324,57 +323,48 @@ export default function XrayPage() {
     <ConfigProvider theme={antdThemeConfig}>
       {messageContextHolder}
       <Layout className={pageClass}>
-        <AppSidebar />
+        <Layout.Content id="content-layout" className="content-area">
+          <Spin spinning={spinning || !fetched} delay={200} description={t('loading')} size="large">
+            {!fetched ? (
+              <div className="loading-spacer" />
+            ) : fetchError ? (
+              <Result
+                status="error"
+                title={t('somethingWentWrong')}
+                subTitle={fetchError}
+                extra={
+                  <Button type="primary" onClick={fetchAll}>
+                    {t('check')}
+                  </Button>
+                }
+              />
+            ) : (
+              <Row gutter={[isMobile ? 8 : 16, isMobile ? 0 : 12]}>
+                <Col span={24}>
+                  <Card hoverable>
+                    <Row className="header-row">
+                      <Col xs={24} sm={14} className="header-actions">
+                        <Space>
+                          <Button type="primary" disabled={saveDisabled} onClick={onSaveAll}>
+                            {t('pages.xray.save')}
+                          </Button>
+                        </Space>
+                      </Col>
+                      <Col xs={24} sm={10} className="header-info">
+                        <FloatButton.BackTop target={scrollTarget} visibilityHeight={200} />
+                        <Alert type="warning" showIcon title={t('pages.settings.infoDesc')} />
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
 
-        <Layout className="content-shell">
-          <Layout.Content id="content-layout" className="content-area">
-            <Spin
-              spinning={spinning || !fetched}
-              delay={200}
-              description={t('loading')}
-              size="large"
-            >
-              {!fetched ? (
-                <div className="loading-spacer" />
-              ) : fetchError ? (
-                <Result
-                  status="error"
-                  title={t('somethingWentWrong')}
-                  subTitle={fetchError}
-                  extra={
-                    <Button type="primary" onClick={fetchAll}>
-                      {t('check')}
-                    </Button>
-                  }
-                />
-              ) : (
-                <Row gutter={[isMobile ? 8 : 16, isMobile ? 0 : 12]}>
-                  <Col span={24}>
-                    <Card hoverable>
-                      <Row className="header-row">
-                        <Col xs={24} sm={14} className="header-actions">
-                          <Space>
-                            <Button type="primary" disabled={saveDisabled} onClick={onSaveAll}>
-                              {t('pages.xray.save')}
-                            </Button>
-                          </Space>
-                        </Col>
-                        <Col xs={24} sm={10} className="header-info">
-                          <FloatButton.BackTop target={scrollTarget} visibilityHeight={200} />
-                          <Alert type="warning" showIcon title={t('pages.settings.infoDesc')} />
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-
-                  <Col span={24}>
-                    <Card hoverable>{sectionBody}</Card>
-                  </Col>
-                </Row>
-              )}
-            </Spin>
-          </Layout.Content>
-        </Layout>
+                <Col span={24}>
+                  <Card hoverable>{sectionBody}</Card>
+                </Col>
+              </Row>
+            )}
+          </Spin>
+        </Layout.Content>
 
         <WarpModal
           open={warpOpen}

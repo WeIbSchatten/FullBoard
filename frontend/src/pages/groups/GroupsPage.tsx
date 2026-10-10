@@ -46,7 +46,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { useClients } from '@/hooks/useClients';
 import { HttpUtil, SizeFormatter } from '@/utils';
 import { setMessageInstance } from '@/utils/messageBus';
-import AppSidebar from '@/layouts/AppSidebar';
 import { LazyMount } from '@/components/utility';
 import { keys } from '@/api/queryKeys';
 import {
@@ -492,106 +491,103 @@ export default function GroupsPage() {
       {messageContextHolder}
       {modalContextHolder}
       <Layout className={pageClass}>
-        <AppSidebar />
-        <Layout className="content-shell">
-          <Layout.Content id="content-layout" className="content-area">
-            <Spin spinning={!fetched} delay={200} description={t('loading')} size="large">
-              {!fetched ? (
-                <div className="loading-spacer" />
-              ) : fetchError ? (
-                <Result
-                  status="error"
-                  title={t('somethingWentWrong')}
-                  subTitle={fetchError}
-                  extra={
-                    <Button type="primary" loading={loading} onClick={() => groupsQuery.refetch()}>
-                      {t('refresh')}
-                    </Button>
-                  }
-                />
-              ) : (
-                <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
-                  <Col span={24}>
-                    <Card size="small" hoverable className="summary-card">
-                      <Row gutter={[16, isMobile ? 16 : 12]}>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.groups.totalGroups')}
-                            value={String(totalGroups)}
-                            prefix={<TagsOutlined />}
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.groups.totalGroupedClients')}
-                            value={String(totalClients)}
-                            prefix={<TeamOutlined />}
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.groups.totalUpDown')}
-                            value={0}
-                            formatter={() => (
-                              <span>
-                                <ArrowUpOutlined /> {SizeFormatter.sizeFormat(totalUpload)}
-                                {' / '}
-                                <ArrowDownOutlined /> {SizeFormatter.sizeFormat(totalDownload)}
-                              </span>
-                            )}
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.groups.totalTraffic')}
-                            value={SizeFormatter.sizeFormat(totalTraffic)}
-                            prefix={<PieChartOutlined />}
-                          />
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
+        <Layout.Content id="content-layout" className="content-area">
+          <Spin spinning={!fetched} delay={200} description={t('loading')} size="large">
+            {!fetched ? (
+              <div className="loading-spacer" />
+            ) : fetchError ? (
+              <Result
+                status="error"
+                title={t('somethingWentWrong')}
+                subTitle={fetchError}
+                extra={
+                  <Button type="primary" loading={loading} onClick={() => groupsQuery.refetch()}>
+                    {t('refresh')}
+                  </Button>
+                }
+              />
+            ) : (
+              <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
+                <Col span={24}>
+                  <Card size="small" hoverable className="summary-card">
+                    <Row gutter={[16, isMobile ? 16 : 12]}>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.groups.totalGroups')}
+                          value={String(totalGroups)}
+                          prefix={<TagsOutlined />}
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.groups.totalGroupedClients')}
+                          value={String(totalClients)}
+                          prefix={<TeamOutlined />}
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.groups.totalUpDown')}
+                          value={0}
+                          formatter={() => (
+                            <span>
+                              <ArrowUpOutlined /> {SizeFormatter.sizeFormat(totalUpload)}
+                              {' / '}
+                              <ArrowDownOutlined /> {SizeFormatter.sizeFormat(totalDownload)}
+                            </span>
+                          )}
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.groups.totalTraffic')}
+                          value={SizeFormatter.sizeFormat(totalTraffic)}
+                          prefix={<PieChartOutlined />}
+                        />
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
 
-                  <Col span={24}>
-                    <Card
+                <Col span={24}>
+                  <Card
+                    size="small"
+                    hoverable
+                    title={
+                      <div className="card-toolbar">
+                        <Button
+                          aria-label={t('pages.groups.addGroup')}
+                          type="primary"
+                          icon={<PlusOutlined />}
+                          onClick={openCreate}
+                        >
+                          {!isMobile && t('pages.groups.addGroup')}
+                        </Button>
+                      </div>
+                    }
+                  >
+                    <Table<GroupSummary>
+                      dataSource={groups}
+                      columns={columns}
+                      rowKey="name"
                       size="small"
-                      hoverable
-                      title={
-                        <div className="card-toolbar">
-                          <Button
-                            aria-label={t('pages.groups.addGroup')}
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={openCreate}
-                          >
-                            {!isMobile && t('pages.groups.addGroup')}
-                          </Button>
-                        </div>
-                      }
-                    >
-                      <Table<GroupSummary>
-                        dataSource={groups}
-                        columns={columns}
-                        rowKey="name"
-                        size="small"
-                        pagination={false}
-                        loading={loading}
-                        locale={{
-                          emptyText: (
-                            <div className="card-empty">
-                              <TagsOutlined style={{ fontSize: 32, marginBottom: 8 }} />
-                              <div>{t('noData')}</div>
-                            </div>
-                          ),
-                        }}
-                      />
-                    </Card>
-                  </Col>
-                </Row>
-              )}
-            </Spin>
-          </Layout.Content>
-        </Layout>
+                      pagination={false}
+                      loading={loading}
+                      locale={{
+                        emptyText: (
+                          <div className="card-empty">
+                            <TagsOutlined style={{ fontSize: 32, marginBottom: 8 }} />
+                            <div>{t('noData')}</div>
+                          </div>
+                        ),
+                      }}
+                    />
+                  </Card>
+                </Col>
+              </Row>
+            )}
+          </Spin>
+        </Layout.Content>
 
         <Modal
           open={createOpen}

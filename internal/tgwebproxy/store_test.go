@@ -171,3 +171,39 @@ func TestStoreRefusesToWriteWithoutBinary(t *testing.T) {
 		t.Fatal("config.json written without a -check")
 	}
 }
+
+// MutateProfiles must keep carrier_mode through check+commit so WebSocket
+// profiles are not silently rewritten to https on disk.
+func TestMutateProfilesPreservesCarrierModeWebSocket(t *testing.T) {
+	runner := &fakeRunner{}
+	store, paths := newTestStore(t, runner)
+	initial := validProfile()
+	if err := store.SaveConfig(context.Background(), testConfig(), &initial); err != nil {
+		t.Fatal(err)
+	}
+	err := store.MutateProfiles(context.Background(), func(list []RelayProfile) ([]RelayProfile, error) {
+		list[0].CarrierMode = "websocket"
+		return list, nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(paths.ProfilesFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	disk, err := ParseProfiles(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(disk) != 1 || disk[0].CarrierMode != "websocket" {
+		t.Fatalf("disk carrier_mode = %+v, want websocket", disk)
+	}
+	snap, err := store.Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snap.Profiles[0].CarrierMode != "websocket" {
+		t.Fatalf("load carrier_mode = %q, want websocket", snap.Profiles[0].CarrierMode)
+	}
+}

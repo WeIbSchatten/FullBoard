@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Dropdown, Modal, Space, Table, Tabs, message } from 'antd';
+import { Button, Dropdown, Modal, Space, Table, message } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   AimOutlined,
   ControlOutlined,
@@ -349,7 +350,7 @@ export default function RoutingTab({
     <>
       {modalContextHolder}
       {messageContextHolder}
-      <Tabs
+      <PanelTabs
         defaultActiveKey="basic"
         items={[
           {

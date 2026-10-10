@@ -66,6 +66,10 @@ func (s *TgWebProxyService) Check(ctx context.Context) error {
 	return tgWebProxy().Store().Check(ctx)
 }
 
+func (s *TgWebProxyService) FixCaddyEncode(ctx context.Context) (bool, error) {
+	return tgWebProxy().FixCaddyEncode(ctx)
+}
+
 func (s *TgWebProxyService) AddProfile(ctx context.Context, p tgwebproxy.RelayProfile) (tgwebproxy.RelayApplyResult, error) {
 	return tgWebProxy().AddProfile(ctx, p)
 }

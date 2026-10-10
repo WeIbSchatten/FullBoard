@@ -1,18 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Dropdown,
-  Empty,
-  Modal,
-  Select,
-  Space,
-  Table,
-  Tabs,
-  Tag,
-  Tooltip,
-  message,
-} from 'antd';
+import { Button, Dropdown, Empty, Modal, Select, Space, Table, Tag, Tooltip, message } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   PlusOutlined,
   MoreOutlined,
@@ -511,7 +500,7 @@ export default function BalancersTab({
     <>
       {modalContextHolder}
       {messageContextHolder}
-      <Tabs
+      <PanelTabs
         items={[
           {
             key: 'balancers',

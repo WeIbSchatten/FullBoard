@@ -30,7 +30,6 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useNodesQuery } from '@/api/queries/useNodesQuery';
 import type { NodeRecord } from '@/api/queries/useNodesQuery';
 import { useNodeMutations } from '@/api/queries/useNodeMutations';
-import AppSidebar from '@/layouts/AppSidebar';
 import NodeList from './NodeList';
 import NodeFormModal from './NodeFormModal';
 import RemotePanelDrawer from './RemotePanelDrawer';
@@ -288,95 +287,91 @@ export default function NodesPage() {
       {messageContextHolder}
       {modalContextHolder}
       <Layout className={pageClass}>
-        <AppSidebar />
+        <Layout.Content id="content-layout" className="content-area">
+          <Spin spinning={!fetched} delay={200} description={t('loading')} size="large">
+            {!fetched ? (
+              <div className="loading-spacer" />
+            ) : fetchError ? (
+              <Result
+                status="error"
+                title={t('somethingWentWrong')}
+                subTitle={fetchError}
+                extra={
+                  <Button type="primary" loading={loading} onClick={() => refetch()}>
+                    {t('refresh')}
+                  </Button>
+                }
+              />
+            ) : (
+              <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
+                <Col span={24}>
+                  <Card size="small" hoverable className="summary-card">
+                    <Row gutter={[16, isMobile ? 16 : 12]}>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.nodes.totalNodes')}
+                          value={String(totals.total)}
+                          prefix={<CloudServerOutlined />}
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.nodes.onlineNodes')}
+                          value={String(totals.online)}
+                          prefix={
+                            <CheckCircleOutlined style={{ color: 'var(--ant-color-success)' }} />
+                          }
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.nodes.offlineNodes')}
+                          value={String(totals.offline)}
+                          prefix={
+                            <CloseCircleOutlined style={{ color: 'var(--ant-color-error)' }} />
+                          }
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={6}>
+                        <Statistic
+                          title={t('pages.nodes.avgLatency')}
+                          value={totals.avgLatency > 0 ? `${totals.avgLatency} ms` : '-'}
+                          prefix={<ThunderboltOutlined />}
+                        />
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
 
-        <Layout className="content-shell">
-          <Layout.Content id="content-layout" className="content-area">
-            <Spin spinning={!fetched} delay={200} description={t('loading')} size="large">
-              {!fetched ? (
-                <div className="loading-spacer" />
-              ) : fetchError ? (
-                <Result
-                  status="error"
-                  title={t('somethingWentWrong')}
-                  subTitle={fetchError}
-                  extra={
-                    <Button type="primary" loading={loading} onClick={() => refetch()}>
-                      {t('refresh')}
-                    </Button>
-                  }
-                />
-              ) : (
-                <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
-                  <Col span={24}>
-                    <Card size="small" hoverable className="summary-card">
-                      <Row gutter={[16, isMobile ? 16 : 12]}>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.nodes.totalNodes')}
-                            value={String(totals.total)}
-                            prefix={<CloudServerOutlined />}
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.nodes.onlineNodes')}
-                            value={String(totals.online)}
-                            prefix={
-                              <CheckCircleOutlined style={{ color: 'var(--ant-color-success)' }} />
-                            }
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.nodes.offlineNodes')}
-                            value={String(totals.offline)}
-                            prefix={
-                              <CloseCircleOutlined style={{ color: 'var(--ant-color-error)' }} />
-                            }
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={6}>
-                          <Statistic
-                            title={t('pages.nodes.avgLatency')}
-                            value={totals.avgLatency > 0 ? `${totals.avgLatency} ms` : '-'}
-                            prefix={<ThunderboltOutlined />}
-                          />
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-
-                  <Col span={24}>
-                    <Alert
-                      type="info"
-                      showIcon
-                      style={{ marginBottom: 12 }}
-                      message={t('pages.nodes.remote.manageHint')}
-                    />
-                    <NodeList
-                      nodes={nodes}
-                      loading={loading}
-                      isMobile={isMobile}
-                      latestVersion={latestVersion}
-                      selectedIds={selectedIds}
-                      onSelectionChange={setSelectedIds}
-                      onAdd={onAdd}
-                      onMtls={() => setMtlsOpen(true)}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                      onProbe={onProbe}
-                      onToggleEnable={onToggleEnable}
-                      onUpdateNode={onUpdateNode}
-                      onUpdateSelected={onUpdateSelected}
-                      onManage={setManagedNode}
-                    />
-                  </Col>
-                </Row>
-              )}
-            </Spin>
-          </Layout.Content>
-        </Layout>
+                <Col span={24}>
+                  <Alert
+                    type="info"
+                    showIcon
+                    style={{ marginBottom: 12 }}
+                    message={t('pages.nodes.remote.manageHint')}
+                  />
+                  <NodeList
+                    nodes={nodes}
+                    loading={loading}
+                    isMobile={isMobile}
+                    latestVersion={latestVersion}
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    onAdd={onAdd}
+                    onMtls={() => setMtlsOpen(true)}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onProbe={onProbe}
+                    onToggleEnable={onToggleEnable}
+                    onUpdateNode={onUpdateNode}
+                    onUpdateSelected={onUpdateSelected}
+                    onManage={setManagedNode}
+                  />
+                </Col>
+              </Row>
+            )}
+          </Spin>
+        </Layout.Content>
 
         <RemotePanelDrawer
           key={managedNode?.id ?? 'none'}

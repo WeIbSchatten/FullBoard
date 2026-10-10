@@ -32,6 +32,8 @@ type AllSetting struct {
 	PanelOutbound         string `json:"panelOutbound" form:"panelOutbound"`
 	CustomCss             string `json:"customCss" form:"customCss"`
 	CustomLoginCss        string `json:"customLoginCss" form:"customLoginCss"`
+	CustomCssBundle       string `json:"customCssBundle" form:"customCssBundle"`
+	NavPosition           string `json:"navPosition" form:"navPosition"`
 
 	PageSize                   int    `json:"pageSize" form:"pageSize" validate:"gte=0,lte=1000"`
 	ExpireDiff                 int    `json:"expireDiff" form:"expireDiff" validate:"gte=0"`
