@@ -10,11 +10,19 @@ import { HttpUtil } from '@/utils';
 import { getMessage } from '@/utils/messageBus';
 import {
   applyTproxyBackendRule,
+  assignedInboundTag,
+  buildLocalMtproxyDirectRule,
   buildTproxyBackendRule,
   buildTproxyTunnelInbound,
+  ensureTproxyLocalOutbound,
+  isHostLocalOnly,
   loopbackBackend,
+  outboundTagForBackendRewrite,
   parseBackendHostPort,
   pickLoopbackListenPort,
+  TPROXY_LOCAL_OUTBOUND_TAG,
+  unwrapBackendTarget,
+  type ProfileEgressInbound,
 } from '@/lib/tgWebProxyRouteOutbound';
 
 interface Props {
@@ -28,6 +36,7 @@ interface RouteSources {
   tags: string[];
   usedPorts: number[];
   suggestedPort: number;
+  inbounds: ProfileEgressInbound[];
 }
 
 async function loadRouteSources(): Promise<RouteSources> {
@@ -38,15 +47,18 @@ async function loadRouteSources(): Promise<RouteSources> {
     .map((o) => (o && typeof o === 'object' && 'tag' in o ? String(o.tag) : ''))
     .filter(Boolean);
   const ports: number[] = [];
-  const listMsg = await HttpUtil.get<{ port?: number }[]>('/panel/api/inbounds/list', undefined, {
-    silent: true,
-  });
-  if (Array.isArray(listMsg?.obj)) {
-    for (const ib of listMsg.obj) {
-      if (typeof ib.port === 'number') ports.push(ib.port);
-    }
+  const listMsg = await HttpUtil.get<ProfileEgressInbound[]>(
+    '/panel/api/inbounds/list',
+    undefined,
+    {
+      silent: true,
+    },
+  );
+  const inbounds = Array.isArray(listMsg?.obj) ? listMsg.obj : [];
+  for (const ib of inbounds) {
+    if (typeof ib.port === 'number') ports.push(ib.port);
   }
-  return { tags, usedPorts: ports, suggestedPort: pickLoopbackListenPort(ports) };
+  return { tags, usedPorts: ports, suggestedPort: pickLoopbackListenPort(ports), inbounds };
 }
 
 export default function RouteViaOutboundModal({ profile, open, onClose, onApplied }: Props) {
@@ -61,10 +73,13 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
     enabled: open && !!profile,
   });
 
-  const rewrite = useMemo(
-    () => (profile ? parseBackendHostPort(profile.backend) : null),
-    [profile],
-  );
+  const rewrite = useMemo(() => {
+    if (!profile) return null;
+    return (
+      unwrapBackendTarget(profile.backend, sourcesQuery.data?.inbounds ?? []) ??
+      parseBackendHostPort(profile.backend)
+    );
+  }, [profile, sourcesQuery.data?.inbounds]);
   const listenPort = listenPortOverride ?? sourcesQuery.data?.suggestedPort;
   const tags = sourcesQuery.data?.tags ?? [];
   const usedPorts = sourcesQuery.data?.usedPorts ?? [];
@@ -89,12 +104,17 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
 
       const cfg = await fetchXrayConfig();
       const template = structuredClone(cfg.xraySetting) as XraySettingsValue;
-      const rule = buildTproxyBackendRule(inbound.tag, outboundTag);
+      const tag = assignedInboundTag(addMsg.obj as { tag?: string } | undefined, inbound.tag);
+      const dialOutbound = outboundTagForBackendRewrite(rewrite.host, outboundTag);
+      if (dialOutbound === TPROXY_LOCAL_OUTBOUND_TAG) ensureTproxyLocalOutbound(template);
+      const rule = buildTproxyBackendRule(tag, dialOutbound);
       if (!rule) {
         getMessage().error(t('pages.tgWebProxy.routeVia.failed'));
         return;
       }
       applyTproxyBackendRule(template, rule, 'top');
+      const localCatch = buildLocalMtproxyDirectRule(rewrite);
+      if (localCatch) applyTproxyBackendRule(template, localCatch, 'top');
       const updateMsg = await HttpUtil.post('/panel/api/xray/update', {
         xraySetting: JSON.stringify(template),
       });
@@ -104,7 +124,13 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       }
 
       await onApplied({ ...profile, backend: loopbackBackend(listenPort) });
-      getMessage().success(t('pages.tgWebProxy.routeVia.done'));
+      getMessage().success(
+        t(
+          isHostLocalOnly(rewrite.host)
+            ? 'pages.tgWebProxy.routeVia.doneLocal'
+            : 'pages.tgWebProxy.routeVia.done',
+        ),
+      );
       onClose();
     } catch (e) {
       getMessage().error((e as Error).message);

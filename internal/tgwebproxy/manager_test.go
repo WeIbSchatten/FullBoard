@@ -167,7 +167,7 @@ func TestFixCaddyEncodeUsesReloadOrRestart(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(raw), "encode @not_h2_ws gzip") {
+	if !strings.Contains(string(raw), "encode disabled") || activeEncode.Match(raw) {
 		t.Fatalf("Caddyfile not patched: %s", raw)
 	}
 	var sawReloadOrRestart bool

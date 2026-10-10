@@ -96,14 +96,14 @@ FullBoard скачивает актуальные исходники в `/usr/lo
 
 ### WebSocket и stock Caddy
 
-В типовой установке Caddy включает `encode`. Вместе с HTTP/2 WebSocket это
-может «зависать» на `GET /api/v1/ws`
+В типовой установке Caddy включает `encode`. Это «зависает» на `GET /api/v1/ws`
+(обычный Upgrade) и на HTTP/2 `CONNECT`
 ([caddyserver/caddy#6733](https://github.com/caddyserver/caddy/issues/6733));
 HTTPS long-poll при этом работает. FullBoard правит `/etc/caddy/Caddyfile`,
-чтобы `encode` пропускал h2 `CONNECT`:
+чтобы **отключить `encode`** в site-блоке:
 
-- автоматически при сохранении профиля с `websocket` / `websocket-lanes`, и
-- кнопкой **Исправить Caddy для WebSocket** на вкладке Overview.
+- кнопкой **Исправить Caddy для WebSocket** на вкладке Overview (и если
+  остался старый частичный h2-only патч).
 
 Патч идемпотентен. Повторите его после install/update, если upstream
 перезаписал Caddyfile.
