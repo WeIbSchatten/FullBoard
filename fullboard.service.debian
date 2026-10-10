@@ -49,8 +49,9 @@ ProtectSystem=full
 # ReadWritePaths= requires systemd >= 231; ReadWriteDirectories= is the deprecated
 # alias for older systemd, needed so ProtectSystem=full keeps /etc/fullboard writable.
 # /etc/tproxy-server: Telegram WEB proxy config/profiles written by the panel.
-ReadWritePaths=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server
-ReadWriteDirectories=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server
+# /etc/caddy: stock Caddyfile encode patch for HTTP/2 WebSocket (tg-web-proxy).
+ReadWritePaths=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server -/etc/caddy
+ReadWriteDirectories=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server -/etc/caddy
 ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectKernelLogs=yes

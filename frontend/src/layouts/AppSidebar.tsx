@@ -414,14 +414,17 @@ export default function AppSidebar() {
             <span className="brand-text">FullBoard</span>
             {brandActions}
           </div>
-          <Menu
-            theme={currentTheme}
-            mode="horizontal"
-            selectedKeys={[selectedKey]}
-            className="top-nav-menu"
-            items={[...(toMenuItems(navItems) ?? []), ...(toMenuItems(utilItems) ?? [])]}
-            onClick={onMenuClick}
-          />
+          <div className="top-nav-menu-wrap">
+            <Menu
+              theme={currentTheme}
+              mode="horizontal"
+              selectedKeys={[selectedKey]}
+              className="top-nav-menu"
+              disabledOverflow={false}
+              items={[...(toMenuItems(navItems) ?? []), ...(toMenuItems(utilItems) ?? [])]}
+              onClick={onMenuClick}
+            />
+          </div>
           <div className="top-nav-tools">
             {commandTrigger}
             <VersionBadge version={panelVersion} />
