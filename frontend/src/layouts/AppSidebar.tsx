@@ -412,7 +412,6 @@ export default function AppSidebar() {
         <Layout.Header className={`top-nav-header top-nav-header--${currentTheme}`}>
           <div className="top-nav-brand">
             <span className="brand-text">FullBoard</span>
-            {brandActions}
           </div>
           <div className="top-nav-menu-wrap">
             <Menu
@@ -420,14 +419,40 @@ export default function AppSidebar() {
               mode="horizontal"
               selectedKeys={[selectedKey]}
               className="top-nav-menu"
-              disabledOverflow={false}
-              items={[...(toMenuItems(navItems) ?? []), ...(toMenuItems(utilItems) ?? [])]}
+              triggerSubMenuAction="click"
+              items={toMenuItems(navItems)}
               onClick={onMenuClick}
             />
           </div>
           <div className="top-nav-tools">
-            {commandTrigger}
-            <VersionBadge version={panelVersion} />
+            <Tooltip title={t('commandPalette.title') || 'Command Palette (Ctrl + K)'}>
+              <button
+                type="button"
+                className="top-nav-icon-btn"
+                onClick={openCommandPalette}
+                aria-label={t('commandPalette.title') || 'Command Palette (Ctrl + K)'}
+              >
+                <SearchOutlined />
+              </button>
+            </Tooltip>
+            <ThemeCycleButton
+              id="theme-cycle-top"
+              isDark={isDark}
+              isUltra={isUltra}
+              onCycle={() => cycleTheme('theme-cycle-top')}
+              ariaLabel={t('menu.theme')}
+            />
+            <DocsButton ariaLabel={t('menu.docs') || 'Documentation'} />
+            <Tooltip title={t('logout')}>
+              <button
+                type="button"
+                className="top-nav-icon-btn"
+                onClick={() => openLink(LOGOUT_KEY)}
+                aria-label={t('logout')}
+              >
+                <LogoutOutlined />
+              </button>
+            </Tooltip>
           </div>
         </Layout.Header>
       ) : (

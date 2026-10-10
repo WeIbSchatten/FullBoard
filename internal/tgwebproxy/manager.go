@@ -88,7 +88,7 @@ func (m *Manager) Status(ctx context.Context) RelayStatus {
 		for _, unit := range statusUnits {
 			st.Units = append(st.Units, m.unitStatus(ctx, unit))
 		}
-		st.CaddyEncode = inspectCaddyEncode(DefaultCaddyfile)
+		st.CaddyEncode = inspectCaddyEncode(caddyfileForEncode)
 	}
 	st.Job = m.jobs.status(ctx)
 	return st
@@ -136,43 +136,47 @@ func (m *Manager) afterCommit(ctx context.Context) RelayApplyResult {
 	return res
 }
 
-func (m *Manager) maybeWarnOrPatchCaddy(ctx context.Context, res RelayApplyResult) RelayApplyResult {
+// caddyfileForEncode is the stock Caddyfile path; tests swap it to a temp file.
+var caddyfileForEncode = DefaultCaddyfile
+
+func (m *Manager) maybeWarnOrPatchCaddy(_ context.Context, res RelayApplyResult) RelayApplyResult {
 	snap, err := m.store.Load()
 	if err != nil || !profilesUseWebSocket(snap.Profiles) {
 		return res
 	}
-	st := inspectCaddyEncode(DefaultCaddyfile)
-	if !st.Exists || !st.NeedsFix {
+	st := inspectCaddyEncode(caddyfileForEncode)
+	if !st.Exists {
 		return res
 	}
-	// Auto-patch stock Caddy when a WebSocket carrier profile is saved.
-	patched, perr := m.FixCaddyEncode(ctx)
-	res.CaddyPatched = patched
-	if perr != nil {
-		res.CaddyPatchError = perr.Error()
+	// Never auto-write/reload Caddy on profile save — a panel UMask=0077 write
+	// previously left Caddyfile as root:root 0600 and crashed the caddy unit.
+	if st.NeedsFix {
 		res.CaddyWarning = "Caddy encode still blocks HTTP/2 WebSocket upgrades; use Fix Caddy for WebSocket"
 	}
 	return res
 }
 
-// FixCaddyEncode patches the stock Caddyfile so encode skips h2 WS CONNECT, then reloads caddy.
+// FixCaddyEncode patches encode for h2 WS (if needed), forces root:caddy 0640, then reloads caddy.
 func (m *Manager) FixCaddyEncode(ctx context.Context) (bool, error) {
-	changed, err := ApplyCaddyEncodeH2WSPatch(DefaultCaddyfile)
+	changed, err := ApplyCaddyEncodeH2WSPatch(caddyfileForEncode)
 	if err != nil {
 		return false, err
 	}
-	if !changed {
-		return false, nil
+	// Always harden — operators may click Fix only to repair permissions.
+	if herr := hardenCaddyfilePerms(caddyfileForEncode); herr != nil {
+		return changed, wrapCaddyWriteError(herr)
 	}
-	if m.supported() {
-		if err := m.systemctl(ctx, "reload", "caddy.service"); err != nil {
-			// Fall back to restart — some units lack ExecReload.
-			if rerr := m.systemctl(ctx, "restart", "caddy.service"); rerr != nil {
-				return true, fmt.Errorf("Caddyfile patched but reload failed: %w", err)
-			}
+	if !m.supported() {
+		return changed, nil
+	}
+	// Stock caddy.service often has no ExecReload; prefer restart over a
+	// misleading "reload not applicable" failure when restart would succeed.
+	if err := m.systemctl(ctx, "reload-or-restart", "caddy.service"); err != nil {
+		if rerr := m.systemctl(ctx, "restart", "caddy.service"); rerr != nil {
+			return changed, fmt.Errorf("Caddyfile updated but caddy restart failed: %w", rerr)
 		}
 	}
-	return true, nil
+	return changed, nil
 }
 
 func (m *Manager) SaveConfig(ctx context.Context, cfg RelayConfig, initial *RelayProfile) (RelayApplyResult, error) {

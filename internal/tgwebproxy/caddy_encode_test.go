@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"testing"
@@ -64,7 +65,7 @@ func TestWrapCaddyWriteErrorHintsSandbox(t *testing.T) {
 func TestApplyCaddyEncodeH2WSPatchRoundTrip(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "Caddyfile")
-	if err := os.WriteFile(path, []byte("host {\n\tencode gzip\n}\n"), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte("host {\n\tencode gzip\n}\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	changed, err := ApplyCaddyEncodeH2WSPatch(path)
@@ -77,6 +78,15 @@ func TestApplyCaddyEncodeH2WSPatchRoundTrip(t *testing.T) {
 	}
 	if !strings.Contains(string(raw), "encode @not_h2_ws gzip") {
 		t.Fatalf("file not patched: %s", raw)
+	}
+	if runtime.GOOS != "windows" {
+		st, err := os.Stat(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if st.Mode().Perm() != 0o640 {
+			t.Fatalf("mode = %o, want 0640 (panel UMask must not leave Caddyfile private to root)", st.Mode().Perm())
+		}
 	}
 	changed, err = ApplyCaddyEncodeH2WSPatch(path)
 	if err != nil || changed {

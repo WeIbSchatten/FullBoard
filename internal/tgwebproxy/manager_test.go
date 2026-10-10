@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -109,6 +110,74 @@ func TestInstallSecretNeverReachesCommandLineOrScript(t *testing.T) {
 	stored, err := os.ReadFile(paths.JobDir + "/job.secret")
 	if err != nil || strings.TrimSpace(string(stored)) != secret {
 		t.Fatalf("secret file = %q, %v", stored, err)
+	}
+}
+
+func TestAfterCommitWarnsWithoutPatchingCaddy(t *testing.T) {
+	runner := &fakeRunner{}
+	m, _ := newTestManager(t, runner)
+	caddyPath := filepath.Join(t.TempDir(), "Caddyfile")
+	bare := "host {\n\tencode gzip\n}\n"
+	if err := os.WriteFile(caddyPath, []byte(bare), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	prev := caddyfileForEncode
+	caddyfileForEncode = caddyPath
+	t.Cleanup(func() { caddyfileForEncode = prev })
+
+	if _, err := m.SaveConfig(context.Background(), testConfig(), &RelayProfile{
+		Name: "ws", Secret: "000102030405060708090a0b0c0d0e0f", Backend: "127.0.0.1:2398", CarrierMode: "websocket",
+	}); err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+	res := m.afterCommit(context.Background())
+	if res.CaddyWarning == "" {
+		t.Fatal("expected CaddyWarning when bare encode + websocket profile")
+	}
+	raw, err := os.ReadFile(caddyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(raw) != bare {
+		t.Fatalf("profile save must not rewrite Caddyfile;\ngot:\n%s", raw)
+	}
+	for _, c := range runner.calls {
+		if c.name == "systemctl" && len(c.args) >= 2 && c.args[1] == "caddy.service" {
+			t.Fatalf("profile save must not touch caddy.service: %v", c.args)
+		}
+	}
+}
+
+func TestFixCaddyEncodeUsesReloadOrRestart(t *testing.T) {
+	runner := &fakeRunner{}
+	m, _ := newTestManager(t, runner)
+	caddyPath := filepath.Join(t.TempDir(), "Caddyfile")
+	if err := os.WriteFile(caddyPath, []byte("host {\n\tencode gzip\n}\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	prev := caddyfileForEncode
+	caddyfileForEncode = caddyPath
+	t.Cleanup(func() { caddyfileForEncode = prev })
+
+	changed, err := m.FixCaddyEncode(context.Background())
+	if err != nil || !changed {
+		t.Fatalf("FixCaddyEncode: changed=%v err=%v", changed, err)
+	}
+	raw, err := os.ReadFile(caddyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(raw), "encode @not_h2_ws gzip") {
+		t.Fatalf("Caddyfile not patched: %s", raw)
+	}
+	var sawReloadOrRestart bool
+	for _, c := range runner.calls {
+		if c.name == "systemctl" && len(c.args) >= 2 && c.args[0] == "reload-or-restart" && c.args[1] == "caddy.service" {
+			sawReloadOrRestart = true
+		}
+	}
+	if !sawReloadOrRestart {
+		t.Fatalf("expected systemctl reload-or-restart caddy.service, calls=%v", runner.calls)
 	}
 }
 
