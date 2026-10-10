@@ -1,0 +1,30 @@
+.panel-chrome {
+  min-height: 100vh;
+  background: transparent;
+}
+
+.panel-chrome--side {
+  flex-direction: row;
+}
+
+.panel-chrome--top {
+  flex-direction: column;
+}
+
+.panel-chrome--top > .content-shell {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.panel-chrome--side > .content-shell {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .panel-chrome--side,
+  .panel-chrome--top {
+    flex-direction: column;
+  }
+}

@@ -5,6 +5,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 import type { AllSetting } from '@/models/setting';
 import { SettingListItem } from '@/components/ui';
+import { writeCachedNavPosition, type NavPosition } from '@/layouts/NavLayoutContext';
 
 export const CUSTOM_CSS_MAX_BYTES = 64 * 1024;
 const PREVIEW_STYLE_ID = 'fullboard-custom-css-preview';
@@ -161,7 +162,11 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
       >
         <Radio.Group
           value={allSetting.navPosition === 'top' ? 'top' : 'side'}
-          onChange={(e) => updateSetting({ navPosition: e.target.value })}
+          onChange={(e) => {
+            const navPosition = e.target.value as NavPosition;
+            writeCachedNavPosition(navPosition);
+            updateSetting({ navPosition });
+          }}
           optionType="button"
           options={[
             { value: 'side', label: t('pages.settings.navPositionSide') },

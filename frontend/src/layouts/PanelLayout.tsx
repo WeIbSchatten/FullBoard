@@ -6,11 +6,15 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import CommandPalette from '@/components/command-palette/CommandPalette';
 import AppSidebar from '@/layouts/AppSidebar';
 import { NavLayoutProvider, useNavLayout } from '@/layouts/NavLayoutContext';
+import './PanelChrome.css';
 
 function PanelChrome() {
   const { navPosition } = useNavLayout();
   return (
-    <Layout className={`panel-chrome panel-chrome--${navPosition}`} style={{ minHeight: '100vh' }}>
+    <Layout
+      className={`panel-chrome panel-chrome--${navPosition}`}
+      hasSider={navPosition === 'side'}
+    >
       <AppSidebar />
       <Layout className="content-shell">
         <Outlet />

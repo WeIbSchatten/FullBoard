@@ -1,9 +1,12 @@
 package tgwebproxy
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 )
 
@@ -45,6 +48,16 @@ func TestPatchCaddyEncodeSkipsAlreadyGated(t *testing.T) {
 	_, changed := PatchCaddyEncodeForH2WS(in)
 	if changed {
 		t.Fatal("already-gated encode must not be rewritten")
+	}
+}
+
+func TestWrapCaddyWriteErrorHintsSandbox(t *testing.T) {
+	err := wrapCaddyWriteError(fmt.Errorf("open tmp: %w", syscall.EROFS))
+	if err == nil || !strings.Contains(err.Error(), "ReadWritePaths=-/etc/caddy") {
+		t.Fatalf("error = %v, want ReadWritePaths hint", err)
+	}
+	if !errors.Is(err, syscall.EROFS) {
+		t.Fatalf("wrapped error must still match EROFS, got %v", err)
 	}
 }
 

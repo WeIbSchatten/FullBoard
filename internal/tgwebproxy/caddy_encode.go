@@ -1,10 +1,12 @@
 package tgwebproxy
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
 	"strings"
+	"syscall"
 )
 
 // DefaultCaddyfile is the stock path written by the upstream tproxy-server installer.
@@ -93,7 +95,7 @@ func inspectCaddyEncode(path string) CaddyH2WSStatus {
 func ApplyCaddyEncodeH2WSPatch(path string) (changed bool, err error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
-		return false, err
+		return false, wrapCaddyWriteError(err)
 	}
 	next, changed := PatchCaddyEncodeForH2WS(string(raw))
 	if !changed {
@@ -101,11 +103,22 @@ func ApplyCaddyEncodeH2WSPatch(path string) (changed bool, err error) {
 	}
 	tmp := path + ".fullboard-tmp"
 	if err := os.WriteFile(tmp, []byte(next), 0o644); err != nil {
-		return false, err
+		return false, wrapCaddyWriteError(err)
 	}
 	if err := os.Rename(tmp, path); err != nil {
 		_ = os.Remove(tmp)
-		return false, fmt.Errorf("replace Caddyfile: %w", err)
+		return false, wrapCaddyWriteError(fmt.Errorf("replace Caddyfile: %w", err))
 	}
 	return true, nil
+}
+
+func wrapCaddyWriteError(err error) error {
+	if err == nil {
+		return nil
+	}
+	msg := strings.ToLower(err.Error())
+	if errors.Is(err, syscall.EROFS) || strings.Contains(msg, "read-only file system") {
+		return fmt.Errorf("%w; add ReadWritePaths=-/etc/caddy to fullboard.service (or a drop-in under fullboard.service.d/) and restart the panel", err)
+	}
+	return err
 }
