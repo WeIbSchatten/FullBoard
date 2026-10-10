@@ -4,7 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
+	"os/user"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 )
@@ -16,6 +19,8 @@ const DefaultCaddyfile = "/etc/caddy/Caddyfile"
 const (
 	caddyH2WSBegin = "# fullboard-h2-ws-begin"
 	caddyH2WSEnd   = "# fullboard-h2-ws-end"
+	caddyFileMode  = 0o640
+	caddyGroupName = "caddy"
 )
 
 var (
@@ -91,7 +96,9 @@ func inspectCaddyEncode(path string) CaddyH2WSStatus {
 	return st
 }
 
-// ApplyCaddyEncodeH2WSPatch writes the patched Caddyfile. Caller reloads caddy.
+// ApplyCaddyEncodeH2WSPatch writes the patched Caddyfile as root:caddy 0640.
+// The panel's UMask=0077 would otherwise leave 0600 root:root and the caddy
+// service user cannot open it (permission denied → crash loop).
 func ApplyCaddyEncodeH2WSPatch(path string) (changed bool, err error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -99,17 +106,70 @@ func ApplyCaddyEncodeH2WSPatch(path string) (changed bool, err error) {
 	}
 	next, changed := PatchCaddyEncodeForH2WS(string(raw))
 	if !changed {
+		// Still repair ownership if a previous write left the file unreadable.
+		if herr := hardenCaddyfilePerms(path); herr != nil {
+			return false, wrapCaddyWriteError(herr)
+		}
 		return false, nil
 	}
+	backup := path + ".fullboard-prev"
+	_ = os.WriteFile(backup, raw, caddyFileMode)
+	_ = hardenCaddyfilePerms(backup)
+
 	tmp := path + ".fullboard-tmp"
-	if err := os.WriteFile(tmp, []byte(next), 0o644); err != nil {
+	if err := os.WriteFile(tmp, []byte(next), caddyFileMode); err != nil {
 		return false, wrapCaddyWriteError(err)
+	}
+	if err := hardenCaddyfilePerms(tmp); err != nil {
+		_ = os.Remove(tmp)
+		return false, wrapCaddyWriteError(err)
+	}
+	if err := ValidateCaddyfile(tmp); err != nil {
+		_ = os.Remove(tmp)
+		return false, err
 	}
 	if err := os.Rename(tmp, path); err != nil {
 		_ = os.Remove(tmp)
 		return false, wrapCaddyWriteError(fmt.Errorf("replace Caddyfile: %w", err))
 	}
+	if err := hardenCaddyfilePerms(path); err != nil {
+		return true, wrapCaddyWriteError(err)
+	}
 	return true, nil
+}
+
+// hardenCaddyfilePerms forces 0640 root:caddy so UMask=0077 cannot lock caddy out.
+func hardenCaddyfilePerms(path string) error {
+	if err := os.Chmod(path, caddyFileMode); err != nil {
+		return err
+	}
+	grp, err := user.LookupGroup(caddyGroupName)
+	if err != nil {
+		// Non-Linux / missing group: mode alone is still better than 0600.
+		return nil
+	}
+	gid, err := strconv.Atoi(grp.Gid)
+	if err != nil {
+		return nil
+	}
+	return os.Chown(path, 0, gid)
+}
+
+// ValidateCaddyfile runs `caddy validate` when the binary is on PATH.
+func ValidateCaddyfile(path string) error {
+	bin, err := exec.LookPath("caddy")
+	if err != nil {
+		return nil
+	}
+	out, err := exec.Command(bin, "validate", "--config", path).CombinedOutput()
+	if err != nil {
+		msg := strings.TrimSpace(string(out))
+		if msg == "" {
+			msg = err.Error()
+		}
+		return fmt.Errorf("caddy validate: %s", msg)
+	}
+	return nil
 }
 
 func wrapCaddyWriteError(err error) error {

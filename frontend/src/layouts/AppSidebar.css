@@ -284,6 +284,7 @@
 
 .ant-sidebar--top {
   flex: 0 0 auto;
+  align-self: stretch;
   width: 100%;
   max-width: 100%;
   --sider-rail: 0px;
@@ -292,10 +293,10 @@
 .ant-sidebar--top .top-nav-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 56px;
+  gap: 4px;
+  height: 52px;
   padding: 0 12px 0 16px;
-  line-height: 56px;
+  line-height: 52px;
   width: 100%;
   background: var(--ant-color-bg-container, #fff);
   border-bottom: 1px solid var(--ant-color-border-secondary, rgba(0, 0, 0, 0.06));
@@ -309,8 +310,14 @@
 .ant-sidebar--top .top-nav-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex: 0 0 auto;
+  padding-right: 8px;
+}
+
+.ant-sidebar--top .top-nav-brand .brand-text {
+  font-weight: 600;
+  font-size: 16px;
+  white-space: nowrap;
 }
 
 .ant-sidebar--top .top-nav-menu-wrap {
@@ -321,44 +328,53 @@
 
 .ant-sidebar--top .top-nav-menu {
   width: 100%;
-  border-bottom: none;
+  border-bottom: none !important;
   background: transparent;
-  line-height: 54px;
+  line-height: 50px;
+}
+
+.ant-sidebar--top .top-nav-menu .ant-menu-item,
+.ant-sidebar--top .top-nav-menu .ant-menu-submenu-title {
+  padding-inline: 10px !important;
 }
 
 .ant-sidebar--top .top-nav-tools {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   flex: 0 0 auto;
+  padding-left: 4px;
 }
 
-.ant-sidebar--top .sidebar-command-trigger {
-  margin: 0;
-  width: auto;
-  max-width: 200px;
+.ant-sidebar--top .top-nav-icon-btn,
+.ant-sidebar--top .sidebar-docs,
+.ant-sidebar--top .sidebar-theme-cycle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ant-color-text);
+  cursor: pointer;
 }
 
-@media (max-width: 1200px) {
-  .ant-sidebar--top .sidebar-command-text,
-  .ant-sidebar--top .sidebar-command-kbd {
+.ant-sidebar--top .top-nav-icon-btn:hover,
+.ant-sidebar--top .sidebar-docs:hover,
+.ant-sidebar--top .sidebar-theme-cycle:hover {
+  background: var(--ant-color-fill-secondary, rgba(0, 0, 0, 0.06));
+}
+
+@media (max-width: 1100px) {
+  .ant-sidebar--top .top-nav-menu .ant-menu-title-content {
     display: none;
   }
 
-  .ant-sidebar--top .sidebar-command-trigger {
-    max-width: 40px;
-    padding-inline: 10px;
-    justify-content: center;
-  }
-
-  .ant-sidebar--top .sidebar-command-left {
-    margin: 0;
-  }
-}
-
-@media (max-width: 992px) {
-  .ant-sidebar--top .top-nav-brand .brand-actions {
-    display: none;
+  .ant-sidebar--top .top-nav-menu .ant-menu-item,
+  .ant-sidebar--top .top-nav-menu .ant-menu-submenu-title {
+    padding-inline: 8px !important;
   }
 }
 
