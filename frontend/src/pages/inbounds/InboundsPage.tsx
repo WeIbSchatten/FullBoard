@@ -40,7 +40,6 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { useNodesQuery } from '@/api/queries/useNodesQuery';
 import { useHostsQuery } from '@/api/queries/useHostsQuery';
 import { withHostEndpoints } from '@/lib/hosts/host-link';
-import AppSidebar from '@/layouts/AppSidebar';
 const TextModal = lazy(() => import('@/components/feedback/TextModal'));
 import type { TextModalTab } from '@/components/feedback/TextModal';
 const PromptModal = lazy(() => import('@/components/feedback/PromptModal'));
@@ -724,99 +723,95 @@ export default function InboundsPage() {
       {messageContextHolder}
       {modalContextHolder}
       <Layout className={`inbounds-page${isDark ? ' is-dark' : ''}${isUltra ? ' is-ultra' : ''}`}>
-        <AppSidebar />
+        <Layout.Content id="content-layout" className="content-area">
+          <Spin
+            spinning={!fetched || !hostsFetched}
+            delay={200}
+            description={t('loading')}
+            size="large"
+          >
+            {!fetched || !hostsFetched ? (
+              <div className="loading-spacer" />
+            ) : fetchError || hostsError ? (
+              <Result
+                status="error"
+                title={t('somethingWentWrong')}
+                subTitle={fetchError || hostsError}
+                extra={
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      void refresh();
+                      void refetchHosts();
+                    }}
+                  >
+                    {t('refresh')}
+                  </Button>
+                }
+              />
+            ) : (
+              <Row gutter={[isMobile ? 8 : 16, 12]}>
+                <Col span={24}>
+                  <Card size="small" hoverable className="summary-card">
+                    <Row gutter={[16, 12]}>
+                      <Col xs={12} sm={12} md={8}>
+                        <Statistic
+                          title={t('pages.inbounds.totalDownUp')}
+                          value={0}
+                          formatter={() => (
+                            <span>
+                              <ArrowUpOutlined /> {SizeFormatter.sizeFormat(totals.up)}
+                              {' / '}
+                              <ArrowDownOutlined /> {SizeFormatter.sizeFormat(totals.down)}
+                            </span>
+                          )}
+                        />
+                      </Col>
+                      <Col xs={12} sm={12} md={8}>
+                        <Statistic
+                          title={t('pages.inbounds.totalUsage')}
+                          value={SizeFormatter.sizeFormat(totals.up + totals.down)}
+                          prefix={<PieChartOutlined />}
+                        />
+                      </Col>
+                      <Col xs={24} sm={24} md={8}>
+                        <Statistic
+                          title={t('pages.inbounds.inboundCount')}
+                          value={String(dbInbounds.length)}
+                          prefix={<BarsOutlined />}
+                        />
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
 
-        <Layout className="content-shell">
-          <Layout.Content id="content-layout" className="content-area">
-            <Spin
-              spinning={!fetched || !hostsFetched}
-              delay={200}
-              description={t('loading')}
-              size="large"
-            >
-              {!fetched || !hostsFetched ? (
-                <div className="loading-spacer" />
-              ) : fetchError || hostsError ? (
-                <Result
-                  status="error"
-                  title={t('somethingWentWrong')}
-                  subTitle={fetchError || hostsError}
-                  extra={
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        void refresh();
-                        void refetchHosts();
-                      }}
-                    >
-                      {t('refresh')}
-                    </Button>
-                  }
-                />
-              ) : (
-                <Row gutter={[isMobile ? 8 : 16, 12]}>
-                  <Col span={24}>
-                    <Card size="small" hoverable className="summary-card">
-                      <Row gutter={[16, 12]}>
-                        <Col xs={12} sm={12} md={8}>
-                          <Statistic
-                            title={t('pages.inbounds.totalDownUp')}
-                            value={0}
-                            formatter={() => (
-                              <span>
-                                <ArrowUpOutlined /> {SizeFormatter.sizeFormat(totals.up)}
-                                {' / '}
-                                <ArrowDownOutlined /> {SizeFormatter.sizeFormat(totals.down)}
-                              </span>
-                            )}
-                          />
-                        </Col>
-                        <Col xs={12} sm={12} md={8}>
-                          <Statistic
-                            title={t('pages.inbounds.totalUsage')}
-                            value={SizeFormatter.sizeFormat(totals.up + totals.down)}
-                            prefix={<PieChartOutlined />}
-                          />
-                        </Col>
-                        <Col xs={24} sm={24} md={8}>
-                          <Statistic
-                            title={t('pages.inbounds.inboundCount')}
-                            value={String(dbInbounds.length)}
-                            prefix={<BarsOutlined />}
-                          />
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-
-                  <Col span={24}>
-                    <InboundList
-                      dbInbounds={dbInbounds}
-                      clientCount={clientCount}
-                      onlineClients={onlineClients}
-                      lastOnlineMap={lastOnlineMap}
-                      inboundSpeed={inboundSpeed}
-                      expireDiff={expireDiff}
-                      trafficDiff={trafficDiff}
-                      pageSize={pageSize}
-                      isMobile={isMobile}
-                      subEnable={subSettings.enable}
-                      nodesById={nodesById}
-                      hasActiveNode={showNodeInfo}
-                      hosts={hosts}
-                      onAddInbound={onAddInbound}
-                      onGeneralAction={onGeneralAction}
-                      onRowAction={({ key, dbInbound }) =>
-                        onRowAction({ key, dbInbound: dbInbound as unknown as DBInbound })
-                      }
-                      onBulkDelete={confirmBulkDelete}
-                    />
-                  </Col>
-                </Row>
-              )}
-            </Spin>
-          </Layout.Content>
-        </Layout>
+                <Col span={24}>
+                  <InboundList
+                    dbInbounds={dbInbounds}
+                    clientCount={clientCount}
+                    onlineClients={onlineClients}
+                    lastOnlineMap={lastOnlineMap}
+                    inboundSpeed={inboundSpeed}
+                    expireDiff={expireDiff}
+                    trafficDiff={trafficDiff}
+                    pageSize={pageSize}
+                    isMobile={isMobile}
+                    subEnable={subSettings.enable}
+                    nodesById={nodesById}
+                    hasActiveNode={showNodeInfo}
+                    hosts={hosts}
+                    onAddInbound={onAddInbound}
+                    onGeneralAction={onGeneralAction}
+                    onRowAction={({ key, dbInbound }) =>
+                      onRowAction({ key, dbInbound: dbInbound as unknown as DBInbound })
+                    }
+                    onBulkDelete={confirmBulkDelete}
+                  />
+                </Col>
+              </Row>
+            )}
+          </Spin>
+        </Layout.Content>
 
         <LazyMount when={formOpen}>
           <InboundFormModal

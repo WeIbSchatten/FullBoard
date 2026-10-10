@@ -31,6 +31,7 @@ func (a *TgWebProxyController) initRouter(g *gin.RouterGroup) {
 	g.GET("/config", a.getConfig)
 	g.POST("/config", a.saveConfig)
 	g.POST("/check", a.check)
+	g.POST("/fixCaddy", a.fixCaddy)
 	g.GET("/profiles", a.listProfiles)
 	g.POST("/profiles/add", a.addProfile)
 	g.POST("/profiles/update/:name", a.updateProfile)
@@ -103,6 +104,11 @@ func (a *TgWebProxyController) saveConfig(c *gin.Context) {
 func (a *TgWebProxyController) check(c *gin.Context) {
 	err := a.svc.Check(c.Request.Context())
 	jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.checkOk"), err)
+}
+
+func (a *TgWebProxyController) fixCaddy(c *gin.Context) {
+	changed, err := a.svc.FixCaddyEncode(c.Request.Context())
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.caddyFixed"), gin.H{"changed": changed}, err)
 }
 
 func (a *TgWebProxyController) listProfiles(c *gin.Context) {

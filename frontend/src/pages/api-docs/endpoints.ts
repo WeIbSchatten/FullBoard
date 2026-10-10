@@ -2923,6 +2923,13 @@ export const sections: readonly Section[] = [
         response: '{\n  "success": true\n}',
       },
       {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/fixCaddy',
+        summary:
+          'Patch the stock /etc/caddy/Caddyfile so encode skips HTTP/2 WebSocket CONNECT upgrades (caddyserver/caddy#6733), then reload caddy. Idempotent.',
+        response: '{\n  "success": true,\n  "obj": { "changed": true }\n}',
+      },
+      {
         method: 'GET',
         path: '/panel/api/tgWebProxy/profiles',
         summary: 'List profiles.json entries, including their secrets.',

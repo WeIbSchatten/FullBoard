@@ -43,6 +43,11 @@ export function reportApply(
   } else if (res.restarted) {
     getMessage().info(t('pages.tgWebProxy.toasts.restarted'));
   }
+  if (res.caddyWarning) {
+    getMessage().warning(res.caddyWarning);
+  } else if (res.caddyPatched) {
+    getMessage().info(t('pages.tgWebProxy.toasts.caddyFixed'));
+  }
 }
 
 export default function ProfilesTab({

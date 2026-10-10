@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Input, InputNumber, Select, Switch, Tabs } from 'antd';
+import { Input, InputNumber, Select, Switch } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   ApartmentOutlined,
   BellOutlined,
@@ -177,7 +178,7 @@ export default function GeneralTab({ allSetting, updateSetting }: GeneralTabProp
   );
 
   return (
-    <Tabs
+    <PanelTabs
       defaultActiveKey="1"
       items={[
         {

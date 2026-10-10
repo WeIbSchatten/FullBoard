@@ -1,4 +1,5 @@
-import { Alert, Button, Input, InputNumber, Select, Switch, Tabs } from 'antd';
+import { Alert, Button, Input, InputNumber, Select, Switch } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   BranchesOutlined,
   CompassOutlined,
@@ -43,7 +44,7 @@ export default function SubscriptionGeneralTab({
     searchParams.get('subscriptionTab') === 'happ' ? HAPP_SETTINGS_TAB : PANEL_SETTINGS_TAB;
 
   return (
-    <Tabs
+    <PanelTabs
       defaultActiveKey={initialTab}
       items={[
         {

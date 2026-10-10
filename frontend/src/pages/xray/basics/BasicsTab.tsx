@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { onNumber } from '@/utils/onNumber';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Input, InputNumber, Modal, Select, Space, Switch, Tabs } from 'antd';
+import { Alert, Button, Input, InputNumber, Modal, Select, Space, Switch } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import {
   BarChartOutlined,
   ClockCircleOutlined,
@@ -492,7 +493,7 @@ export default function BasicsTab({
   return (
     <>
       {modalContextHolder}
-      <Tabs defaultActiveKey="1" items={items} />
+      <PanelTabs defaultActiveKey="1" items={items} />
     </>
   );
 }

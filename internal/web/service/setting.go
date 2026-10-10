@@ -205,6 +205,8 @@ var defaultValueMap = map[string]string{
 	"panelOutbound":               "",
 	"customCss":                   "",
 	"customLoginCss":              "",
+	"customCssBundle":             `{"active":"default","presets":[]}`,
+	"navPosition":                 "side",
 	"devChannelEnable":            "false",
 
 	// LDAP defaults
@@ -344,6 +346,12 @@ func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 		allSetting.SubProfileMode = ""
 	}
 	allSetting.SubProfileMode = effectiveSubProfileMode(allSetting.SubProfileMode, allSetting.SubProfileUrl)
+	if migrateCustomCssBundleIntoSetting(allSetting) {
+		_ = s.setString("customCssBundle", allSetting.CustomCssBundle)
+	}
+	if allSetting.NavPosition != "top" {
+		allSetting.NavPosition = "side"
+	}
 	return allSetting, nil
 }
 
@@ -1669,6 +1677,14 @@ func (s *SettingService) UpdateAllSetting(allSetting *entity.AllSetting, clears 
 	}
 	if err := validateCustomCssSettings(allSetting); err != nil {
 		return err
+	}
+	switch allSetting.NavPosition {
+	case "", "side":
+		allSetting.NavPosition = "side"
+	case "top":
+		// ok
+	default:
+		return errors.New("navPosition must be side or top")
 	}
 	if err := allSetting.CheckValid(); err != nil {
 		return err

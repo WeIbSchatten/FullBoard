@@ -31,6 +31,9 @@
           "customCss": {
             "type": "string"
           },
+          "customCssBundle": {
+            "type": "string"
+          },
           "customLoginCss": {
             "type": "string"
           },
@@ -156,6 +159,9 @@
             "type": "string"
           },
           "ldapVlessField": {
+            "type": "string"
+          },
+          "navPosition": {
             "type": "string"
           },
           "outboundDownThreshold": {
@@ -605,6 +611,7 @@
         },
         "required": [
           "customCss",
+          "customCssBundle",
           "customLoginCss",
           "datepicker",
           "discordAdminIds",
@@ -644,6 +651,7 @@
           "ldapUserAttr",
           "ldapUserFilter",
           "ldapVlessField",
+          "navPosition",
           "outboundDownThreshold",
           "pageSize",
           "panelOutbound",
@@ -789,6 +797,9 @@
       "AllSettingView": {
         "properties": {
           "customCss": {
+            "type": "string"
+          },
+          "customCssBundle": {
             "type": "string"
           },
           "customLoginCss": {
@@ -942,6 +953,9 @@
           "ldapVlessField": {
             "type": "string"
           },
+          "navPosition": {
+            "type": "string"
+          },
           "outboundDownThreshold": {
             "maximum": 100,
             "minimum": 1,
@@ -1389,6 +1403,7 @@
         },
         "required": [
           "customCss",
+          "customCssBundle",
           "customLoginCss",
           "datepicker",
           "discordAdminIds",
@@ -1436,6 +1451,7 @@
           "ldapUserAttr",
           "ldapUserFilter",
           "ldapVlessField",
+          "navPosition",
           "outboundDownThreshold",
           "pageSize",
           "panelOutbound",
@@ -1686,6 +1702,32 @@
           "id",
           "name",
           "scope"
+        ],
+        "type": "object"
+      },
+      "CaddyH2WSStatus": {
+        "description": "CaddyH2WSStatus describes whether the stock Caddyfile needs the encode patch.",
+        "properties": {
+          "exists": {
+            "example": true,
+            "type": "boolean"
+          },
+          "lastError": {
+            "type": "string"
+          },
+          "needsFix": {
+            "example": true,
+            "type": "boolean"
+          },
+          "path": {
+            "example": "/etc/caddy/Caddyfile",
+            "type": "string"
+          }
+        },
+        "required": [
+          "exists",
+          "needsFix",
+          "path"
         ],
         "type": "object"
       },
@@ -4486,6 +4528,16 @@
       },
       "RelayApplyResult": {
         "properties": {
+          "caddyPatchError": {
+            "type": "string"
+          },
+          "caddyPatched": {
+            "example": false,
+            "type": "boolean"
+          },
+          "caddyWarning": {
+            "type": "string"
+          },
           "restartError": {
             "type": "string"
           },
@@ -4935,6 +4987,9 @@
             "example": "/usr/local/bin/tproxy-server",
             "type": "string"
           },
+          "caddyEncode": {
+            "$ref": "#/components/schemas/CaddyH2WSStatus"
+          },
           "configError": {
             "type": "string"
           },
@@ -4986,12 +5041,17 @@
               "$ref": "#/components/schemas/RelayUnitStatus"
             },
             "type": "array"
+          },
+          "usesWebSocket": {
+            "example": false,
+            "type": "boolean"
           }
         },
         "required": [
           "basePath",
           "binaryInstalled",
           "binaryPath",
+          "caddyEncode",
           "configError",
           "configExists",
           "configPath",
@@ -5004,7 +5064,8 @@
           "profilesModeOk",
           "profilesPath",
           "supported",
-          "units"
+          "units",
+          "usesWebSocket"
         ],
         "type": "object"
       },
@@ -17154,6 +17215,12 @@
                     "basePath": "",
                     "binaryInstalled": true,
                     "binaryPath": "/usr/local/bin/tproxy-server",
+                    "caddyEncode": {
+                      "exists": true,
+                      "lastError": "",
+                      "needsFix": true,
+                      "path": "/etc/caddy/Caddyfile"
+                    },
                     "configError": "",
                     "configExists": true,
                     "configPath": "/etc/tproxy-server/config.json",
@@ -17183,7 +17250,8 @@
                         "unit": "tproxy-server",
                         "unitFileState": "enabled"
                       }
-                    ]
+                    ],
+                    "usesWebSocket": false
                   }
                 }
               }
@@ -17341,6 +17409,9 @@
                 "example": {
                   "success": true,
                   "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
                     "restartError": "",
                     "restarted": true
                   }
@@ -17377,6 +17448,42 @@
                 },
                 "example": {
                   "success": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/fixCaddy": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Patch the stock /etc/caddy/Caddyfile so encode skips HTTP/2 WebSocket CONNECT upgrades (caddyserver/caddy#6733), then reload caddy. Idempotent.",
+        "operationId": "post_panel_api_tgWebProxy_fixCaddy",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "changed": true
+                  }
                 }
               }
             }
@@ -17479,6 +17586,9 @@
                 "example": {
                   "success": true,
                   "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
                     "restartError": "",
                     "restarted": true
                   }
@@ -17545,6 +17655,9 @@
                 "example": {
                   "success": true,
                   "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
                     "restartError": "",
                     "restarted": true
                   }
@@ -17595,6 +17708,9 @@
                 "example": {
                   "success": true,
                   "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
                     "restartError": "",
                     "restarted": true
                   }
@@ -18021,6 +18137,9 @@
                 "example": {
                   "success": true,
                   "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
                     "restartError": "",
                     "restarted": true
                   }
@@ -18060,6 +18179,9 @@
                 "example": {
                   "success": true,
                   "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
                     "restartError": "",
                     "restarted": true
                   }

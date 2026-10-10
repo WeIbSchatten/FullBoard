@@ -11,6 +11,7 @@ export type transportBits = number;
 
 export interface AllSetting {
   customCss: string;
+  customCssBundle: string;
   customLoginCss: string;
   datepicker: string;
   discordAdminIds: string;
@@ -50,6 +51,7 @@ export interface AllSetting {
   ldapUserAttr: string;
   ldapUserFilter: string;
   ldapVlessField: string;
+  navPosition: string;
   outboundDownThreshold: number;
   pageSize: number;
   panelOutbound: string;
@@ -193,6 +195,7 @@ export interface AllSetting {
 
 export interface AllSettingView {
   customCss: string;
+  customCssBundle: string;
   customLoginCss: string;
   datepicker: string;
   discordAdminIds: string;
@@ -240,6 +243,7 @@ export interface AllSettingView {
   ldapUserAttr: string;
   ldapUserFilter: string;
   ldapVlessField: string;
+  navPosition: string;
   outboundDownThreshold: number;
   pageSize: number;
   panelOutbound: string;
@@ -405,6 +409,13 @@ export interface ApiTokenView {
   name: string;
   scope: string;
   token?: string;
+}
+
+export interface CaddyH2WSStatus {
+  exists: boolean;
+  lastError?: string;
+  needsFix: boolean;
+  path: string;
 }
 
 export interface Client {
@@ -1019,6 +1030,9 @@ export interface RelayAdminProbe {
 }
 
 export interface RelayApplyResult {
+  caddyPatchError?: string;
+  caddyPatched?: boolean;
+  caddyWarning?: string;
   restartError: string;
   restarted: boolean;
 }
@@ -1125,6 +1139,7 @@ export interface RelayStatus {
   basePath: string;
   binaryInstalled: boolean;
   binaryPath: string;
+  caddyEncode: CaddyH2WSStatus;
   configError: string;
   configExists: boolean;
   configPath: string;
@@ -1138,6 +1153,7 @@ export interface RelayStatus {
   profilesPath: string;
   supported: boolean;
   units: RelayUnitStatus[];
+  usesWebSocket: boolean;
 }
 
 export interface RelayTimeouts {

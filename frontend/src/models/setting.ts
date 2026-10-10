@@ -16,6 +16,8 @@ export class AllSetting {
   panelOutbound = '';
   customCss = '';
   customLoginCss = '';
+  customCssBundle = '{"active":"default","presets":[]}';
+  navPosition: 'side' | 'top' = 'side';
   pageSize = 25;
   expireDiff = 0;
   trafficDiff = 0;

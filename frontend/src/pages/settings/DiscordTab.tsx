@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Input, Select, Space, Switch, Tabs } from 'antd';
+import { Alert, Button, Input, Select, Space, Switch } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import { BellOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { HttpUtil, LanguageManager } from '@/utils';
 import type { AllSetting } from '@/models/setting';
@@ -62,7 +63,7 @@ export default function DiscordTab({ allSetting, updateSetting }: DiscordTabProp
   );
 
   return (
-    <Tabs
+    <PanelTabs
       defaultActiveKey="1"
       items={[
         {

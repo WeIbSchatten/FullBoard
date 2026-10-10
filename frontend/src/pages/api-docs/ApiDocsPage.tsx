@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, Col, ConfigProvider, Layout, Row, Tabs, Typography } from 'antd';
+import { Card, Col, ConfigProvider, Layout, Row, Typography } from 'antd';
+import PanelTabs from '@/layouts/PanelTabs';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 
 import { useTheme } from '@/hooks/useTheme';
-import AppSidebar from '@/layouts/AppSidebar';
 import { EXAMPLES } from '@/generated/examples';
 import { buildWebSocketEvents } from './websocket-events';
 import './ApiDocsPage.css';
@@ -36,7 +36,7 @@ function SectionTabs({ specSelectors, layoutSelectors, layoutActions }: SectionT
     .map((tag) => tag.name);
   return (
     <div className="wrapper section-tabs">
-      <Tabs
+      <PanelTabs
         size="small"
         activeKey={layoutSelectors.currentFilter() || tags[0]}
         onChange={layoutActions.updateFilter}
@@ -83,60 +83,55 @@ export default function ApiDocsPage() {
   return (
     <ConfigProvider theme={antdThemeConfig}>
       <Layout className={pageClass}>
-        <AppSidebar />
-
-        <Layout className="content-shell">
-          <Layout.Content className="content-area">
-            <Tabs
-              items={[
-                {
-                  key: 'panel-api',
-                  label: 'FullBoard Panel API',
-                  children: (
-                    <div className="docs-wrapper" role="region" aria-label={t('menu.apiDocs')}>
-                      <SwaggerUI
-                        url={openApiUrl}
-                        docExpansion="list"
-                        deepLinking={false}
-                        plugins={[sectionTabsPlugin]}
-                        tryItOutEnabled
-                        persistAuthorization
-                      />
-                    </div>
-                  ),
-                },
-                {
-                  key: 'websocket-events',
-                  label: 'WebSocket events',
-                  children: (
-                    <section className="websocket-events">
-                      <Typography.Paragraph>
-                        After the cookie-authenticated{' '}
-                        <Typography.Text code>GET /ws</Typography.Text> upgrade, every server
-                        message uses{' '}
-                        <Typography.Text code>{'{ type, payload, time }'}</Typography.Text>. The
-                        time value is Unix milliseconds.
-                      </Typography.Paragraph>
-                      <Row gutter={[12, 12]}>
-                        {websocketEvents.map((event) => (
-                          <Col key={event.type} xs={24} sm={12} xl={8}>
-                            <Card
-                              size="small"
-                              title={<Typography.Text code>{event.type}</Typography.Text>}
-                            >
-                              <Typography.Paragraph>{event.summary}</Typography.Paragraph>
-                              <pre>{JSON.stringify(event.example, null, 2)}</pre>
-                            </Card>
-                          </Col>
-                        ))}
-                      </Row>
-                    </section>
-                  ),
-                },
-              ]}
-            />
-          </Layout.Content>
-        </Layout>
+        <Layout.Content className="content-area">
+          <PanelTabs
+            items={[
+              {
+                key: 'panel-api',
+                label: 'FullBoard Panel API',
+                children: (
+                  <div className="docs-wrapper" role="region" aria-label={t('menu.apiDocs')}>
+                    <SwaggerUI
+                      url={openApiUrl}
+                      docExpansion="list"
+                      deepLinking={false}
+                      plugins={[sectionTabsPlugin]}
+                      tryItOutEnabled
+                      persistAuthorization
+                    />
+                  </div>
+                ),
+              },
+              {
+                key: 'websocket-events',
+                label: 'WebSocket events',
+                children: (
+                  <section className="websocket-events">
+                    <Typography.Paragraph>
+                      After the cookie-authenticated <Typography.Text code>GET /ws</Typography.Text>{' '}
+                      upgrade, every server message uses{' '}
+                      <Typography.Text code>{'{ type, payload, time }'}</Typography.Text>. The time
+                      value is Unix milliseconds.
+                    </Typography.Paragraph>
+                    <Row gutter={[12, 12]}>
+                      {websocketEvents.map((event) => (
+                        <Col key={event.type} xs={24} sm={12} xl={8}>
+                          <Card
+                            size="small"
+                            title={<Typography.Text code>{event.type}</Typography.Text>}
+                          >
+                            <Typography.Paragraph>{event.summary}</Typography.Paragraph>
+                            <pre>{JSON.stringify(event.example, null, 2)}</pre>
+                          </Card>
+                        </Col>
+                      ))}
+                    </Row>
+                  </section>
+                ),
+              },
+            ]}
+          />
+        </Layout.Content>
       </Layout>
     </ConfigProvider>
   );

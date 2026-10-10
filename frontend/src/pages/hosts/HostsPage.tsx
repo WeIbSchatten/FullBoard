@@ -20,7 +20,6 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useHostsQuery, type HostRecord } from '@/api/queries/useHostsQuery';
 import { useHostMutations } from '@/api/queries/useHostMutations';
 import { useInboundOptions } from '@/api/queries/useInboundOptions';
-import AppSidebar from '@/layouts/AppSidebar';
 import { setMessageInstance } from '@/utils/messageBus';
 import type { BulkAddHostValues } from '@/schemas/api/host';
 import HostList, { sortHosts } from './HostList';
@@ -148,79 +147,76 @@ export default function HostsPage() {
       {messageContextHolder}
       {modalContextHolder}
       <Layout className={pageClass}>
-        <AppSidebar />
-        <Layout className="content-shell">
-          <Layout.Content id="content-layout" className="content-area">
-            <Spin spinning={!fetched} delay={200} size="large">
-              {!fetched ? (
-                <div className="loading-spacer" />
-              ) : fetchError ? (
-                <Result
-                  status="error"
-                  title={t('somethingWentWrong')}
-                  subTitle={fetchError}
-                  extra={
-                    <Button type="primary" loading={loading} onClick={() => refetch()}>
-                      {t('refresh')}
-                    </Button>
-                  }
-                />
-              ) : (
-                <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
-                  <Col span={24}>
-                    <Card size="small" hoverable className="summary-card">
-                      <Row gutter={[16, 12]}>
-                        <Col xs={8} sm={8} md={8}>
-                          <Statistic
-                            title={t('pages.hosts.summary.total')}
-                            value={String(summary.total)}
-                            prefix={<GlobalOutlined />}
-                          />
-                        </Col>
-                        <Col xs={8} sm={8} md={8}>
-                          <Statistic
-                            title={t('pages.hosts.summary.enabled')}
-                            value={String(summary.enabled)}
-                            prefix={
-                              <CheckCircleOutlined style={{ color: 'var(--ant-color-success)' }} />
-                            }
-                          />
-                        </Col>
-                        <Col xs={8} sm={8} md={8}>
-                          <Statistic
-                            title={t('pages.hosts.summary.disabled')}
-                            value={String(summary.disabled)}
-                            prefix={
-                              <StopOutlined style={{ color: 'var(--ant-color-text-quaternary)' }} />
-                            }
-                          />
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
+        <Layout.Content id="content-layout" className="content-area">
+          <Spin spinning={!fetched} delay={200} size="large">
+            {!fetched ? (
+              <div className="loading-spacer" />
+            ) : fetchError ? (
+              <Result
+                status="error"
+                title={t('somethingWentWrong')}
+                subTitle={fetchError}
+                extra={
+                  <Button type="primary" loading={loading} onClick={() => refetch()}>
+                    {t('refresh')}
+                  </Button>
+                }
+              />
+            ) : (
+              <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
+                <Col span={24}>
+                  <Card size="small" hoverable className="summary-card">
+                    <Row gutter={[16, 12]}>
+                      <Col xs={8} sm={8} md={8}>
+                        <Statistic
+                          title={t('pages.hosts.summary.total')}
+                          value={String(summary.total)}
+                          prefix={<GlobalOutlined />}
+                        />
+                      </Col>
+                      <Col xs={8} sm={8} md={8}>
+                        <Statistic
+                          title={t('pages.hosts.summary.enabled')}
+                          value={String(summary.enabled)}
+                          prefix={
+                            <CheckCircleOutlined style={{ color: 'var(--ant-color-success)' }} />
+                          }
+                        />
+                      </Col>
+                      <Col xs={8} sm={8} md={8}>
+                        <Statistic
+                          title={t('pages.hosts.summary.disabled')}
+                          value={String(summary.disabled)}
+                          prefix={
+                            <StopOutlined style={{ color: 'var(--ant-color-text-quaternary)' }} />
+                          }
+                        />
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
 
-                  <Col span={24}>
-                    <HostList
-                      hosts={hosts}
-                      inboundOptions={inboundOptions}
-                      loading={loading}
-                      isMobile={isMobile}
-                      selectedGroupIds={selectedGroupIds}
-                      onSelectionChange={setSelectedGroupIds}
-                      onAdd={onAdd}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                      onToggleEnable={onToggleEnable}
-                      onMove={onMove}
-                      onBulkEnable={onBulkEnable}
-                      onBulkDelete={onBulkDelete}
-                    />
-                  </Col>
-                </Row>
-              )}
-            </Spin>
-          </Layout.Content>
-        </Layout>
+                <Col span={24}>
+                  <HostList
+                    hosts={hosts}
+                    inboundOptions={inboundOptions}
+                    loading={loading}
+                    isMobile={isMobile}
+                    selectedGroupIds={selectedGroupIds}
+                    onSelectionChange={setSelectedGroupIds}
+                    onAdd={onAdd}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onToggleEnable={onToggleEnable}
+                    onMove={onMove}
+                    onBulkEnable={onBulkEnable}
+                    onBulkDelete={onBulkDelete}
+                  />
+                </Col>
+              </Row>
+            )}
+          </Spin>
+        </Layout.Content>
 
         <HostFormModal
           open={formOpen}

@@ -282,6 +282,55 @@
   padding: 8px 8px 12px;
 }
 
+.ant-sidebar--top {
+  flex: 0 0 auto;
+  width: 100%;
+  --sider-rail: 0px;
+}
+
+.ant-sidebar--top .top-nav-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 16px;
+  line-height: 56px;
+  background: var(--ant-color-bg-container, #fff);
+  border-bottom: 1px solid var(--ant-color-border-secondary, rgba(0, 0, 0, 0.06));
+}
+
+.ant-sidebar--top .top-nav-header--dark {
+  background: #141414;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.ant-sidebar--top .top-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.ant-sidebar--top .top-nav-menu {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-bottom: none;
+  background: transparent;
+}
+
+.ant-sidebar--top .top-nav-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.ant-sidebar--top .sidebar-command-trigger {
+  margin: 0;
+  width: auto;
+  max-width: 220px;
+}
+
 @media (max-width: 768px) {
   .drawer-handle {
     display: inline-flex;
@@ -296,6 +345,10 @@
     max-width: 0 !important;
     min-width: 0 !important;
     width: 0 !important;
+  }
+
+  .ant-sidebar--top > .top-nav-header {
+    display: none;
   }
 
   .ant-sidebar {

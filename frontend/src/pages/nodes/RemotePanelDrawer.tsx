@@ -85,8 +85,8 @@ const CURATED_SETTINGS: { key: string; kind: 'number' | 'text' | 'bool' | 'css' 
   { key: 'subPath', kind: 'text' },
   { key: 'tgBotEnable', kind: 'bool' },
   { key: 'restartXrayOnClientDisable', kind: 'bool' },
-  { key: 'customCss', kind: 'css' },
-  { key: 'customLoginCss', kind: 'css' },
+  { key: 'customCssBundle', kind: 'text' },
+  { key: 'navPosition', kind: 'text' },
 ];
 
 export function inboundsOfNode(inbounds: MasterInbound[], nodeId: number): MasterInbound[] {
