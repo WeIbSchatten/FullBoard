@@ -7,7 +7,8 @@
 .groups-page,
 .api-docs-page,
 .hosts-page,
-.tg-web-proxy-page {
+.tg-web-proxy-page,
+.connections-page {
   --bg-page: transparent;
   --bg-card: rgba(255, 255, 255, 0.78);
   min-height: 100vh;
@@ -23,9 +24,10 @@
 .groups-page.is-dark,
 .api-docs-page.is-dark,
 .hosts-page.is-dark,
-.tg-web-proxy-page.is-dark {
+.tg-web-proxy-page.is-dark,
+.connections-page.is-dark {
   --bg-page: transparent;
-  --bg-card: rgba(20, 20, 24, 0.72);
+  --bg-card: rgba(19, 21, 28, 0.92);
 }
 
 .index-page.is-dark.is-ultra,

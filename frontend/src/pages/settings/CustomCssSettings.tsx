@@ -1,11 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Input, Radio, Select, Space, Switch, Typography } from 'antd';
+import { Alert, Button, Checkbox, Input, Radio, Select, Space, Switch, Typography } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
 import type { AllSetting } from '@/models/setting';
 import { SettingListItem } from '@/components/ui';
 import { writeCachedNavPosition, type NavPosition } from '@/layouts/NavLayoutContext';
+import {
+  DEFAULT_NAV_VISIBILITY,
+  HIDEABLE_NAV_KEYS,
+  parseNavVisibility,
+  type NavVisibility,
+} from '@/lib/navVisibility';
 
 export const CUSTOM_CSS_MAX_BYTES = 64 * 1024;
 const PREVIEW_STYLE_ID = 'fullboard-custom-css-preview';
@@ -13,7 +19,11 @@ const MAX_PRESETS = 2;
 const DEFAULT_BUNDLE = '{"active":"default","presets":[]}';
 
 export type CssPreset = { id: string; name: string; panel: string; login: string };
-export type CssBundle = { active: string; presets: CssPreset[] };
+export type CssBundle = {
+  active: string;
+  presets: CssPreset[];
+  navVisibility?: { hidden?: string[]; showRouting?: boolean };
+};
 
 export function cssByteLength(css: string): number {
   return new TextEncoder().encode(css).length;
@@ -25,6 +35,7 @@ export function parseCssBundle(raw: string | undefined): CssBundle {
     return {
       active: parsed.active || 'default',
       presets: Array.isArray(parsed.presets) ? parsed.presets.slice(0, MAX_PRESETS) : [],
+      navVisibility: parsed.navVisibility,
     };
   } catch {
     return { active: 'default', presets: [] };
@@ -32,7 +43,11 @@ export function parseCssBundle(raw: string | undefined): CssBundle {
 }
 
 function encodeBundle(b: CssBundle): string {
-  return JSON.stringify({ active: b.active || 'default', presets: b.presets });
+  return JSON.stringify({
+    active: b.active || 'default',
+    presets: b.presets,
+    ...(b.navVisibility ? { navVisibility: b.navVisibility } : {}),
+  });
 }
 
 function newPresetId(): string {
@@ -120,6 +135,7 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
     const id = newPresetId();
     const name = t('pages.settings.customCss.presetName', { n: bundle.presets.length + 1 });
     commit({
+      ...bundle,
       active: id,
       presets: [...bundle.presets, { id, name, panel: '', login: '' }],
     });
@@ -144,7 +160,40 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
   const deleteSelected = () => {
     if (!selected) return;
     const presets = bundle.presets.filter((p) => p.id !== selected.id);
-    commit({ active: 'default', presets });
+    commit({ active: 'default', presets, navVisibility: bundle.navVisibility });
+  };
+
+  const navVis = useMemo(() => parseNavVisibility(bundle.navVisibility), [bundle.navVisibility]);
+
+  const setNavVis = (next: NavVisibility) => {
+    commit({ ...bundle, navVisibility: next });
+  };
+
+  const navLabel = (key: string) => {
+    switch (key) {
+      case '/':
+        return t('menu.dashboard');
+      case '/connections':
+        return t('menu.connections');
+      case '/clients':
+        return t('menu.clients');
+      case '/groups':
+        return t('menu.groups');
+      case '/nodes':
+        return t('menu.nodes');
+      case '/hosts':
+        return t('menu.hosts');
+      case '/settings':
+        return t('menu.settings');
+      case '/xray':
+        return t('menu.xray');
+      case '/routing':
+        return t('menu.routing');
+      case '/api-docs':
+        return t('menu.apiDocs');
+      default:
+        return key;
+    }
   };
 
   return (
@@ -173,6 +222,44 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
             { value: 'top', label: t('pages.settings.navPositionTop') },
           ]}
         />
+      </SettingListItem>
+      <SettingListItem
+        paddings="small"
+        title={t('pages.settings.customCss.navVisibility')}
+        description={t('pages.settings.customCss.navVisibilityDesc')}
+      >
+        <Space orientation="vertical" style={{ width: '100%' }}>
+          {HIDEABLE_NAV_KEYS.filter((k) => k !== '/routing').map((key) => {
+            const hidden = navVis.hidden.includes(key);
+            return (
+              <Checkbox
+                key={key}
+                checked={!hidden}
+                onChange={(e) => {
+                  const show = e.target.checked;
+                  const hiddenKeys = new Set(navVis.hidden);
+                  if (show) hiddenKeys.delete(key);
+                  else hiddenKeys.add(key);
+                  setNavVis({ ...navVis, hidden: [...hiddenKeys] });
+                }}
+              >
+                {navLabel(key)}
+              </Checkbox>
+            );
+          })}
+          <Checkbox
+            checked={navVis.showRouting}
+            onChange={(e) =>
+              setNavVis({
+                ...(navVis.hidden.length ? navVis : DEFAULT_NAV_VISIBILITY),
+                hidden: navVis.hidden.filter((k) => k !== '/routing'),
+                showRouting: e.target.checked,
+              })
+            }
+          >
+            {t('menu.routing')}
+          </Checkbox>
+        </Space>
       </SettingListItem>
       <SettingListItem
         paddings="small"

@@ -14,10 +14,8 @@ import {
   DashboardOutlined,
   DatabaseOutlined,
   DiscordOutlined,
-  ExportOutlined,
   GithubOutlined,
   GlobalOutlined,
-  ImportOutlined,
   LogoutOutlined,
   MailOutlined,
   MenuOutlined,
@@ -29,7 +27,6 @@ import {
   ReadOutlined,
   SafetyOutlined,
   SearchOutlined,
-  SendOutlined,
   SettingOutlined,
   SunOutlined,
   SwapOutlined,
@@ -40,6 +37,8 @@ import {
 
 import { HttpUtil } from '@/utils';
 import { formatPanelVersion } from '@/lib/panel-version';
+import { isNavKeyVisible, parseNavVisibility } from '@/lib/navVisibility';
+import { parseCssBundle } from '@/pages/settings/CustomCssSettings';
 import { pauseAnimationsUntilLeave, useTheme } from '@/hooks/useTheme';
 import { useAllSettings } from '@/api/queries/useAllSettings';
 import { useCommandPalette } from '@/components/command-palette/useCommandPalette';
@@ -60,32 +59,28 @@ let hoveredAcrossRemounts = false;
 
 type IconName =
   | 'dashboard'
-  | 'inbound'
+  | 'connections'
   | 'team'
   | 'groups'
   | 'setting'
   | 'tool'
   | 'cluster'
   | 'hosts'
-  | 'tgWebProxy'
   | 'logout'
   | 'apidocs'
-  | 'outbound'
   | 'routing';
 
 const iconByName: Record<IconName, ComponentType> = {
   dashboard: DashboardOutlined,
-  inbound: ImportOutlined,
+  connections: CloudServerOutlined,
   team: TeamOutlined,
   groups: TagsOutlined,
   setting: SettingOutlined,
   tool: ToolOutlined,
   cluster: ClusterOutlined,
   hosts: GlobalOutlined,
-  tgWebProxy: SendOutlined,
   logout: LogoutOutlined,
   apidocs: ApiOutlined,
-  outbound: ExportOutlined,
   routing: SwapOutlined,
 };
 
@@ -175,6 +170,10 @@ export default function AppSidebar() {
   const topNav = navPosition === 'top';
   const showSubFormats = !!(allSetting.subJsonEnable || allSetting.subClashEnable);
   const showSubBalancers = !!allSetting.subJsonEnable;
+  const navVisibility = useMemo(
+    () => parseNavVisibility(parseCssBundle(allSetting.customCssBundle).navVisibility),
+    [allSetting.customCssBundle],
+  );
 
   const [hovered, setHovered] = useState(() => hoveredAcrossRemounts);
   const [pinned, setPinned] = useState(readSidebarPinned);
@@ -208,24 +207,22 @@ export default function AppSidebar() {
   const currentTheme: 'light' | 'dark' = isDark ? 'dark' : 'light';
   const panelVersion = window.X_UI_CUR_VER || '';
 
-  const tabs = useMemo<{ key: string; icon: IconName; title: string }[]>(
-    () => [
+  const tabs = useMemo<{ key: string; icon: IconName; title: string }[]>(() => {
+    const all: { key: string; icon: IconName; title: string }[] = [
       { key: '/', icon: 'dashboard', title: t('menu.dashboard') },
-      { key: '/inbounds', icon: 'inbound', title: t('menu.inbounds') },
+      { key: '/connections', icon: 'connections', title: t('menu.connections') },
       { key: '/clients', icon: 'team', title: t('menu.clients') },
       { key: '/groups', icon: 'groups', title: t('menu.groups') },
       { key: '/nodes', icon: 'cluster', title: t('menu.nodes') },
       { key: '/hosts', icon: 'hosts', title: t('menu.hosts') },
-      { key: '/tg-web-proxy', icon: 'tgWebProxy', title: t('menu.tgWebProxy') },
-      { key: '/outbound', icon: 'outbound', title: t('menu.outbounds') },
       { key: '/routing', icon: 'routing', title: t('menu.routing') },
       { key: '/settings', icon: 'setting', title: t('menu.settings') },
       { key: '/xray', icon: 'tool', title: t('menu.xray') },
       { key: '/api-docs', icon: 'apidocs', title: t('menu.apiDocs') },
       { key: LOGOUT_KEY, icon: 'logout', title: t('logout') },
-    ],
-    [t],
-  );
+    ];
+    return all.filter((tab) => tab.key === LOGOUT_KEY || isNavKeyVisible(tab.key, navVisibility));
+  }, [t, navVisibility]);
 
   const navItems = useMemo(() => tabs.filter((tab) => tab.icon !== 'logout'), [tabs]);
   const utilItems = useMemo(() => tabs.filter((tab) => tab.icon === 'logout'), [tabs]);

@@ -30,6 +30,11 @@ _openapi:
         profiles.json.
       url: '#run-tproxy-server--check-against-the-committed-configjson-and-profilesjson'
     - depth: 2
+      title: Patch the stock /etc/caddy/Caddyfile so encode skips HTTP/2 WebSocket
+        CONNECT upgrades (caddyserver/caddy#6733), then reload caddy.
+        Idempotent.
+      url: '#patch-the-stock-etccaddycaddyfile-so-encode-skips-http2-websocket-connect-upgrades-caddyservercaddy6733-then-reload-caddy-idempotent'
+    - depth: 2
       title: List profiles.json entries, including their secrets.
       url: '#list-profilesjson-entries-including-their-secrets'
     - depth: 2
@@ -65,6 +70,46 @@ _openapi:
     - depth: 2
       title: State and log tail of the last install/update job.
       url: '#state-and-log-tail-of-the-last-installupdate-job'
+    - depth: 2
+      title: 'Panel-managed static site under /var/lib/fullboard/tproxy-site:
+        index.html, asset list and whether config public_dir points at it.'
+      url: '#panel-managed-static-site-under-varlibfullboardtproxy-site-indexhtml-asset-list-and-whether-config-public_dir-points-at-it'
+    - depth: 2
+      title: Write index.html and set config public_dir to the managed directory
+        (clears public_upstream).
+      url: '#write-indexhtml-and-set-config-public_dir-to-the-managed-directory-clears-public_upstream'
+    - depth: 2
+      title: Restore the built-in landing page template and activate managed
+        public_dir.
+      url: '#restore-the-built-in-landing-page-template-and-activate-managed-public_dir'
+    - depth: 2
+      title: Upload an allowlisted asset (html/css/js/images/fonts/txt) into the
+        managed public directory. Multipart field "file"; optional "name".
+      url: '#upload-an-allowlisted-asset-htmlcssjsimagesfontstxt-into-the-managed-public-directory-multipart-field-file-optional-name'
+    - depth: 2
+      title: Delete a non-index asset from the managed public directory.
+      url: '#delete-a-non-index-asset-from-the-managed-public-directory'
+    - depth: 2
+      title: Client-to-profile bindings plus the last background sync error. A bound
+        client gets a https://t.me/webproxy link in its raw subscription.
+      url: '#client-to-profile-bindings-plus-the-last-background-sync-error-a-bound-client-gets-a-httpstmewebproxy-link-in-its-raw-subscription'
+    - depth: 2
+      title: Bind a client (by email) to an existing profile; calling it again
+        replaces the binding. With dedicated=true the client gets its own
+        "fb:<email>" profile, cloned from the named one with a fresh secret,
+        created by a debounced background sync (the link appears once it ran).
+        Optional nodeId targets a remote node's relay (dedicated required); the
+        managed MTProto backend is synced to that node.
+      url: '#bind-a-client-by-email-to-an-existing-profile-calling-it-again-replaces-the-binding-with-dedicatedtrue-the-client-gets-its-own-fbemail-profile-cloned-from-the-named-one-with-a-fresh-secret-created-by-a-debounced-background-sync-the-link-appears-once-it-ran-optional-nodeid-targets-a-remote-nodes-relay-dedicated-required-the-managed-mtproto-backend-is-synced-to-that-node'
+    - depth: 2
+      title: Remove a client binding (idempotent). A dedicated client profile is
+        removed by the background sync.
+      url: '#remove-a-client-binding-idempotent-a-dedicated-client-profile-is-removed-by-the-background-sync'
+    - depth: 2
+      title: Make this host's fb:* dedicated profiles match the given specs (used when
+        a master panel syncs bindings onto a node). Empty specs removes all
+        managed profiles.
+      url: '#make-this-hosts-fb-dedicated-profiles-match-the-given-specs-used-when-a-master-panel-syncs-bindings-onto-a-node-empty-specs-removes-all-managed-profiles'
   structuredData:
     headings:
       - content: Install state, systemd units (tproxy-server, mtproxy, caddy,
@@ -81,6 +126,10 @@ _openapi:
       - content: Run `tproxy-server -check` against the committed config.json and
           profiles.json.
         id: run-tproxy-server--check-against-the-committed-configjson-and-profilesjson
+      - content: Patch the stock /etc/caddy/Caddyfile so encode skips HTTP/2 WebSocket
+          CONNECT upgrades (caddyserver/caddy#6733), then reload caddy.
+          Idempotent.
+        id: patch-the-stock-etccaddycaddyfile-so-encode-skips-http2-websocket-connect-upgrades-caddyservercaddy6733-then-reload-caddy-idempotent
       - content: List profiles.json entries, including their secrets.
         id: list-profilesjson-entries-including-their-secrets
       - content: Add a profile. The secret must be 32 hex characters (optionally
@@ -108,19 +157,48 @@ _openapi:
         id: download-the-latest-upstream-tree-and-run-deployupdate-relaysh-tests-build-atomic-swap-automatic-rollback
       - content: State and log tail of the last install/update job.
         id: state-and-log-tail-of-the-last-installupdate-job
+      - content: 'Panel-managed static site under /var/lib/fullboard/tproxy-site:
+          index.html, asset list and whether config public_dir points at it.'
+        id: panel-managed-static-site-under-varlibfullboardtproxy-site-indexhtml-asset-list-and-whether-config-public_dir-points-at-it
+      - content: Write index.html and set config public_dir to the managed directory
+          (clears public_upstream).
+        id: write-indexhtml-and-set-config-public_dir-to-the-managed-directory-clears-public_upstream
+      - content: Restore the built-in landing page template and activate managed
+          public_dir.
+        id: restore-the-built-in-landing-page-template-and-activate-managed-public_dir
+      - content: Upload an allowlisted asset (html/css/js/images/fonts/txt) into the
+          managed public directory. Multipart field "file"; optional "name".
+        id: upload-an-allowlisted-asset-htmlcssjsimagesfontstxt-into-the-managed-public-directory-multipart-field-file-optional-name
+      - content: Delete a non-index asset from the managed public directory.
+        id: delete-a-non-index-asset-from-the-managed-public-directory
+      - content: Client-to-profile bindings plus the last background sync error. A bound
+          client gets a https://t.me/webproxy link in its raw subscription.
+        id: client-to-profile-bindings-plus-the-last-background-sync-error-a-bound-client-gets-a-httpstmewebproxy-link-in-its-raw-subscription
+      - content: Bind a client (by email) to an existing profile; calling it again
+          replaces the binding. With dedicated=true the client gets its own
+          "fb:<email>" profile, cloned from the named one with a fresh secret,
+          created by a debounced background sync (the link appears once it ran).
+          Optional nodeId targets a remote node's relay (dedicated required);
+          the managed MTProto backend is synced to that node.
+        id: bind-a-client-by-email-to-an-existing-profile-calling-it-again-replaces-the-binding-with-dedicatedtrue-the-client-gets-its-own-fbemail-profile-cloned-from-the-named-one-with-a-fresh-secret-created-by-a-debounced-background-sync-the-link-appears-once-it-ran-optional-nodeid-targets-a-remote-nodes-relay-dedicated-required-the-managed-mtproto-backend-is-synced-to-that-node
+      - content: Remove a client binding (idempotent). A dedicated client profile is
+          removed by the background sync.
+        id: remove-a-client-binding-idempotent-a-dedicated-client-profile-is-removed-by-the-background-sync
+      - content: Make this host's fb:* dedicated profiles match the given specs (used
+          when a master panel syncs bindings onto a node). Empty specs removes
+          all managed profiles.
+        id: make-this-hosts-fb-dedicated-profiles-match-the-given-specs-used-when-a-master-panel-syncs-bindings-onto-a-node-empty-specs-removes-all-managed-profiles
     contents: []
 ---
 
 {/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
 
 export default function Layout(props) {
-  const { APIPage, OpenAPIPage } = props.components ?? {};
-  // "APIPage" is the old name from v10, this allows both for backward compatibility
-  const Comp = OpenAPIPage ?? APIPage;
+  const { OpenAPIPage } = props.components ?? {};
   return (
     <>
       {props.children}
-      <Comp document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/tgWebProxy/status","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"post"},{"path":"/panel/api/tgWebProxy/check","method":"post"},{"path":"/panel/api/tgWebProxy/profiles","method":"get"},{"path":"/panel/api/tgWebProxy/profiles/add","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/update/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/share/{name}","method":"get"},{"path":"/panel/api/tgWebProxy/service/{unit}/{action}","method":"post"},{"path":"/panel/api/tgWebProxy/logs/{unit}","method":"get"},{"path":"/panel/api/tgWebProxy/install","method":"post"},{"path":"/panel/api/tgWebProxy/update","method":"post"},{"path":"/panel/api/tgWebProxy/job","method":"get"}]} showTitle />
+      <OpenAPIPage document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/tgWebProxy/status","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"post"},{"path":"/panel/api/tgWebProxy/check","method":"post"},{"path":"/panel/api/tgWebProxy/fixCaddy","method":"post"},{"path":"/panel/api/tgWebProxy/profiles","method":"get"},{"path":"/panel/api/tgWebProxy/profiles/add","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/update/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/share/{name}","method":"get"},{"path":"/panel/api/tgWebProxy/service/{unit}/{action}","method":"post"},{"path":"/panel/api/tgWebProxy/logs/{unit}","method":"get"},{"path":"/panel/api/tgWebProxy/install","method":"post"},{"path":"/panel/api/tgWebProxy/update","method":"post"},{"path":"/panel/api/tgWebProxy/job","method":"get"},{"path":"/panel/api/tgWebProxy/publicSite","method":"get"},{"path":"/panel/api/tgWebProxy/publicSite","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/reset","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/upload","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/bindings","method":"get"},{"path":"/panel/api/tgWebProxy/bindings/bind","method":"post"},{"path":"/panel/api/tgWebProxy/bindings/unbind","method":"post"},{"path":"/panel/api/tgWebProxy/syncDedicated","method":"post"}]} showTitle />
     </>
   );
 }

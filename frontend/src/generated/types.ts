@@ -594,6 +594,27 @@ export interface DedicatedSpec {
   secret?: string;
 }
 
+export interface EnrollConsumeResponse {
+  address: string;
+  apiToken: string;
+  basePath: string;
+  name: string;
+  panelGuid?: string;
+  port: number;
+  scheme: string;
+}
+
+export interface EnrollFromInviteRequest {
+  invite: string;
+  name?: string;
+}
+
+export interface EnrollInviteResponse {
+  baseUrl: string;
+  expiresIn: number;
+  invite: string;
+}
+
 export interface FallbackParentInfo {
   masterId: number;
   path?: string;

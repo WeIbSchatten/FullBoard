@@ -2,24 +2,59 @@
   min-height: 100vh;
   font-family: 'Segoe UI Variable Text', 'Segoe UI', 'Avenir Next', 'Helvetica Neue', sans-serif;
   background:
-    radial-gradient(920px 540px at 10% -12%, rgba(96, 165, 250, 0.16), transparent 58%),
-    radial-gradient(720px 460px at 94% 6%, rgba(255, 255, 255, 0.045), transparent 52%),
-    radial-gradient(640px 420px at 50% 110%, rgba(37, 99, 235, 0.08), transparent 55%),
-    #09090b;
+    radial-gradient(920px 540px at 10% -12%, rgba(96, 165, 250, 0.12), transparent 58%),
+    radial-gradient(720px 460px at 94% 6%, rgba(244, 238, 226, 0.04), transparent 52%),
+    radial-gradient(640px 420px at 50% 110%, rgba(37, 99, 235, 0.06), transparent 55%),
+    var(--fb-bg, #0b0c10);
 }
 
 body.light .panel-chrome {
   background:
     radial-gradient(920px 540px at 10% -12%, rgba(59, 130, 246, 0.12), transparent 58%),
     radial-gradient(720px 460px at 94% 6%, rgba(15, 23, 42, 0.04), transparent 52%),
-    #eef0f5;
+    var(--fb-bg, #eef0f5);
 }
 
 html[data-theme='ultra-dark'] .panel-chrome {
   background:
     radial-gradient(920px 540px at 10% -12%, rgba(96, 165, 250, 0.1), transparent 58%),
     radial-gradient(720px 460px at 94% 6%, rgba(255, 255, 255, 0.03), transparent 52%),
-    #000;
+    var(--fb-bg, #000);
+}
+
+.fb-segmented-tabs > .ant-tabs-nav {
+  margin-bottom: 16px;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav::before {
+  border: none;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+  background: var(--fb-card, #13151c);
+  border: 1px solid var(--fb-border, #1f2330);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab {
+  border-radius: 8px;
+  margin: 0 2px !important;
+  padding: 8px 14px !important;
+  color: var(--fb-muted, #8c92a4);
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab-active {
+  background: var(--fb-accent, #f4eee2) !important;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--fb-accent-text, #13151c) !important;
+  font-weight: 600;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-ink-bar {
+  display: none;
 }
 
 .panel-chrome--side {

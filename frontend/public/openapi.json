@@ -2544,6 +2544,84 @@
         ],
         "type": "object"
       },
+      "EnrollConsumeResponse": {
+        "properties": {
+          "address": {
+            "example": "eu.example.com",
+            "type": "string"
+          },
+          "apiToken": {
+            "example": "tok_…",
+            "type": "string"
+          },
+          "basePath": {
+            "example": "/",
+            "type": "string"
+          },
+          "name": {
+            "example": "eu-relay",
+            "type": "string"
+          },
+          "panelGuid": {
+            "type": "string"
+          },
+          "port": {
+            "example": 2053,
+            "type": "integer"
+          },
+          "scheme": {
+            "example": "https",
+            "type": "string"
+          }
+        },
+        "required": [
+          "address",
+          "apiToken",
+          "basePath",
+          "name",
+          "port",
+          "scheme"
+        ],
+        "type": "object"
+      },
+      "EnrollFromInviteRequest": {
+        "properties": {
+          "invite": {
+            "example": "fb-enroll-1.…",
+            "type": "string"
+          },
+          "name": {
+            "example": "eu-relay",
+            "type": "string"
+          }
+        },
+        "required": [
+          "invite"
+        ],
+        "type": "object"
+      },
+      "EnrollInviteResponse": {
+        "properties": {
+          "baseUrl": {
+            "example": "https://eu.example.com:2053/",
+            "type": "string"
+          },
+          "expiresIn": {
+            "example": 1800,
+            "type": "integer"
+          },
+          "invite": {
+            "example": "fb-enroll-1.eyJ2IjoxLCJiYXNlIjoiaHR0cHM6Ly9ldS5leGFtcGxlLmNvbTozMDAwLyIsImNvZGUiOiJhYmMifQ",
+            "type": "string"
+          }
+        },
+        "required": [
+          "baseUrl",
+          "expiresIn",
+          "invite"
+        ],
+        "type": "object"
+      },
       "FallbackParentInfo": {
         "description": "FallbackParentInfo carries everything the frontend needs to rewrite a\nchild inbound's client link: where to connect (the master's address\nand port) and which path matched on the master's fallbacks array.\nThe frontend already has the master inbound in its dbInbounds list,\nso we only ship identifiers + the match path here.",
         "properties": {
@@ -5995,6 +6073,63 @@
                 "example": {
                   "success": false,
                   "msg": "This sign-in link is invalid or has expired."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enroll/consume": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Consume a one-time enroll invite code (child panel). Mints an admin API token and returns connection details for the master. Public; single use.",
+        "operationId": "post_enroll_consume",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "code": "…"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/EnrollConsumeResponse"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "address": "eu.example.com",
+                    "apiToken": "tok_…",
+                    "basePath": "/",
+                    "name": "eu-relay",
+                    "panelGuid": "",
+                    "port": 2053,
+                    "scheme": "https"
+                  }
                 }
               }
             }
@@ -13792,6 +13927,100 @@
         }
       }
     },
+    "/panel/api/nodes/enrollFromInvite": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Register a remote node from a child-generated enroll invite blob (fb-enroll-1.…). Contacts the child, consumes the code, and stores the minted admin API token.",
+        "operationId": "post_panel_api_nodes_enrollFromInvite",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "invite": "fb-enroll-1.…",
+                "name": "eu-relay"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/NodeView"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "activeCount": 20,
+                    "address": "node.example.com",
+                    "allowPrivateAddress": false,
+                    "basePath": "/",
+                    "clientCount": 25,
+                    "configDirty": false,
+                    "configDirtyAt": 0,
+                    "cpuPct": 12.5,
+                    "createdAt": 1700000000,
+                    "depletedCount": 1,
+                    "disabledCount": 2,
+                    "enable": true,
+                    "guid": "node-guid",
+                    "hasApiToken": true,
+                    "id": 1,
+                    "inboundCount": 3,
+                    "inboundSyncMode": "all",
+                    "inboundTags": [
+                      "in-443-tcp"
+                    ],
+                    "lastError": "",
+                    "lastHeartbeat": 1700000000,
+                    "latencyMs": 42,
+                    "memPct": 45.2,
+                    "name": "edge-1",
+                    "netDown": 1048576,
+                    "netUp": 2097152,
+                    "onlineCount": 5,
+                    "outboundTag": "direct",
+                    "panelVersion": "v3.x.x",
+                    "parentGuid": "",
+                    "pinnedCertSha256": "",
+                    "port": 2053,
+                    "remark": "Primary edge",
+                    "scheme": "https",
+                    "status": "online",
+                    "tlsVerifyMode": "verify",
+                    "transitive": false,
+                    "updatedAt": 1700003600,
+                    "uptimeSecs": 86400,
+                    "xrayError": "",
+                    "xrayState": "running",
+                    "xrayVersion": "25.10.31"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/panel/api/nodes/update/{id}": {
       "post": {
         "tags": [
@@ -15522,6 +15751,59 @@
                   "obj": {
                     "expiresIn": 45,
                     "ticket": "q3dKx0m7uZ1pYb2l9sVwQeR5tN8aHc4F6gJ_iLoPzXk"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/setting/enrollInvite": {
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Mint a one-time enroll invite blob (fb-enroll-1.…, ~30 min TTL) so a master panel can register this panel as a Node without pasting an API token. Optional publicBase overrides the guessed listen URL.",
+        "operationId": "post_panel_api_setting_enrollInvite",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "publicBase": "https://eu.example.com:2053/"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/EnrollInviteResponse"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "baseUrl": "https://eu.example.com:2053/",
+                    "expiresIn": 1800,
+                    "invite": "fb-enroll-1.eyJ2IjoxLCJiYXNlIjoiaHR0cHM6Ly9ldS5leGFtcGxlLmNvbTozMDAwLyIsImNvZGUiOiJhYmMifQ"
                   }
                 }
               }
