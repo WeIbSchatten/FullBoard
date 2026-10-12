@@ -27,10 +27,17 @@ type CustomCssPreset struct {
 	Login string `json:"login"`
 }
 
+// NavVisibilityBundle is persisted inside customCssBundle (no extra DB column).
+type NavVisibilityBundle struct {
+	Hidden      []string `json:"hidden,omitempty"`
+	ShowRouting bool     `json:"showRouting,omitempty"`
+}
+
 // CustomCssBundle stores up to two presets plus which sheet is live.
 type CustomCssBundle struct {
-	Active  string            `json:"active"`
-	Presets []CustomCssPreset `json:"presets"`
+	Active        string               `json:"active"`
+	Presets       []CustomCssPreset    `json:"presets"`
+	NavVisibility *NavVisibilityBundle `json:"navVisibility,omitempty"`
 }
 
 func defaultCustomCssBundleValue() CustomCssBundle {

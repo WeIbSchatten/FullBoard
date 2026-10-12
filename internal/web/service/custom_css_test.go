@@ -105,3 +105,40 @@ func TestCustomCssBundleRejectsThirdPreset(t *testing.T) {
 		t.Fatalf("err = %v, want at most 2 presets", err)
 	}
 }
+
+func TestCustomCssBundlePreservesNavVisibility(t *testing.T) {
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	s := &SettingService{}
+	all, err := s.GetAllSetting()
+	if err != nil {
+		t.Fatal(err)
+	}
+	all.CustomCssBundle, err = EncodeCustomCssBundle(CustomCssBundle{
+		Active:  customCssActiveDefault,
+		Presets: []CustomCssPreset{},
+		NavVisibility: &NavVisibilityBundle{
+			Hidden:      []string{"/nodes", "/api-docs"},
+			ShowRouting: true,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.UpdateAllSetting(all, SecretClears{}); err != nil {
+		t.Fatal(err)
+	}
+	all, err = s.GetAllSetting()
+	if err != nil {
+		t.Fatal(err)
+	}
+	b := ParseCustomCssBundle(all.CustomCssBundle)
+	if b.NavVisibility == nil {
+		t.Fatal("navVisibility stripped on save")
+	}
+	if !b.NavVisibility.ShowRouting {
+		t.Fatal("showRouting lost")
+	}
+	if len(b.NavVisibility.Hidden) != 2 || b.NavVisibility.Hidden[0] != "/nodes" {
+		t.Fatalf("hidden = %#v", b.NavVisibility.Hidden)
+	}
+}
