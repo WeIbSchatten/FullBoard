@@ -2,7 +2,12 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -10,6 +15,7 @@ import (
 	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy/relaytest"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
 )
 
 const bindingBaseSecret = "000102030405060708090a0b0c0d0e0f"
@@ -145,6 +151,49 @@ func TestBindClientRejectsUnknownClientAndProfile(t *testing.T) {
 	}
 }
 
+func TestBindClientRemoteRequiresDedicated(t *testing.T) {
+	setupBindingTest(t)
+	createBindingClient(t, "alice", "sub-a", true)
+	nodeID := 9
+	svc := &TgWebProxyService{}
+	_, err := svc.BindClient(TgWebProxyBindRequest{
+		Email: "alice", ProfileName: "default", NodeId: &nodeID,
+	})
+	if err == nil || !strings.Contains(err.Error(), "dedicated") {
+		t.Fatalf("remote shared bind error = %v, want dedicated required", err)
+	}
+}
+
+func TestPrepareDedicatedSpecsSetsNodeIDOnManagedInbound(t *testing.T) {
+	setupBindingTest(t)
+	rec := createBindingClient(t, "remote@wp", "sub-r", true)
+	n := &model.Node{
+		Name: "eu", Scheme: "https", Address: "eu.example.com", Port: 2053,
+		BasePath: "/", Enable: true, AllowPrivateAddress: true, PanelVersion: "v3.9.0",
+	}
+	if err := database.GetDB().Create(n).Error; err != nil {
+		t.Fatalf("seed node: %v", err)
+	}
+	nodeID := n.Id
+	rows := []tgBindingRow{{
+		ClientId: rec.Id, Email: rec.Email, ProfileName: "default", Dedicated: true, NodeId: &nodeID,
+	}}
+	specs, err := (&TgWebProxyService{}).prepareDedicatedSpecs(rows, &nodeID)
+	if err != nil {
+		t.Fatalf("prepare: %v", err)
+	}
+	if len(specs) != 1 || specs[0].Backend == "" {
+		t.Fatalf("specs = %+v", specs)
+	}
+	var ib model.Inbound
+	if err := database.GetDB().Where("remark = ?", tgWebProxyManagedRemark(rec.Email)).First(&ib).Error; err != nil {
+		t.Fatalf("inbound: %v", err)
+	}
+	if ib.NodeID == nil || *ib.NodeID != nodeID {
+		t.Fatalf("inbound NodeID = %v, want %d", ib.NodeID, nodeID)
+	}
+}
+
 func TestBindClientReplacesExistingBinding(t *testing.T) {
 	setupBindingTest(t)
 	createBindingClient(t, "alice", "sub-a", true)
@@ -267,5 +316,175 @@ func TestBindingChangesAreSyncedAfterDebounce(t *testing.T) {
 			t.Fatalf("debounced sync never created the profiles: a=%v b=%v c=%v", okA, okB, okC)
 		}
 		time.Sleep(20 * time.Millisecond)
+	}
+}
+
+func writeRelayOK(w http.ResponseWriter, obj any) {
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(map[string]any{"success": true, "msg": "", "obj": obj})
+}
+
+// Remote dedicated sync provisions a node-scoped inbound, pushes SyncDedicated
+// to the EU panel, and exposes an EU share host in subscription links.
+func TestRemoteDedicatedSyncAndSubscriptionShareHost(t *testing.T) {
+	setupBindingTest(t)
+	createBindingClient(t, "eu-client", "sub-eu", true)
+
+	const euHost = "eu-proxy.example.com"
+	const euSecret = "aabbccddeeff00112233445566778899"
+	var mu sync.Mutex
+	var syncBodies [][]byte
+	profiles := map[string]tgwebproxy.RelayProfile{
+		"default": {Name: "default", Secret: bindingBaseSecret, Backend: "127.0.0.1:2398"},
+	}
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/panel/api/tgWebProxy/config", func(w http.ResponseWriter, _ *http.Request) {
+		mu.Lock()
+		list := make([]tgwebproxy.RelayProfile, 0, len(profiles))
+		for _, p := range profiles {
+			list = append(list, p)
+		}
+		mu.Unlock()
+		writeRelayOK(w, tgwebproxy.RelaySnapshot{
+			ConfigExists: true,
+			Config:       tgwebproxy.RelayConfig{PublicHostname: euHost},
+			Profiles:     list,
+		})
+	})
+	mux.HandleFunc("/panel/api/tgWebProxy/syncDedicated", func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		mu.Lock()
+		syncBodies = append(syncBodies, append([]byte(nil), body...))
+		var req struct {
+			Specs []tgwebproxy.DedicatedSpec `json:"specs"`
+		}
+		_ = json.Unmarshal(body, &req)
+		for _, spec := range req.Specs {
+			name := tgwebproxy.DedicatedProfileName(spec.Email)
+			secret := spec.Secret
+			if secret == "" {
+				secret = euSecret
+			}
+			backend := spec.Backend
+			if backend == "" {
+				backend = "127.0.0.1:2398"
+			}
+			profiles[name] = tgwebproxy.RelayProfile{Name: name, Secret: secret, Backend: backend}
+		}
+		mu.Unlock()
+		writeRelayOK(w, tgwebproxy.RelayApplyResult{})
+	})
+	mux.HandleFunc("/panel/api/tgWebProxy/share/", func(w http.ResponseWriter, r *http.Request) {
+		name := strings.TrimPrefix(r.URL.Path, "/panel/api/tgWebProxy/share/")
+		mu.Lock()
+		p, ok := profiles[name]
+		mu.Unlock()
+		if !ok {
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]any{"success": false, "msg": "profile not found"})
+			return
+		}
+		info, err := tgwebproxy.BuildShareInfo(euHost, "", p)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		writeRelayOK(w, info)
+	})
+	ts := httptest.NewServer(mux)
+	t.Cleanup(ts.Close)
+
+	node := reconcileTestNode(t, ts, "eu-relay", "all", nil)
+	if err := database.GetDB().Model(node).Update("panel_version", "v3.9.0").Error; err != nil {
+		t.Fatalf("set panel version: %v", err)
+	}
+	node.PanelVersion = "v3.9.0"
+	runtime.SetManager(runtime.NewManager(runtime.LocalDeps{}))
+	t.Cleanup(func() { runtime.SetManager(nil) })
+
+	svc := &TgWebProxyService{}
+	nodeID := node.Id
+	if _, err := svc.BindClient(TgWebProxyBindRequest{
+		Email: "eu-client", ProfileName: "default", Dedicated: true, NodeId: &nodeID,
+	}); err != nil {
+		t.Fatalf("bind: %v", err)
+	}
+
+	links, err := svc.ClientLinksBySubId("sub-eu")
+	if err != nil {
+		t.Fatalf("links before sync: %v", err)
+	}
+	if len(links) != 0 {
+		t.Fatalf("before sync links = %+v, want none (dedicated profile not on EU yet)", links)
+	}
+
+	if _, err := svc.SyncBindings(context.Background()); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+
+	mu.Lock()
+	nSync := len(syncBodies)
+	mu.Unlock()
+	if nSync != 1 {
+		t.Fatalf("syncDedicated calls = %d, want 1", nSync)
+	}
+
+	var ib model.Inbound
+	if err := database.GetDB().Where("remark = ?", tgWebProxyManagedRemark("eu-client")).First(&ib).Error; err != nil {
+		t.Fatalf("managed inbound: %v", err)
+	}
+	if ib.NodeID == nil || *ib.NodeID != nodeID {
+		t.Fatalf("inbound NodeID = %v, want %d", ib.NodeID, nodeID)
+	}
+
+	links, err = svc.ClientLinksBySubId("sub-eu")
+	if err != nil {
+		t.Fatalf("links after sync: %v", err)
+	}
+	if len(links) != 1 || links[0].Email != "eu-client" {
+		t.Fatalf("after sync links = %+v, want eu-client", links)
+	}
+	if !strings.Contains(links[0].Link, "server="+euHost) {
+		t.Fatalf("link = %q, want EU hostname %s", links[0].Link, euHost)
+	}
+	if strings.Contains(links[0].Link, "server=proxy.example.com") {
+		t.Fatalf("link still points at the local relay host: %q", links[0].Link)
+	}
+}
+
+func TestLocalDedicatedBindingUnaffectedByRemotePath(t *testing.T) {
+	m := setupBindingTest(t)
+	createBindingClient(t, "local-only", "sub-local", true)
+	svc := &TgWebProxyService{}
+	if _, err := svc.BindClient(TgWebProxyBindRequest{
+		Email: "local-only", ProfileName: "default", Dedicated: true,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := svc.SyncBindings(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	p, ok := relayProfile(t, m, tgwebproxy.DedicatedProfileName("local-only"))
+	if !ok {
+		t.Fatal("local dedicated profile missing")
+	}
+	links, err := svc.ClientLinksBySubId("sub-local")
+	if err != nil || len(links) != 1 {
+		t.Fatalf("links = %+v, %v", links, err)
+	}
+	if !strings.Contains(links[0].Link, "proxy.example.com") {
+		t.Fatalf("local link = %q, want local relay host", links[0].Link)
+	}
+	if p.Secret == bindingBaseSecret {
+		t.Fatal("dedicated local binding reused the shared secret")
+	}
+	var row model.ClientTgWebProxy
+	if err := database.GetDB().Joins("JOIN clients c ON c.id = client_tg_web_proxy.client_id").
+		Where("c.email = ?", "local-only").First(&row).Error; err != nil {
+		t.Fatalf("binding row: %v", err)
+	}
+	if row.NodeId != nil {
+		t.Fatalf("local binding NodeId = %v, want nil", row.NodeId)
 	}
 }

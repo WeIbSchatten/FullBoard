@@ -435,6 +435,35 @@ func TestMasterNodeContract(t *testing.T) {
 				{"UpdateGeofile is refused without admin scope", []string{"UpdateGeofile"}, func() error {
 					return master.UpdateGeofile(ctx, "geoip.dat")
 				}, func(t *testing.T) {}, true, false},
+				{"tg-web-proxy snapshot and status are readable", []string{"GetTgWebProxySnapshot", "GetTgWebProxyStatus"}, func() error {
+					if _, err := master.GetTgWebProxySnapshot(ctx); err != nil {
+						return err
+					}
+					_, err := master.GetTgWebProxyStatus(ctx)
+					return err
+				}, func(t *testing.T) {}, false, false},
+				{"SyncTgWebProxyDedicated with empty specs is a no-op", []string{"SyncTgWebProxyDedicated"}, func() error {
+					_, err := master.SyncTgWebProxyDedicated(ctx, []any{})
+					return err
+				}, func(t *testing.T) {}, false, false},
+				{"ShareTgWebProxyProfile reaches the node for a missing profile", []string{"ShareTgWebProxyProfile"}, func() error {
+					_, err := master.ShareTgWebProxyProfile(ctx, "missing-profile")
+					return err
+				}, func(t *testing.T) {}, false, true},
+				{"AddTgWebProxyProfile reaches the node which rejects an empty profile", []string{"AddTgWebProxyProfile"}, func() error {
+					_, err := master.AddTgWebProxyProfile(ctx, map[string]any{"name": ""})
+					return err
+				}, func(t *testing.T) {}, false, true},
+				{"UpdateTgWebProxyProfile reaches the node for a missing profile", []string{"UpdateTgWebProxyProfile"}, func() error {
+					_, err := master.UpdateTgWebProxyProfile(ctx, "missing", map[string]any{
+						"name": "missing", "secret": "000102030405060708090a0b0c0d0e0f", "backend": "127.0.0.1:2398",
+					})
+					return err
+				}, func(t *testing.T) {}, false, true},
+				{"DeleteTgWebProxyProfile reaches the node for a missing profile", []string{"DeleteTgWebProxyProfile"}, func() error {
+					_, err := master.DeleteTgWebProxyProfile(ctx, "missing")
+					return err
+				}, func(t *testing.T) {}, false, true},
 			}
 			covered := map[string]bool{}
 			for _, c := range cells {

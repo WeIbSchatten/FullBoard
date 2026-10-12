@@ -621,6 +621,14 @@ export const ClientsSummarySchema = z.object({
 });
 export type ClientsSummary = z.infer<typeof ClientsSummarySchema>;
 
+export const DedicatedSpecSchema = z.object({
+  backend: z.string().optional(),
+  base: z.string(),
+  email: z.string(),
+  secret: z.string().optional(),
+});
+export type DedicatedSpec = z.infer<typeof DedicatedSpecSchema>;
+
 export const FallbackParentInfoSchema = z.object({
   masterId: z.number().int(),
   path: z.string().optional(),
@@ -1336,6 +1344,7 @@ export type SubBalancer = z.infer<typeof SubBalancerSchema>;
 export const TgWebProxyBindRequestSchema = z.object({
   dedicated: z.boolean(),
   email: z.string(),
+  nodeId: z.number().int().nullable().optional(),
   profileName: z.string(),
 });
 export type TgWebProxyBindRequest = z.infer<typeof TgWebProxyBindRequestSchema>;
@@ -1346,6 +1355,7 @@ export const TgWebProxyBindingSchema = z.object({
   effectiveProfile: z.string(),
   email: z.string(),
   link: z.string().optional(),
+  nodeId: z.number().int().nullable().optional(),
   profileName: z.string(),
   secret: z.string().optional(),
 });
@@ -1362,6 +1372,11 @@ export const TgWebProxyConfigRequestSchema = z.object({
   initialProfile: z.lazy(() => RelayProfileSchema).nullable().optional(),
 });
 export type TgWebProxyConfigRequest = z.infer<typeof TgWebProxyConfigRequestSchema>;
+
+export const TgWebProxySyncDedicatedRequestSchema = z.object({
+  specs: z.array(z.lazy(() => DedicatedSpecSchema)),
+});
+export type TgWebProxySyncDedicatedRequest = z.infer<typeof TgWebProxySyncDedicatedRequestSchema>;
 
 export const TgWebProxyUnbindRequestSchema = z.object({
   email: z.string(),

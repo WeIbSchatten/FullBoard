@@ -1164,7 +1164,9 @@
         "logLines": "تعداد خطوط",
         "xrayTemplateHint": "قالب Xray خود نود را ویرایش می‌کند. نود پس از ذخیره، Xray را خودش راه‌اندازی مجدد می‌کند.",
         "stopXrayConfirm": "Xray روی این نود متوقف شود؟ تا زمانی که Xray دوباره اجرا نشود، کلاینت‌های آن ارتباطشان قطع می‌ماند.",
-        "importBackupConfirm": "پایگاه داده نود از فایل زیر بازیابی شود؟\n{name}\nاین کار همه داده‌های نود را جایگزین می‌کند."
+        "importBackupConfirm": "پایگاه داده نود از فایل زیر بازیابی شود؟\n{name}\nاین کار همه داده‌های نود را جایگزین می‌کند.",
+        "tgWebProxy": "Telegram WEB Proxy",
+        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
       }
     },
     "settings": {
@@ -2575,6 +2577,9 @@
         "managed": "Managed",
         "managedHint": "Created for a client binding. Unbind the client to remove it.",
         "bind": "Bind",
+        "selectNode": "Relay host",
+        "local": "This panel (local)",
+        "remoteHint": "Remote bindings use Dedicated only: the managed MTProto inbound and fb: profile are created on the selected node.",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
         "notConfigured": "Configure the Telegram WEB Proxy relay first.",

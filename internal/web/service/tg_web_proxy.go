@@ -140,3 +140,13 @@ func (s *TgWebProxyService) UploadPublicSiteAsset(name string, r io.Reader, size
 func (s *TgWebProxyService) DeletePublicSiteAsset(name string) error {
 	return tgWebProxy().DeletePublicSiteAsset(name)
 }
+
+type TgWebProxySyncDedicatedRequest struct {
+	Specs []tgwebproxy.DedicatedSpec `json:"specs"`
+}
+
+// SyncDedicatedProfiles applies a dedicated-spec list to the local relay
+// (used by a master that manages this node's tg-web-proxy remotely).
+func (s *TgWebProxyService) SyncDedicatedProfiles(ctx context.Context, specs []tgwebproxy.DedicatedSpec) (tgwebproxy.RelayApplyResult, error) {
+	return tgWebProxy().SyncDedicatedProfiles(ctx, specs)
+}
