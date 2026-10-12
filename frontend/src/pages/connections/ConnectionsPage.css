@@ -1,4 +1,27 @@
 .connections-page {
   background: transparent;
   min-height: 60vh;
+  width: 100%;
+}
+
+/* Nested page Layouts already bring their own content-area padding. */
+.connections-page > .ant-tabs {
+  width: 100%;
+}
+
+.connections-page .ant-tabs-content-holder,
+.connections-page .ant-tabs-tabpane {
+  min-width: 0;
+}
+
+.connections-page .inbounds-page,
+.connections-page .xray-page,
+.connections-page .tg-web-proxy-page {
+  min-height: 0;
+}
+
+.connections-page .inbounds-page > .ant-layout-content.content-area,
+.connections-page .xray-page > .ant-layout-content.content-area,
+.connections-page .tg-web-proxy-page > .ant-layout-content.content-area {
+  padding-top: 8px;
 }

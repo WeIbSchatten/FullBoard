@@ -38,7 +38,7 @@ function resolveNavPosition(raw: string | undefined, cached: NavPosition | null)
 
 const NavLayoutContext = createContext<NavLayoutValue>({
   navPosition: readCachedNavPosition() ?? 'side',
-  tabsTabPosition: (readCachedNavPosition() ?? 'side') === 'top' ? 'left' : 'top',
+  tabsTabPosition: 'top',
   ready: readCachedNavPosition() != null,
 });
 
@@ -53,7 +53,7 @@ export function NavLayoutProvider({ children }: { children: ReactNode }) {
     const navPosition = resolveNavPosition(fromServer, cached);
     return {
       navPosition,
-      tabsTabPosition: navPosition === 'top' ? 'left' : 'top',
+      tabsTabPosition: 'top',
       ready: fetched || cached != null,
     };
   }, [allSetting?.navPosition, cached, fetched]);

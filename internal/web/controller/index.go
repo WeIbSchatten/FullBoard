@@ -212,7 +212,8 @@ func (a *IndexController) enrollConsume(c *gin.Context) {
 		pureJsonMsg(c, http.StatusOK, false, "code is required")
 		return
 	}
-	if err := a.settingService.ConsumeEnrollInviteCode(form.Code); err != nil {
+	preferredBase, err := a.settingService.ConsumeEnrollInviteCode(form.Code)
+	if err != nil {
 		logger.Warningf("enroll consume failed: IP=%q err=%v", getRemoteIp(c), err)
 		pureJsonMsg(c, http.StatusOK, false, err.Error())
 		return
@@ -224,7 +225,7 @@ func (a *IndexController) enrollConsume(c *gin.Context) {
 		pureJsonMsg(c, http.StatusOK, false, err.Error())
 		return
 	}
-	res, err := a.settingService.EnrollConnectionDetails(view.Token)
+	res, err := a.settingService.EnrollConnectionDetails(view.Token, preferredBase)
 	if err != nil {
 		logger.Warningf("enroll details failed: IP=%q err=%v", getRemoteIp(c), err)
 		pureJsonMsg(c, http.StatusOK, false, err.Error())
