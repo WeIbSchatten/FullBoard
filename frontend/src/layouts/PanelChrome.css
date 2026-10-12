@@ -63,6 +63,7 @@ html[data-theme='ultra-dark'] .panel-chrome {
 
 .panel-chrome--top {
   flex-direction: column;
+  width: 100%;
 }
 
 .panel-chrome--top > .content-shell,
@@ -70,9 +71,16 @@ html[data-theme='ultra-dark'] .panel-chrome {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
+  width: 100%;
   background: transparent !important;
   display: flex;
   flex-direction: column;
+}
+
+.panel-chrome--top > .content-shell > .content-area,
+.panel-chrome--top > .content-shell > .ant-layout {
+  width: 100%;
+  max-width: 100%;
 }
 
 @media (max-width: 768px) {

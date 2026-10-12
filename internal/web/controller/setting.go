@@ -260,13 +260,56 @@ type enrollInviteForm struct {
 func (a *SettingController) issueEnrollInvite(c *gin.Context) {
 	form := &enrollInviteForm{}
 	_ = c.ShouldBind(form)
-	res, err := a.settingService.IssueEnrollInvite(form.PublicBase)
+	publicBase := strings.TrimSpace(form.PublicBase)
+	if publicBase == "" {
+		if guessed, err := a.settingService.GuessPanelBaseURL(); err == nil {
+			publicBase = guessed
+		} else {
+			publicBase = requestPublicBaseURL(c)
+		}
+	}
+	res, err := a.settingService.IssueEnrollInvite(publicBase)
 	if err != nil {
 		jsonMsg(c, I18nWeb(c, "pages.settings.remoteManage.issueFailed"), err)
 		return
 	}
 	c.Header("Cache-Control", "no-store")
 	jsonObj(c, res, nil)
+}
+
+// requestPublicBaseURL uses the browser-facing Host when Web Domain is unset.
+func requestPublicBaseURL(c *gin.Context) string {
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme = "https"
+	}
+	if proto := strings.TrimSpace(c.GetHeader("X-Forwarded-Proto")); proto != "" {
+		scheme = strings.Split(proto, ",")[0]
+		scheme = strings.TrimSpace(scheme)
+	}
+	host := strings.TrimSpace(c.GetHeader("X-Forwarded-Host"))
+	if host == "" {
+		host = strings.TrimSpace(c.Request.Host)
+	} else {
+		host = strings.Split(host, ",")[0]
+		host = strings.TrimSpace(host)
+	}
+	if host == "" {
+		return ""
+	}
+	basePath := "/"
+	if v, ok := c.Get("base_path"); ok {
+		if s, ok := v.(string); ok && s != "" {
+			basePath = s
+		}
+	}
+	if !strings.HasPrefix(basePath, "/") {
+		basePath = "/" + basePath
+	}
+	if !strings.HasSuffix(basePath, "/") {
+		basePath += "/"
+	}
+	return scheme + "://" + host + basePath
 }
 
 // getDefaultXrayConfig retrieves the default Xray configuration.

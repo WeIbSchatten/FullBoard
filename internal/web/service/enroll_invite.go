@@ -60,7 +60,7 @@ func (s *SettingService) IssueEnrollInvite(publicBase string) (EnrollInviteRespo
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		return EnrollInviteResponse{}, fmt.Errorf("public base URL must include scheme and host")
 	}
-	code, err := session.IssueEnrollInviteCode()
+	code, err := session.IssueEnrollInviteCode(base)
 	if err != nil {
 		return EnrollInviteResponse{}, err
 	}
@@ -119,23 +119,32 @@ func normalizeEnrollBasePath(p string) string {
 	return p
 }
 
-// ConsumeEnrollInviteCode burns a one-time invite; the caller mints the API token.
-func (s *SettingService) ConsumeEnrollInviteCode(code string) error {
-	if !session.ConsumeEnrollInviteCode(strings.TrimSpace(code)) {
-		return fmt.Errorf("enroll invite is invalid or expired")
+// ConsumeEnrollInviteCode burns a one-time invite; returns the public base stored at issue.
+func (s *SettingService) ConsumeEnrollInviteCode(code string) (string, error) {
+	base, ok := session.ConsumeEnrollInviteCode(strings.TrimSpace(code))
+	if !ok {
+		return "", fmt.Errorf("enroll invite is invalid or expired")
 	}
-	return nil
+	return base, nil
 }
 
 // EnrollConnectionDetails returns this panel's dial address for a minted token.
-func (s *SettingService) EnrollConnectionDetails(apiToken string) (EnrollConsumeResponse, error) {
-	base, err := s.GuessPanelBaseURL()
-	if err != nil {
-		return EnrollConsumeResponse{}, err
+// preferredBase (from the invite) wins over GuessPanelBaseURL so wildcard listen works.
+func (s *SettingService) EnrollConnectionDetails(apiToken, preferredBase string) (EnrollConsumeResponse, error) {
+	base := strings.TrimSpace(preferredBase)
+	if base == "" {
+		var err error
+		base, err = s.GuessPanelBaseURL()
+		if err != nil {
+			return EnrollConsumeResponse{}, err
+		}
+	}
+	if !strings.HasSuffix(base, "/") {
+		base += "/"
 	}
 	u, err := url.Parse(base)
-	if err != nil {
-		return EnrollConsumeResponse{}, err
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return EnrollConsumeResponse{}, fmt.Errorf("enroll base URL is invalid")
 	}
 	port := 0
 	if u.Port() != "" {
