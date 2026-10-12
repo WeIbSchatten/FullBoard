@@ -75,6 +75,7 @@ func (a *SettingController) initRouter(g *gin.RouterGroup) {
 	g.POST("/updateUser", a.updateUser)
 	g.POST("/restartPanel", a.restartPanel)
 	g.POST("/loginTicket", a.issueLoginTicket)
+	g.POST("/enrollInvite", a.issueEnrollInvite)
 	g.GET("/getDefaultJsonConfig", a.getDefaultXrayConfig)
 	g.GET("/apiTokens", a.listApiTokens)
 	g.POST("/apiTokens/create", a.createApiToken)
@@ -250,6 +251,22 @@ func (a *SettingController) issueLoginTicket(c *gin.Context) {
 	logger.Infof("login ticket issued to an admin API token from IP=%q", getRemoteIp(c))
 	c.Header("Cache-Control", "no-store")
 	jsonObj(c, service.LoginTicketResponse{Ticket: ticket, ExpiresIn: int(session.LoginTicketTTL.Seconds())}, nil)
+}
+
+type enrollInviteForm struct {
+	PublicBase string `json:"publicBase" form:"publicBase"`
+}
+
+func (a *SettingController) issueEnrollInvite(c *gin.Context) {
+	form := &enrollInviteForm{}
+	_ = c.ShouldBind(form)
+	res, err := a.settingService.IssueEnrollInvite(form.PublicBase)
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.settings.remoteManage.issueFailed"), err)
+		return
+	}
+	c.Header("Cache-Control", "no-store")
+	jsonObj(c, res, nil)
 }
 
 // getDefaultXrayConfig retrieves the default Xray configuration.

@@ -243,6 +243,14 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'POST',
+        path: '/enroll/consume',
+        summary:
+          'Consume a one-time enroll invite code (child panel). Mints an admin API token and returns connection details for the master. Public; single use.',
+        body: '{\n  "code": "…"\n}',
+        responseSchema: 'EnrollConsumeResponse',
+      },
+      {
+        method: 'POST',
         path: '/logout',
         summary: 'Clear the session cookie. Requires the CSRF header for browser sessions.',
         response: '{\n  "success": true\n}',
@@ -2002,6 +2010,14 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'POST',
+        path: '/panel/api/nodes/enrollFromInvite',
+        summary:
+          'Register a remote node from a child-generated enroll invite blob (fb-enroll-1.…). Contacts the child, consumes the code, and stores the minted admin API token.',
+        body: '{\n  "invite": "fb-enroll-1.…",\n  "name": "eu-relay"\n}',
+        responseSchema: 'NodeView',
+      },
+      {
+        method: 'POST',
         path: '/panel/api/nodes/update/:id',
         summary:
           'Replace a node\u2019s connection details. apiToken is write-only: omit it or send an empty string to keep the stored token; set clearApiToken=true to clear it.',
@@ -2254,6 +2270,14 @@ export const sections: readonly Section[] = [
         summary:
           'Mint a single-use browser sign-in ticket (valid 45 seconds) for POST /login/ticket. Admin-scope API tokens only: a browser session, node-sync or monitor token gets 403. A managing panel calls this for its "Login to panel" button.',
         responseSchema: 'LoginTicketResponse',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/setting/enrollInvite',
+        summary:
+          'Mint a one-time enroll invite blob (fb-enroll-1.…, ~30 min TTL) so a master panel can register this panel as a Node without pasting an API token. Optional publicBase overrides the guessed listen URL.',
+        body: '{\n  "publicBase": "https://eu.example.com:2053/"\n}',
+        responseSchema: 'EnrollInviteResponse',
       },
       {
         method: 'POST',

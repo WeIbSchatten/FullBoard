@@ -21,6 +21,7 @@ import { catTabLabel } from './catTabLabel';
 import { sanitizePath } from './uriPath';
 import SecretInput from './SecretInput';
 import CustomCssSettings from './CustomCssSettings';
+import RemoteManageSettings from './RemoteManageSettings';
 
 interface ApiMsg<T = unknown> {
   success?: boolean;
@@ -347,6 +348,8 @@ export default function GeneralTab({ allSetting, updateSetting }: GeneralTabProp
                   options={langOptions}
                 />
               </SettingListItem>
+
+              <RemoteManageSettings />
             </>
           ),
         },

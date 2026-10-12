@@ -42,7 +42,7 @@ const SECTION_SLUGS = ['basic', 'routing', 'outbound', 'balancer', 'dns', 'advan
 
 type AdvKey = 'xraySetting' | 'inboundSettings' | 'outboundSettings' | 'routingRuleSettings';
 
-export default function XrayPage() {
+export default function XrayPage({ forceSection }: { forceSection?: string } = {}) {
   const { t } = useTranslation();
   const { isDark, isUltra, antdThemeConfig } = useTheme();
   const { isMobile } = useMediaQuery();
@@ -86,9 +86,11 @@ export default function XrayPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const pathSection =
-    location.pathname === '/outbound'
+    forceSection === 'outbound' ||
+    location.pathname === '/outbound' ||
+    (location.pathname === '/connections' && location.hash.replace(/^#/, '') === 'outbounds')
       ? 'outbound'
-      : location.pathname === '/routing'
+      : forceSection === 'routing' || location.pathname === '/routing'
         ? 'routing'
         : '';
   const chainRequest = useMemo(() => {

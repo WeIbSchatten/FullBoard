@@ -14,6 +14,7 @@ import {
   EyeInvisibleOutlined,
   EyeOutlined,
   InfoCircleOutlined,
+  LinkOutlined,
   MoreOutlined,
   PlusOutlined,
   RightOutlined,
@@ -36,6 +37,7 @@ interface NodeListProps {
   selectedIds: number[];
   onSelectionChange: (ids: number[]) => void;
   onAdd: () => void;
+  onAddFromInvite?: () => void;
   onMtls: () => void;
   onEdit: (node: NodeRecord) => void;
   onDelete: (node: NodeRecord) => void;
@@ -173,6 +175,7 @@ export default function NodeList({
   selectedIds,
   onSelectionChange,
   onAdd,
+  onAddFromInvite,
   onMtls,
   onEdit,
   onDelete,
@@ -597,6 +600,11 @@ export default function NodeList({
         <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
           {t('pages.nodes.addNode')}
         </Button>
+        {onAddFromInvite ? (
+          <Button icon={<LinkOutlined />} onClick={onAddFromInvite}>
+            {t('pages.nodes.addFromInvite')}
+          </Button>
+        ) : null}
         <Button icon={<SafetyCertificateOutlined />} onClick={onMtls}>
           {t('pages.nodes.mtls.title')}
         </Button>

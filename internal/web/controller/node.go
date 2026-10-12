@@ -32,6 +32,7 @@ func (a *NodeController) initRouter(g *gin.RouterGroup) {
 	g.GET("/webCert/:id", a.webCert)
 
 	g.POST("/add", a.add)
+	g.POST("/enrollFromInvite", a.enrollFromInvite)
 	g.POST("/update/:id", a.update)
 	g.POST("/del/:id", a.del)
 	g.POST("/setEnable/:id", a.setEnable)
@@ -230,6 +231,15 @@ func (a *NodeController) add(c *gin.Context) {
 		}
 	}
 	jsonMsgObj(c, I18nWeb(c, "pages.nodes.toasts.add"), view, nil)
+}
+
+func (a *NodeController) enrollFromInvite(c *gin.Context) {
+	req, ok := middleware.BindJSONAndValidate[service.EnrollFromInviteRequest](c)
+	if !ok {
+		return
+	}
+	view, err := a.nodeService.EnrollFromInvite(*req)
+	jsonMsgObj(c, I18nWeb(c, "pages.nodes.toasts.add"), view, err)
 }
 
 func (a *NodeController) update(c *gin.Context) {

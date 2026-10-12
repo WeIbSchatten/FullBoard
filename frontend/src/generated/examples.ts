@@ -635,6 +635,24 @@ export const EXAMPLES: Record<string, unknown> = {
     "email": "alice",
     "secret": "aabbccddeeff00112233445566778899"
   },
+  "EnrollConsumeResponse": {
+    "address": "eu.example.com",
+    "apiToken": "tok_…",
+    "basePath": "/",
+    "name": "eu-relay",
+    "panelGuid": "",
+    "port": 2053,
+    "scheme": "https"
+  },
+  "EnrollFromInviteRequest": {
+    "invite": "fb-enroll-1.…",
+    "name": "eu-relay"
+  },
+  "EnrollInviteResponse": {
+    "baseUrl": "https://eu.example.com:2053/",
+    "expiresIn": 1800,
+    "invite": "fb-enroll-1.eyJ2IjoxLCJiYXNlIjoiaHR0cHM6Ly9ldS5leGFtcGxlLmNvbTozMDAwLyIsImNvZGUiOiJhYmMifQ"
+  },
   "FallbackParentInfo": {
     "masterId": 0,
     "path": ""

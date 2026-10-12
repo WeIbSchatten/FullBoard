@@ -1,10 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 	"text/template"
 	"time"
 
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
@@ -48,6 +51,8 @@ func (a *IndexController) initRouter(g *gin.RouterGroup) {
 	g.POST("/login/ticket", middleware.CSRFMiddleware(), a.loginWithTicket)
 	g.POST("/logout", middleware.CSRFMiddleware(), a.logout)
 	g.POST("/getTwoFactorEnable", middleware.CSRFMiddleware(), a.getTwoFactorEnable)
+	// Public one-shot enroll consume (no CSRF: master panels call this server-to-server).
+	g.POST("/enroll/consume", a.enrollConsume)
 }
 
 // customLoginCss is public: the login page needs it before authentication.
@@ -195,6 +200,38 @@ func loginFailureReason(err error) string {
 		return "invalid 2FA code"
 	}
 	return "invalid credentials"
+}
+
+type enrollConsumeForm struct {
+	Code string `json:"code" form:"code"`
+}
+
+func (a *IndexController) enrollConsume(c *gin.Context) {
+	form := &enrollConsumeForm{}
+	if err := c.ShouldBindJSON(form); err != nil || strings.TrimSpace(form.Code) == "" {
+		pureJsonMsg(c, http.StatusOK, false, "code is required")
+		return
+	}
+	if err := a.settingService.ConsumeEnrollInviteCode(form.Code); err != nil {
+		logger.Warningf("enroll consume failed: IP=%q err=%v", getRemoteIp(c), err)
+		pureJsonMsg(c, http.StatusOK, false, err.Error())
+		return
+	}
+	tokSvc := &panel.ApiTokenService{}
+	view, err := tokSvc.Create(fmt.Sprintf("enroll-%d", time.Now().Unix()), model.ApiScopeAdmin, 0)
+	if err != nil {
+		logger.Warningf("enroll token mint failed: IP=%q err=%v", getRemoteIp(c), err)
+		pureJsonMsg(c, http.StatusOK, false, err.Error())
+		return
+	}
+	res, err := a.settingService.EnrollConnectionDetails(view.Token)
+	if err != nil {
+		logger.Warningf("enroll details failed: IP=%q err=%v", getRemoteIp(c), err)
+		pureJsonMsg(c, http.StatusOK, false, err.Error())
+		return
+	}
+	c.Header("Cache-Control", "no-store")
+	jsonObj(c, res, nil)
 }
 
 func (a *IndexController) logout(c *gin.Context) {

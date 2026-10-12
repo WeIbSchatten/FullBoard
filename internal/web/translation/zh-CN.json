@@ -125,7 +125,8 @@
     "pinSidebar": "固定侧边栏",
     "unpinSidebar": "取消固定侧边栏",
     "subFormats": "Sub Formats",
-    "tgWebProxy": "Telegram WEB Proxy"
+    "tgWebProxy": "Telegram WEB Proxy",
+    "connections": "Connections"
   },
   "pages": {
     "login": {
@@ -1167,7 +1168,14 @@
         "importBackupConfirm": "从 {name} 恢复节点数据库？这将替换该节点的所有数据。",
         "tgWebProxy": "Telegram WEB Proxy",
         "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
-      }
+      },
+      "addFromInvite": "Add from invite",
+      "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
+      "invitePlaceholder": "fb-enroll-1.…",
+      "inviteNamePlaceholder": "Optional node name",
+      "inviteRequired": "Paste an enroll invite",
+      "inviteSubmit": "Enroll node",
+      "inviteFailed": "Could not enroll from invite"
     },
     "settings": {
       "defaultTag": "默认",
@@ -1808,7 +1816,22 @@
         "createPreset": "New preset",
         "deletePreset": "Delete preset",
         "rename": "Preset name",
-        "renameDesc": "Shown in the stylesheet switcher."
+        "renameDesc": "Shown in the stylesheet switcher.",
+        "navVisibility": "Sidebar items",
+        "navVisibilityDesc": "Hide menu entries you do not use. Routing stays off unless you enable it here."
+      },
+      "remoteManage": {
+        "title": "Remote management",
+        "desc": "Generate a one-time invite so a master panel can add this panel as a Node without pasting an API token. Open the invite on the master or paste it under Nodes → Add from invite.",
+        "publicBasePh": "https://this-panel.example.com:2053/",
+        "publicBaseDesc": "Optional public base URL if Web Domain is unset or wrong.",
+        "issue": "Generate invite",
+        "regenerate": "Regenerate invite",
+        "copy": "Copy invite",
+        "copied": "Invite copied",
+        "issued": "Invite ready — copy it to the master panel",
+        "issueFailed": "Could not create enroll invite",
+        "expiresIn": "Expires in about {minutes} minutes"
       }
     },
     "xray": {
@@ -2635,7 +2658,8 @@
         "hint": "For a public MTProxy address, creates a loopback tunnel that rewrites to that address and sends it through the chosen outbound. A loopback or private MTProxy is dialed on this host: the stock direct outbound blocks private addresses, so the hop uses its own outbound that allows 127.0.0.1. A remote outbound would dial 127.0.0.1 on the far side.",
         "warning": "The MTProxy must accept this profile secret. Loopback and private addresses stay on direct so geoip:private cannot blackhole them.",
         "doneLocal": "Local MTProxy is dialed on this host. A remote outbound cannot carry 127.0.0.1."
-      }
+      },
+      "servicePanel": "Service"
     }
   },
   "tgbot": {
