@@ -5,11 +5,13 @@
 .settings-page,
 .nodes-page,
 .groups-page,
-.api-docs-page {
-  --bg-page: #e6e8ec;
-  --bg-card: #ffffff;
+.api-docs-page,
+.hosts-page,
+.tg-web-proxy-page {
+  --bg-page: transparent;
+  --bg-card: rgba(255, 255, 255, 0.78);
   min-height: 100vh;
-  background: var(--bg-page);
+  background: transparent;
 }
 
 .index-page.is-dark,
@@ -19,9 +21,11 @@
 .settings-page.is-dark,
 .nodes-page.is-dark,
 .groups-page.is-dark,
-.api-docs-page.is-dark {
-  --bg-page: #1a1b1f;
-  --bg-card: #23252b;
+.api-docs-page.is-dark,
+.hosts-page.is-dark,
+.tg-web-proxy-page.is-dark {
+  --bg-page: transparent;
+  --bg-card: rgba(20, 20, 24, 0.72);
 }
 
 .index-page.is-dark.is-ultra,
@@ -31,9 +35,11 @@
 .settings-page.is-dark.is-ultra,
 .nodes-page.is-dark.is-ultra,
 .groups-page.is-dark.is-ultra,
-.api-docs-page.is-dark.is-ultra {
-  --bg-page: #000;
-  --bg-card: #101013;
+.api-docs-page.is-dark.is-ultra,
+.hosts-page.is-dark.is-ultra,
+.tg-web-proxy-page.is-dark.is-ultra {
+  --bg-page: transparent;
+  --bg-card: rgba(12, 12, 15, 0.78);
 }
 
 .index-page .ant-layout,
@@ -51,7 +57,11 @@
 .groups-page .ant-layout,
 .groups-page .ant-layout-content,
 .api-docs-page .ant-layout,
-.api-docs-page .ant-layout-content {
+.api-docs-page .ant-layout-content,
+.hosts-page .ant-layout,
+.hosts-page .ant-layout-content,
+.tg-web-proxy-page .ant-layout,
+.tg-web-proxy-page .ant-layout-content {
   background: transparent;
 }
 
@@ -62,7 +72,9 @@
 .settings-page .content-shell,
 .nodes-page .content-shell,
 .groups-page .content-shell,
-.api-docs-page .content-shell {
+.api-docs-page .content-shell,
+.hosts-page .content-shell,
+.tg-web-proxy-page .content-shell {
   background: transparent;
 }
 
@@ -72,16 +84,21 @@
 .xray-page .content-area,
 .settings-page .content-area,
 .nodes-page .content-area,
-.groups-page .content-area {
-  padding: 24px;
+.groups-page .content-area,
+.hosts-page .content-area,
+.api-docs-page .content-area,
+.tg-web-proxy-page .content-area {
+  padding: 12px 24px 28px;
 }
 
 @media (max-width: 768px) {
   .clients-page .content-area,
   .inbounds-page .content-area,
   .nodes-page .content-area,
-  .groups-page .content-area {
-    padding: 8px;
+  .groups-page .content-area,
+  .hosts-page .content-area,
+  .tg-web-proxy-page .content-area {
+    padding: 8px 12px 20px;
   }
 }
 
@@ -142,6 +159,44 @@ body.dark .ant-dropdown-menu-item-divider {
   justify-content: flex-end;
 }
 
+.panel-chrome .ant-tabs-nav::before {
+  border-bottom: none !important;
+}
+
+.panel-chrome .ant-tabs-tab {
+  border-radius: 999px !important;
+  padding: 6px 16px !important;
+  margin: 0 4px 0 0 !important;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.15s;
+}
+
+.panel-chrome .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+.panel-chrome .ant-tabs-tab-active {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+body.light .panel-chrome .ant-tabs-tab-active {
+  background: rgba(15, 23, 42, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.35);
+}
+
+.panel-chrome .ant-btn {
+  border-radius: 12px;
+}
+
+.panel-chrome .ant-btn-round,
+.panel-chrome .ant-input-affix-wrapper-borderless,
+.panel-chrome .ant-input-search .ant-input-affix-wrapper {
+  border-radius: 999px;
+}
+
 .icons-only .ant-tabs-nav {
   margin-bottom: 8px;
 }
@@ -174,7 +229,8 @@ body.dark .ant-dropdown-menu-item-divider {
 .clients-page .summary-card,
 .inbounds-page .summary-card,
 .nodes-page .summary-card,
-.groups-page .summary-card {
+.groups-page .summary-card,
+.hosts-page .summary-card {
   padding: 16px;
 }
 
@@ -182,46 +238,7 @@ body.dark .ant-dropdown-menu-item-divider {
   .clients-page .summary-card,
   .inbounds-page .summary-card,
   .nodes-page .summary-card,
-  .groups-page .summary-card {
-    padding: 8px;
-  }
-}
-
-/* Hosts page shares the standard panel page shell (background, transparent
-   layout, content padding, summary-card padding). */
-.hosts-page {
-  --bg-page: #e6e8ec;
-  --bg-card: #ffffff;
-  min-height: 100vh;
-  background: var(--bg-page);
-}
-
-.hosts-page.is-dark {
-  --bg-page: #1a1b1f;
-  --bg-card: #23252b;
-}
-
-.hosts-page.is-dark.is-ultra {
-  --bg-page: #000;
-  --bg-card: #101013;
-}
-
-.hosts-page .ant-layout,
-.hosts-page .ant-layout-content,
-.hosts-page .content-shell {
-  background: transparent;
-}
-
-.hosts-page .content-area {
-  padding: 24px;
-}
-
-.hosts-page .summary-card {
-  padding: 16px;
-}
-
-@media (max-width: 768px) {
-  .hosts-page .content-area,
+  .groups-page .summary-card,
   .hosts-page .summary-card {
     padding: 8px;
   }

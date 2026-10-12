@@ -5,6 +5,7 @@ import { useWebSocketBridge } from '@/api/websocketBridge';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import CommandPalette from '@/components/command-palette/CommandPalette';
 import AppSidebar from '@/layouts/AppSidebar';
+import PanelTopBar from '@/layouts/PanelTopBar';
 import { NavLayoutProvider, useNavLayout } from '@/layouts/NavLayoutContext';
 import './PanelChrome.css';
 
@@ -17,6 +18,7 @@ function PanelChrome() {
     >
       <AppSidebar />
       <Layout className="content-shell">
+        {navPosition === 'side' ? <PanelTopBar /> : null}
         <Outlet />
       </Layout>
     </Layout>

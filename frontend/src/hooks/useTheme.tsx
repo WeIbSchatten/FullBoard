@@ -35,50 +35,70 @@ const initialUltra = readBool(STORAGE_ULTRA, false);
 applyDom(initialDark, initialUltra);
 
 const DARK_TOKENS = {
-  colorBgBase: '#1a1b1f',
-  colorBgLayout: '#1a1b1f',
-  colorBgContainer: '#23252b',
-  colorBgElevated: '#2d2f37',
+  colorBgBase: '#09090b',
+  colorBgLayout: '#09090b',
+  colorBgContainer: 'rgba(20, 20, 24, 0.72)',
+  colorBgElevated: '#1c1c22',
+  colorPrimary: '#60a5fa',
+  colorPrimaryHover: '#93c5fd',
+  colorPrimaryActive: '#3b82f6',
+  borderRadius: 14,
+  borderRadiusLG: 20,
+  fontFamily: `"Segoe UI Variable Text", "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif`,
 };
 const ULTRA_DARK_TOKENS = {
   colorBgBase: '#000',
   colorBgLayout: '#000',
-  colorBgContainer: '#101013',
-  colorBgElevated: '#1a1a1e',
+  colorBgContainer: 'rgba(12, 12, 15, 0.78)',
+  colorBgElevated: '#141418',
+  colorPrimary: '#60a5fa',
+  colorPrimaryHover: '#93c5fd',
+  colorPrimaryActive: '#3b82f6',
+  borderRadius: 14,
+  borderRadiusLG: 20,
+  fontFamily: `"Segoe UI Variable Text", "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif`,
 };
 const DARK_LAYOUT_TOKENS = {
-  bodyBg: '#1a1b1f',
-  headerBg: '#15161a',
+  bodyBg: 'transparent',
+  headerBg: 'transparent',
   headerColor: '#ffffff',
-  footerBg: '#1a1b1f',
-  siderBg: '#15161a',
-  triggerBg: '#23252b',
+  footerBg: 'transparent',
+  siderBg: 'transparent',
+  triggerBg: '#141418',
   triggerColor: '#ffffff',
 };
 const ULTRA_DARK_LAYOUT_TOKENS = {
-  bodyBg: '#000',
-  headerBg: '#050507',
+  bodyBg: 'transparent',
+  headerBg: 'transparent',
   headerColor: '#ffffff',
-  footerBg: '#000',
-  siderBg: '#050507',
-  triggerBg: '#1a1a1e',
+  footerBg: 'transparent',
+  siderBg: 'transparent',
+  triggerBg: '#0c0c0f',
   triggerColor: '#ffffff',
 };
 const DARK_MENU_TOKENS = {
-  darkItemBg: '#15161a',
-  darkSubMenuItemBg: '#1a1b1f',
-  darkPopupBg: '#23252b',
+  darkItemBg: 'transparent',
+  darkSubMenuItemBg: 'transparent',
+  darkPopupBg: '#1c1c22',
+  itemBorderRadius: 12,
+  itemMarginInline: 8,
+  itemMarginBlock: 2,
 };
 const ULTRA_DARK_MENU_TOKENS = {
-  darkItemBg: '#050507',
-  darkSubMenuItemBg: '#000',
-  darkPopupBg: '#101013',
+  darkItemBg: 'transparent',
+  darkSubMenuItemBg: 'transparent',
+  darkPopupBg: '#141418',
+  itemBorderRadius: 12,
+  itemMarginInline: 8,
+  itemMarginBlock: 2,
 };
 const DARK_CARD_TOKENS = {
   colorBorderSecondary: 'rgba(255, 255, 255, 0.06)',
+  borderRadiusLG: 20,
 };
 const ULTRA_DARK_CARD_TOKENS = {
   colorBorderSecondary: 'rgba(255, 255, 255, 0.04)',
+  borderRadiusLG: 20,
 };
 const STATISTIC_TOKENS = {
   contentFontSize: 17,
@@ -117,10 +137,27 @@ export function buildAntdThemeConfig(isDark: boolean, isUltra: boolean): ThemeCo
     return {
       ...SHARED_STYLE_CONFIG,
       algorithm: antdTheme.defaultAlgorithm,
-      token: LIGHT_CONTRAST_TOKENS,
+      token: {
+        ...LIGHT_CONTRAST_TOKENS,
+        borderRadius: 14,
+        borderRadiusLG: 20,
+        fontFamily: `"Segoe UI Variable Text", "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif`,
+      },
       components: {
         Statistic: STATISTIC_TOKENS,
         Button: LIGHT_BUTTON_TOKENS,
+        Card: { borderRadiusLG: 20 },
+        Layout: {
+          bodyBg: 'transparent',
+          headerBg: 'transparent',
+          siderBg: 'transparent',
+          footerBg: 'transparent',
+        },
+        Menu: {
+          itemBorderRadius: 12,
+          itemMarginInline: 8,
+          itemMarginBlock: 2,
+        },
       },
     };
   }

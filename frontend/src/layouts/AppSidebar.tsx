@@ -377,29 +377,6 @@ export default function AppSidebar() {
     </div>
   );
 
-  const commandTrigger = (
-    <Tooltip
-      title={railCollapsed ? t('commandPalette.title') || 'Command Palette (Ctrl + K)' : undefined}
-      placement="right"
-    >
-      <button
-        type="button"
-        className={`sidebar-command-trigger${railCollapsed ? ' collapsed' : ''}`}
-        onClick={openCommandPalette}
-        aria-label={t('commandPalette.title') || 'Command Palette (Ctrl + K)'}
-      >
-        <span className="sidebar-command-left">
-          <SearchOutlined className="sidebar-command-icon" />
-          <span className="sidebar-command-text">{t('commandPalette.search') || 'Search...'}</span>
-        </span>
-        <span className="sidebar-command-kbd">
-          <span className="kbd-cmd">{SHORTCUT_MODIFIER}</span>
-          <span className="kbd-key">K</span>
-        </span>
-      </button>
-    </Tooltip>
-  );
-
   return (
     <div
       ref={rootRef}
@@ -411,6 +388,9 @@ export default function AppSidebar() {
       {topNav ? (
         <Layout.Header className={`top-nav-header top-nav-header--${currentTheme}`}>
           <div className="top-nav-brand">
+            <span className="brand-mark" aria-hidden>
+              FB
+            </span>
             <span className="brand-text">FullBoard</span>
           </div>
           <div className="top-nav-menu-wrap">
@@ -464,11 +444,13 @@ export default function AppSidebar() {
         >
           <div className="sider-brand">
             <div className="brand-block">
-              <span className="brand-text">{railCollapsed ? 'FB' : 'FullBoard'}</span>
+              <span className="brand-mark" aria-hidden>
+                FB
+              </span>
+              {!railCollapsed && <span className="brand-text">FullBoard</span>}
             </div>
             {!railCollapsed && brandActions}
           </div>
-          {commandTrigger}
           <Menu
             theme={currentTheme}
             mode="inline"
