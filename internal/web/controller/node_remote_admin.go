@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +27,13 @@ func (a *NodeController) initRemoteAdminRouter(g *gin.RouterGroup) {
 	g.GET("/remote/:id/inbounds", a.remoteInbounds)
 	g.POST("/remote/:id/adopt", a.adoptRemoteInbound)
 	g.POST("/remote/:id/loginAs", a.remoteLoginAs)
+	g.GET("/remote/:id/tgWebProxy/status", a.remoteTgWebProxyStatus)
+	g.GET("/remote/:id/tgWebProxy/config", a.remoteTgWebProxyConfig)
+	g.GET("/remote/:id/tgWebProxy/share/:name", a.remoteTgWebProxyShare)
+	g.POST("/remote/:id/tgWebProxy/syncDedicated", a.remoteTgWebProxySyncDedicated)
+	g.POST("/remote/:id/tgWebProxy/profiles/add", a.remoteTgWebProxyAddProfile)
+	g.POST("/remote/:id/tgWebProxy/profiles/update/:name", a.remoteTgWebProxyUpdateProfile)
+	g.POST("/remote/:id/tgWebProxy/profiles/del/:name", a.remoteTgWebProxyDelProfile)
 }
 
 type remoteXrayForm struct {
@@ -189,4 +198,79 @@ func (a *NodeController) remoteLoginAs(c *gin.Context) {
 	}
 	c.Header("Cache-Control", "no-store")
 	jsonObj(c, service.RemoteLoginURL{Url: loginURL}, nil)
+}
+
+func (a *NodeController) remoteTgWebProxyStatus(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	status, err := a.nodeService.RemoteTgWebProxyStatus(id)
+	jsonObj(c, status, err)
+}
+
+func (a *NodeController) remoteTgWebProxyConfig(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	snap, err := a.nodeService.RemoteTgWebProxySnapshot(id)
+	jsonObj(c, snap, err)
+}
+
+func (a *NodeController) remoteTgWebProxyShare(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	info, err := a.nodeService.RemoteTgWebProxyShare(id, c.Param("name"))
+	jsonObj(c, info, err)
+}
+
+func (a *NodeController) remoteTgWebProxySyncDedicated(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	req, ok := middleware.BindJSONAndValidate[service.TgWebProxySyncDedicatedRequest](c)
+	if !ok {
+		return
+	}
+	res, err := a.nodeService.SyncRemoteTgWebProxyDedicated(id, req.Specs)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
+}
+
+func (a *NodeController) remoteTgWebProxyAddProfile(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	p, ok := middleware.BindJSONAndValidate[tgwebproxy.RelayProfile](c)
+	if !ok {
+		return
+	}
+	res, err := a.nodeService.AddRemoteTgWebProxyProfile(id, *p)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
+}
+
+func (a *NodeController) remoteTgWebProxyUpdateProfile(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	p, ok := middleware.BindJSONAndValidate[tgwebproxy.RelayProfile](c)
+	if !ok {
+		return
+	}
+	res, err := a.nodeService.UpdateRemoteTgWebProxyProfile(id, c.Param("name"), *p)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
+}
+
+func (a *NodeController) remoteTgWebProxyDelProfile(c *gin.Context) {
+	id, ok := remoteNodeID(c)
+	if !ok {
+		return
+	}
+	res, err := a.nodeService.DeleteRemoteTgWebProxyProfile(id, c.Param("name"))
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.deleted"), res, err)
 }

@@ -629,6 +629,12 @@ export const EXAMPLES: Record<string, unknown> = {
     "onlineCount": 1,
     "total": 2000
   },
+  "DedicatedSpec": {
+    "backend": "127.0.0.1:31234",
+    "base": "default",
+    "email": "alice",
+    "secret": "aabbccddeeff00112233445566778899"
+  },
   "FallbackParentInfo": {
     "masterId": 0,
     "path": ""
@@ -1426,6 +1432,7 @@ export const EXAMPLES: Record<string, unknown> = {
   "TgWebProxyBindRequest": {
     "dedicated": false,
     "email": "alice",
+    "nodeId": 2,
     "profileName": "default"
   },
   "TgWebProxyBinding": {
@@ -1434,6 +1441,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "effectiveProfile": "default",
     "email": "alice",
     "link": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+    "nodeId": 2,
     "profileName": "default",
     "secret": "000102030405060708090a0b0c0d0e0f"
   },
@@ -1445,6 +1453,7 @@ export const EXAMPLES: Record<string, unknown> = {
         "effectiveProfile": "default",
         "email": "alice",
         "link": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
+        "nodeId": 2,
         "profileName": "default",
         "secret": "000102030405060708090a0b0c0d0e0f"
       }
@@ -1499,6 +1508,16 @@ export const EXAMPLES: Record<string, unknown> = {
       "token_key_file": "/etc/tproxy-server/token.key"
     },
     "initialProfile": null
+  },
+  "TgWebProxySyncDedicatedRequest": {
+    "specs": [
+      {
+        "backend": "127.0.0.1:31234",
+        "base": "default",
+        "email": "alice",
+        "secret": "aabbccddeeff00112233445566778899"
+      }
+    ]
   },
   "TgWebProxyUnbindRequest": {
     "email": "alice"

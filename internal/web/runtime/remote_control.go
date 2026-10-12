@@ -193,3 +193,77 @@ func (r *Remote) LoginURL(ticket string) (string, error) {
 	}
 	return base + "#loginTicket=" + url.QueryEscape(ticket), nil
 }
+
+// GetTgWebProxySnapshot reads the node's relay config + profiles.
+func (r *Remote) GetTgWebProxySnapshot(ctx context.Context) (json.RawMessage, error) {
+	env, err := r.do(ctx, http.MethodGet, "panel/api/tgWebProxy/config", nil)
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}
+
+// GetTgWebProxyStatus reads the node's relay unit/admin status.
+func (r *Remote) GetTgWebProxyStatus(ctx context.Context) (json.RawMessage, error) {
+	env, err := r.do(ctx, http.MethodGet, "panel/api/tgWebProxy/status", nil)
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}
+
+// ShareTgWebProxyProfile builds a t.me/webproxy link for one profile on the node.
+func (r *Remote) ShareTgWebProxyProfile(ctx context.Context, name string) (json.RawMessage, error) {
+	if name == "" {
+		return nil, errors.New("profile name required")
+	}
+	env, err := r.do(ctx, http.MethodGet, "panel/api/tgWebProxy/share/"+url.PathEscape(name), nil)
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}
+
+// SyncTgWebProxyDedicated asks the node to make its fb:* profiles match specs.
+func (r *Remote) SyncTgWebProxyDedicated(ctx context.Context, specs any) (json.RawMessage, error) {
+	env, err := r.do(ctx, http.MethodPost, "panel/api/tgWebProxy/syncDedicated", map[string]any{
+		"specs": specs,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}
+
+// AddTgWebProxyProfile creates a non-managed profile on the node's relay.
+func (r *Remote) AddTgWebProxyProfile(ctx context.Context, profile any) (json.RawMessage, error) {
+	env, err := r.do(ctx, http.MethodPost, "panel/api/tgWebProxy/profiles/add", profile)
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}
+
+// UpdateTgWebProxyProfile updates a profile on the node's relay.
+func (r *Remote) UpdateTgWebProxyProfile(ctx context.Context, name string, profile any) (json.RawMessage, error) {
+	if name == "" {
+		return nil, errors.New("profile name required")
+	}
+	env, err := r.do(ctx, http.MethodPost, "panel/api/tgWebProxy/profiles/update/"+url.PathEscape(name), profile)
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}
+
+// DeleteTgWebProxyProfile removes a profile on the node's relay.
+func (r *Remote) DeleteTgWebProxyProfile(ctx context.Context, name string) (json.RawMessage, error) {
+	if name == "" {
+		return nil, errors.New("profile name required")
+	}
+	env, err := r.do(ctx, http.MethodPost, "panel/api/tgWebProxy/profiles/del/"+url.PathEscape(name), nil)
+	if err != nil {
+		return nil, err
+	}
+	return env.Obj, nil
+}

@@ -21,10 +21,10 @@ const maxProfileNameLength = 64
 // and limits). Secret/Backend override the generated secret and base backend
 // when the panel has already provisioned a matching MTProto listener.
 type DedicatedSpec struct {
-	Email   string
-	Base    string
-	Secret  string // optional; empty keeps/creates the usual random secret
-	Backend string // optional; empty inherits Base's backend
+	Email   string `json:"email" example:"alice"`
+	Base    string `json:"base" example:"default"`
+	Secret  string `json:"secret,omitempty" example:"aabbccddeeff00112233445566778899"`
+	Backend string `json:"backend,omitempty" example:"127.0.0.1:31234"`
 }
 
 // DedicatedProfileName is deterministic so a binding finds its profile again

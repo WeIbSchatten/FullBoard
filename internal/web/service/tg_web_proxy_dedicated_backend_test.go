@@ -21,7 +21,7 @@ func TestEnsureTgWebProxyManagedBackendCreatesAndReuses(t *testing.T) {
 		t.Fatalf("seed client: %v", err)
 	}
 
-	backend, err := ensureTgWebProxyManagedBackend(inboundSvc, email, secret)
+	backend, err := ensureTgWebProxyManagedBackend(inboundSvc, email, secret, nil)
 	if err != nil {
 		t.Fatalf("create: %v", err)
 	}
@@ -50,7 +50,7 @@ func TestEnsureTgWebProxyManagedBackendCreatesAndReuses(t *testing.T) {
 		t.Fatalf("SubID cleared by managed sync: got %q, want subalice", rec.SubID)
 	}
 
-	again, err := ensureTgWebProxyManagedBackend(inboundSvc, email, secret)
+	again, err := ensureTgWebProxyManagedBackend(inboundSvc, email, secret, nil)
 	if err != nil {
 		t.Fatalf("reuse: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestPrepareDedicatedSpecsPointsAtManagedBackend(t *testing.T) {
 		t.Fatal(err)
 	}
 	rows := []tgBindingRow{{ClientId: rec.Id, Email: rec.Email, ProfileName: "default", Dedicated: true}}
-	specs, err := (&TgWebProxyService{}).prepareDedicatedSpecs(rows)
+	specs, err := (&TgWebProxyService{}).prepareDedicatedSpecs(rows, nil)
 	if err != nil {
 		t.Fatalf("prepare: %v", err)
 	}
@@ -99,7 +99,7 @@ func TestCleanupManagedBackendsRemovesUnwanted(t *testing.T) {
 	if err := database.GetDB().Create(&model.ClientRecord{Email: "gone@wp", SubID: "subgone", Enable: true}).Error; err != nil {
 		t.Fatal(err)
 	}
-	if _, err := ensureTgWebProxyManagedBackend(inboundSvc, "gone@wp", "aabbccddeeff00112233445566778899"); err != nil {
+	if _, err := ensureTgWebProxyManagedBackend(inboundSvc, "gone@wp", "aabbccddeeff00112233445566778899", nil); err != nil {
 		t.Fatal(err)
 	}
 	(&TgWebProxyService{}).cleanupManagedBackends(map[string]struct{}{})

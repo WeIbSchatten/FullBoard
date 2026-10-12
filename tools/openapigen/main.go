@@ -117,6 +117,7 @@ func run(root, outDir string) error {
 				"TgWebProxyBinding",
 				"TgWebProxyBindingList",
 				"TgWebProxyBindRequest",
+				"TgWebProxySyncDedicatedRequest",
 				"TgWebProxyUnbindRequest",
 			),
 		},
@@ -151,6 +152,7 @@ func run(root, outDir string) error {
 				"PublicSiteFile",
 				"PublicSiteSnapshot",
 				"CaddyH2WSStatus",
+				"DedicatedSpec",
 			),
 		},
 	}
