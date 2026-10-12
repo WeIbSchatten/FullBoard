@@ -39,6 +39,7 @@ import { HttpUtil, SizeFormatter } from '@/utils';
 import RemoteBackupTab from './RemoteBackupTab';
 import RemoteLiveInbounds from './RemoteLiveInbounds';
 import RemoteLogsTab from './RemoteLogsTab';
+import RemoteTgWebProxyTab from './RemoteTgWebProxyTab';
 import RemoteXrayTab from './RemoteXrayTab';
 
 interface RemoteStatus {
@@ -602,6 +603,11 @@ export default function RemotePanelDrawer({ node, onClose }: RemotePanelDrawerPr
             key: 'backup',
             label: t('pages.index.backupTitle'),
             children: <RemoteBackupTab nodeId={nodeId} onChanged={refreshAll} />,
+          },
+          {
+            key: 'tgWebProxy',
+            label: t('pages.nodes.remote.tgWebProxy'),
+            children: <RemoteTgWebProxyTab nodeId={nodeId} />,
           },
         ]}
       />

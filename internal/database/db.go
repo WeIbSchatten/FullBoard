@@ -116,6 +116,14 @@ func migrateInboundExcludeFromSubColumn() error {
 	return migrator.AddColumn(&model.Inbound{}, "ExcludeFromSub")
 }
 
+func migrateClientTgWebProxyNodeIdColumn() error {
+	migrator := db.Migrator()
+	if !migrator.HasTable(&model.ClientTgWebProxy{}) || migrator.HasColumn(&model.ClientTgWebProxy{}, "node_id") {
+		return nil
+	}
+	return migrator.AddColumn(&model.ClientTgWebProxy{}, "NodeId")
+}
+
 func initModels() error {
 	if err := migrateClientTrafficLastSubFetchColumn(); err != nil {
 		return err
@@ -124,6 +132,9 @@ func initModels() error {
 		return err
 	}
 	if err := migrateInboundExcludeFromSubColumn(); err != nil {
+		return err
+	}
+	if err := migrateClientTgWebProxyNodeIdColumn(); err != nil {
 		return err
 	}
 	models := allModels()

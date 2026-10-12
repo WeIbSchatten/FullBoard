@@ -1164,7 +1164,9 @@
         "logLines": "Líneas",
         "xrayTemplateHint": "Edita la plantilla de Xray del propio nodo. El nodo reinicia Xray por sí mismo al guardar.",
         "stopXrayConfirm": "¿Detener Xray en este nodo? Sus clientes perderán la conectividad hasta que Xray se inicie de nuevo.",
-        "importBackupConfirm": "¿Restaurar la base de datos del nodo desde {name}? Esto reemplaza todos los datos del nodo."
+        "importBackupConfirm": "¿Restaurar la base de datos del nodo desde {name}? Esto reemplaza todos los datos del nodo.",
+        "tgWebProxy": "Telegram WEB Proxy",
+        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
       }
     },
     "settings": {
@@ -2575,6 +2577,9 @@
         "managed": "Managed",
         "managedHint": "Created for a client binding. Unbind the client to remove it.",
         "bind": "Bind",
+        "selectNode": "Relay host",
+        "local": "This panel (local)",
+        "remoteHint": "Remote bindings use Dedicated only: the managed MTProto inbound and fb: profile are created on the selected node.",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
         "notConfigured": "Configure the Telegram WEB Proxy relay first.",

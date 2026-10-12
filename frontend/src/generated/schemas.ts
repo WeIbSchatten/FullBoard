@@ -2492,6 +2492,32 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "DedicatedSpec": {
+    "description": "DedicatedSpec asks for one per-client profile cloned from Base (carrier mode\nand limits). Secret/Backend override the generated secret and base backend\nwhen the panel has already provisioned a matching MTProto listener.",
+    "properties": {
+      "backend": {
+        "example": "127.0.0.1:31234",
+        "type": "string"
+      },
+      "base": {
+        "example": "default",
+        "type": "string"
+      },
+      "email": {
+        "example": "alice",
+        "type": "string"
+      },
+      "secret": {
+        "example": "aabbccddeeff00112233445566778899",
+        "type": "string"
+      }
+    },
+    "required": [
+      "base",
+      "email"
+    ],
+    "type": "object"
+  },
   "FallbackParentInfo": {
     "description": "FallbackParentInfo carries everything the frontend needs to rewrite a\nchild inbound's client link: where to connect (the master's address\nand port) and which path matched on the master's fallbacks array.\nThe frontend already has the master inbound in its dbInbounds list,\nso we only ship identifiers + the match path here.",
     "properties": {
@@ -5428,6 +5454,11 @@ export const SCHEMAS: Record<string, unknown> = {
         "example": "alice",
         "type": "string"
       },
+      "nodeId": {
+        "example": 2,
+        "nullable": true,
+        "type": "integer"
+      },
       "profileName": {
         "example": "default",
         "type": "string"
@@ -5461,6 +5492,11 @@ export const SCHEMAS: Record<string, unknown> = {
       "link": {
         "example": "https://t.me/webproxy?server=proxy.example.com\u0026secret=000102030405060708090a0b0c0d0e0f",
         "type": "string"
+      },
+      "nodeId": {
+        "example": 2,
+        "nullable": true,
+        "type": "integer"
       },
       "profileName": {
         "example": "default",
@@ -5516,6 +5552,20 @@ export const SCHEMAS: Record<string, unknown> = {
     },
     "required": [
       "config"
+    ],
+    "type": "object"
+  },
+  "TgWebProxySyncDedicatedRequest": {
+    "properties": {
+      "specs": {
+        "items": {
+          "$ref": "#/components/schemas/DedicatedSpec"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "specs"
     ],
     "type": "object"
   },
