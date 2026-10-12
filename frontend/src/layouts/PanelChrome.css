@@ -1,6 +1,25 @@
 .panel-chrome {
   min-height: 100vh;
-  background: transparent;
+  font-family: 'Segoe UI Variable Text', 'Segoe UI', 'Avenir Next', 'Helvetica Neue', sans-serif;
+  background:
+    radial-gradient(920px 540px at 10% -12%, rgba(96, 165, 250, 0.16), transparent 58%),
+    radial-gradient(720px 460px at 94% 6%, rgba(255, 255, 255, 0.045), transparent 52%),
+    radial-gradient(640px 420px at 50% 110%, rgba(37, 99, 235, 0.08), transparent 55%),
+    #09090b;
+}
+
+body.light .panel-chrome {
+  background:
+    radial-gradient(920px 540px at 10% -12%, rgba(59, 130, 246, 0.12), transparent 58%),
+    radial-gradient(720px 460px at 94% 6%, rgba(15, 23, 42, 0.04), transparent 52%),
+    #eef0f5;
+}
+
+html[data-theme='ultra-dark'] .panel-chrome {
+  background:
+    radial-gradient(920px 540px at 10% -12%, rgba(96, 165, 250, 0.1), transparent 58%),
+    radial-gradient(720px 460px at 94% 6%, rgba(255, 255, 255, 0.03), transparent 52%),
+    #000;
 }
 
 .panel-chrome--side {
@@ -11,15 +30,14 @@
   flex-direction: column;
 }
 
-.panel-chrome--top > .content-shell {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
-}
-
+.panel-chrome--top > .content-shell,
 .panel-chrome--side > .content-shell {
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 0;
+  background: transparent !important;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 768px) {

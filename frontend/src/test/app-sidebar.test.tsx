@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router';
 import { afterEach, expect, test, vi } from 'vitest';
 
 import AppSidebar from '@/layouts/AppSidebar';
+import PanelTopBar from '@/layouts/PanelTopBar';
 import { renderWithProviders } from './test-utils';
 
 vi.mock('@/api/queries/useAllSettings', () => ({
@@ -70,7 +71,12 @@ test('returns to the compact rail after unpinning', async () => {
 });
 
 test('labels the palette shortcut with the modifier the platform actually uses', async () => {
-  const view = await renderSidebar();
-  const chip = view.container.querySelector('.sidebar-command-kbd');
+  const view = renderWithProviders(
+    <MemoryRouter>
+      <PanelTopBar />
+    </MemoryRouter>,
+  );
+  await act(async () => {});
+  const chip = view.container.querySelector('.panel-topbar-search-kbd');
   expect(chip?.textContent).toBe('CtrlK');
 });

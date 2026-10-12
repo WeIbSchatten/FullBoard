@@ -3,17 +3,38 @@
   width: var(--sider-rail, 72px);
   position: relative;
   z-index: 210;
+  padding: 12px 0 12px 12px;
+  box-sizing: content-box;
 }
 
 .ant-sidebar > .ant-layout-sider {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 12px;
+  height: calc(100vh - 24px);
   align-self: flex-start;
+  border-radius: 24px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(16, 16, 20, 0.55) !important;
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  overflow: hidden;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.light .ant-sidebar > .ant-layout-sider {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    0 10px 32px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .ant-sidebar:not(.sidebar-pinned) > .ant-layout-sider:not(.ant-layout-sider-collapsed) {
-  box-shadow: 0 0 32px rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .sider-nav .ant-menu-item .anticon,
@@ -35,17 +56,38 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  height: 58px;
-  padding: 0 16px 0 24px;
-  border-bottom: 1px solid var(--ant-color-border-secondary);
+  height: 64px;
+  padding: 0 14px 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
 }
 
+body.light .sider-brand {
+  border-bottom-color: rgba(15, 23, 42, 0.06);
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #7dd3fc, #3b82f6);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+
 .brand-block {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   min-width: 0;
   line-height: 1.1;
 }
@@ -290,21 +332,40 @@
   --sider-rail: 0px;
 }
 
+.ant-sidebar--top {
+  padding: 0;
+}
+
 .ant-sidebar--top .top-nav-header {
   display: flex;
   align-items: center;
   gap: 4px;
-  height: 52px;
+  height: 56px;
+  margin: 12px 12px 0;
   padding: 0 12px 0 16px;
-  line-height: 52px;
-  width: 100%;
-  background: var(--ant-color-bg-container, #fff);
-  border-bottom: 1px solid var(--ant-color-border-secondary, rgba(0, 0, 0, 0.06));
+  line-height: 56px;
+  width: calc(100% - 24px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 16, 20, 0.55);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  box-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.light .ant-sidebar--top .top-nav-header {
+  border-color: rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 10px 28px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .ant-sidebar--top .top-nav-header--dark {
-  background: #141414;
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: rgba(16, 16, 20, 0.55);
+  border-bottom: none;
 }
 
 .ant-sidebar--top .top-nav-brand {
@@ -383,6 +444,12 @@
     display: inline-flex;
   }
 
+  .ant-sidebar {
+    flex: 0 0 0;
+    width: 0;
+    padding: 0;
+  }
+
   .ant-sidebar > .ant-layout-sider .ant-layout-sider-children {
     display: none;
   }
@@ -392,15 +459,13 @@
     max-width: 0 !important;
     min-width: 0 !important;
     width: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .ant-sidebar--top > .top-nav-header {
     display: none;
-  }
-
-  .ant-sidebar {
-    flex: 0 0 0;
-    width: 0;
   }
 }
 
@@ -422,11 +487,36 @@ body.dark .ant-drawer-body .drawer-menu .ant-menu-item-group-list {
   background-color: transparent;
 }
 
+.sider-nav,
+.sider-utility {
+  background: transparent !important;
+  border-inline-end: none !important;
+}
+
+.sider-nav .ant-menu-item,
+.sider-utility .ant-menu-item,
+.sider-nav .ant-menu-submenu-title {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+body.light .sider-nav .ant-menu-item,
+body.light .sider-utility .ant-menu-item,
+body.light .sider-nav .ant-menu-submenu-title {
+  color: rgba(17, 24, 39, 0.55) !important;
+}
+
 .sider-nav .ant-menu-item-selected,
 .sider-utility .ant-menu-item-selected,
 .drawer-menu .ant-menu-item-selected {
-  background-color: color-mix(in srgb, var(--ant-color-primary) 20%, transparent) !important;
-  color: var(--ant-color-primary) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+body.light .sider-nav .ant-menu-item-selected,
+body.light .sider-utility .ant-menu-item-selected,
+body.light .drawer-menu .ant-menu-item-selected {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+  color: #111827 !important;
 }
 
 .sider-nav .ant-menu-item-active:not(.ant-menu-item-selected),
@@ -435,6 +525,18 @@ body.dark .ant-drawer-body .drawer-menu .ant-menu-item-group-list {
 .sider-nav .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
 .sider-utility .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
 .drawer-menu .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover {
-  background-color: color-mix(in srgb, var(--ant-color-primary) 10%, transparent) !important;
-  color: var(--ant-color-primary) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body.light .sider-nav .ant-menu-item-active:not(.ant-menu-item-selected),
+body.light .sider-utility .ant-menu-item-active:not(.ant-menu-item-selected),
+body.light .drawer-menu .ant-menu-item-active:not(.ant-menu-item-selected),
+body.light .sider-nav .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
+body.light
+  .sider-utility
+  .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover,
+body.light .drawer-menu .ant-menu-item:not(.ant-menu-item-selected):not(.ant-menu-item-disabled):hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+  color: rgba(17, 24, 39, 0.92) !important;
 }
