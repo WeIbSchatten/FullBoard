@@ -38,17 +38,22 @@ func loopbackBackend(port int) string {
 
 // prepareDedicatedSpecs provisions a loopback MTProto listener per dedicated
 // binding so each profile secret has a matching backend without a hand-built inbound.
-func (s *TgWebProxyService) prepareDedicatedSpecs(rows []tgBindingRow) ([]tgwebproxy.DedicatedSpec, error) {
+// nodeID nil = local relay; set = inbound lives on that node and SyncDedicated runs there.
+func (s *TgWebProxyService) prepareDedicatedSpecs(rows []tgBindingRow, nodeID *int) ([]tgwebproxy.DedicatedSpec, error) {
 	if len(rows) == 0 {
 		return nil, nil
 	}
-	snap, err := tgWebProxy().Store().Load()
-	if err != nil {
-		return nil, err
-	}
-	byName := make(map[string]tgwebproxy.RelayProfile, len(snap.Profiles))
-	for _, p := range snap.Profiles {
-		byName[p.Name] = p
+
+	var byName map[string]tgwebproxy.RelayProfile
+	if nodeID == nil {
+		snap, err := tgWebProxy().Store().Load()
+		if err != nil {
+			return nil, err
+		}
+		byName = make(map[string]tgwebproxy.RelayProfile, len(snap.Profiles))
+		for _, p := range snap.Profiles {
+			byName[p.Name] = p
+		}
 	}
 
 	inboundSvc := &InboundService{}
@@ -56,16 +61,19 @@ func (s *TgWebProxyService) prepareDedicatedSpecs(rows []tgBindingRow) ([]tgwebp
 	for _, r := range rows {
 		name := r.effectiveProfile()
 		secret := ""
-		if p, ok := byName[name]; ok {
-			secret = p.Secret
+		if byName != nil {
+			if p, ok := byName[name]; ok {
+				secret = p.Secret
+			}
 		}
 		if secret == "" {
+			var err error
 			secret, err = tgwebproxy.NewProfileSecret()
 			if err != nil {
 				return nil, err
 			}
 		}
-		backend, err := ensureTgWebProxyManagedBackend(inboundSvc, r.Email, secret)
+		backend, err := ensureTgWebProxyManagedBackend(inboundSvc, r.Email, secret, nodeID)
 		if err != nil {
 			return nil, fmt.Errorf("dedicated backend for %s: %w", r.Email, err)
 		}
@@ -79,18 +87,31 @@ func (s *TgWebProxyService) prepareDedicatedSpecs(rows []tgBindingRow) ([]tgwebp
 	return specs, nil
 }
 
-func ensureTgWebProxyManagedBackend(inboundSvc *InboundService, email, secret string) (string, error) {
+func sameManagedBackendNode(ib *model.Inbound, nodeID *int) bool {
+	return (ib.NodeID == nil && nodeID == nil) ||
+		(ib.NodeID != nil && nodeID != nil && *ib.NodeID == *nodeID)
+}
+
+func ensureTgWebProxyManagedBackend(inboundSvc *InboundService, email, secret string, nodeID *int) (string, error) {
 	email = strings.TrimSpace(email)
 	remark := tgWebProxyManagedRemark(email)
 	db := database.GetDB()
 
 	var existing model.Inbound
 	err := db.Where("remark = ? AND protocol = ?", remark, model.MTProto).First(&existing).Error
-	if err == nil {
+	switch {
+	case err == nil && sameManagedBackendNode(&existing, nodeID):
 		if err := syncManagedMtprotoSecret(inboundSvc, &existing, email, secret); err != nil {
 			return "", err
 		}
 		return loopbackBackend(existing.Port), nil
+	case err == nil:
+		// UpdateInbound restores NodeID from the stored row; recreate instead.
+		if _, delErr := inboundSvc.DelInbound(existing.Id); delErr != nil {
+			return "", delErr
+		}
+	case !database.IsNotFound(err):
+		return "", err
 	}
 
 	port, err := allocateLoopbackPort()
@@ -106,6 +127,7 @@ func ensureTgWebProxyManagedBackend(inboundSvc *InboundService, email, secret st
 		Port:     port,
 		Protocol: model.MTProto,
 		Settings: `{"clients":[]}`,
+		NodeID:   nodeID,
 	})
 	if err != nil {
 		return "", err

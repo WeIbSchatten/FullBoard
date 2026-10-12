@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"slices"
@@ -34,6 +35,7 @@ type TgWebProxyBinding struct {
 	Email            string `json:"email" example:"alice"`
 	ProfileName      string `json:"profileName" example:"default"`
 	Dedicated        bool   `json:"dedicated" example:"false"`
+	NodeId           *int   `json:"nodeId,omitempty" example:"2"`
 	EffectiveProfile string `json:"effectiveProfile" example:"default"`
 	// Secret/Link are filled from the live relay profile when available.
 	Secret string `json:"secret,omitempty" example:"000102030405060708090a0b0c0d0e0f"`
@@ -50,6 +52,7 @@ type TgWebProxyBindRequest struct {
 	Email       string `json:"email" validate:"required" example:"alice"`
 	ProfileName string `json:"profileName" validate:"required" example:"default"`
 	Dedicated   bool   `json:"dedicated" example:"false"`
+	NodeId      *int   `json:"nodeId,omitempty" example:"2"`
 }
 
 type TgWebProxyUnbindRequest struct {
@@ -67,6 +70,7 @@ type tgBindingRow struct {
 	Email       string
 	ProfileName string
 	Dedicated   bool
+	NodeId      *int
 }
 
 func (r tgBindingRow) effectiveProfile() string {
@@ -82,13 +86,14 @@ func (r tgBindingRow) view() TgWebProxyBinding {
 		Email:            r.Email,
 		ProfileName:      r.ProfileName,
 		Dedicated:        r.Dedicated,
+		NodeId:           r.NodeId,
 		EffectiveProfile: r.effectiveProfile(),
 	}
 }
 
 func tgBindingRows(db *gorm.DB) *gorm.DB {
 	return db.Table("client_tg_web_proxy AS b").
-		Select("b.client_id AS client_id, c.email AS email, b.profile_name AS profile_name, b.dedicated AS dedicated").
+		Select("b.client_id AS client_id, c.email AS email, b.profile_name AS profile_name, b.dedicated AS dedicated, b.node_id AS node_id").
 		Joins("JOIN clients c ON c.id = b.client_id").
 		Order("b.id ASC")
 }
@@ -155,7 +160,18 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 	if err := tgBindingRows(db).Where("b.dedicated = ?", true).Scan(&rows).Error; err != nil {
 		return tgwebproxy.RelayApplyResult{}, err
 	}
-	specs, err := s.prepareDedicatedSpecs(rows)
+
+	var localRows []tgBindingRow
+	remoteByNode := map[int][]tgBindingRow{}
+	for _, r := range rows {
+		if r.NodeId == nil {
+			localRows = append(localRows, r)
+			continue
+		}
+		remoteByNode[*r.NodeId] = append(remoteByNode[*r.NodeId], r)
+	}
+
+	specs, err := s.prepareDedicatedSpecs(localRows, nil)
 	if err != nil {
 		return tgwebproxy.RelayApplyResult{}, err
 	}
@@ -163,12 +179,33 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 	if err != nil {
 		return res, err
 	}
+
+	var remoteErrs []string
+	for nodeID, nodeRows := range remoteByNode {
+		if err := s.syncRemoteDedicated(ctx, nodeID, nodeRows); err != nil {
+			remoteErrs = append(remoteErrs, fmt.Sprintf("node %d: %v", nodeID, err))
+		}
+	}
+
 	wanted := make(map[string]struct{}, len(rows))
 	for _, r := range rows {
 		wanted[strings.ToLower(r.Email)] = struct{}{}
 	}
 	s.cleanupManagedBackends(wanted)
+
+	if len(remoteErrs) > 0 {
+		return res, errors.New(strings.Join(remoteErrs, "; "))
+	}
 	return res, nil
+}
+
+func (s *TgWebProxyService) syncRemoteDedicated(ctx context.Context, nodeID int, rows []tgBindingRow) error {
+	specs, err := s.prepareDedicatedSpecs(rows, &nodeID)
+	if err != nil {
+		return err
+	}
+	_, err = (&NodeService{}).SyncRemoteTgWebProxyDedicated(nodeID, specs)
+	return err
 }
 
 func (s *TgWebProxyService) ListBindings() (TgWebProxyBindingList, error) {
@@ -177,23 +214,64 @@ func (s *TgWebProxyService) ListBindings() (TgWebProxyBindingList, error) {
 		return TgWebProxyBindingList{}, err
 	}
 	out := TgWebProxyBindingList{Bindings: make([]TgWebProxyBinding, len(rows)), SyncError: lastTgWebProxySyncError()}
-	names := make([]string, len(rows))
-	for i, r := range rows {
-		names[i] = r.effectiveProfile()
-	}
-	shares, shareErr := tgWebProxy().ShareProfiles(names)
-	if shareErr != nil {
-		logger.Warning("tg-web-proxy: share bindings:", shareErr)
-	}
+	shares := s.shareMapForRows(rows)
 	for i, r := range rows {
 		b := r.view()
-		if info, ok := shares[r.effectiveProfile()]; ok {
+		if info, ok := shares[shareKey(r)]; ok {
 			b.Secret = info.Secret
 			b.Link = info.Link
 		}
 		out.Bindings[i] = b
 	}
 	return out, nil
+}
+
+func shareKey(r tgBindingRow) string {
+	node := 0
+	if r.NodeId != nil {
+		node = *r.NodeId
+	}
+	return fmt.Sprintf("%d:%s", node, r.effectiveProfile())
+}
+
+func (s *TgWebProxyService) shareMapForRows(rows []tgBindingRow) map[string]tgwebproxy.RelayShareInfo {
+	out := make(map[string]tgwebproxy.RelayShareInfo, len(rows))
+	var localNames []string
+	remoteNames := map[int][]string{}
+	for _, r := range rows {
+		name := r.effectiveProfile()
+		if r.NodeId == nil {
+			localNames = append(localNames, name)
+			continue
+		}
+		remoteNames[*r.NodeId] = append(remoteNames[*r.NodeId], name)
+	}
+	if len(localNames) > 0 {
+		shares, err := tgWebProxy().ShareProfiles(localNames)
+		if err != nil {
+			logger.Warning("tg-web-proxy: share bindings:", err)
+		} else {
+			for name, info := range shares {
+				out[fmt.Sprintf("0:%s", name)] = info
+			}
+		}
+	}
+	nodeSvc := &NodeService{}
+	for nodeID, names := range remoteNames {
+		for _, name := range names {
+			raw, err := nodeSvc.RemoteTgWebProxyShare(nodeID, name)
+			if err != nil {
+				logger.Warningf("tg-web-proxy: remote share node %d %s: %v", nodeID, name, err)
+				continue
+			}
+			var info tgwebproxy.RelayShareInfo
+			if err := json.Unmarshal(raw, &info); err != nil || info.Link == "" {
+				continue
+			}
+			out[fmt.Sprintf("%d:%s", nodeID, name)] = info
+		}
+	}
+	return out
 }
 
 func clientRecordByEmail(db *gorm.DB, email string) (model.ClientRecord, error) {
@@ -218,32 +296,71 @@ func (s *TgWebProxyService) BindClient(req TgWebProxyBindRequest) (TgWebProxyBin
 	if tgwebproxy.IsManagedProfileName(profile) {
 		return TgWebProxyBinding{}, fmt.Errorf("profile %q is managed by client bindings and cannot be bound", profile)
 	}
-	snap, err := tgWebProxy().Store().Load()
-	if err != nil {
-		return TgWebProxyBinding{}, err
-	}
-	if !snap.ConfigExists {
-		return TgWebProxyBinding{}, errors.New("tg-web-proxy is not configured yet; save the relay configuration first")
-	}
-	if !slices.ContainsFunc(snap.Profiles, func(p tgwebproxy.RelayProfile) bool { return p.Name == profile }) {
-		return TgWebProxyBinding{}, fmt.Errorf("profile %q not found", profile)
+	if req.NodeId != nil {
+		if !req.Dedicated {
+			return TgWebProxyBinding{}, errors.New("remote tg-web-proxy bindings require dedicated secrets")
+		}
+		if err := s.validateRemoteBind(*req.NodeId, profile); err != nil {
+			return TgWebProxyBinding{}, err
+		}
+	} else {
+		snap, err := tgWebProxy().Store().Load()
+		if err != nil {
+			return TgWebProxyBinding{}, err
+		}
+		if !snap.ConfigExists {
+			return TgWebProxyBinding{}, errors.New("tg-web-proxy is not configured yet; save the relay configuration first")
+		}
+		if !slices.ContainsFunc(snap.Profiles, func(p tgwebproxy.RelayProfile) bool { return p.Name == profile }) {
+			return TgWebProxyBinding{}, fmt.Errorf("profile %q not found", profile)
+		}
 	}
 
 	var row model.ClientTgWebProxy
 	err = db.Where("client_id = ?", rec.Id).First(&row).Error
 	switch {
 	case errors.Is(err, gorm.ErrRecordNotFound):
-		row = model.ClientTgWebProxy{ClientId: rec.Id, ProfileName: profile, Dedicated: req.Dedicated}
+		row = model.ClientTgWebProxy{
+			ClientId: rec.Id, ProfileName: profile, Dedicated: req.Dedicated, NodeId: req.NodeId,
+		}
 		err = db.Create(&row).Error
 	case err == nil:
-		row.ProfileName, row.Dedicated = profile, req.Dedicated
-		err = db.Model(&row).Updates(map[string]any{"profile_name": profile, "dedicated": req.Dedicated}).Error
+		row.ProfileName, row.Dedicated, row.NodeId = profile, req.Dedicated, req.NodeId
+		err = db.Model(&row).Select("ProfileName", "Dedicated", "NodeId").Updates(&row).Error
 	}
 	if err != nil {
 		return TgWebProxyBinding{}, err
 	}
 	scheduleTgWebProxySync()
-	return tgBindingRow{ClientId: rec.Id, Email: rec.Email, ProfileName: row.ProfileName, Dedicated: row.Dedicated}.view(), nil
+	return tgBindingRow{
+		ClientId: rec.Id, Email: rec.Email, ProfileName: row.ProfileName,
+		Dedicated: row.Dedicated, NodeId: row.NodeId,
+	}.view(), nil
+}
+
+func (s *TgWebProxyService) validateRemoteBind(nodeID int, profile string) error {
+	exists, err := (&NodeService{}).NodeExists(nodeID)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return fmt.Errorf("node %d not found", nodeID)
+	}
+	raw, err := (&NodeService{}).RemoteTgWebProxySnapshot(nodeID)
+	if err != nil {
+		return fmt.Errorf("read remote tg-web-proxy: %w", err)
+	}
+	var snap tgwebproxy.RelaySnapshot
+	if err := json.Unmarshal(raw, &snap); err != nil {
+		return fmt.Errorf("decode remote tg-web-proxy snapshot: %w", err)
+	}
+	if !snap.ConfigExists {
+		return errors.New("remote tg-web-proxy is not configured yet")
+	}
+	if !slices.ContainsFunc(snap.Profiles, func(p tgwebproxy.RelayProfile) bool { return p.Name == profile }) {
+		return fmt.Errorf("profile %q not found on node %d", profile, nodeID)
+	}
+	return nil
 }
 
 // UnbindClient is idempotent: an unknown client or a client without a binding is a no-op.
@@ -268,7 +385,7 @@ func (s *TgWebProxyService) UnbindClient(email string) error {
 }
 
 // ClientLinksBySubId lists enabled bound clients whose profile exists on the relay;
-// an unsynced dedicated profile is skipped, never replaced by the shared secret.
+// an unsynced dedicated profile is skipped, never replaced by the shared base secret.
 func (s *TgWebProxyService) ClientLinksBySubId(subId string) ([]TgWebProxyClientLink, error) {
 	if subId == "" {
 		return nil, nil
@@ -280,17 +397,10 @@ func (s *TgWebProxyService) ClientLinksBySubId(subId string) ([]TgWebProxyClient
 	if err != nil || len(rows) == 0 {
 		return nil, err
 	}
-	names := make([]string, len(rows))
-	for i, r := range rows {
-		names[i] = r.effectiveProfile()
-	}
-	shares, err := tgWebProxy().ShareProfiles(names)
-	if err != nil {
-		return nil, err
-	}
+	shares := s.shareMapForRows(rows)
 	links := make([]TgWebProxyClientLink, 0, len(rows))
 	for _, r := range rows {
-		if info, ok := shares[r.effectiveProfile()]; ok {
+		if info, ok := shares[shareKey(r)]; ok {
 			links = append(links, TgWebProxyClientLink{Email: r.Email, Link: info.Link})
 		}
 	}
@@ -317,15 +427,11 @@ func dedicatedBindingsUse(profile string) (bool, error) {
 }
 
 // deleteClientTgWebProxyBindings runs inside the client-delete transactions and
-// returns how many bindings went, so callers sync the relay only when needed.
-func deleteClientTgWebProxyBindings(tx *gorm.DB, clientIds []int) (int64, error) {
-	var total int64
-	for _, batch := range chunkInts(clientIds, sqlInChunk) {
-		res := tx.Where("client_id IN ?", batch).Delete(&model.ClientTgWebProxy{})
-		if res.Error != nil {
-			return total, res.Error
-		}
-		total += res.RowsAffected
+// returns how many rows were removed so callers can schedule a sync once.
+func deleteClientTgWebProxyBindings(tx *gorm.DB, clientIDs []int) (int64, error) {
+	if len(clientIDs) == 0 {
+		return 0, nil
 	}
-	return total, nil
+	res := tx.Where("client_id IN ?", clientIDs).Delete(&model.ClientTgWebProxy{})
+	return res.RowsAffected, res.Error
 }

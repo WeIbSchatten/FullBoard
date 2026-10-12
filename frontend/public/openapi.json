@@ -2518,6 +2518,32 @@
         ],
         "type": "object"
       },
+      "DedicatedSpec": {
+        "description": "DedicatedSpec asks for one per-client profile cloned from Base (carrier mode\nand limits). Secret/Backend override the generated secret and base backend\nwhen the panel has already provisioned a matching MTProto listener.",
+        "properties": {
+          "backend": {
+            "example": "127.0.0.1:31234",
+            "type": "string"
+          },
+          "base": {
+            "example": "default",
+            "type": "string"
+          },
+          "email": {
+            "example": "alice",
+            "type": "string"
+          },
+          "secret": {
+            "example": "aabbccddeeff00112233445566778899",
+            "type": "string"
+          }
+        },
+        "required": [
+          "base",
+          "email"
+        ],
+        "type": "object"
+      },
       "FallbackParentInfo": {
         "description": "FallbackParentInfo carries everything the frontend needs to rewrite a\nchild inbound's client link: where to connect (the master's address\nand port) and which path matched on the master's fallbacks array.\nThe frontend already has the master inbound in its dbInbounds list,\nso we only ship identifiers + the match path here.",
         "properties": {
@@ -5454,6 +5480,11 @@
             "example": "alice",
             "type": "string"
           },
+          "nodeId": {
+            "example": 2,
+            "nullable": true,
+            "type": "integer"
+          },
           "profileName": {
             "example": "default",
             "type": "string"
@@ -5487,6 +5518,11 @@
           "link": {
             "example": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
             "type": "string"
+          },
+          "nodeId": {
+            "example": 2,
+            "nullable": true,
+            "type": "integer"
           },
           "profileName": {
             "example": "default",
@@ -5542,6 +5578,20 @@
         },
         "required": [
           "config"
+        ],
+        "type": "object"
+      },
+      "TgWebProxySyncDedicatedRequest": {
+        "properties": {
+          "specs": {
+            "items": {
+              "$ref": "#/components/schemas/DedicatedSpec"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "specs"
         ],
         "type": "object"
       },
@@ -12961,6 +13011,546 @@
         }
       }
     },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/status": {
+      "get": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Proxy the node's Telegram WEB Proxy status (units, admin health, install job). Requires an admin-scope API token on the node.",
+        "operationId": "get_panel_api_nodes_remote_id_tgWebProxy_status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayStatus"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "admin": null,
+                    "basePath": "",
+                    "binaryInstalled": true,
+                    "binaryPath": "/usr/local/bin/tproxy-server",
+                    "caddyEncode": {
+                      "exists": true,
+                      "lastError": "",
+                      "needsFix": true,
+                      "path": "/etc/caddy/Caddyfile"
+                    },
+                    "configError": "",
+                    "configExists": true,
+                    "configPath": "/etc/tproxy-server/config.json",
+                    "hostname": "proxy.example.com",
+                    "job": {
+                      "exitCode": null,
+                      "kind": "install",
+                      "log": "",
+                      "startedAt": 1760000000,
+                      "state": "running",
+                      "unit": "fullboard-tproxy-install-1760000000"
+                    },
+                    "platform": "linux/amd64",
+                    "profileCount": 1,
+                    "profilesExists": true,
+                    "profilesMode": "0400",
+                    "profilesModeOk": true,
+                    "profilesPath": "/etc/tproxy-server/profiles.json",
+                    "supported": true,
+                    "units": [
+                      {
+                        "activeState": "active",
+                        "controllable": true,
+                        "mainPid": 1234,
+                        "since": "Fri 2026-10-09 18:00:00 UTC",
+                        "subState": "running",
+                        "unit": "tproxy-server",
+                        "unitFileState": "enabled"
+                      }
+                    ],
+                    "usesWebSocket": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/config": {
+      "get": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Proxy the node's Telegram WEB Proxy relay snapshot (config + profiles). Requires an admin-scope API token on the node.",
+        "operationId": "get_panel_api_nodes_remote_id_tgWebProxy_config",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelaySnapshot"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "config": {
+                      "admin_listen": "127.0.0.1:8081",
+                      "base_path": "",
+                      "enable_pprof": false,
+                      "limits": {
+                        "carrier_batch_bytes": 2097152,
+                        "max_backend_dials_in_flight": 256,
+                        "max_body_bytes": 2097152,
+                        "max_bootstraps_global": 512,
+                        "max_bootstraps_per_ip": 0,
+                        "max_closed_stream_ids": 4096,
+                        "max_frame_payload": 1048576,
+                        "max_header_bytes": 16384,
+                        "max_pending_global": 536870912,
+                        "max_pending_items_global": 262144,
+                        "max_pending_items_per_session": 16384,
+                        "max_pending_per_session": 33554432,
+                        "max_profiles": 32,
+                        "max_sessions_global": 128,
+                        "max_sessions_per_ip": 0,
+                        "max_streams_global": 4096,
+                        "max_streams_per_session": 128,
+                        "new_bootstraps_burst": 256,
+                        "new_bootstraps_per_minute": 1200,
+                        "new_sessions_burst": 128,
+                        "new_sessions_per_minute": 600,
+                        "new_streams_burst": 512,
+                        "new_streams_per_minute": 6000
+                      },
+                      "listen": "127.0.0.1:8080",
+                      "profiles_file": "/run/credentials/tproxy-server.service/profiles.json",
+                      "public_dir": "",
+                      "public_hostname": "proxy.example.com",
+                      "public_upstream": "http://127.0.0.1:3000",
+                      "static_routes": "exact",
+                      "timeouts": {
+                        "backend_dial": "5s",
+                        "bootstrap_lifetime": "2m",
+                        "idle": "75s",
+                        "long_poll": "25s",
+                        "read_header": "10s",
+                        "reconnect_grace": "2m",
+                        "shutdown": "15s"
+                      },
+                      "token_key_file": "/etc/tproxy-server/token.key"
+                    },
+                    "configExists": true,
+                    "profiles": [
+                      {
+                        "backend": "127.0.0.1:2398",
+                        "carrier_mode": "https",
+                        "limits": null,
+                        "name": "default",
+                        "secret": "000102030405060708090a0b0c0d0e0f"
+                      }
+                    ],
+                    "profilesExists": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/share/{name}": {
+      "get": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Proxy a t.me/webproxy share link for one profile on the node's relay. Requires an admin-scope API token on the node.",
+        "operationId": "get_panel_api_nodes_remote_id_tgWebProxy_share_name",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Profile name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayShareInfo"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "carrierMode": "https",
+                    "deepLink": "tg://webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                    "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                    "linkSecret": "000102030405060708090a0b0c0d0e0f",
+                    "profile": "default",
+                    "secret": "000102030405060708090a0b0c0d0e0f",
+                    "server": "proxy.example.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/syncDedicated": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Ask the node's relay to make its fb:* dedicated profiles match the given specs (used by the master binding sync). Requires an admin-scope API token on the node.",
+        "operationId": "post_panel_api_nodes_remote_id_tgWebProxy_syncDedicated",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "specs": [
+                  {
+                    "email": "alice",
+                    "base": "default",
+                    "secret": "aabbccddeeff00112233445566778899",
+                    "backend": "127.0.0.1:31234"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/profiles/add": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Create a profile on the node's Telegram WEB Proxy relay.",
+        "operationId": "post_panel_api_nodes_remote_id_tgWebProxy_profiles_add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "default",
+                "secret": "000102030405060708090a0b0c0d0e0f",
+                "backend": "127.0.0.1:2398",
+                "carrier_mode": "https"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/profiles/update/{name}": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Update a profile on the node's Telegram WEB Proxy relay.",
+        "operationId": "post_panel_api_nodes_remote_id_tgWebProxy_profiles_update_name",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Current profile name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "default",
+                "secret": "000102030405060708090a0b0c0d0e0f",
+                "backend": "127.0.0.1:2398",
+                "carrier_mode": "https"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/nodes/remote/{id}/tgWebProxy/profiles/del/{name}": {
+      "post": {
+        "tags": [
+          "Nodes"
+        ],
+        "summary": "Delete a profile on the node's Telegram WEB Proxy relay.",
+        "operationId": "post_panel_api_nodes_remote_id_tgWebProxy_profiles_del_name",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Node ID.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Profile name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
+                    "restartError": "",
+                    "restarted": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/panel/api/nodes/get/{id}": {
       "get": {
         "tags": [
@@ -18315,6 +18905,7 @@
                         "effectiveProfile": "default",
                         "email": "alice",
                         "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                        "nodeId": 2,
                         "profileName": "default",
                         "secret": "000102030405060708090a0b0c0d0e0f"
                       }
@@ -18333,7 +18924,7 @@
         "tags": [
           "Telegram WEB Proxy"
         ],
-        "summary": "Bind a client (by email) to an existing profile; calling it again replaces the binding. With dedicated=true the client gets its own \"fb:<email>\" profile, cloned from the named one with a fresh secret, created by a debounced background sync (the link appears once it ran).",
+        "summary": "Bind a client (by email) to an existing profile; calling it again replaces the binding. With dedicated=true the client gets its own \"fb:<email>\" profile, cloned from the named one with a fresh secret, created by a debounced background sync (the link appears once it ran). Optional nodeId targets a remote node's relay (dedicated required); the managed MTProto backend is synced to that node.",
         "operationId": "post_panel_api_tgWebProxy_bindings_bind",
         "requestBody": {
           "required": true,
@@ -18345,7 +18936,8 @@
               "example": {
                 "email": "alice",
                 "profileName": "default",
-                "dedicated": true
+                "dedicated": true,
+                "nodeId": 2
               }
             }
           }
@@ -18377,6 +18969,7 @@
                     "effectiveProfile": "default",
                     "email": "alice",
                     "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                    "nodeId": 2,
                     "profileName": "default",
                     "secret": "000102030405060708090a0b0c0d0e0f"
                   }
@@ -18426,6 +19019,68 @@
                 },
                 "example": {
                   "success": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/syncDedicated": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Make this host's fb:* dedicated profiles match the given specs (used when a master panel syncs bindings onto a node). Empty specs removes all managed profiles.",
+        "operationId": "post_panel_api_tgWebProxy_syncDedicated",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "specs": [
+                  {
+                    "email": "alice",
+                    "base": "default",
+                    "secret": "aabbccddeeff00112233445566778899",
+                    "backend": "127.0.0.1:31234"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/RelayApplyResult"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "caddyPatchError": "",
+                    "caddyPatched": false,
+                    "caddyWarning": "",
+                    "restartError": "",
+                    "restarted": true
+                  }
                 }
               }
             }

@@ -587,6 +587,13 @@ export interface ClientsSummary {
   total: number;
 }
 
+export interface DedicatedSpec {
+  backend?: string;
+  base: string;
+  email: string;
+  secret?: string;
+}
+
 export interface FallbackParentInfo {
   masterId: number;
   path?: string;
@@ -1251,6 +1258,7 @@ export interface SubBalancer {
 export interface TgWebProxyBindRequest {
   dedicated: boolean;
   email: string;
+  nodeId?: number | null;
   profileName: string;
 }
 
@@ -1260,6 +1268,7 @@ export interface TgWebProxyBinding {
   effectiveProfile: string;
   email: string;
   link?: string;
+  nodeId?: number | null;
   profileName: string;
   secret?: string;
 }
@@ -1272,6 +1281,10 @@ export interface TgWebProxyBindingList {
 export interface TgWebProxyConfigRequest {
   config: RelayConfig;
   initialProfile?: RelayProfile | null;
+}
+
+export interface TgWebProxySyncDedicatedRequest {
+  specs: DedicatedSpec[];
 }
 
 export interface TgWebProxyUnbindRequest {

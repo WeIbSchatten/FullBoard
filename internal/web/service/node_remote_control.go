@@ -15,6 +15,7 @@ import (
 	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
 )
 
@@ -350,4 +351,46 @@ func (s *NodeService) RemoteLoginURL(id int) (string, error) {
 		logger.Infof("remote node %d: login ticket issued", id)
 	}
 	return url, err
+}
+
+func (s *NodeService) RemoteTgWebProxySnapshot(id int) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.GetTgWebProxySnapshot(ctx)
+	})
+}
+
+func (s *NodeService) RemoteTgWebProxyStatus(id int) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.GetTgWebProxyStatus(ctx)
+	})
+}
+
+func (s *NodeService) RemoteTgWebProxyShare(id int, name string) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.ShareTgWebProxyProfile(ctx, name)
+	})
+}
+
+func (s *NodeService) SyncRemoteTgWebProxyDedicated(id int, specs []tgwebproxy.DedicatedSpec) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.SyncTgWebProxyDedicated(ctx, specs)
+	})
+}
+
+func (s *NodeService) AddRemoteTgWebProxyProfile(id int, profile tgwebproxy.RelayProfile) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.AddTgWebProxyProfile(ctx, profile)
+	})
+}
+
+func (s *NodeService) UpdateRemoteTgWebProxyProfile(id int, name string, profile tgwebproxy.RelayProfile) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.UpdateTgWebProxyProfile(ctx, name, profile)
+	})
+}
+
+func (s *NodeService) DeleteRemoteTgWebProxyProfile(id int, name string) (json.RawMessage, error) {
+	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+		return r.DeleteTgWebProxyProfile(ctx, name)
+	})
 }

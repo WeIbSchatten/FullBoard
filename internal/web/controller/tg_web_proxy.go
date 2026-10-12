@@ -50,6 +50,16 @@ func (a *TgWebProxyController) initRouter(g *gin.RouterGroup) {
 	g.GET("/bindings", a.listBindings)
 	g.POST("/bindings/bind", a.bindClient)
 	g.POST("/bindings/unbind", a.unbindClient)
+	g.POST("/syncDedicated", a.syncDedicated)
+}
+
+func (a *TgWebProxyController) syncDedicated(c *gin.Context) {
+	req, ok := middleware.BindJSONAndValidate[service.TgWebProxySyncDedicatedRequest](c)
+	if !ok {
+		return
+	}
+	res, err := a.svc.SyncDedicatedProfiles(c.Request.Context(), req.Specs)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
 }
 
 func (a *TgWebProxyController) listBindings(c *gin.Context) {

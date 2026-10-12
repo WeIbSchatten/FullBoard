@@ -1913,6 +1913,71 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'GET',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/status',
+        summary:
+          "Proxy the node's Telegram WEB Proxy status (units, admin health, install job). Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        responseSchema: 'RelayStatus',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/config',
+        summary:
+          "Proxy the node's Telegram WEB Proxy relay snapshot (config + profiles). Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        responseSchema: 'RelaySnapshot',
+      },
+      {
+        method: 'GET',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/share/:name',
+        summary:
+          "Proxy a t.me/webproxy share link for one profile on the node's relay. Requires an admin-scope API token on the node.",
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          { name: 'name', in: 'path', type: 'string', desc: 'Profile name.' },
+        ],
+        responseSchema: 'RelayShareInfo',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/syncDedicated',
+        summary:
+          "Ask the node's relay to make its fb:* dedicated profiles match the given specs (used by the master binding sync). Requires an admin-scope API token on the node.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        body: '{\n  "specs": [\n    {\n      "email": "alice",\n      "base": "default",\n      "secret": "aabbccddeeff00112233445566778899",\n      "backend": "127.0.0.1:31234"\n    }\n  ]\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/profiles/add',
+        summary: "Create a profile on the node's Telegram WEB Proxy relay.",
+        params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
+        body: '{\n  "name": "default",\n  "secret": "000102030405060708090a0b0c0d0e0f",\n  "backend": "127.0.0.1:2398",\n  "carrier_mode": "https"\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/profiles/update/:name',
+        summary: "Update a profile on the node's Telegram WEB Proxy relay.",
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          { name: 'name', in: 'path', type: 'string', desc: 'Current profile name.' },
+        ],
+        body: '{\n  "name": "default",\n  "secret": "000102030405060708090a0b0c0d0e0f",\n  "backend": "127.0.0.1:2398",\n  "carrier_mode": "https"\n}',
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/nodes/remote/:id/tgWebProxy/profiles/del/:name',
+        summary: "Delete a profile on the node's Telegram WEB Proxy relay.",
+        params: [
+          { name: 'id', in: 'path', type: 'number', desc: 'Node ID.' },
+          { name: 'name', in: 'path', type: 'string', desc: 'Profile name.' },
+        ],
+        responseSchema: 'RelayApplyResult',
+      },
+      {
+        method: 'GET',
         path: '/panel/api/nodes/get/:id',
         summary: 'Fetch a single node by ID.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
@@ -3082,8 +3147,8 @@ export const sections: readonly Section[] = [
         method: 'POST',
         path: '/panel/api/tgWebProxy/bindings/bind',
         summary:
-          'Bind a client (by email) to an existing profile; calling it again replaces the binding. With dedicated=true the client gets its own "fb:<email>" profile, cloned from the named one with a fresh secret, created by a debounced background sync (the link appears once it ran).',
-        body: '{\n  "email": "alice",\n  "profileName": "default",\n  "dedicated": true\n}',
+          'Bind a client (by email) to an existing profile; calling it again replaces the binding. With dedicated=true the client gets its own "fb:<email>" profile, cloned from the named one with a fresh secret, created by a debounced background sync (the link appears once it ran). Optional nodeId targets a remote node\'s relay (dedicated required); the managed MTProto backend is synced to that node.',
+        body: '{\n  "email": "alice",\n  "profileName": "default",\n  "dedicated": true,\n  "nodeId": 2\n}',
         responseSchema: 'TgWebProxyBinding',
       },
       {
@@ -3093,6 +3158,14 @@ export const sections: readonly Section[] = [
           'Remove a client binding (idempotent). A dedicated client profile is removed by the background sync.',
         body: '{\n  "email": "alice"\n}',
         response: '{\n  "success": true\n}',
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/tgWebProxy/syncDedicated',
+        summary:
+          "Make this host's fb:* dedicated profiles match the given specs (used when a master panel syncs bindings onto a node). Empty specs removes all managed profiles.",
+        body: '{\n  "specs": [\n    {\n      "email": "alice",\n      "base": "default",\n      "secret": "aabbccddeeff00112233445566778899",\n      "backend": "127.0.0.1:31234"\n    }\n  ]\n}',
+        responseSchema: 'RelayApplyResult',
       },
     ],
   },
