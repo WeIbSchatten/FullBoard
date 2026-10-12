@@ -629,6 +629,30 @@ export const DedicatedSpecSchema = z.object({
 });
 export type DedicatedSpec = z.infer<typeof DedicatedSpecSchema>;
 
+export const EnrollConsumeResponseSchema = z.object({
+  address: z.string(),
+  apiToken: z.string(),
+  basePath: z.string(),
+  name: z.string(),
+  panelGuid: z.string().optional(),
+  port: z.number().int(),
+  scheme: z.string(),
+});
+export type EnrollConsumeResponse = z.infer<typeof EnrollConsumeResponseSchema>;
+
+export const EnrollFromInviteRequestSchema = z.object({
+  invite: z.string(),
+  name: z.string().optional(),
+});
+export type EnrollFromInviteRequest = z.infer<typeof EnrollFromInviteRequestSchema>;
+
+export const EnrollInviteResponseSchema = z.object({
+  baseUrl: z.string(),
+  expiresIn: z.number().int(),
+  invite: z.string(),
+});
+export type EnrollInviteResponse = z.infer<typeof EnrollInviteResponseSchema>;
+
 export const FallbackParentInfoSchema = z.object({
   masterId: z.number().int(),
   path: z.string().optional(),

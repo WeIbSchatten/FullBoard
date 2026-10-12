@@ -125,7 +125,8 @@
     "pinSidebar": "Pin sidebar",
     "unpinSidebar": "Unpin sidebar",
     "subFormats": "Sub Formats",
-    "tgWebProxy": "Telegram WEB Proxy"
+    "tgWebProxy": "Telegram WEB Proxy",
+    "connections": "Connections"
   },
   "pages": {
     "login": {
@@ -1307,7 +1308,8 @@
         "jobStarted": "Job started",
         "restarted": "tproxy-server restarted with the new configuration",
         "restartFailed": "Saved, but restart failed: {error}"
-      }
+      },
+      "servicePanel": "Service"
     },
     "nodes": {
       "addNode": "Add Node",
@@ -1459,7 +1461,14 @@
         "importBackupConfirm": "Restore the node's database from {name}? This replaces all of the node's data.",
         "tgWebProxy": "Telegram WEB Proxy",
         "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
-      }
+      },
+      "addFromInvite": "Add from invite",
+      "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
+      "invitePlaceholder": "fb-enroll-1.…",
+      "inviteNamePlaceholder": "Optional node name",
+      "inviteRequired": "Paste an enroll invite",
+      "inviteSubmit": "Enroll node",
+      "inviteFailed": "Could not enroll from invite"
     },
     "settings": {
       "defaultTag": "Default",
@@ -2100,7 +2109,22 @@
         "createPreset": "New preset",
         "deletePreset": "Delete preset",
         "rename": "Preset name",
-        "renameDesc": "Shown in the stylesheet switcher."
+        "renameDesc": "Shown in the stylesheet switcher.",
+        "navVisibility": "Sidebar items",
+        "navVisibilityDesc": "Hide menu entries you do not use. Routing stays off unless you enable it here."
+      },
+      "remoteManage": {
+        "title": "Remote management",
+        "desc": "Generate a one-time invite so a master panel can add this panel as a Node without pasting an API token. Open the invite on the master or paste it under Nodes → Add from invite.",
+        "publicBasePh": "https://this-panel.example.com:2053/",
+        "publicBaseDesc": "Optional public base URL if Web Domain is unset or wrong.",
+        "issue": "Generate invite",
+        "regenerate": "Regenerate invite",
+        "copy": "Copy invite",
+        "copied": "Invite copied",
+        "issued": "Invite ready — copy it to the master panel",
+        "issueFailed": "Could not create enroll invite",
+        "expiresIn": "Expires in about {minutes} minutes"
       }
     },
     "xray": {

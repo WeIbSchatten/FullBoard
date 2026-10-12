@@ -108,6 +108,10 @@ export default function NodesPage() {
   const [trustCa, setTrustCa] = useState('');
   const [copyingCa, setCopyingCa] = useState(false);
   const [savingTrustCa, setSavingTrustCa] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteBlob, setInviteBlob] = useState('');
+  const [inviteName, setInviteName] = useState('');
+  const [inviteBusy, setInviteBusy] = useState(false);
 
   const onCopyNodeCa = useCallback(async () => {
     setCopyingCa(true);
@@ -149,6 +153,38 @@ export default function NodesPage() {
     setFormNode(null);
     setFormOpen(true);
   }, []);
+
+  const onAddFromInvite = useCallback(() => {
+    setInviteBlob('');
+    setInviteName('');
+    setInviteOpen(true);
+  }, []);
+
+  const onSubmitInvite = useCallback(async () => {
+    const invite = inviteBlob.trim();
+    if (!invite) {
+      messageApi.warning(t('pages.nodes.inviteRequired'));
+      return;
+    }
+    setInviteBusy(true);
+    try {
+      const msg = await HttpUtil.post('/panel/api/nodes/enrollFromInvite', {
+        invite,
+        name: inviteName.trim() || undefined,
+      });
+      if (msg?.success) {
+        messageApi.success(msg.msg || t('pages.nodes.toasts.add'));
+        setInviteOpen(false);
+        await refetch();
+      } else {
+        messageApi.error(msg?.msg || t('pages.nodes.inviteFailed'));
+      }
+    } catch {
+      messageApi.error(t('pages.nodes.inviteFailed'));
+    } finally {
+      setInviteBusy(false);
+    }
+  }, [inviteBlob, inviteName, messageApi, t, refetch]);
 
   const onEdit = useCallback((node: NodeRecord) => {
     setFormMode('edit');
@@ -358,6 +394,7 @@ export default function NodesPage() {
                     selectedIds={selectedIds}
                     onSelectionChange={setSelectedIds}
                     onAdd={onAdd}
+                    onAddFromInvite={onAddFromInvite}
                     onMtls={() => setMtlsOpen(true)}
                     onEdit={onEdit}
                     onDelete={onDelete}
@@ -389,6 +426,33 @@ export default function NodesPage() {
           save={onSave}
           onOpenChange={setFormOpen}
         />
+
+        <Modal
+          open={inviteOpen}
+          title={t('pages.nodes.addFromInvite')}
+          okText={t('pages.nodes.inviteSubmit')}
+          cancelText={t('cancel')}
+          confirmLoading={inviteBusy}
+          onOk={onSubmitInvite}
+          onCancel={() => setInviteOpen(false)}
+          destroyOnHidden
+        >
+          <Typography.Paragraph type="secondary" style={{ marginTop: 0 }}>
+            {t('pages.nodes.inviteHint')}
+          </Typography.Paragraph>
+          <Input.TextArea
+            rows={4}
+            value={inviteBlob}
+            onChange={(e) => setInviteBlob(e.target.value)}
+            placeholder={t('pages.nodes.invitePlaceholder')}
+            style={{ fontFamily: 'monospace', marginBottom: 12 }}
+          />
+          <Input
+            value={inviteName}
+            onChange={(e) => setInviteName(e.target.value)}
+            placeholder={t('pages.nodes.inviteNamePlaceholder')}
+          />
+        </Modal>
 
         <Modal
           open={mtlsOpen}

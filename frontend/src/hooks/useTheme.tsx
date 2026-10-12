@@ -22,6 +22,22 @@ function applyDom(isDark: boolean, isUltra: boolean) {
   } else {
     document.documentElement.removeAttribute('data-theme');
   }
+  const root = document.documentElement.style;
+  if (isDark) {
+    root.setProperty('--fb-bg', isUltra ? '#000000' : '#0b0c10');
+    root.setProperty('--fb-card', isUltra ? '#0c0c0f' : '#13151c');
+    root.setProperty('--fb-border', isUltra ? '#16161c' : '#1f2330');
+    root.setProperty('--fb-accent', '#f4eee2');
+    root.setProperty('--fb-accent-text', '#13151c');
+    root.setProperty('--fb-muted', '#8c92a4');
+  } else {
+    root.setProperty('--fb-bg', '#eef0f5');
+    root.setProperty('--fb-card', '#ffffff');
+    root.setProperty('--fb-border', 'rgba(15, 23, 42, 0.08)');
+    root.setProperty('--fb-accent', '#13151c');
+    root.setProperty('--fb-accent-text', '#f4eee2');
+    root.setProperty('--fb-muted', '#64748b');
+  }
   const msg = document.getElementById('message');
   if (msg) {
     msg.classList.remove('dark', 'light');
@@ -35,15 +51,15 @@ const initialUltra = readBool(STORAGE_ULTRA, false);
 applyDom(initialDark, initialUltra);
 
 const DARK_TOKENS = {
-  colorBgBase: '#09090b',
-  colorBgLayout: '#09090b',
-  colorBgContainer: 'rgba(20, 20, 24, 0.72)',
-  colorBgElevated: '#1c1c22',
+  colorBgBase: '#0b0c10',
+  colorBgLayout: '#0b0c10',
+  colorBgContainer: 'rgba(19, 21, 28, 0.92)',
+  colorBgElevated: '#13151c',
   colorPrimary: '#60a5fa',
   colorPrimaryHover: '#93c5fd',
   colorPrimaryActive: '#3b82f6',
   borderRadius: 14,
-  borderRadiusLG: 20,
+  borderRadiusLG: 14,
   fontFamily: `"Segoe UI Variable Text", "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif`,
 };
 const ULTRA_DARK_TOKENS = {
@@ -94,11 +110,11 @@ const ULTRA_DARK_MENU_TOKENS = {
 };
 const DARK_CARD_TOKENS = {
   colorBorderSecondary: 'rgba(255, 255, 255, 0.06)',
-  borderRadiusLG: 20,
+  borderRadiusLG: 14,
 };
 const ULTRA_DARK_CARD_TOKENS = {
   colorBorderSecondary: 'rgba(255, 255, 255, 0.04)',
-  borderRadiusLG: 20,
+  borderRadiusLG: 14,
 };
 const STATISTIC_TOKENS = {
   contentFontSize: 17,
@@ -140,13 +156,13 @@ export function buildAntdThemeConfig(isDark: boolean, isUltra: boolean): ThemeCo
       token: {
         ...LIGHT_CONTRAST_TOKENS,
         borderRadius: 14,
-        borderRadiusLG: 20,
+        borderRadiusLG: 14,
         fontFamily: `"Segoe UI Variable Text", "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif`,
       },
       components: {
         Statistic: STATISTIC_TOKENS,
         Button: LIGHT_BUTTON_TOKENS,
-        Card: { borderRadiusLG: 20 },
+        Card: { borderRadiusLG: 14 },
         Layout: {
           bodyBg: 'transparent',
           headerBg: 'transparent',

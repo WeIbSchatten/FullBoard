@@ -42,6 +42,8 @@ import { activateOnKey } from '@/utils/a11y';
 import { useInboundOptions } from '@/api/queries/useInboundOptions';
 import { useAllSettings } from '@/api/queries/useAllSettings';
 import { useTheme } from '@/hooks/useTheme';
+import { isNavKeyVisible, parseNavVisibility } from '@/lib/navVisibility';
+import { parseCssBundle } from '@/pages/settings/CustomCssSettings';
 import type { ClientRecord, InboundOption } from '@/schemas/client';
 import { commandPaletteStore, useCommandPalette } from './useCommandPalette';
 import './CommandPalette.css';
@@ -69,6 +71,10 @@ export default function CommandPalette() {
   const { isDark, isUltra, toggleTheme, toggleUltra, antdThemeConfig } = useTheme();
   const { isOpen, close } = useCommandPalette();
   const { allSetting } = useAllSettings();
+  const navVisibility = useMemo(
+    () => parseNavVisibility(parseCssBundle(allSetting.customCssBundle).navVisibility),
+    [allSetting.customCssBundle],
+  );
   const { data: inbounds = [] } = useInboundOptions();
 
   const [query, setQuery] = useState('');
@@ -338,7 +344,11 @@ export default function CommandPalette() {
           ) : undefined,
         action: () => {
           close();
-          navigate(`/inbounds?search=${encodeURIComponent(ib.remark || String(ib.port || ''))}`);
+          navigate({
+            pathname: '/connections',
+            hash: 'inbounds',
+            search: `?search=${encodeURIComponent(ib.remark || String(ib.port || ''))}`,
+          });
         },
       });
     });
@@ -351,20 +361,18 @@ export default function CommandPalette() {
         icon: <DashboardOutlined />,
       },
       {
-        path: '/inbounds',
-        title: t('menu.inbounds'),
+        path: '/connections',
+        title: t('menu.connections'),
         keywords: [
+          'connections',
           'inbounds',
+          'outbounds',
+          'telegram',
+          'web proxy',
+          'tproxy',
           'ports',
-          'vless',
-          'vmess',
-          'reality',
-          'trojan',
-          'shadowsocks',
-          'wireguard',
-          'hysteria',
         ],
-        icon: <ImportOutlined />,
+        icon: <CloudServerOutlined />,
       },
       {
         path: '/clients',
@@ -389,18 +397,6 @@ export default function CommandPalette() {
         title: t('menu.hosts'),
         keywords: ['hosts', 'sni', 'domains'],
         icon: <GlobalOutlined />,
-      },
-      {
-        path: '/tg-web-proxy',
-        title: t('menu.tgWebProxy'),
-        keywords: ['telegram', 'web proxy', 'tproxy', 'mtproxy', 'webview'],
-        icon: <SendOutlined />,
-      },
-      {
-        path: '/outbound',
-        title: t('menu.outbounds'),
-        keywords: ['outbounds', 'freedom', 'blackhole', 'socks', 'http', 'warp', 'nord', 'pia'],
-        icon: <ExportOutlined />,
       },
       {
         path: '/routing',
@@ -429,6 +425,7 @@ export default function CommandPalette() {
     ];
 
     pages
+      .filter((p) => isNavKeyVisible(p.path, navVisibility))
       .filter((p) => matches(p.title, undefined, p.keywords))
       .forEach((p) => {
         list.push({
@@ -646,6 +643,7 @@ export default function CommandPalette() {
     isDark,
     isUltra,
     allSetting.subURI,
+    navVisibility,
     t,
     close,
     navigate,

@@ -2518,6 +2518,84 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "EnrollConsumeResponse": {
+    "properties": {
+      "address": {
+        "example": "eu.example.com",
+        "type": "string"
+      },
+      "apiToken": {
+        "example": "tok_…",
+        "type": "string"
+      },
+      "basePath": {
+        "example": "/",
+        "type": "string"
+      },
+      "name": {
+        "example": "eu-relay",
+        "type": "string"
+      },
+      "panelGuid": {
+        "type": "string"
+      },
+      "port": {
+        "example": 2053,
+        "type": "integer"
+      },
+      "scheme": {
+        "example": "https",
+        "type": "string"
+      }
+    },
+    "required": [
+      "address",
+      "apiToken",
+      "basePath",
+      "name",
+      "port",
+      "scheme"
+    ],
+    "type": "object"
+  },
+  "EnrollFromInviteRequest": {
+    "properties": {
+      "invite": {
+        "example": "fb-enroll-1.…",
+        "type": "string"
+      },
+      "name": {
+        "example": "eu-relay",
+        "type": "string"
+      }
+    },
+    "required": [
+      "invite"
+    ],
+    "type": "object"
+  },
+  "EnrollInviteResponse": {
+    "properties": {
+      "baseUrl": {
+        "example": "https://eu.example.com:2053/",
+        "type": "string"
+      },
+      "expiresIn": {
+        "example": 1800,
+        "type": "integer"
+      },
+      "invite": {
+        "example": "fb-enroll-1.eyJ2IjoxLCJiYXNlIjoiaHR0cHM6Ly9ldS5leGFtcGxlLmNvbTozMDAwLyIsImNvZGUiOiJhYmMifQ",
+        "type": "string"
+      }
+    },
+    "required": [
+      "baseUrl",
+      "expiresIn",
+      "invite"
+    ],
+    "type": "object"
+  },
   "FallbackParentInfo": {
     "description": "FallbackParentInfo carries everything the frontend needs to rewrite a\nchild inbound's client link: where to connect (the master's address\nand port) and which path matched on the master's fallbacks array.\nThe frontend already has the master inbound in its dbInbounds list,\nso we only ship identifiers + the match path here.",
     "properties": {
