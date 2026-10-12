@@ -339,12 +339,15 @@ body.light .sider-brand {
 .ant-sidebar--top .top-nav-header {
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 56px;
+  gap: 8px;
+  min-height: 56px;
+  height: auto;
   margin: 12px 12px 0;
-  padding: 0 12px 0 16px;
-  line-height: 56px;
+  padding: 6px 12px 6px 16px;
+  line-height: 1.2;
   width: calc(100% - 24px);
+  max-width: calc(100% - 24px);
+  box-sizing: border-box;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(16, 16, 20, 0.55);
@@ -384,19 +387,27 @@ body.light .ant-sidebar--top .top-nav-header {
 .ant-sidebar--top .top-nav-menu-wrap {
   flex: 1 1 auto;
   min-width: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
 }
 
 .ant-sidebar--top .top-nav-menu {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-bottom: none !important;
   background: transparent;
-  line-height: 50px;
+  line-height: 44px;
 }
 
 .ant-sidebar--top .top-nav-menu .ant-menu-item,
 .ant-sidebar--top .top-nav-menu .ant-menu-submenu-title {
   padding-inline: 10px !important;
+  display: inline-flex !important;
+  align-items: center;
+  height: 44px !important;
+  line-height: 44px !important;
+  margin-block: 0 !important;
 }
 
 .ant-sidebar--top .top-nav-tools {

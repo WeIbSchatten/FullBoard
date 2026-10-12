@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Input, Space, Typography, message } from 'antd';
 import { CopyOutlined, LinkOutlined } from '@ant-design/icons';
 
 import { SettingListItem } from '@/components/ui';
+import { useAllSettings } from '@/api/queries/useAllSettings';
 import { HttpUtil } from '@/utils';
 
 interface EnrollInviteResponse {
@@ -18,10 +19,25 @@ interface ApiMsg<T = unknown> {
   obj?: T;
 }
 
+function guessPublicBase(webBasePath: string | undefined): string {
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  if (!origin) return '';
+  let path = (webBasePath || window.X_UI_BASE_PATH || '/').trim() || '/';
+  if (!path.startsWith('/')) path = `/${path}`;
+  if (!path.endsWith('/')) path += '/';
+  return `${origin}${path === '/' ? '/' : path}`;
+}
+
 export default function RemoteManageSettings() {
   const { t } = useTranslation();
+  const { allSetting } = useAllSettings();
   const [messageApi, contextHolder] = message.useMessage();
-  const [publicBase, setPublicBase] = useState('');
+  const defaultBase = useMemo(
+    () => guessPublicBase(allSetting.webBasePath),
+    [allSetting.webBasePath],
+  );
+  const [publicBaseOverride, setPublicBaseOverride] = useState<string | null>(null);
+  const publicBase = publicBaseOverride ?? defaultBase;
   const [invite, setInvite] = useState('');
   const [expiresIn, setExpiresIn] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
@@ -29,12 +45,14 @@ export default function RemoteManageSettings() {
   const issue = useCallback(async () => {
     setBusy(true);
     try {
+      const base = publicBase.trim() || defaultBase;
       const msg = (await HttpUtil.post('/panel/api/setting/enrollInvite', {
-        publicBase: publicBase.trim() || undefined,
+        publicBase: base || undefined,
       })) as ApiMsg<EnrollInviteResponse>;
       if (msg?.success && msg.obj?.invite) {
         setInvite(msg.obj.invite);
         setExpiresIn(typeof msg.obj.expiresIn === 'number' ? msg.obj.expiresIn : null);
+        if (msg.obj.baseUrl) setPublicBaseOverride(msg.obj.baseUrl);
         messageApi.success(t('pages.settings.remoteManage.issued'));
       } else {
         messageApi.error(msg?.msg || t('pages.settings.remoteManage.issueFailed'));
@@ -44,7 +62,7 @@ export default function RemoteManageSettings() {
     } finally {
       setBusy(false);
     }
-  }, [publicBase, messageApi, t]);
+  }, [publicBase, defaultBase, messageApi, t]);
 
   const copy = useCallback(async () => {
     if (!invite) return;
@@ -68,8 +86,8 @@ export default function RemoteManageSettings() {
           <Input
             prefix={<LinkOutlined />}
             value={publicBase}
-            onChange={(e) => setPublicBase(e.target.value)}
-            placeholder={t('pages.settings.remoteManage.publicBasePh')}
+            onChange={(e) => setPublicBaseOverride(e.target.value)}
+            placeholder={defaultBase || t('pages.settings.remoteManage.publicBasePh')}
           />
           <Typography.Text type="secondary">
             {t('pages.settings.remoteManage.publicBaseDesc')}
