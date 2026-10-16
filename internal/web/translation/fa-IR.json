@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "بارگذاری قالب…",
+        "presetSignup": "صفحه ثبت‌نام اپلیکیشن",
+        "presetCats": "گربه‌ها در حال تعمیر اتصال",
+        "presetLoaded": "قالب در ویرایشگر بارگذاری شد. برای انتشار ذخیره کنید."
       },
       "routeVia": {
         "button": "Route via outbound",

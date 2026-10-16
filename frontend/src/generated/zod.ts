@@ -1082,6 +1082,12 @@ export const PublicSiteFileSchema = z.object({
 });
 export type PublicSiteFile = z.infer<typeof PublicSiteFileSchema>;
 
+export const PublicSitePresetSchema = z.object({
+  html: z.string(),
+  id: z.string(),
+});
+export type PublicSitePreset = z.infer<typeof PublicSitePresetSchema>;
+
 export const PublicSiteSnapshotSchema = z.object({
   active: z.boolean(),
   configPublicDir: z.string(),
@@ -1089,6 +1095,7 @@ export const PublicSiteSnapshotSchema = z.object({
   dir: z.string(),
   files: z.array(z.lazy(() => PublicSiteFileSchema)),
   indexHtml: z.string(),
+  presets: z.array(z.lazy(() => PublicSitePresetSchema)),
 });
 export type PublicSiteSnapshot = z.infer<typeof PublicSiteSnapshotSchema>;
 

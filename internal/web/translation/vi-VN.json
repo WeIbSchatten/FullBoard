@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Tải mẫu…",
+        "presetSignup": "Trang đăng ký ứng dụng",
+        "presetCats": "Mèo đang sửa kết nối",
+        "presetLoaded": "Đã tải mẫu vào trình soạn thảo. Lưu để xuất bản."
       },
       "routeVia": {
         "button": "Route via outbound",
