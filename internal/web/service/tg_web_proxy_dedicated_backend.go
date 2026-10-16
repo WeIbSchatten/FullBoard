@@ -147,9 +147,10 @@ func syncManagedMtprotoSecret(inboundSvc *InboundService, ib *model.Inbound, ema
 	if err != nil {
 		return err
 	}
+	// Keep the record's enable flag: forcing true here re-armed the secret of a
+	// disabled or depleted client on every binding sync.
 	client := *rec.ToClient()
 	client.Secret = secret
-	client.Enable = true
 
 	settings, err := json.Marshal(map[string][]model.Client{"clients": {client}})
 	if err != nil {
