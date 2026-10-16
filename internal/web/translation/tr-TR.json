@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Şablon yükle…",
+        "presetSignup": "Uygulama kayıt sayfası",
+        "presetCats": "Kediler bağlantıyı onarıyor",
+        "presetLoaded": "Şablon düzenleyiciye yüklendi. Yayınlamak için kaydedin."
       },
       "routeVia": {
         "button": "Route via outbound",

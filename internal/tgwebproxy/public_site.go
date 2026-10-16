@@ -314,14 +314,29 @@ type PublicSiteFile struct {
 	Size int64  `json:"size" example:"2048"`
 }
 
+// PublicSitePreset is a built-in landing page the editor can load and save.
+type PublicSitePreset struct {
+	ID   string `json:"id" example:"signup"`
+	HTML string `json:"html"`
+}
+
+// PublicSitePresets lists the built-in landings; the first is the reset default.
+func PublicSitePresets() []PublicSitePreset {
+	return []PublicSitePreset{
+		{ID: "signup", HTML: DefaultPublicSiteHTML},
+		{ID: "cats", HTML: CatsPublicSiteHTML},
+	}
+}
+
 // PublicSiteSnapshot is the panel-managed static site state.
 type PublicSiteSnapshot struct {
-	Dir             string           `json:"dir" example:"/srv/tproxy-site"`
-	Active          bool             `json:"active" example:"true"`
-	IndexHTML       string           `json:"indexHtml"`
-	Files           []PublicSiteFile `json:"files"`
-	DefaultHTML     string           `json:"defaultHtml"`
-	ConfigPublicDir string           `json:"configPublicDir" example:"/srv/tproxy-site"`
+	Dir             string             `json:"dir" example:"/srv/tproxy-site"`
+	Active          bool               `json:"active" example:"true"`
+	IndexHTML       string             `json:"indexHtml"`
+	Files           []PublicSiteFile   `json:"files"`
+	DefaultHTML     string             `json:"defaultHtml"`
+	ConfigPublicDir string             `json:"configPublicDir" example:"/srv/tproxy-site"`
+	Presets         []PublicSitePreset `json:"presets"`
 }
 
 func (m *Manager) PublicSiteDir() string {
@@ -412,6 +427,7 @@ func (m *Manager) GetPublicSite() (PublicSiteSnapshot, error) {
 		Dir:         dir,
 		DefaultHTML: DefaultPublicSiteHTML,
 		Files:       []PublicSiteFile{},
+		Presets:     PublicSitePresets(),
 	}
 	if cfgSnap, err := m.store.Load(); err == nil {
 		snap.ConfigPublicDir = cfgSnap.Config.PublicDir

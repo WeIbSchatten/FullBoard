@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "載入範本…",
+        "presetSignup": "應用程式註冊頁",
+        "presetCats": "貓咪正在修復連線",
+        "presetLoaded": "範本已載入編輯器，儲存後即可發佈。"
       },
       "routeVia": {
         "button": "Route via outbound",

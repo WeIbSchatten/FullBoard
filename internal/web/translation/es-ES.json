@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Cargar plantilla…",
+        "presetSignup": "Página de registro de app",
+        "presetCats": "Gatitos arreglando la conexión",
+        "presetLoaded": "Plantilla cargada en el editor. Guarda para publicarla."
       },
       "routeVia": {
         "button": "Route via outbound",

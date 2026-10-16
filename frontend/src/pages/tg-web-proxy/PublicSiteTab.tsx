@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Button, Card, Space, Table, Tag, Typography, Upload, Input } from 'antd';
+import { Alert, Button, Card, Select, Space, Table, Tag, Typography, Upload, Input } from 'antd';
 import type { UploadProps } from 'antd';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -14,6 +14,11 @@ import type { Msg } from '@/utils';
 import { reportApply } from './ProfilesTab';
 
 const BASE = '/panel/api/tgWebProxy';
+
+const PRESET_LABEL_KEYS: Record<string, string> = {
+  signup: 'pages.tgWebProxy.publicSite.presetSignup',
+  cats: 'pages.tgWebProxy.publicSite.presetCats',
+};
 
 async function fetchPublicSite(): Promise<PublicSiteSnapshot> {
   const msg = await HttpUtil.get(`${BASE}/publicSite`, undefined, { silent: true });
@@ -112,7 +117,23 @@ export default function PublicSiteTab({ disabled }: { disabled?: boolean }) {
       <Card
         title={t('pages.tgWebProxy.publicSite.editor')}
         extra={
-          <Space>
+          <Space wrap>
+            <Select
+              style={{ minWidth: 220 }}
+              placeholder={t('pages.tgWebProxy.publicSite.preset')}
+              disabled={disabled || saving || !site?.presets?.length}
+              value={null}
+              options={(site?.presets ?? []).map((p) => ({
+                value: p.id,
+                label: PRESET_LABEL_KEYS[p.id] ? t(PRESET_LABEL_KEYS[p.id]) : p.id,
+              }))}
+              onChange={(id: string) => {
+                const preset = site?.presets?.find((p) => p.id === id);
+                if (!preset) return;
+                setDraft(preset.html);
+                getMessage().info(t('pages.tgWebProxy.publicSite.presetLoaded'));
+              }}
+            />
             <Button disabled={disabled || saving} onClick={reset}>
               {t('pages.tgWebProxy.publicSite.reset')}
             </Button>

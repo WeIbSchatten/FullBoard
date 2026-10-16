@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "テンプレートを読み込む…",
+        "presetSignup": "アプリ登録ページ",
+        "presetCats": "猫が接続を修理中",
+        "presetLoaded": "テンプレートをエディタに読み込みました。保存すると公開されます。"
       },
       "routeVia": {
         "button": "Route via outbound",

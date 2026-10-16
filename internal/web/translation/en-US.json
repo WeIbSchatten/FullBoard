@@ -1174,7 +1174,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Load a template…",
+        "presetSignup": "App sign-up page",
+        "presetCats": "Cats fixing the connection",
+        "presetLoaded": "Template loaded into the editor. Save to publish it."
       },
       "routeVia": {
         "button": "Route via outbound",

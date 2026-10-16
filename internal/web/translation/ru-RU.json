@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Загрузить шаблон…",
+        "presetSignup": "Страница регистрации в приложении",
+        "presetCats": "Котики чинят подключение",
+        "presetLoaded": "Шаблон загружен в редактор. Сохраните, чтобы опубликовать."
       },
       "routeVia": {
         "button": "Route via outbound",

@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Завантажити шаблон…",
+        "presetSignup": "Сторінка реєстрації в застосунку",
+        "presetCats": "Котики лагодять підключення",
+        "presetLoaded": "Шаблон завантажено в редактор. Збережіть, щоб опублікувати."
       },
       "routeVia": {
         "button": "Route via outbound",

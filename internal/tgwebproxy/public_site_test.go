@@ -173,3 +173,26 @@ func TestGetPublicSiteReportsLegacyPublicDirAsInactive(t *testing.T) {
 		t.Fatalf("ConfigPublicDir = %q, want %q", snap.ConfigPublicDir, legacy)
 	}
 }
+
+func TestPublicSitePresetsKeepResetDefaultFirstAndShipSelfContainedCats(t *testing.T) {
+	presets := PublicSitePresets()
+	if len(presets) < 2 || presets[0].HTML != DefaultPublicSiteHTML {
+		t.Fatalf("first preset must be the reset default, got %d presets", len(presets))
+	}
+	var cats string
+	for _, p := range presets {
+		if p.ID == "cats" {
+			cats = p.HTML
+		}
+	}
+	if cats == "" {
+		t.Fatal("cats preset missing")
+	}
+	// The relay serves the site from memory; an external asset would leak the
+	// visitor to a third party and break offline hosts.
+	for _, ref := range []string{"http://", "https://", "//fonts."} {
+		if strings.Contains(cats, ref) {
+			t.Fatalf("cats preset references an external resource (%q)", ref)
+		}
+	}
+}
