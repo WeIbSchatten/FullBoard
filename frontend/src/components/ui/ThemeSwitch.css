@@ -1,0 +1,55 @@
+.theme-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--fb-radius);
+  background: var(--fb-surface-2);
+  border: 1px solid var(--fb-border);
+}
+
+.theme-switch-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  border: 0;
+  border-radius: calc(var(--fb-radius) - 4px);
+  background: transparent;
+  color: var(--fb-text-3);
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    background 0.15s var(--fb-ease),
+    color 0.15s var(--fb-ease);
+}
+
+.theme-switch-item:hover {
+  color: var(--fb-text);
+}
+
+.theme-switch-item.is-active {
+  background: var(--fb-accent);
+  color: var(--fb-on-accent);
+}
+
+.theme-switch-cycle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 36px;
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius-sm);
+  background: var(--fb-surface-2);
+  color: var(--fb-text-2);
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.theme-switch-cycle:hover {
+  color: var(--fb-text);
+  border-color: var(--fb-border-strong);
+}

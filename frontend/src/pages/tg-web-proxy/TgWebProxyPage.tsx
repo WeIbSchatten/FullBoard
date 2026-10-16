@@ -63,7 +63,7 @@ export default function TgWebProxyPage() {
                     type="warning"
                     showIcon
                     style={{ marginBottom: 12 }}
-                    message={t('pages.tgWebProxy.unsupported')}
+                    title={t('pages.tgWebProxy.unsupported')}
                   />
                 )}
                 <PanelTabs

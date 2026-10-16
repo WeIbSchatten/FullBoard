@@ -60,7 +60,7 @@ export default function InstallModal({ open, onClose }: { open: boolean; onClose
         type="warning"
         showIcon
         style={{ marginBottom: 16 }}
-        message={t('pages.tgWebProxy.install.warning')}
+        title={t('pages.tgWebProxy.install.warning')}
       />
       <Form
         form={form}

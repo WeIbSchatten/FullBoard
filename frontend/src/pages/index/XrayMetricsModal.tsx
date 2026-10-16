@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 
 import { HttpUtil, Msg, SizeFormatter } from '@/utils';
+import { useChartColors } from '@/hooks/useTheme';
 import { Sparkline } from '@/components/viz';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import './XrayMetricsModal.css';
@@ -30,7 +31,6 @@ interface MetricDef {
   title: string;
   icon: ReactNode;
   unit: 'B' | 'ns' | 'ms' | '';
-  stroke: string;
 }
 
 interface XrayState {
@@ -55,7 +55,6 @@ const METRICS: MetricDef[] = [
     title: 'pages.index.xrayTitleHeap',
     icon: <DatabaseOutlined />,
     unit: 'B',
-    stroke: '#7c4dff',
   },
   {
     key: 'xrSys',
@@ -64,7 +63,6 @@ const METRICS: MetricDef[] = [
     title: 'pages.index.xrayTitleSys',
     icon: <CloudServerOutlined />,
     unit: 'B',
-    stroke: '#1890ff',
   },
   {
     key: 'xrHeapObjects',
@@ -73,7 +71,6 @@ const METRICS: MetricDef[] = [
     title: 'pages.index.xrayTitleObjects',
     icon: <BlockOutlined />,
     unit: '',
-    stroke: '#13c2c2',
   },
   {
     key: 'xrNumGC',
@@ -82,7 +79,6 @@ const METRICS: MetricDef[] = [
     title: 'pages.index.xrayTitleGcCount',
     icon: <DeleteOutlined />,
     unit: '',
-    stroke: '#fa8c16',
   },
   {
     key: 'xrPauseNs',
@@ -91,7 +87,6 @@ const METRICS: MetricDef[] = [
     title: 'pages.index.xrayTitleGcPause',
     icon: <PauseCircleOutlined />,
     unit: 'ns',
-    stroke: '#f5222d',
   },
   {
     key: OBS_KEY,
@@ -100,7 +95,6 @@ const METRICS: MetricDef[] = [
     title: 'pages.index.xrayTitleObservatory',
     icon: <EyeOutlined />,
     unit: 'ms',
-    stroke: '#52c41a',
   },
 ];
 
@@ -215,7 +209,7 @@ export default function XrayMetricsModal({ open, onClose }: XrayMetricsModalProp
 
   const activeMetric = useMemo(() => METRICS.find((m) => m.key === activeKey), [activeKey]);
   const isObservatory = activeKey === OBS_KEY;
-  const strokeColor = activeMetric?.stroke || '#008771';
+  const strokeColor = useChartColors().series[0];
   const yFormatter = useMemo(() => unitFormatter(activeMetric?.unit ?? ''), [activeMetric]);
 
   const activeObsTag = obsTags.find((tg) => tg.tag === obsActiveTag) || null;

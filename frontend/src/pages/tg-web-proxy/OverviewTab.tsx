@@ -138,7 +138,7 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
     <Row gutter={[16, 16]}>
       {status.configError && (
         <Col span={24}>
-          <Alert type="error" showIcon message={status.configError} />
+          <Alert type="error" showIcon title={status.configError} />
         </Col>
       )}
       {status.profilesExists && !status.profilesModeOk && (
@@ -146,7 +146,7 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
           <Alert
             type="error"
             showIcon
-            message={t('pages.tgWebProxy.profilesModeBad', { mode: status.profilesMode })}
+            title={t('pages.tgWebProxy.profilesModeBad', { mode: status.profilesMode })}
           />
         </Col>
       )}
@@ -200,7 +200,7 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
                       <Alert
                         type="warning"
                         showIcon
-                        message={t('pages.tgWebProxy.caddyEncodeWarn')}
+                        title={t('pages.tgWebProxy.caddyEncodeWarn')}
                         action={
                           <Button
                             size="small"

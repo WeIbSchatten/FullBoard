@@ -76,7 +76,9 @@ export default function RealityTargetScannerModal({
             <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {target}
             </div>
-            {row.ip ? <div style={{ color: '#999', fontSize: 12 }}>{row.ip}</div> : null}
+            {row.ip ? (
+              <div style={{ color: 'var(--fb-text-3)', fontSize: 12 }}>{row.ip}</div>
+            ) : null}
           </div>
         </Tooltip>
       ),

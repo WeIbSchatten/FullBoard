@@ -268,9 +268,9 @@ export default function CommandPalette() {
           title: c.email,
           subtitle: `${trafficUsed} / ${trafficTotal}${c.comment ? ` · ${c.comment}` : ''}`,
           icon: isOnline ? (
-            <CheckCircleFilled style={{ color: '#52c41a' }} />
+            <CheckCircleFilled style={{ color: 'var(--fb-success)' }} />
           ) : (
-            <CloseCircleFilled style={{ color: '#ff4d4f' }} />
+            <CloseCircleFilled style={{ color: 'var(--fb-error)' }} />
           ),
           action: () => {
             close();
@@ -337,7 +337,7 @@ export default function CommandPalette() {
         category: 'inbounds',
         title: ib.remark || ib.tag || `Inbound #${ib.id}`,
         subtitle: `Port ${ib.port || ''}`,
-        icon: <ImportOutlined style={{ color: '#1677ff' }} />,
+        icon: <ImportOutlined style={{ color: 'var(--fb-info)' }} />,
         tag:
           tags.length > 0 ? (
             <div style={{ display: 'inline-flex', gap: 4, flexWrap: 'wrap' }}>{tags}</div>
@@ -373,6 +373,12 @@ export default function CommandPalette() {
           'ports',
         ],
         icon: <CloudServerOutlined />,
+      },
+      {
+        path: '/connections#tg-web-proxy',
+        title: t('menu.tgWebProxy'),
+        keywords: ['telegram', 'web proxy', 'tproxy', 'mtproto', 'tg'],
+        icon: <SendOutlined />,
       },
       {
         path: '/clients',
@@ -595,14 +601,14 @@ export default function CommandPalette() {
         title: t('commandPalette.restartXray'),
         subtitle: t('pages.index.restartXray'),
         keywords: ['restart', 'xray restart', 'reboot xray'],
-        icon: <ReloadOutlined style={{ color: '#faad14' }} />,
+        icon: <ReloadOutlined style={{ color: 'var(--fb-warning)' }} />,
         action: restartXray,
       },
       {
         id: 'act-cycle-theme',
         category: 'actions',
         title: t('menu.theme'),
-        subtitle: isUltra ? 'Ultra Dark' : isDark ? 'Dark' : 'Light',
+        subtitle: t(isUltra ? 'menu.themeAmoled' : isDark ? 'menu.themeDark' : 'menu.themeLight'),
         keywords: ['theme', 'light', 'dark', 'ultra'],
         icon: isDark ? <SunOutlined /> : <MoonOutlined />,
         action: cycleTheme,
@@ -613,7 +619,7 @@ export default function CommandPalette() {
         title: t('pages.inbounds.addInbound'),
         subtitle: t('menu.inbounds'),
         keywords: ['add inbound', 'create inbound', 'new port', 'new inbound'],
-        icon: <PlusOutlined style={{ color: '#52c41a' }} />,
+        icon: <PlusOutlined style={{ color: 'var(--fb-success)' }} />,
         action: () => {
           close();
           navigate('/inbounds');
@@ -625,7 +631,7 @@ export default function CommandPalette() {
         title: t('pages.clients.addClient'),
         subtitle: t('menu.clients'),
         keywords: ['add client', 'create user', 'new client', 'new user'],
-        icon: <PlusOutlined style={{ color: '#52c41a' }} />,
+        icon: <PlusOutlined style={{ color: 'var(--fb-success)' }} />,
         action: () => {
           close();
           navigate('/clients');

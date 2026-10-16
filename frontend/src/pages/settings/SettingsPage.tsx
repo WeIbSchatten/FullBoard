@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { PoweroffOutlined, SaveOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
   Card,
-  Col,
   ConfigProvider,
   FloatButton,
   Layout,
   Modal,
-  Row,
-  Space,
   Spin,
   message,
 } from 'antd';
@@ -22,6 +20,9 @@ import { useTheme } from '@/hooks/useTheme';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useAllSettings } from '@/api/queries/useAllSettings';
 import { AllSettingSchema } from '@/schemas/setting';
+import PageActionBar from '@/components/ui/PageActionBar';
+import SectionNav from '@/components/ui/SectionNav';
+import { useSettingsSections } from '@/layouts/sectionModel';
 import GeneralTab from './GeneralTab';
 import SecurityTab from './SecurityTab';
 import TelegramTab from './TelegramTab';
@@ -35,17 +36,6 @@ import './SettingsPage.css';
 interface ApiMsg {
   success?: boolean;
 }
-
-const tabSlugs = [
-  'general',
-  'security',
-  'telegram',
-  'email',
-  'discord',
-  'subscription',
-  'subscription-formats',
-  'subscription-balancers',
-];
 
 function isIp(h: string): boolean {
   if (typeof h !== 'string') return false;
@@ -61,10 +51,6 @@ function isIp(h: string): boolean {
   if (![...head, ...tail].every(valid)) return false;
   const groups = head.length + tail.length;
   return parts.length === 2 ? groups < 8 : groups === 8;
-}
-
-function scrollTarget() {
-  return document.getElementById('content-layout') as HTMLElement;
 }
 
 export default function SettingsPage() {
@@ -95,8 +81,10 @@ export default function SettingsPage() {
 
   const [alertVisible, setAlertVisible] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
+  const sections = useSettingsSections();
   const slug = location.hash.replace(/^#/, '');
-  const activeSlug = tabSlugs.includes(slug) ? slug : 'general';
+  const activeSlug = sections.some((s) => s.key === slug) ? slug : 'general';
 
   function rebuildUrlAfterRestart(): string {
     const { webDomain, webPort, webBasePath, webCertFile, webKeyFile } = allSetting;
@@ -262,37 +250,34 @@ export default function SettingsPage() {
                   />
                 )}
 
-                <Row gutter={[isMobile ? 8 : 16, isMobile ? 0 : 12]}>
-                  <Col span={24}>
-                    <Card hoverable>
-                      <Row className="header-row">
-                        <Col xs={24} sm={10} className="header-actions">
-                          <Space>
-                            <Button type="primary" disabled={saveDisabled} onClick={onSave}>
-                              {t('pages.settings.save')}
-                            </Button>
-                            <Button
-                              type="primary"
-                              danger
-                              disabled={!saveDisabled}
-                              onClick={restartPanel}
-                            >
-                              {t('pages.settings.restartPanel')}
-                            </Button>
-                          </Space>
-                        </Col>
-                        <Col xs={24} sm={14} className="header-info">
-                          <FloatButton.BackTop target={scrollTarget} visibilityHeight={200} />
-                          <Alert type="warning" showIcon title={t('pages.settings.infoDesc')} />
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
+                <PageActionBar dirty={!saveDisabled}>
+                  <Button
+                    danger
+                    icon={<PoweroffOutlined />}
+                    disabled={!saveDisabled}
+                    onClick={restartPanel}
+                  >
+                    {!isMobile && t('pages.settings.restartPanel')}
+                  </Button>
+                  <Button
+                    type="primary"
+                    icon={<SaveOutlined />}
+                    disabled={saveDisabled}
+                    onClick={onSave}
+                  >
+                    {t('pages.settings.save')}
+                  </Button>
+                </PageActionBar>
 
-                  <Col span={24}>
-                    <Card hoverable>{categoryBody}</Card>
-                  </Col>
-                </Row>
+                <SectionNav
+                  items={sections}
+                  active={activeSlug}
+                  onChange={(key) => navigate({ hash: key }, { replace: true })}
+                  ariaLabel={t('menu.settings')}
+                />
+
+                <Card>{categoryBody}</Card>
+                <FloatButton.BackTop visibilityHeight={400} />
               </>
             )}
           </Spin>

@@ -122,11 +122,29 @@
     "hosts": "میزبان‌ها",
     "docs": "مستندات",
     "openMenu": "باز کردن منو",
-    "pinSidebar": "ثابت کردن نوار کناری",
-    "unpinSidebar": "برداشتن تثبیت نوار کناری",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "مدیریت",
+    "sectionInfra": "زیرساخت",
+    "sectionSystem": "سیستم",
+    "collapseSidebar": "جمع کردن منو",
+    "expandSidebar": "باز کردن منو",
+    "themeLight": "روشن",
+    "themeDark": "تیره",
+    "themeAmoled": "مشکی AMOLED",
+    "account": "حساب",
+    "hint": {
+      "dashboard": "وضعیت سرور، ترافیک و Xray در یک نگاه",
+      "connections": "ورودی‌ها، خروجی‌ها و پراکسی وب تلگرام",
+      "clients": "کاربران، کلیدها، محدودیت‌ها و اشتراک‌ها",
+      "groups": "کلاینت‌ها را گروه کنید تا محدودیت و دسترسی را یکجا مدیریت کنید",
+      "nodes": "پنل‌های FullBoard روی سرورهای دیگر شما",
+      "hosts": "آدرس‌ها و بازنویسی‌ها برای لینک‌ها و اشتراک‌های کلاینت",
+      "xray": "پیکربندی هسته: مسیریابی، متعادل‌کننده، DNS و JSON",
+      "settings": "پنل، امنیت، اعلان‌ها و اشتراک‌ها",
+      "apiDocs": "مرجع REST API برای خودکارسازی"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "تغییرات ذخیره‌نشده",
+      "allSaved": "همه تغییرات ذخیره شد"
     },
     "xray": {
       "save": "ذخیره",

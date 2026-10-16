@@ -140,7 +140,7 @@ export default function ConfigTab({ snapshot }: { snapshot: RelaySnapshot }) {
         type="info"
         showIcon
         style={{ marginBottom: 16 }}
-        message={t('pages.tgWebProxy.config.applyHint')}
+        title={t('pages.tgWebProxy.config.applyHint')}
       />
       <Form
         form={form}

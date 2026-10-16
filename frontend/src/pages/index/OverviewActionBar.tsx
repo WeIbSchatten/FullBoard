@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Tag, Tooltip } from 'antd';
+import { Button, Dropdown, Tag, Tooltip } from 'antd';
 import {
   ApiOutlined,
   ArrowUpOutlined,
@@ -10,6 +10,7 @@ import {
   CloudDownloadOutlined,
   CloudServerOutlined,
   ControlOutlined,
+  EllipsisOutlined,
   FileTextOutlined,
   PoweroffOutlined,
   ReloadOutlined,
@@ -191,25 +192,55 @@ export default function OverviewActionBar({
       )}
 
       <div className="ov-bar-actions">
-        {actionGroups.map((group, groupIndex) => (
-          <Fragment key={group[0].key}>
-            {groupIndex > 0 && <span className="ov-bar-sep" />}
-            {group.map((action) => (
-              <Button
-                key={action.key}
-                type={action.primary ? undefined : 'text'}
-                color={action.primary ? 'primary' : undefined}
-                variant={action.primary ? 'outlined' : undefined}
-                size={size}
-                icon={action.icon}
-                aria-label={action.text}
-                onClick={action.onClick}
-              >
-                {isMobile ? undefined : action.text}
-              </Button>
-            ))}
-          </Fragment>
+        {actionGroups[0].map((action) => (
+          <Button
+            key={action.key}
+            type={action.primary ? 'primary' : 'default'}
+            size={size}
+            icon={action.icon}
+            aria-label={action.text}
+            onClick={action.onClick}
+          >
+            {action.text}
+          </Button>
         ))}
+        {isMobile ? (
+          <Dropdown
+            trigger={['click']}
+            placement="bottomRight"
+            menu={{
+              items: actionGroups.slice(1).flatMap((group, i) => [
+                ...(i > 0 ? [{ type: 'divider' as const, key: `sep-${i}` }] : []),
+                ...group.map((a) => ({
+                  key: a.key,
+                  icon: a.icon,
+                  label: a.text,
+                  onClick: a.onClick,
+                })),
+              ]),
+            }}
+          >
+            <Button size={size} icon={<EllipsisOutlined />} aria-label={t('more')} />
+          </Dropdown>
+        ) : (
+          actionGroups.slice(1).map((group) => (
+            <Fragment key={group[0].key}>
+              <span className="ov-bar-sep" />
+              {group.map((action) => (
+                <Button
+                  key={action.key}
+                  type="text"
+                  size={size}
+                  icon={action.icon}
+                  aria-label={action.text}
+                  onClick={action.onClick}
+                >
+                  {action.text}
+                </Button>
+              ))}
+            </Fragment>
+          ))
+        )}
       </div>
     </div>
   );

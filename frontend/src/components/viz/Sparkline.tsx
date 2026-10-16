@@ -17,14 +17,14 @@ export interface SparklineExtrema {
   maxColor?: string;
 }
 
-const DEFAULT_STROKE = '#008771';
-const DEFAULT_STROKE2 = '#722ed1';
-const DEFAULT_STROKE3 = '#a0d911';
-const DEFAULT_MIN_COLOR = '#52c41a';
-const DEFAULT_MAX_COLOR = '#fa541c';
-const GRID_COLOR = 'rgba(128, 128, 140, 0.35)';
-const AXIS_FONT = '10px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
-const LABEL_FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const DEFAULT_STROKE = '#8a8a8a';
+const DEFAULT_STROKE2 = '#9db8db';
+const DEFAULT_STROKE3 = '#e2b86b';
+const DEFAULT_MIN_COLOR = '#7dcea0';
+const DEFAULT_MAX_COLOR = '#ec7a7a';
+const GRID_COLOR = 'rgba(128, 128, 128, 0.18)';
+const AXIS_FONT = '10px ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif';
+const LABEL_FONT = 'ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif';
 
 interface SparklineProps {
   data: number[];

@@ -15,19 +15,19 @@
 
 .jdp-dark .jdp-wrap input,
 .jdp-dark input {
-  color: rgba(255, 255, 255, 0.88) !important;
-  background-color: #23252b !important;
+  color: var(--fb-text) !important;
+  background-color: var(--fb-elevated) !important;
 }
 
 .jdp-ultra .jdp-wrap input,
 .jdp-ultra input {
-  color: rgba(255, 255, 255, 0.88) !important;
-  background-color: #101013 !important;
+  color: var(--fb-text) !important;
+  background-color: var(--fb-elevated) !important;
 }
 
 .jdp-dark input::placeholder,
 .jdp-ultra input::placeholder {
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: var(--fb-text-3) !important;
 }
 
 .jdp-disabled {
@@ -53,21 +53,21 @@
   cursor: pointer;
   font-size: 12px;
   line-height: 1;
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--fb-text-3);
   transition: color 0.2s;
 }
 
 .jdp-wrap .jdp-clear:hover {
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--fb-text-2);
 }
 
 .jdp-dark .jdp-clear {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--fb-text-3);
 }
 
 .jdp-dark .jdp-clear:hover,
 .jdp-ultra .jdp-clear:hover {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--fb-text-2);
 }
 
 /* With no value the library still paints today's date into its readOnly input;

@@ -76,7 +76,7 @@ interface HealthProps {
 
 // Purple: the node's panel API is reachable (status=online) but its Xray core
 // has failed or been stopped. Distinct from a normal offline/unknown node.
-const XRAY_ERROR_COLOR = '#722ED1';
+const XRAY_ERROR_COLOR = 'var(--fb-purple)';
 
 // True when the panel is online but Xray itself reports error/stop.
 function hasXrayProblem(status?: string, xrayState?: string): boolean {

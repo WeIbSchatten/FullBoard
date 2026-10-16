@@ -7,16 +7,11 @@
   --ov-line: var(--ant-color-border);
   --ov-label: var(--ant-color-text-secondary);
   --ov-faint: var(--ant-color-text-tertiary);
-  --ov-gap: 12px;
+  --ov-gap: 16px;
   --ov-pad: 20px;
 }
 
 @media (max-width: 768px) {
-  .index-page .content-area {
-    padding: 12px;
-    padding-top: 64px;
-  }
-
   .index-page {
     --ov-gap: 8px;
     --ov-pad: 14px;
@@ -36,16 +31,21 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius-lg);
+  background: var(--fb-surface);
 }
 
 .ov-state {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px;
-  border: 1px solid var(--ov-line);
+  padding: 6px 12px;
   border-radius: 999px;
+  background: var(--fb-surface-2);
   font-size: 13px;
+  font-weight: 500;
   color: var(--ant-color-text);
 }
 
@@ -99,7 +99,9 @@
 .ov-state-version:focus-visible,
 .ov-panel-version:hover,
 .ov-panel-version:focus-visible {
-  color: var(--ant-color-primary);
+  color: var(--ant-color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .ov-panel-version {
@@ -144,7 +146,20 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  padding: 10px 14px;
+  border-radius: var(--fb-radius);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.ov-health--warn {
+  color: var(--fb-warning);
+  background: var(--fb-warning-bg);
+}
+
+.ov-health--crit {
+  color: var(--fb-error);
+  background: var(--fb-error-bg);
 }
 
 .ov-health-mark {
@@ -152,19 +167,6 @@
   height: 1px;
   background: currentColor;
   flex: none;
-}
-
-.ov-rule {
-  height: 1px;
-  border: 0;
-  margin: 0;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--ov-line) 48px,
-    var(--ov-line) calc(100% - 48px),
-    transparent
-  );
 }
 
 /* — shared type — */
@@ -189,7 +191,7 @@
 }
 
 .ov-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--fb-font-mono);
 }
 
 /* — vitals tiles — */
@@ -220,8 +222,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 14px var(--ov-pad) 0;
-  color: var(--ov-accent);
+  padding: 16px var(--ov-pad) 0;
+  color: var(--ov-faint);
+}
+
+.ov-tile--warn .ov-tile-number {
+  color: var(--fb-warning);
+}
+
+.ov-tile--crit .ov-tile-number {
+  color: var(--fb-error);
 }
 
 .ov-tile-icon {
@@ -484,4 +494,8 @@
 
 .index-page .ip-hidden {
   filter: blur(6px);
+}
+
+.ov-bar-actions .ant-btn-variant-text {
+  padding-inline: 8px;
 }
