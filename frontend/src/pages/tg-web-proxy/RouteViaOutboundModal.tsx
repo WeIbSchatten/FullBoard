@@ -149,7 +149,7 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       title={t('pages.tgWebProxy.routeVia.title', { name: profile?.name ?? '' })}
       onCancel={onClose}
       onOk={submit}
-      okText={t('pages.tgWebProxy.routeVia.apply')}
+      okText={t(localBackend ? 'save' : 'pages.tgWebProxy.routeVia.apply')}
       confirmLoading={saving}
       okButtonProps={{
         disabled:

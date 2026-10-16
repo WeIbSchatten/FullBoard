@@ -2,6 +2,7 @@ package tgwebproxy
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,9 +12,10 @@ import (
 func withTempPublicSite(t *testing.T) string {
 	t.Helper()
 	dir := filepath.Join(t.TempDir(), "tproxy-site")
-	prev := publicSiteDir
+	prev, prevLegacy := publicSiteDir, legacyPublicSiteDir
 	publicSiteDir = dir
-	t.Cleanup(func() { publicSiteDir = prev })
+	legacyPublicSiteDir = filepath.Join(t.TempDir(), "no-legacy-site")
+	t.Cleanup(func() { publicSiteDir, legacyPublicSiteDir = prev, prevLegacy })
 	return dir
 }
 
@@ -101,5 +103,73 @@ func TestUploadAndDeletePublicSiteAsset(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(dir, "style.css")); !os.IsNotExist(err) {
 		t.Fatalf("expected deleted file, err=%v", err)
+	}
+}
+
+func withTempLegacyPublicSite(t *testing.T) string {
+	t.Helper()
+	dir := filepath.Join(t.TempDir(), "legacy-site")
+	prev := legacyPublicSiteDir
+	legacyPublicSiteDir = dir
+	t.Cleanup(func() { legacyPublicSiteDir = prev })
+	return dir
+}
+
+func TestEnsurePublicSiteDirCarriesOverLegacySite(t *testing.T) {
+	dir := withTempPublicSite(t)
+	legacy := withTempLegacyPublicSite(t)
+	if err := os.MkdirAll(legacy, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	custom := "<html><body>operator page</body></html>"
+	files := map[string]string{"index.html": custom, "style.css": "body{}", "notes.exe": "x"}
+	for name, body := range files {
+		if err := os.WriteFile(filepath.Join(legacy, name), []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := EnsurePublicSiteDir(dir); err != nil {
+		t.Fatal(err)
+	}
+
+	for name, want := range map[string]string{"index.html": custom, "style.css": "body{}"} {
+		got, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil || string(got) != want {
+			t.Fatalf("%s = %q, %v; want the legacy file carried over", name, got, err)
+		}
+	}
+	if _, err := os.Stat(filepath.Join(dir, "notes.exe")); !os.IsNotExist(err) {
+		t.Fatalf("non-allowlisted legacy file was copied (err=%v)", err)
+	}
+}
+
+func TestGetPublicSiteReportsLegacyPublicDirAsInactive(t *testing.T) {
+	_ = withTempPublicSite(t)
+	legacy := withTempLegacyPublicSite(t)
+	m, paths := newTestManager(t, &fakeRunner{})
+	cfg := testConfig()
+	cfg.PublicUpstream = ""
+	cfg.PublicDir = legacy
+	raw, err := json.Marshal(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Dir(paths.ConfigFile), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(paths.ConfigFile, raw, 0o640); err != nil {
+		t.Fatal(err)
+	}
+
+	snap, err := m.GetPublicSite()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snap.Active {
+		t.Fatalf("Active = true while the relay still serves %s, which the panel no longer edits", legacy)
+	}
+	if snap.ConfigPublicDir != legacy {
+		t.Fatalf("ConfigPublicDir = %q, want %q", snap.ConfigPublicDir, legacy)
 	}
 }

@@ -16,8 +16,13 @@ import (
 // (paths under /var/lib/fullboard are often 0700 root and fail at runtime).
 const ManagedPublicDir = "/srv/tproxy-site"
 
+// legacyManagedPublicDir is where releases before 1.4.1 kept the managed site.
+const legacyManagedPublicDir = "/var/lib/fullboard/tproxy-site"
+
 // publicSiteDir is overridable in tests; production always uses ManagedPublicDir.
 var publicSiteDir = ManagedPublicDir
+
+var legacyPublicSiteDir = legacyManagedPublicDir
 
 const (
 	maxPublicSiteHTMLBytes  = 512 << 10 // 512 KiB
@@ -335,7 +340,42 @@ func EnsurePublicSiteDir(dir string) error {
 	} else if !errors.Is(err, fs.ErrNotExist) {
 		return err
 	}
+	if copied, err := copyLegacyPublicSite(dir); err != nil || copied {
+		return err
+	}
 	return os.WriteFile(index, []byte(DefaultPublicSiteHTML), 0o644)
+}
+
+// copyLegacyPublicSite seeds a fresh managed dir from the pre-1.4.1 location so
+// an operator's edited landing page survives the move to /srv/tproxy-site.
+func copyLegacyPublicSite(dir string) (bool, error) {
+	if legacyPublicSiteDir == dir {
+		return false, nil
+	}
+	if _, err := os.Stat(filepath.Join(legacyPublicSiteDir, "index.html")); err != nil {
+		return false, nil
+	}
+	entries, err := os.ReadDir(legacyPublicSiteDir)
+	if err != nil {
+		return false, nil
+	}
+	for _, e := range entries {
+		if !e.Type().IsRegular() {
+			continue
+		}
+		name, err := sanitizePublicSiteName(e.Name())
+		if err != nil {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join(legacyPublicSiteDir, name))
+		if err != nil {
+			return false, fmt.Errorf("read legacy public site %s: %w", name, err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, name), raw, 0o644); err != nil {
+			return false, fmt.Errorf("copy legacy public site %s: %w", name, err)
+		}
+	}
+	return true, nil
 }
 
 func (m *Manager) GetPublicSite() (PublicSiteSnapshot, error) {
@@ -347,9 +387,7 @@ func (m *Manager) GetPublicSite() (PublicSiteSnapshot, error) {
 	}
 	if cfgSnap, err := m.store.Load(); err == nil {
 		snap.ConfigPublicDir = cfgSnap.Config.PublicDir
-		snap.Active = cfgSnap.Config.PublicDir == dir ||
-			cfgSnap.Config.PublicDir == ManagedPublicDir ||
-			cfgSnap.Config.PublicDir == "/var/lib/fullboard/tproxy-site"
+		snap.Active = cfgSnap.Config.PublicDir == dir
 	}
 	if err := EnsurePublicSiteDir(dir); err != nil {
 		return snap, err
