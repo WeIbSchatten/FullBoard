@@ -1089,9 +1089,9 @@ export const EXAMPLES: Record<string, unknown> = {
   },
   "PublicSiteSnapshot": {
     "active": true,
-    "configPublicDir": "/var/lib/fullboard/tproxy-site",
+    "configPublicDir": "/srv/tproxy-site",
     "defaultHtml": "",
-    "dir": "/var/lib/fullboard/tproxy-site",
+    "dir": "/srv/tproxy-site",
     "files": [
       {
         "name": "index.html",

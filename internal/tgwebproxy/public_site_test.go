@@ -26,7 +26,7 @@ func TestEnsurePublicSiteDirWritesDefaultOnce(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(raw), "Welcome") {
+	if !strings.Contains(string(raw), "Anywhere app") || !strings.Contains(string(raw), "Create new account") {
 		t.Fatalf("expected default landing page, got %q", string(raw)[:min(80, len(raw))])
 	}
 	custom := "<html><body>custom</body></html>"
