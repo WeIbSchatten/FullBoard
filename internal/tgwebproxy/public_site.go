@@ -335,15 +335,43 @@ func EnsurePublicSiteDir(dir string) error {
 		return fmt.Errorf("create public site dir: %w", err)
 	}
 	index := filepath.Join(dir, "index.html")
-	if _, err := os.Stat(index); err == nil {
-		return nil
-	} else if !errors.Is(err, fs.ErrNotExist) {
+	switch _, err := os.Stat(index); {
+	case err == nil:
+	case !errors.Is(err, fs.ErrNotExist):
+		return err
+	default:
+		copied, err := copyLegacyPublicSite(dir)
+		if err != nil {
+			return err
+		}
+		if !copied {
+			if err := os.WriteFile(index, []byte(DefaultPublicSiteHTML), 0o644); err != nil {
+				return err
+			}
+		}
+	}
+	return makePublicSiteReadable(dir)
+}
+
+// makePublicSiteReadable undoes the panel's UMask=0077: the relay runs as the
+// unprivileged tproxy user and exits at start-up if it cannot read a file.
+func makePublicSiteReadable(dir string) error {
+	if err := os.Chmod(dir, 0o755); err != nil {
+		return fmt.Errorf("chmod public site dir: %w", err)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
 		return err
 	}
-	if copied, err := copyLegacyPublicSite(dir); err != nil || copied {
-		return err
+	for _, e := range entries {
+		if !e.Type().IsRegular() {
+			continue
+		}
+		if err := os.Chmod(filepath.Join(dir, e.Name()), 0o644); err != nil {
+			return fmt.Errorf("chmod public site %s: %w", e.Name(), err)
+		}
 	}
-	return os.WriteFile(index, []byte(DefaultPublicSiteHTML), 0o644)
+	return nil
 }
 
 // copyLegacyPublicSite seeds a fresh managed dir from the pre-1.4.1 location so
@@ -429,7 +457,11 @@ func WritePublicSiteIndex(html string) error {
 	if err := EnsurePublicSiteDir(dir); err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(dir, "index.html"), []byte(html), 0o644)
+	index := filepath.Join(dir, "index.html")
+	if err := os.WriteFile(index, []byte(html), 0o644); err != nil {
+		return err
+	}
+	return os.Chmod(index, 0o644)
 }
 
 // PutPublicSiteIndex writes index.html and points config public_dir at the
@@ -477,6 +509,9 @@ func (m *Manager) UploadPublicSiteAsset(name string, r io.Reader, size int64) er
 	if n > maxPublicSiteAssetBytes {
 		return fmt.Errorf("asset exceeds %d bytes", maxPublicSiteAssetBytes)
 	}
+	if err := os.Chmod(tmpName, 0o644); err != nil {
+		return err
+	}
 	return os.Rename(tmpName, dst)
 }
 
@@ -510,6 +545,9 @@ func (m *Manager) applyManagedPublicDir(ctx context.Context) (RelayApplyResult, 
 	var initial *RelayProfile
 	if len(snap.Profiles) == 0 {
 		return RelayApplyResult{}, errors.New("save a relay config with an initial profile before activating the public site")
+	}
+	if err := EnsurePublicSiteDir(cfg.PublicDir); err != nil {
+		return RelayApplyResult{}, err
 	}
 	return m.SaveConfig(ctx, cfg, initial)
 }
