@@ -19,11 +19,11 @@ export interface TrafficDisplay {
 }
 
 const DISABLED_STROKE = {
-  light: '#bcbcbc',
-  dark: 'rgb(72, 84, 105)',
+  light: '#cfcfcf',
+  dark: '#3a3a3a',
 } as const;
 
-const UNLIMITED_STROKE = '#722ed1';
+const UNLIMITED_STROKE = { light: '#6b4fb3', dark: '#b8a3e3' } as const;
 
 export function computeTrafficDisplay(input: TrafficDisplayInput, isDark: boolean): TrafficDisplay {
   const up = input.up || 0;
@@ -44,9 +44,9 @@ export function computeTrafficDisplay(input: TrafficDisplayInput, isDark: boolea
   if (!input.enabled) {
     strokeColor = isDark ? DISABLED_STROKE.dark : DISABLED_STROKE.light;
   } else if (isUnlimited) {
-    strokeColor = UNLIMITED_STROKE;
+    strokeColor = isDark ? UNLIMITED_STROKE.dark : UNLIMITED_STROKE.light;
   } else {
-    strokeColor = ColorUtils.clientUsageColor({ up, down, total }, input.trafficDiff);
+    strokeColor = ColorUtils.clientUsageColor({ up, down, total }, input.trafficDiff, isDark);
   }
 
   return {

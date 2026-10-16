@@ -122,11 +122,29 @@
     "hosts": "ホスト",
     "docs": "ドキュメント",
     "openMenu": "メニューを開く",
-    "pinSidebar": "サイドバーを固定",
-    "unpinSidebar": "サイドバーの固定を解除",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "管理",
+    "sectionInfra": "インフラ",
+    "sectionSystem": "システム",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "expandSidebar": "サイドバーを展開",
+    "themeLight": "ライト",
+    "themeDark": "ダーク",
+    "themeAmoled": "AMOLED ブラック",
+    "account": "アカウント",
+    "hint": {
+      "dashboard": "サーバーの状態、トラフィック、Xray の状況をひと目で",
+      "connections": "インバウンド、アウトバウンド、Telegram Web プロキシ",
+      "clients": "ユーザー、キー、制限、サブスクリプション",
+      "groups": "クライアントをまとめて制限とアクセスを一括管理",
+      "nodes": "他のサーバーにある FullBoard パネル",
+      "hosts": "クライアントリンクとサブスクリプションで使うアドレスと上書き",
+      "xray": "コア設定：ルーティング、バランサー、DNS、JSON",
+      "settings": "パネル、セキュリティ、通知、サブスクリプション",
+      "apiDocs": "自動化のための REST API リファレンス"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "未保存の変更があります",
+      "allSaved": "すべての変更を保存済み"
     },
     "xray": {
       "importRules": "ルールをインポート",

@@ -648,7 +648,6 @@ export default function OutboundsTab({
                 </Radio.Group>
               </Tooltip>
               <Button
-                type="primary"
                 loading={testingAll}
                 icon={<PlayCircleOutlined />}
                 onClick={() => onTestAll(testMode)}
@@ -810,7 +809,7 @@ export default function OutboundsTab({
                   />{' '}
                   {t('pages.xray.outboundSub.minutes')}
                 </Space>
-                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--fb-text-3)', marginTop: 4 }}>
                   {t('pages.xray.outboundSub.intervalHint')}
                 </div>
               </Form.Item>
@@ -825,7 +824,7 @@ export default function OutboundsTab({
                   checked={newSub.allowPrivate}
                   onChange={(v) => setNewSub({ ...newSub, allowPrivate: v })}
                 />
-                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--fb-text-3)', marginTop: 4 }}>
                   {t('pages.xray.outboundSub.allowPrivateHint')}
                 </div>
               </Form.Item>
@@ -834,7 +833,7 @@ export default function OutboundsTab({
                   checked={newSub.allowInsecure}
                   onChange={(v) => setNewSub({ ...newSub, allowInsecure: v })}
                 />
-                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--fb-text-3)', marginTop: 4 }}>
                   {t('pages.hosts.hints.allowInsecure')}
                 </div>
               </Form.Item>
@@ -843,7 +842,7 @@ export default function OutboundsTab({
                   checked={newSub.prepend}
                   onChange={(v) => setNewSub({ ...newSub, prepend: v })}
                 />
-                <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--fb-text-3)', marginTop: 4 }}>
                   {t('pages.xray.outboundSub.prependHint')}
                 </div>
               </Form.Item>
@@ -863,7 +862,7 @@ export default function OutboundsTab({
               </Space>
               {previewData && previewData.length > 0 && (
                 <div style={{ marginTop: 8 }}>
-                  <div style={{ fontSize: 12, color: '#888', marginBottom: 4 }}>
+                  <div style={{ fontSize: 12, color: 'var(--fb-text-3)', marginBottom: 4 }}>
                     {previewData.length} · {t('pages.xray.Outbounds')}
                   </div>
                   <div
@@ -918,7 +917,7 @@ export default function OutboundsTab({
               )}
             </div>
             {subs.length === 0 ? (
-              <div style={{ color: '#888' }}>{t('pages.xray.outboundSub.empty')}</div>
+              <div style={{ color: 'var(--fb-text-3)' }}>{t('pages.xray.outboundSub.empty')}</div>
             ) : (
               <Table
                 size="small"
@@ -959,7 +958,9 @@ export default function OutboundsTab({
                       <div>
                         <div>{r.remark || <em>{t('pages.xray.outboundSub.auto')}</em>}</div>
                         {r.tagPrefix && (
-                          <div style={{ fontSize: 11, color: '#888' }}>{r.tagPrefix}</div>
+                          <div style={{ fontSize: 11, color: 'var(--fb-text-3)' }}>
+                            {r.tagPrefix}
+                          </div>
                         )}
                       </div>
                     ),
@@ -978,11 +979,11 @@ export default function OutboundsTab({
                     render: (_: unknown, r: OutboundSub) =>
                       r.lastError ? (
                         <Tooltip title={r.lastError}>
-                          <WarningOutlined style={{ color: '#e04141' }} />
+                          <WarningOutlined style={{ color: 'var(--fb-error)' }} />
                         </Tooltip>
                       ) : (
                         <Tooltip title={t('pages.xray.outboundSub.statusOk')}>
-                          <CheckCircleOutlined style={{ color: '#008771' }} />
+                          <CheckCircleOutlined style={{ color: 'var(--fb-success)' }} />
                         </Tooltip>
                       ),
                   },
@@ -1045,7 +1046,7 @@ export default function OutboundsTab({
                 ]}
               />
             )}
-            <div style={{ marginTop: 8, fontSize: 12, color: '#666' }}>
+            <div style={{ marginTop: 8, fontSize: 12, color: 'var(--fb-text-3)' }}>
               {t('pages.xray.outboundSub.restartHint')}
             </div>
           </div>

@@ -12,22 +12,16 @@ import {
   Spin,
   message,
 } from 'antd';
-import {
-  KeyOutlined,
-  LockOutlined,
-  MoonFilled,
-  MoonOutlined,
-  SunOutlined,
-  TranslationOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { KeyOutlined, LockOutlined, TranslationOutlined, UserOutlined } from '@ant-design/icons';
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { HttpUtil, LanguageManager } from '@/utils';
 import { parseLoginTicket } from '@/lib/loginTicket';
 import { FormField, rhfZodValidate } from '@/components/form/rhf';
 import { setMessageInstance } from '@/utils/messageBus';
-import { pauseAnimationsUntilLeave, useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@/hooks/useTheme';
+import BrandMark from '@/components/ui/BrandMark';
+import ThemeSwitch from '@/components/ui/ThemeSwitch';
 import { LoginFormSchema, TwoFactorCodeSchema, type LoginFormValues } from '@/schemas/login';
 import './LoginPage.css';
 
@@ -47,7 +41,7 @@ let ticketRedeem: Promise<boolean> | null = null;
 
 export default function LoginPage() {
   const { t } = useTranslation();
-  const { isDark, isUltra, toggleTheme, toggleUltra, antdThemeConfig } = useTheme();
+  const { isDark, isUltra, antdThemeConfig } = useTheme();
   const [messageApi, messageContextHolder] = message.useMessage();
 
   useEffect(() => {
@@ -112,19 +106,6 @@ export default function LoginPage() {
     LanguageManager.setLanguage(next);
   }, []);
 
-  const cycleTheme = useCallback(() => {
-    pauseAnimationsUntilLeave('login-theme-cycle');
-    if (!isDark) {
-      toggleTheme();
-      if (isUltra) toggleUltra();
-    } else if (!isUltra) {
-      toggleUltra();
-    } else {
-      toggleUltra();
-      toggleTheme();
-    }
-  }, [isDark, isUltra, toggleTheme, toggleUltra]);
-
   const pageClass = useMemo(() => {
     const classes = ['login-app'];
     if (isDark) classes.push('is-dark');
@@ -148,24 +129,13 @@ export default function LoginPage() {
     [],
   );
 
-  const themeIcon = !isDark ? <SunOutlined /> : !isUltra ? <MoonOutlined /> : <MoonFilled />;
-
   return (
     <ConfigProvider theme={antdThemeConfig}>
       {messageContextHolder}
       <Layout className={pageClass}>
         <Layout.Content className="login-content">
           <div className="login-toolbar">
-            <Button
-              id="login-theme-cycle"
-              shape="circle"
-              size="large"
-              className="toolbar-btn"
-              aria-label={t('menu.theme')}
-              title={t('menu.theme')}
-              icon={themeIcon}
-              onClick={cycleTheme}
-            />
+            <ThemeSwitch />
             <Popover
               rootClassName={isDark ? 'dark' : 'light'}
               placement="bottomRight"
@@ -183,8 +153,6 @@ export default function LoginPage() {
               }
             >
               <Button
-                shape="circle"
-                size="large"
                 className="toolbar-btn"
                 aria-label={t('pages.settings.language')}
                 icon={<TranslationOutlined />}
@@ -200,8 +168,8 @@ export default function LoginPage() {
             ) : (
               <div className="login-card">
                 <div className="brand">
+                  <BrandMark size={40} />
                   <span className="brand-name">FullBoard</span>
-                  <span className="brand-accent" aria-hidden="true" />
                 </div>
                 <h2 className="welcome">
                   <b key={headlineIndex}>{headlineWords[headlineIndex]}</b>

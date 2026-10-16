@@ -122,11 +122,29 @@
     "hosts": "Хости",
     "docs": "Документація",
     "openMenu": "Відкрити меню",
-    "pinSidebar": "Закріпити бічну панель",
-    "unpinSidebar": "Відкріпити бічну панель",
     "subFormats": "Формати підписки",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "Керування",
+    "sectionInfra": "Інфраструктура",
+    "sectionSystem": "Система",
+    "collapseSidebar": "Згорнути меню",
+    "expandSidebar": "Розгорнути меню",
+    "themeLight": "Світла",
+    "themeDark": "Темна",
+    "themeAmoled": "Чорна (AMOLED)",
+    "account": "Обліковий запис",
+    "hint": {
+      "dashboard": "Стан сервера, трафік і статус Xray",
+      "connections": "Вхідні та вихідні підключення, Telegram Web Proxy",
+      "clients": "Користувачі, їхні ключі, ліміти та підписки",
+      "groups": "Об'єднуйте клієнтів, щоб керувати лімітами й доступом разом",
+      "nodes": "Панелі FullBoard на інших ваших серверах",
+      "hosts": "Адреси та перевизначення для посилань і підписок клієнтів",
+      "xray": "Конфігурація ядра: маршрутизація, балансувальники, DNS і JSON",
+      "settings": "Панель, безпека, сповіщення та підписки",
+      "apiDocs": "Довідник REST API для автоматизації"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "Є незбережені зміни",
+      "allSaved": "Усі зміни збережено"
     },
     "xray": {
       "save": "Зберегти",

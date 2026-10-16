@@ -1,78 +1,33 @@
 .subscription-page {
-  /* --sub-grad-* paints graphics, --sub-ink-* paints text: the cyan end darkens
-     so text clears 4.5:1. --sub-accent is ACCENT.primary in SubPage.tsx. */
-  --sub-grad-from: #8b5cf6;
-  --sub-grad-to: #06b6d4;
-  --sub-ink-from: #6d28d9;
-  --sub-ink-to: #0e7490;
-  --sub-accent: #7c3aed;
-  --bg-page: linear-gradient(135deg, #e9e4ff 0%, #ddeefc 52%, #e2f7f2 100%);
-  --sub-card-bg: rgba(255, 255, 255, 0.72);
-  --sub-card-border: rgba(255, 255, 255, 0.7);
-  --sub-card-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 20px 56px rgba(124, 58, 237, 0.16);
-  --sub-card-sheen: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.75),
-    rgba(255, 255, 255, 0) 42%,
-    rgba(124, 58, 237, 0.22) 88%
-  );
-  --sub-blob-1: rgba(139, 92, 246, 0.55);
-  --sub-blob-2: rgba(6, 182, 212, 0.45);
-  --sub-grid: rgba(124, 58, 237, 0.06);
-  --sub-hairline: linear-gradient(90deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4));
-  --sub-tile-bg: rgba(124, 58, 237, 0.05);
-  --sub-tile-border: rgba(124, 58, 237, 0.12);
-  --sub-row-bg: rgba(124, 58, 237, 0.045);
-  --sub-row-border: rgba(124, 58, 237, 0.11);
-  --sub-row-bg-hover: rgba(124, 58, 237, 0.09);
-  --sub-row-border-hover: rgba(124, 58, 237, 0.3);
-  --sub-row-glow: rgba(124, 58, 237, 0.28);
-  --sub-glass-bg: rgba(255, 255, 255, 0.6);
+  /* Monochrome: graphics and text both ride the panel accent tokens. */
+  --sub-grad-from: var(--fb-accent);
+  --sub-grad-to: var(--fb-accent);
+  --sub-ink-from: var(--fb-text);
+  --sub-ink-to: var(--fb-text);
+  --sub-accent: var(--fb-accent);
+  --bg-page:
+    radial-gradient(1100px 520px at 50% -220px, var(--fb-bg-glow), transparent 70%), var(--fb-bg);
+  --sub-card-bg: var(--fb-surface);
+  --sub-card-border: var(--fb-border);
+  --sub-card-shadow: var(--fb-shadow-pop);
+  --sub-card-sheen: none;
+  --sub-blob-1: transparent;
+  --sub-blob-2: transparent;
+  --sub-grid: var(--fb-grid);
+  --sub-hairline: linear-gradient(90deg, transparent, var(--fb-border-strong), transparent);
+  --sub-tile-bg: var(--fb-surface-2);
+  --sub-tile-border: var(--fb-border);
+  --sub-row-bg: var(--fb-surface-2);
+  --sub-row-border: var(--fb-border);
+  --sub-row-bg-hover: var(--fb-accent-soft-2);
+  --sub-row-border-hover: var(--fb-border-strong);
+  --sub-row-glow: transparent;
+  --sub-glass-bg: var(--fb-accent-soft);
 
   position: relative;
   min-height: 100vh;
   background: var(--bg-page);
-}
-
-.subscription-page.is-dark {
-  --sub-grad-from: #a78bfa;
-  --sub-grad-to: #22d3ee;
-  --sub-ink-from: #c4b5fd;
-  --sub-ink-to: #67e8f9;
-  --sub-accent: #a78bfa;
-  --bg-page: radial-gradient(ellipse 120% 90% at 18% -10%, #1f1740 0%, #16171d 52%, #101116 100%);
-  --sub-card-bg: rgba(35, 37, 43, 0.62);
-  --sub-card-border: rgba(255, 255, 255, 0.08);
-  --sub-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 24px 64px rgba(109, 40, 217, 0.24);
-  --sub-card-sheen: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.16),
-    rgba(255, 255, 255, 0) 42%,
-    rgba(167, 139, 250, 0.4) 88%
-  );
-  --sub-blob-1: rgba(139, 92, 246, 0.4);
-  --sub-blob-2: rgba(34, 211, 238, 0.26);
-  --sub-grid: rgba(255, 255, 255, 0.035);
-  --sub-hairline: linear-gradient(90deg, rgba(167, 139, 250, 0.45), rgba(34, 211, 238, 0.45));
-  --sub-tile-bg: rgba(167, 139, 250, 0.07);
-  --sub-tile-border: rgba(167, 139, 250, 0.14);
-  --sub-row-bg: rgba(167, 139, 250, 0.06);
-  --sub-row-border: rgba(167, 139, 250, 0.12);
-  --sub-row-bg-hover: rgba(167, 139, 250, 0.12);
-  --sub-row-border-hover: rgba(167, 139, 250, 0.35);
-  --sub-row-glow: rgba(139, 92, 246, 0.45);
-  --sub-glass-bg: rgba(255, 255, 255, 0.06);
-}
-
-.subscription-page.is-dark.is-ultra {
-  --bg-page: radial-gradient(ellipse 120% 90% at 18% -10%, #120a2b 0%, #050509 55%, #000 100%);
-  --sub-card-bg: rgba(16, 16, 19, 0.68);
-  --sub-card-border: rgba(255, 255, 255, 0.055);
-  --sub-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 24px 64px rgba(88, 28, 135, 0.3);
-  --sub-blob-1: rgba(139, 92, 246, 0.22);
-  --sub-blob-2: rgba(34, 211, 238, 0.14);
-  --sub-grid: rgba(255, 255, 255, 0.022);
-  --sub-glass-bg: rgba(255, 255, 255, 0.04);
+  color: var(--fb-text);
 }
 
 .subscription-page .ant-layout,
@@ -243,8 +198,8 @@
   justify-content: center;
   border-radius: 13px;
   background: linear-gradient(135deg, var(--sub-grad-from), var(--sub-grad-to));
-  box-shadow: 0 8px 20px -8px var(--sub-row-glow);
-  color: #fff;
+  box-shadow: none;
+  color: var(--fb-on-accent);
   font-size: 20px;
   font-weight: 600;
 }

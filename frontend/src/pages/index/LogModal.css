@@ -14,14 +14,14 @@
 }
 
 .log-container {
-  --log-stamp: #3c89e8;
-  --log-debug: #3c89e8;
-  --log-info: #008771;
-  --log-notice: #008771;
-  --log-warning: #f37b24;
-  --log-error: #e04141;
-  --log-unknown: #595959;
-  --log-divider: rgba(128, 128, 128, 0.18);
+  --log-stamp: var(--fb-text-3);
+  --log-debug: var(--fb-info);
+  --log-info: var(--fb-success);
+  --log-notice: var(--fb-success);
+  --log-warning: var(--fb-warning);
+  --log-error: var(--fb-error);
+  --log-unknown: var(--fb-text-3);
+  --log-divider: var(--fb-border);
 
   margin-top: 12px;
   padding: 10px 12px;
@@ -141,25 +141,25 @@
 }
 
 body.dark .log-container {
-  --log-stamp: #6aa6ee;
-  --log-debug: #6aa6ee;
-  --log-info: #4ed3a6;
-  --log-notice: #4ed3a6;
-  --log-warning: #ffb872;
-  --log-error: #ff7575;
-  --log-unknown: #b5b5b5;
-  --log-divider: rgba(255, 255, 255, 0.1);
+  --log-stamp: var(--fb-text-3);
+  --log-debug: var(--fb-info);
+  --log-info: var(--fb-success);
+  --log-notice: var(--fb-success);
+  --log-warning: var(--fb-warning);
+  --log-error: var(--fb-error);
+  --log-unknown: var(--fb-text-3);
+  --log-divider: var(--fb-border);
 }
 
 html[data-theme='ultra-dark'] .log-container {
-  --log-stamp: #7fb6f1;
-  --log-debug: #7fb6f1;
-  --log-info: #5fd9b0;
-  --log-notice: #5fd9b0;
-  --log-warning: #ffcc88;
-  --log-error: #ff8a8a;
-  --log-unknown: #c4c4c4;
-  --log-divider: rgba(255, 255, 255, 0.12);
+  --log-stamp: var(--fb-text-3);
+  --log-debug: var(--fb-info);
+  --log-info: var(--fb-success);
+  --log-notice: var(--fb-success);
+  --log-warning: var(--fb-warning);
+  --log-error: var(--fb-error);
+  --log-unknown: var(--fb-text-3);
+  --log-divider: var(--fb-border);
 }
 
 .logmodal-mobile .ant-modal-content {

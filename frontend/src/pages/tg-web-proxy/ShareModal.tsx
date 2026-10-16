@@ -48,7 +48,7 @@ export default function ShareModal({
             type="info"
             showIcon
             style={{ marginBottom: 12 }}
-            message={t('pages.tgWebProxy.share.hint')}
+            title={t('pages.tgWebProxy.share.hint')}
           />
           <Descriptions size="small" column={1} bordered>
             <Descriptions.Item label={t('pages.tgWebProxy.share.server')}>

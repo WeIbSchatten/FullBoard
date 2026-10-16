@@ -122,11 +122,29 @@
     "hosts": "主机",
     "docs": "文档",
     "openMenu": "打开菜单",
-    "pinSidebar": "固定侧边栏",
-    "unpinSidebar": "取消固定侧边栏",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "管理",
+    "sectionInfra": "基础设施",
+    "sectionSystem": "系统",
+    "collapseSidebar": "收起侧边栏",
+    "expandSidebar": "展开侧边栏",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeAmoled": "AMOLED 纯黑",
+    "account": "账户",
+    "hint": {
+      "dashboard": "服务器状态、流量与 Xray 运行情况一览",
+      "connections": "入站、出站与 Telegram Web 代理",
+      "clients": "用户及其密钥、限额与订阅",
+      "groups": "将客户端分组，统一管理限额与访问",
+      "nodes": "其他服务器上的 FullBoard 面板",
+      "hosts": "客户端链接与订阅中使用的地址和覆盖设置",
+      "xray": "核心配置：路由、负载均衡、DNS 与 JSON",
+      "settings": "面板、安全、通知与订阅",
+      "apiDocs": "用于自动化的 REST API 参考"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "有未保存的更改",
+      "allSaved": "所有更改已保存"
     },
     "xray": {
       "importRules": "导入规则",

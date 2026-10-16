@@ -62,19 +62,19 @@ function buildDarkTheme({ bg, panelBg, activeBg, border, selection }: DarkPalett
 }
 
 const darkTheme = buildDarkTheme({
-  bg: '#1e1e1e',
-  panelBg: '#2d2d30',
-  activeBg: '#252526',
-  border: '#3a3a3c',
-  selection: '#3a3a3c',
+  bg: '#101010',
+  panelBg: '#161616',
+  activeBg: '#161616',
+  border: 'rgba(255, 255, 255, 0.08)',
+  selection: '#2e2e2e',
 });
 
 const ultraDarkTheme = buildDarkTheme({
-  bg: '#0a0a0a',
-  panelBg: '#141414',
-  activeBg: '#141414',
-  border: '#1f1f1f',
-  selection: '#2a2a2a',
+  bg: '#050505',
+  panelBg: '#0f0f0f',
+  activeBg: '#0f0f0f',
+  border: 'rgba(255, 255, 255, 0.07)',
+  selection: '#262626',
 });
 
 function themeExtension(isDark: boolean, isUltra: boolean) {

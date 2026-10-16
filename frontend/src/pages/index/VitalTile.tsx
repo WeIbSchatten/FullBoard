@@ -3,13 +3,14 @@ import type { ReactNode } from 'react';
 import { Card, theme } from 'antd';
 
 import { Sparkline } from '@/components/viz';
+import type { UsageLevel } from '@/models/status';
 import { mean, peak } from './useOverviewHistory';
 
 interface VitalTileProps {
   icon: ReactNode;
   label: string;
   percent: number;
-  statusColor: string;
+  level: UsageLevel;
   detail: string;
   footLeft: string;
   footRight: string;
@@ -21,7 +22,7 @@ export default function VitalTile({
   icon,
   label,
   percent,
-  statusColor,
+  level,
   detail,
   footLeft,
   footRight,
@@ -30,6 +31,12 @@ export default function VitalTile({
 }: VitalTileProps) {
   const { token } = theme.useToken();
   const meanColor = token.colorTextTertiary;
+  const stroke =
+    level === 'crit'
+      ? token.colorError
+      : level === 'warn'
+        ? token.colorWarning
+        : token.colorPrimary;
 
   const referenceLines = useMemo(
     () => (data.length > 1 ? [{ y: mean(data), dash: '3 4', color: meanColor }] : []),
@@ -37,7 +44,7 @@ export default function VitalTile({
   );
 
   return (
-    <Card hoverable className="ov-tile" styles={{ body: { padding: 0 } }}>
+    <Card className={`ov-tile ov-tile--${level}`} styles={{ body: { padding: 0 } }}>
       <div className="ov-tile-head">
         <span className="ov-tile-icon">{icon}</span>
         <span className="ov-kicker">{label}</span>
@@ -64,7 +71,7 @@ export default function VitalTile({
           showGrid={false}
           showMarker={false}
           valueMax={peak(data) > 0 ? null : 100}
-          stroke={statusColor}
+          stroke={stroke}
           referenceLines={referenceLines}
           yFormatter={(v) => `${v.toFixed(0)}%`}
           name1={label}
