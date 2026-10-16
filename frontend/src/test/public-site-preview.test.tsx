@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import PublicSiteTab from '@/pages/tg-web-proxy/PublicSiteTab';
 import { HttpUtil, Msg } from '@/utils';
@@ -29,5 +29,35 @@ describe('PublicSiteTab preview', () => {
     const frame = await screen.findByTitle('public-site-preview');
     await waitFor(() => expect(frame.getAttribute('srcdoc')).toBe(HTML));
     expect(frame.getAttribute('sandbox')).toBe('');
+  });
+});
+
+describe('PublicSiteTab presets', () => {
+  it('loads a built-in preset into the editor and preview without saving it', async () => {
+    const post = vi.spyOn(HttpUtil, 'post');
+    vi.spyOn(HttpUtil, 'get').mockResolvedValue(
+      new Msg(true, '', {
+        active: true,
+        configPublicDir: '/srv/tproxy-site',
+        defaultHtml: '',
+        dir: '/srv/tproxy-site',
+        files: [],
+        indexHtml: HTML,
+        presets: [
+          { id: 'signup', html: '<html>signup</html>' },
+          { id: 'cats', html: '<html>cats</html>' },
+        ],
+      }),
+    );
+    renderWithProviders(<PublicSiteTab />);
+
+    const frame = await screen.findByTitle('public-site-preview');
+    await waitFor(() => expect(frame.getAttribute('srcdoc')).toBe(HTML));
+    fireEvent.mouseDown(document.querySelector('.ant-select')!);
+    fireEvent.click(await screen.findByText('Cats fixing the connection'));
+
+    await waitFor(() => expect(frame.getAttribute('srcdoc')).toBe('<html>cats</html>'));
+    expect((screen.getByRole('textbox') as HTMLTextAreaElement).value).toBe('<html>cats</html>');
+    expect(post).not.toHaveBeenCalled();
   });
 });

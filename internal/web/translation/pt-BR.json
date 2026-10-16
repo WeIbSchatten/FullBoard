@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Carregar modelo…",
+        "presetSignup": "Página de cadastro do app",
+        "presetCats": "Gatinhos consertando a conexão",
+        "presetLoaded": "Modelo carregado no editor. Salve para publicar."
       },
       "routeVia": {
         "button": "Route via outbound",

@@ -1087,6 +1087,10 @@ export const EXAMPLES: Record<string, unknown> = {
     "name": "index.html",
     "size": 2048
   },
+  "PublicSitePreset": {
+    "html": "",
+    "id": "signup"
+  },
   "PublicSiteSnapshot": {
     "active": true,
     "configPublicDir": "/srv/tproxy-site",
@@ -1098,7 +1102,13 @@ export const EXAMPLES: Record<string, unknown> = {
         "size": 2048
       }
     ],
-    "indexHtml": ""
+    "indexHtml": "",
+    "presets": [
+      {
+        "html": "",
+        "id": "signup"
+      }
+    ]
   },
   "RealityScanResult": {
     "alpn": "h2",

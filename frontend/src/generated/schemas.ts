@@ -4402,6 +4402,23 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "PublicSitePreset": {
+    "description": "PublicSitePreset is a built-in landing page the editor can load and save.",
+    "properties": {
+      "html": {
+        "type": "string"
+      },
+      "id": {
+        "example": "signup",
+        "type": "string"
+      }
+    },
+    "required": [
+      "html",
+      "id"
+    ],
+    "type": "object"
+  },
   "PublicSiteSnapshot": {
     "description": "PublicSiteSnapshot is the panel-managed static site state.",
     "properties": {
@@ -4428,6 +4445,12 @@ export const SCHEMAS: Record<string, unknown> = {
       },
       "indexHtml": {
         "type": "string"
+      },
+      "presets": {
+        "items": {
+          "$ref": "#/components/schemas/PublicSitePreset"
+        },
+        "type": "array"
       }
     },
     "required": [
@@ -4436,7 +4459,8 @@ export const SCHEMAS: Record<string, unknown> = {
       "defaultHtml",
       "dir",
       "files",
-      "indexHtml"
+      "indexHtml",
+      "presets"
     ],
     "type": "object"
   },

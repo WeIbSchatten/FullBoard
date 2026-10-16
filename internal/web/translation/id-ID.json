@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "Muat templat…",
+        "presetSignup": "Halaman daftar aplikasi",
+        "presetCats": "Kucing memperbaiki koneksi",
+        "presetLoaded": "Templat dimuat ke editor. Simpan untuk menerbitkan."
       },
       "routeVia": {
         "button": "Route via outbound",
