@@ -1,12 +1,14 @@
 import { Outlet } from 'react-router';
-import { Layout } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 
 import { useWebSocketBridge } from '@/api/websocketBridge';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTheme } from '@/hooks/useTheme';
 import CommandPalette from '@/components/command-palette/CommandPalette';
 import AppSidebar from '@/layouts/AppSidebar';
 import PanelTopBar from '@/layouts/PanelTopBar';
 import { NavLayoutProvider, useNavLayout } from '@/layouts/NavLayoutContext';
+import { MobileNavProvider } from '@/layouts/MobileNavContext';
 import './PanelChrome.css';
 
 function PanelChrome() {
@@ -18,8 +20,10 @@ function PanelChrome() {
     >
       <AppSidebar />
       <Layout className="content-shell">
-        {navPosition === 'side' ? <PanelTopBar /> : null}
-        <Outlet />
+        <PanelTopBar />
+        <main className="content-main">
+          <Outlet />
+        </main>
       </Layout>
     </Layout>
   );
@@ -28,10 +32,15 @@ function PanelChrome() {
 export default function PanelLayout() {
   useWebSocketBridge();
   usePageTitle();
+  const { antdThemeConfig } = useTheme();
   return (
-    <NavLayoutProvider>
-      <PanelChrome />
-      <CommandPalette />
-    </NavLayoutProvider>
+    <ConfigProvider theme={antdThemeConfig}>
+      <NavLayoutProvider>
+        <MobileNavProvider>
+          <PanelChrome />
+          <CommandPalette />
+        </MobileNavProvider>
+      </NavLayoutProvider>
+    </ConfigProvider>
   );
 }

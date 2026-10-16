@@ -2,8 +2,8 @@ import { NumberFormatter } from '@/utils';
 
 export const USAGE_WARN_PERCENT = 80;
 export const USAGE_CRIT_PERCENT = 90;
-export const USAGE_WARN_COLOR = '#faad14';
-export const USAGE_CRIT_COLOR = '#ff4d4f';
+
+export type UsageLevel = 'normal' | 'warn' | 'crit';
 
 export class CurTotal {
   current: number;
@@ -19,18 +19,18 @@ export class CurTotal {
     return NumberFormatter.toFixed((this.current / this.total) * 100, 2);
   }
 
-  get color(): string {
+  get level(): UsageLevel {
     const p = this.percent;
-    if (p < USAGE_WARN_PERCENT) return '#1677ff';
-    if (p < USAGE_CRIT_PERCENT) return USAGE_WARN_COLOR;
-    return USAGE_CRIT_COLOR;
+    if (p < USAGE_WARN_PERCENT) return 'normal';
+    if (p < USAGE_CRIT_PERCENT) return 'warn';
+    return 'crit';
   }
 }
 
 const XRAY_STATE_COLORS: Record<string, string> = {
-  running: 'green',
-  stop: 'orange',
-  error: 'red',
+  running: 'var(--fb-success)',
+  stop: 'var(--fb-warning)',
+  error: 'var(--fb-error)',
 };
 
 export interface NetIO {
@@ -127,7 +127,7 @@ export class Status {
     this.appUptime = data.appUptime ?? 0;
     this.appStats = data.appStats ?? this.appStats;
     this.xray = { ...this.xray, ...(data.xray || {}) };
-    this.xray.color = XRAY_STATE_COLORS[this.xray.state] ?? 'gray';
+    this.xray.color = XRAY_STATE_COLORS[this.xray.state] ?? 'var(--fb-text-3)';
     this.amneziawg = { ...this.amneziawg, ...(data.amneziawg || {}) };
   }
 }

@@ -92,7 +92,7 @@ export default function RemoteTgWebProxyTab({ nodeId }: { nodeId: number }) {
         </Space>
       )}
       {!configQuery.data?.configExists && !configQuery.isLoading && !err && (
-        <Alert type="info" showIcon message={t('pages.tgWebProxy.bindings.notConfigured')} />
+        <Alert type="info" showIcon title={t('pages.tgWebProxy.bindings.notConfigured')} />
       )}
       <Table<RelayProfile>
         rowKey="name"

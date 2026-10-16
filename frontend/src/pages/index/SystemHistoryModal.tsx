@@ -15,14 +15,13 @@ import {
 } from '@ant-design/icons';
 
 import { HttpUtil, SizeFormatter } from '@/utils';
+import { useChartColors } from '@/hooks/useTheme';
 import { Sparkline } from '@/components/viz';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import type { Status } from '@/models/status';
 import './SystemHistoryModal.css';
 
 interface SystemHistoryModalProps {
   open: boolean;
-  status: Status;
   onClose: () => void;
 }
 
@@ -34,13 +33,10 @@ interface MetricDef {
   icon: ReactNode;
   valueMax: number | null;
   unit: string;
-  stroke: string;
   key2?: string;
-  stroke2?: string;
   name1?: string;
   name2?: string;
   key3?: string;
-  stroke3?: string;
   name3?: string;
 }
 
@@ -53,7 +49,6 @@ const METRICS: MetricDef[] = [
     icon: <DashboardOutlined />,
     valueMax: 100,
     unit: '%',
-    stroke: '',
   },
   {
     key: 'mem',
@@ -63,9 +58,7 @@ const METRICS: MetricDef[] = [
     icon: <DatabaseOutlined />,
     valueMax: 100,
     unit: '%',
-    stroke: '#7c4dff',
     key2: 'swap',
-    stroke2: '#ffa940',
     name1: 'pages.index.memory',
     name2: 'pages.index.swap',
   },
@@ -77,9 +70,7 @@ const METRICS: MetricDef[] = [
     icon: <GlobalOutlined />,
     valueMax: null,
     unit: 'B/s',
-    stroke: '#1890ff',
     key2: 'netDown',
-    stroke2: '#13c2c2',
     name1: 'Up',
     name2: 'Down',
   },
@@ -91,9 +82,7 @@ const METRICS: MetricDef[] = [
     icon: <DeploymentUnitOutlined />,
     valueMax: null,
     unit: 'pkt/s',
-    stroke: '#2f54eb',
     key2: 'pktDown',
-    stroke2: '#36cfc9',
     name1: 'Up',
     name2: 'Down',
   },
@@ -105,9 +94,7 @@ const METRICS: MetricDef[] = [
     icon: <ApiOutlined />,
     valueMax: null,
     unit: '',
-    stroke: '#597ef7',
     key2: 'udpCount',
-    stroke2: '#73d13d',
     name1: 'TCP',
     name2: 'UDP',
   },
@@ -119,9 +106,7 @@ const METRICS: MetricDef[] = [
     icon: <HddOutlined />,
     valueMax: null,
     unit: 'B/s',
-    stroke: '#eb2f96',
     key2: 'diskWrite',
-    stroke2: '#722ed1',
     name1: 'Read',
     name2: 'Write',
   },
@@ -133,7 +118,6 @@ const METRICS: MetricDef[] = [
     icon: <PieChartOutlined />,
     valueMax: 100,
     unit: '%',
-    stroke: '#13c2c2',
   },
   {
     key: 'online',
@@ -143,7 +127,6 @@ const METRICS: MetricDef[] = [
     icon: <TeamOutlined />,
     valueMax: null,
     unit: '',
-    stroke: '#52c41a',
   },
   {
     key: 'load1',
@@ -153,13 +136,10 @@ const METRICS: MetricDef[] = [
     icon: <LineChartOutlined />,
     valueMax: null,
     unit: '',
-    stroke: '#fa8c16',
     key2: 'load5',
-    stroke2: '#f5222d',
     name1: '1m',
     name2: '5m',
     key3: 'load15',
-    stroke3: '#a0d911',
     name3: '15m',
   },
 ];
@@ -261,7 +241,7 @@ async function loadBucket(metric: (typeof METRICS)[number], bucket: number): Pro
   }
 }
 
-export default function SystemHistoryModal({ open, status, onClose }: SystemHistoryModalProps) {
+export default function SystemHistoryModal({ open, onClose }: SystemHistoryModalProps) {
   const { t } = useTranslation();
   const { isMobile } = useMediaQuery();
   const [activeKey, setActiveKey] = useState('cpu');
@@ -271,7 +251,8 @@ export default function SystemHistoryModal({ open, status, onClose }: SystemHist
 
   const activeMetric = useMemo(() => METRICS.find((m) => m.key === activeKey), [activeKey]);
   const trName = (n?: string) => (n && n.startsWith('pages.') ? t(n) : n);
-  const strokeColor = activeMetric?.stroke || status?.cpu?.color || '#008771';
+  const chartColors = useChartColors();
+  const [strokeColor, strokeColor2, strokeColor3] = chartColors.series;
   const yFormatter = useMemo(
     () => unitFormatter(activeMetric?.unit ?? '', activeKey),
     [activeMetric, activeKey],
@@ -378,8 +359,8 @@ export default function SystemHistoryModal({ open, status, onClose }: SystemHist
           data={points}
           data2={activeMetric?.key2 ? points2 : undefined}
           data3={activeMetric?.key3 ? points3 : undefined}
-          stroke2={activeMetric?.stroke2}
-          stroke3={activeMetric?.stroke3}
+          stroke2={strokeColor2}
+          stroke3={strokeColor3}
           name1={trName(activeMetric?.name1)}
           name2={trName(activeMetric?.name2)}
           name3={trName(activeMetric?.name3)}

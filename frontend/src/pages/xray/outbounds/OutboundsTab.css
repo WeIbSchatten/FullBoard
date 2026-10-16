@@ -118,18 +118,18 @@
 }
 
 .country-pill.warp-on {
-  border-color: #f48120;
+  border-color: var(--fb-warning);
 }
 
 .warp-cloud-icon {
   width: 1em;
   height: 1em;
-  color: #f48120;
+  color: var(--fb-warning);
   flex: 0 0 auto;
 }
 
 .warp-cloud-icon svg {
-  fill: #f48120;
+  fill: var(--fb-warning);
 }
 
 .ip-toggle-icon {
@@ -210,12 +210,12 @@
 }
 
 .traffic-up {
-  color: #008771;
+  color: var(--fb-success);
   font-size: 12px;
 }
 
 .traffic-down {
-  color: #3c89e8;
+  color: var(--fb-info);
   font-size: 12px;
 }
 
@@ -235,13 +235,13 @@
 }
 
 .pill-ok {
-  color: #008771;
-  background: rgba(0, 135, 113, 0.12);
+  color: var(--fb-success);
+  background: var(--fb-success-bg);
 }
 
 .pill-fail {
-  color: #e04141;
-  background: rgba(224, 65, 65, 0.12);
+  color: var(--fb-error);
+  background: var(--fb-error-bg);
 }
 
 .empty {
@@ -264,11 +264,11 @@
 }
 
 .outbound-test-popover .td-head.ok {
-  color: #008771;
+  color: var(--fb-success);
 }
 
 .outbound-test-popover .td-head.fail {
-  color: #e04141;
+  color: var(--fb-error);
 }
 
 .outbound-test-popover .mode-badge {
@@ -302,11 +302,11 @@
 }
 
 .outbound-test-popover .dot-ok {
-  color: #008771;
+  color: var(--fb-success);
 }
 
 .outbound-test-popover .dot-fail {
-  color: #e04141;
+  color: var(--fb-error);
 }
 
 .outbound-test-popover .breakdown-row {

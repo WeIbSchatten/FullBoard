@@ -1,117 +1,199 @@
-.index-page .ant-card,
-.clients-page .ant-card,
-.inbounds-page .ant-card,
-.xray-page .ant-card,
-.settings-page .ant-card,
-.nodes-page .ant-card,
-.groups-page .ant-card,
-.api-docs-page .ant-card,
-.hosts-page .ant-card,
-.tg-web-proxy-page .ant-card,
-.connections-page .ant-card {
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  background: var(--bg-card);
-  backdrop-filter: blur(18px) saturate(1.15);
-  -webkit-backdrop-filter: blur(18px) saturate(1.15);
-  box-shadow:
-    0 8px 28px rgba(15, 23, 42, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.25s ease,
-    border-color 0.2s ease;
+/* Cards, summary strips and toolbars shared by every panel page. */
+
+.content-main .ant-card {
+  border-radius: var(--fb-radius-lg);
+  border: 1px solid var(--fb-border);
+  background: var(--fb-surface);
+  box-shadow: var(--fb-shadow);
+  transition: border-color 0.2s var(--fb-ease);
 }
 
-.index-page.is-dark .ant-card,
-.clients-page.is-dark .ant-card,
-.inbounds-page.is-dark .ant-card,
-.xray-page.is-dark .ant-card,
-.settings-page.is-dark .ant-card,
-.nodes-page.is-dark .ant-card,
-.groups-page.is-dark .ant-card,
-.api-docs-page.is-dark .ant-card,
-.hosts-page.is-dark .ant-card,
-.tg-web-proxy-page.is-dark .ant-card,
-.connections-page.is-dark .ant-card {
-  border-color: rgba(255, 255, 255, 0.06);
-  box-shadow:
-    0 10px 32px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.index-page.is-dark.is-ultra .ant-card,
-.clients-page.is-dark.is-ultra .ant-card,
-.inbounds-page.is-dark.is-ultra .ant-card,
-.xray-page.is-dark.is-ultra .ant-card,
-.settings-page.is-dark.is-ultra .ant-card,
-.nodes-page.is-dark.is-ultra .ant-card,
-.groups-page.is-dark.is-ultra .ant-card,
-.api-docs-page.is-dark.is-ultra .ant-card,
-.hosts-page.is-dark.is-ultra .ant-card,
-.tg-web-proxy-page.is-dark.is-ultra .ant-card,
-.connections-page.is-dark.is-ultra .ant-card {
-  border-color: rgba(255, 255, 255, 0.04);
-  box-shadow:
-    0 10px 32px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-.index-page .ant-card.ant-card-hoverable:hover,
-.clients-page .ant-card.ant-card-hoverable:hover,
-.inbounds-page .ant-card.ant-card-hoverable:hover,
-.xray-page .ant-card.ant-card-hoverable:hover,
-.settings-page .ant-card.ant-card-hoverable:hover,
-.nodes-page .ant-card.ant-card-hoverable:hover,
-.groups-page .ant-card.ant-card-hoverable:hover,
-.api-docs-page .ant-card.ant-card-hoverable:hover,
-.hosts-page .ant-card.ant-card-hoverable:hover,
-.tg-web-proxy-page .ant-card.ant-card-hoverable:hover {
+/* "hoverable" was used for decoration only; drop the lift and pointer. */
+.content-main .ant-card.ant-card-hoverable {
   cursor: default;
-  box-shadow:
-    0 14px 36px rgba(15, 23, 42, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
-.index-page.is-dark .ant-card.ant-card-hoverable:hover,
-.clients-page.is-dark .ant-card.ant-card-hoverable:hover,
-.inbounds-page.is-dark .ant-card.ant-card-hoverable:hover,
-.xray-page.is-dark .ant-card.ant-card-hoverable:hover,
-.settings-page.is-dark .ant-card.ant-card-hoverable:hover,
-.nodes-page.is-dark .ant-card.ant-card-hoverable:hover,
-.groups-page.is-dark .ant-card.ant-card-hoverable:hover,
-.api-docs-page.is-dark .ant-card.ant-card-hoverable:hover,
-.hosts-page.is-dark .ant-card.ant-card-hoverable:hover,
-.tg-web-proxy-page.is-dark .ant-card.ant-card-hoverable:hover {
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+.content-main .ant-card.ant-card-hoverable:hover {
+  box-shadow: var(--fb-shadow);
+  border-color: var(--fb-border-strong);
 }
 
-.index-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.clients-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.inbounds-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.xray-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.settings-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.nodes-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.groups-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.api-docs-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.hosts-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover,
-.tg-web-proxy-page.is-dark.is-ultra .ant-card.ant-card-hoverable:hover {
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+.content-main .ant-card .ant-card-head {
+  border-bottom-color: var(--fb-border);
+  min-height: 56px;
 }
 
-.index-page .ant-card .ant-card-actions,
-.clients-page .ant-card .ant-card-actions,
-.inbounds-page .ant-card .ant-card-actions,
-.xray-page .ant-card .ant-card-actions,
-.settings-page .ant-card .ant-card-actions,
-.nodes-page .ant-card .ant-card-actions,
-.groups-page .ant-card .ant-card-actions,
-.api-docs-page .ant-card .ant-card-actions,
-.hosts-page .ant-card .ant-card-actions,
-.tg-web-proxy-page .ant-card .ant-card-actions {
+.content-main .ant-card .ant-card-actions {
   background: transparent;
+  border-top-color: var(--fb-border);
+}
+
+.content-main .ant-card .ant-card {
+  box-shadow: none;
+  background: var(--fb-surface-2);
+}
+
+/* ---------- Summary strip ---------- */
+
+.content-main .summary-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.content-main .summary-card > .ant-card-body {
+  padding: 4px !important;
+}
+
+.content-main .summary-card > .ant-card-body > .ant-row {
+  margin: 0 !important;
+  row-gap: 4px !important;
+}
+
+.content-main .summary-card > .ant-card-body > .ant-row > .ant-col {
+  padding: 0 2px !important;
+}
+
+.content-main .summary-card .ant-statistic,
+.content-main .summary-card .summary-stat {
+  height: 100%;
+}
+
+.content-main .summary-card .ant-statistic {
+  padding: 14px 16px;
+  border-radius: calc(var(--fb-radius-lg) - 4px);
+  transition: background 0.15s var(--fb-ease);
+}
+
+.content-main .summary-card .ant-col + .ant-col .ant-statistic {
+  position: relative;
+}
+
+.content-main .summary-card .ant-statistic-title {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fb-text-3);
+}
+
+.content-main .summary-card .ant-statistic-content {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--fb-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.content-main .summary-card .ant-statistic-content-prefix {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: 8px;
+  font-size: 15px;
+  color: var(--fb-text-3);
+}
+
+.content-main .summary-card .summary-stat {
+  cursor: pointer;
+  border-radius: calc(var(--fb-radius-lg) - 4px);
+  outline: none;
+}
+
+.content-main .summary-card .summary-stat:hover .ant-statistic {
+  background: var(--fb-surface-hover);
+}
+
+.content-main .summary-card .summary-stat.selected .ant-statistic {
+  background: var(--fb-accent-soft-2);
+  box-shadow: inset 0 0 0 1px var(--fb-border-strong);
+}
+
+@media (max-width: 768px) {
+  .content-main .summary-card .ant-statistic {
+    padding: 10px 12px;
+  }
+
+  .content-main .summary-card .ant-statistic-content {
+    font-size: 20px;
+  }
+}
+
+/* ---------- Toolbars inside list cards ---------- */
+
+.content-main .card-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Muted preset tag colours ---------- */
+
+.ant-tag.ant-tag-blue,
+.ant-tag.ant-tag-geekblue,
+.ant-tag.ant-tag-cyan,
+.ant-tag.ant-tag-processing {
+  color: var(--fb-info) !important;
+  background: var(--fb-info-bg) !important;
+  border-color: transparent !important;
+}
+
+.ant-tag.ant-tag-green,
+.ant-tag.ant-tag-lime,
+.ant-tag.ant-tag-success {
+  color: var(--fb-success) !important;
+  background: var(--fb-success-bg) !important;
+  border-color: transparent !important;
+}
+
+.ant-tag.ant-tag-gold,
+.ant-tag.ant-tag-orange,
+.ant-tag.ant-tag-yellow,
+.ant-tag.ant-tag-volcano,
+.ant-tag.ant-tag-warning {
+  color: var(--fb-warning) !important;
+  background: var(--fb-warning-bg) !important;
+  border-color: transparent !important;
+}
+
+.ant-tag.ant-tag-red,
+.ant-tag.ant-tag-magenta,
+.ant-tag.ant-tag-error {
+  color: var(--fb-error) !important;
+  background: var(--fb-error-bg) !important;
+  border-color: transparent !important;
+}
+
+.ant-tag.ant-tag-purple {
+  color: var(--fb-purple) !important;
+  background: var(--fb-purple-bg) !important;
+  border-color: transparent !important;
+}
+
+.ant-tag.ant-tag-default,
+.ant-tag:not([class*='ant-tag-']):not(.ant-tag-has-color) {
+  color: var(--fb-text-2);
+  background: var(--fb-accent-soft);
+  border-color: transparent;
+}
+
+/* Badges & status dots */
+.ant-badge-status-processing .ant-badge-status-dot,
+.ant-badge-status-processing.ant-badge-status-dot {
+  background: var(--fb-info) !important;
+}
+.ant-badge-status-success .ant-badge-status-dot,
+.ant-badge-status-success.ant-badge-status-dot {
+  background: var(--fb-success) !important;
+}
+.ant-badge-status-error .ant-badge-status-dot,
+.ant-badge-status-error.ant-badge-status-dot {
+  background: var(--fb-error) !important;
+}
+.ant-badge-status-warning .ant-badge-status-dot,
+.ant-badge-status-warning.ant-badge-status-dot {
+  background: var(--fb-warning) !important;
 }

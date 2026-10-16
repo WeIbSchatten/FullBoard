@@ -15,9 +15,9 @@ afterEach(() => {
 });
 
 // rc-menu registers its items in a microtask after render; settle it inside act().
-async function renderSidebar() {
+async function renderSidebar(path = '/') {
   const view = renderWithProviders(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[path]}>
       <AppSidebar />
     </MemoryRouter>,
   );
@@ -25,49 +25,42 @@ async function renderSidebar() {
   return view;
 }
 
-test('keeps the sidebar expanded after pinning it from the header and restores the choice', async () => {
+test('starts expanded with labelled sections so every page is named', async () => {
+  const view = await renderSidebar();
+  const sider = view.container.querySelector('.ant-layout-sider');
+
+  expect(sider?.classList.contains('ant-layout-sider-collapsed')).toBe(false);
+  expect(screen.getByText('Manage')).toBeTruthy();
+  expect(screen.getByText('Infrastructure')).toBeTruthy();
+  expect(screen.getByText('Clients')).toBeTruthy();
+});
+
+test('collapses to the icon rail and restores the choice after a reload', async () => {
   const first = await renderSidebar();
-  const sidebar = first.container.querySelector('.ant-layout-sider');
-  const sidebarRoot = first.container.querySelector('.ant-sidebar');
+  fireEvent.click(screen.getByRole('button', { name: 'Collapse sidebar' }));
 
-  expect(sidebar?.classList.contains('ant-layout-sider-collapsed')).toBe(true);
-
-  fireEvent.mouseEnter(sidebarRoot!);
-
-  const pinButton = screen.getByRole('button', { name: 'Pin sidebar' });
-  expect(pinButton.closest('.brand-actions')).not.toBeNull();
-
-  fireEvent.click(pinButton);
-  fireEvent.mouseLeave(sidebarRoot!);
-
-  expect(sidebar?.classList.contains('ant-layout-sider-collapsed')).toBe(false);
-  expect(sidebarRoot?.getAttribute('style')).toContain('--sider-rail: 220px');
-  expect(localStorage.getItem('sidebar-pinned')).toBe('true');
-
+  expect(
+    first.container
+      .querySelector('.ant-layout-sider')
+      ?.classList.contains('ant-layout-sider-collapsed'),
+  ).toBe(true);
+  expect(localStorage.getItem('sidebar-collapsed')).toBe('true');
   first.unmount();
 
   const second = await renderSidebar();
-  const restoredSidebar = second.container.querySelector('.ant-layout-sider');
-  const restoredSidebarRoot = second.container.querySelector('.ant-sidebar');
-
-  expect(restoredSidebar?.classList.contains('ant-layout-sider-collapsed')).toBe(false);
-  expect(restoredSidebarRoot?.getAttribute('style')).toContain('--sider-rail: 220px');
-  expect(screen.getByRole('button', { name: 'Pin sidebar' })).not.toBeNull();
+  expect(
+    second.container
+      .querySelector('.ant-layout-sider')
+      ?.classList.contains('ant-layout-sider-collapsed'),
+  ).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: 'Expand sidebar' }));
+  expect(localStorage.getItem('sidebar-collapsed')).toBe('false');
 });
 
-test('returns to the compact rail after unpinning', async () => {
-  const view = await renderSidebar();
-  const sidebar = view.container.querySelector('.ant-layout-sider');
-  const sidebarRoot = view.container.querySelector('.ant-sidebar');
-
-  fireEvent.mouseEnter(sidebarRoot!);
-  fireEvent.click(screen.getByRole('button', { name: 'Pin sidebar' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Pin sidebar' }));
-  fireEvent.mouseLeave(sidebarRoot!);
-
-  expect(sidebar?.classList.contains('ant-layout-sider-collapsed')).toBe(true);
-  expect(sidebarRoot?.getAttribute('style')).toContain('--sider-rail: 72px');
-  expect(localStorage.getItem('sidebar-pinned')).toBe('false');
+test('highlights Connections for legacy inbound deep links', async () => {
+  const view = await renderSidebar('/inbounds');
+  const selected = view.container.querySelector('.sider-nav .ant-menu-item-selected');
+  expect(selected?.textContent).toBe('Connections');
 });
 
 test('labels the palette shortcut with the modifier the platform actually uses', async () => {
@@ -79,4 +72,14 @@ test('labels the palette shortcut with the modifier the platform actually uses',
   await act(async () => {});
   const chip = view.container.querySelector('.panel-topbar-search-kbd');
   expect(chip?.textContent).toBe('CtrlK');
+});
+
+test('titles the page from the route instead of falling back to Overview', async () => {
+  renderWithProviders(
+    <MemoryRouter initialEntries={['/connections']}>
+      <PanelTopBar />
+    </MemoryRouter>,
+  );
+  await act(async () => {});
+  expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Connections');
 });

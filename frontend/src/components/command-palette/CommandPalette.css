@@ -1,6 +1,4 @@
-/* --------------------------------------------------------------------------
-   Command Palette Backdrop & Modal
-   -------------------------------------------------------------------------- */
+/* Command palette — every colour resolves to a theme token from styles/theme.css. */
 
 .command-palette-backdrop {
   position: fixed;
@@ -10,14 +8,14 @@
   align-items: flex-start;
   justify-content: center;
   padding-top: 12vh;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   animation: cp-fade-in 0.15s ease-out;
 }
 
 .command-palette-backdrop.light {
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.22);
 }
 
 .command-palette-backdrop.ultra {
@@ -40,20 +38,19 @@
   max-height: 72vh;
   display: flex;
   flex-direction: column;
-  border-radius: 14px;
+  border-radius: var(--fb-radius-lg);
   overflow: hidden;
-  animation: cp-scale-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease;
+  background: var(--fb-elevated);
+  color: var(--fb-text);
+  border: 1px solid var(--fb-border-strong);
+  box-shadow: var(--fb-shadow-pop);
+  animation: cp-scale-in 0.18s var(--fb-ease);
 }
 
 @keyframes cp-scale-in {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(-10px);
+    transform: scale(0.97) translateY(-8px);
   }
   to {
     opacity: 1;
@@ -61,72 +58,26 @@
   }
 }
 
-.command-palette-modal.light,
-body.light .command-palette-modal {
-  background: rgba(255, 255, 255, 0.96);
-  color: #1f1f1f;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.16),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.command-palette-modal.dark,
-body.dark .command-palette-modal {
-  background: rgba(35, 37, 43, 0.95);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.65),
-    0 4px 16px rgba(0, 0, 0, 0.4);
-}
-
-.command-palette-modal.ultra,
-html[data-theme='ultra-dark'] .command-palette-modal {
-  background: rgba(16, 16, 19, 0.98);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9);
-}
-
-/* --------------------------------------------------------------------------
-   Header & Search Input
-   -------------------------------------------------------------------------- */
-
 .command-palette-header {
   display: flex;
   align-items: center;
-  padding: 16px 20px;
-  gap: 14px;
-  border-bottom: 1px solid;
-}
-
-.command-palette-modal.light .command-palette-header {
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-
-.command-palette-modal.dark .command-palette-header {
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-.command-palette-modal.ultra .command-palette-header {
-  border-bottom-color: rgba(255, 255, 255, 0.12);
+  padding: 14px 18px;
+  gap: 12px;
+  border-bottom: 1px solid var(--fb-border);
 }
 
 .command-palette-search-icon {
-  font-size: 24px;
-  width: 28px;
-  height: 28px;
-  color: #1677ff;
+  font-size: 18px;
+  width: 24px;
+  height: 24px;
+  color: var(--fb-text-3);
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
 }
 
 .command-palette-search-icon.spinning {
-  color: #1677ff;
   animation: cp-spin 0.8s linear infinite;
 }
 
@@ -141,102 +92,34 @@ html[data-theme='ultra-dark'] .command-palette-modal {
   background: transparent;
   border: none;
   outline: none;
-  font-size: 16.5px;
-  font-weight: 400;
+  font-size: 16px;
   font-family: inherit;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.01em;
+  color: var(--fb-text);
 }
 
-.command-palette-modal.light .command-palette-input {
-  color: #1f1f1f;
+.command-palette-input::placeholder {
+  color: var(--fb-text-3);
 }
-
-.command-palette-modal.light .command-palette-input::placeholder {
-  color: #8c8c8c;
-}
-
-.command-palette-modal.dark .command-palette-input,
-.command-palette-modal.ultra .command-palette-input {
-  color: #ffffff;
-}
-
-.command-palette-modal.dark .command-palette-input::placeholder,
-.command-palette-modal.ultra .command-palette-input::placeholder {
-  color: #737373;
-}
-
-/* --------------------------------------------------------------------------
-   Body & Scrollbar
-   -------------------------------------------------------------------------- */
 
 .command-palette-body {
   flex: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 8px;
   max-height: calc(72vh - 116px);
-  scrollbar-width: thin;
 }
-
-.command-palette-modal.light .command-palette-body {
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-}
-
-.command-palette-modal.dark .command-palette-body,
-.command-palette-modal.ultra .command-palette-body {
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-.command-palette-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.command-palette-body::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.command-palette-modal.light .command-palette-body::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-.command-palette-modal.light .command-palette-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.command-palette-modal.dark .command-palette-body::-webkit-scrollbar-thumb,
-.command-palette-modal.ultra .command-palette-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.command-palette-modal.dark .command-palette-body::-webkit-scrollbar-thumb:hover,
-.command-palette-modal.ultra .command-palette-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
-
-/* --------------------------------------------------------------------------
-   Groups & Items
-   -------------------------------------------------------------------------- */
 
 .command-palette-group {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .command-palette-group-title {
-  padding: 6px 12px 4px;
+  padding: 8px 12px 4px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.command-palette-modal.light .command-palette-group-title {
-  color: #8c8c8c;
-}
-
-.command-palette-modal.dark .command-palette-group-title,
-.command-palette-modal.ultra .command-palette-group-title {
-  color: #8c8c8c;
+  letter-spacing: 0.08em;
+  color: var(--fb-text-3);
 }
 
 .command-palette-item {
@@ -244,54 +127,48 @@ html[data-theme='ultra-dark'] .command-palette-modal {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 9px 14px;
+  padding: 9px 12px;
   background: transparent;
   border: none;
-  border-radius: 9px;
+  border-radius: var(--fb-radius-sm);
   cursor: pointer;
   text-align: start;
   font-family: inherit;
-  /* The row was a <button>; keep the UA line-height it had so swapping the
-     tag does not grow every row by the panel's body line-height. */
   line-height: normal;
   color: inherit;
-  transition:
-    background 0.12s ease,
-    color 0.12s ease;
+  transition: background 0.12s ease;
   user-select: none;
 }
 
-.command-palette-modal.light .command-palette-item.active {
-  background: #e6f4ff;
-  color: #0958d9;
-}
-
-.command-palette-modal.dark .command-palette-item.active {
-  background: rgba(22, 119, 255, 0.2);
-  color: #4096ff;
-}
-
-.command-palette-modal.ultra .command-palette-item.active {
-  background: rgba(22, 119, 255, 0.28);
-  color: #69b1ff;
+.command-palette-item.active {
+  background: var(--fb-accent-soft-2);
 }
 
 .command-palette-item-main {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
   flex: 1;
 }
 
 .command-palette-item-icon {
-  font-size: 20px;
-  width: 26px;
-  height: 26px;
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--fb-radius-sm);
+  background: var(--fb-surface-2);
+  border: 1px solid var(--fb-border);
+  color: var(--fb-text-2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.command-palette-item.active .command-palette-item-icon {
+  color: var(--fb-text);
+  border-color: var(--fb-border-strong);
 }
 
 .command-palette-item-content {
@@ -311,24 +188,16 @@ html[data-theme='ultra-dark'] .command-palette-modal {
 
 .command-palette-item-subtitle {
   font-size: 12px;
+  color: var(--fb-text-3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.command-palette-modal.light .command-palette-item-subtitle {
-  color: #8c8c8c;
-}
-
-.command-palette-modal.dark .command-palette-item-subtitle,
-.command-palette-modal.ultra .command-palette-item-subtitle {
-  color: #8c8c8c;
-}
-
 .command-palette-item-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-inline-start: 12px;
   flex-shrink: 0;
 }
@@ -343,45 +212,17 @@ html[data-theme='ultra-dark'] .command-palette-modal {
   border: none;
   border-radius: 6px;
   background: transparent;
+  color: var(--fb-text-3);
   cursor: pointer;
-  font-size: 15px;
-  transition: all 0.15s ease;
+  font-size: 14px;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
-.command-palette-modal.light .command-palette-action-btn {
-  color: rgba(0, 0, 0, 0.4);
-}
-
-.command-palette-modal.light .command-palette-action-btn:hover {
-  color: #0958d9;
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.command-palette-modal.dark .command-palette-action-btn {
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.command-palette-modal.dark .command-palette-action-btn:hover {
-  color: #4096ff;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.command-palette-modal.ultra .command-palette-action-btn {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.command-palette-modal.ultra .command-palette-action-btn:hover {
-  color: #69b1ff;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.command-palette-item.active .command-palette-action-btn {
-  color: inherit;
-  opacity: 0.8;
-}
-
-.command-palette-item.active .command-palette-action-btn:hover {
-  opacity: 1;
+.command-palette-action-btn:hover {
+  color: var(--fb-text);
+  background: var(--fb-accent-soft);
 }
 
 .command-palette-tooltip {
@@ -392,46 +233,18 @@ html[data-theme='ultra-dark'] .command-palette-modal {
   padding: 36px 16px;
   text-align: center;
   font-size: 14px;
+  color: var(--fb-text-3);
 }
-
-.command-palette-modal.light .command-palette-empty {
-  color: #8c8c8c;
-}
-
-.command-palette-modal.dark .command-palette-empty,
-.command-palette-modal.ultra .command-palette-empty {
-  color: #8c8c8c;
-}
-
-/* --------------------------------------------------------------------------
-   Footer & Keyboard Badges
-   -------------------------------------------------------------------------- */
 
 .command-palette-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-size: 11.5px;
-  border-top: 1px solid;
-}
-
-.command-palette-modal.light .command-palette-footer {
-  background: #fafafa;
-  border-top-color: rgba(0, 0, 0, 0.08);
-  color: #8c8c8c;
-}
-
-.command-palette-modal.dark .command-palette-footer {
-  background: rgba(21, 22, 26, 0.95);
-  border-top-color: rgba(255, 255, 255, 0.08);
-  color: #8c8c8c;
-}
-
-.command-palette-modal.ultra .command-palette-footer {
-  background: #050507;
-  border-top-color: rgba(255, 255, 255, 0.12);
-  color: #8c8c8c;
+  color: var(--fb-text-3);
+  background: var(--fb-surface-2);
+  border-top: 1px solid var(--fb-border);
 }
 
 .command-palette-kbd-group {
@@ -448,178 +261,12 @@ html[data-theme='ultra-dark'] .command-palette-modal {
   height: 22px;
   padding: 0 5px;
   font-family: inherit;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  border-radius: 4px;
+  border-radius: 5px;
   margin-inline-end: 4px;
-}
-
-.command-palette-modal.light .command-palette-kbd {
-  background: #ffffff;
-  border: 1px solid #d9d9d9;
-  color: #595959;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-}
-
-.command-palette-modal.dark .command-palette-kbd {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #d9d9d9;
-}
-
-.command-palette-modal.ultra .command-palette-kbd {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-}
-
-/* --------------------------------------------------------------------------
-   Sidebar Trigger Button
-   -------------------------------------------------------------------------- */
-
-.sidebar-command-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: calc(100% - 16px);
-  height: 36px;
-  box-sizing: border-box;
-  margin: 8px 8px 4px;
-  padding: 0 10px;
-  border-radius: 7px;
-  font-size: 13px;
-  cursor: pointer;
-  overflow: hidden;
-  white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
-}
-
-.sidebar-command-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.sidebar-command-trigger .sidebar-command-icon {
-  font-size: 15px;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-}
-
-.sidebar-command-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  opacity: 1;
-  max-width: 130px;
-  transition:
-    opacity 0.2s ease,
-    max-width 0.2s ease;
-}
-
-.sidebar-command-trigger.collapsed {
-  justify-content: center;
-  padding: 0;
-}
-
-.sidebar-command-trigger.collapsed .sidebar-command-left {
-  justify-content: center;
-  width: 100%;
-  gap: 0;
-}
-
-.sidebar-command-trigger.collapsed .sidebar-command-icon {
-  margin: 0 auto;
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-}
-
-.sidebar-command-trigger.collapsed .sidebar-command-text {
-  display: none;
-}
-
-.sidebar-command-trigger.collapsed .sidebar-command-kbd {
-  display: none;
-}
-
-body.light .sidebar-command-trigger {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: #595959;
-}
-
-body.light .sidebar-command-trigger:hover {
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.15);
-  color: #1f1f1f;
-}
-
-body.dark .sidebar-command-trigger {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #8c8c8c;
-}
-
-body.dark .sidebar-command-trigger:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-}
-
-.sidebar-command-trigger .sidebar-command-icon {
-  font-size: 15px;
-}
-
-.sidebar-command-trigger .sidebar-command-kbd {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2.5px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 4px;
-  user-select: none;
-}
-
-.sidebar-command-trigger .sidebar-command-kbd .kbd-cmd {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 10px;
-  line-height: 1;
-  display: inline-block;
-  opacity: 0.9;
-}
-
-.sidebar-command-trigger .sidebar-command-kbd .kbd-key {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  display: inline-block;
-}
-
-body.light .sidebar-command-trigger .sidebar-command-kbd {
-  background: rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  color: #595959;
-}
-
-body.dark .sidebar-command-trigger .sidebar-command-kbd {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #d9d9d9;
-}
-
-body.dark .sidebar-command-trigger:hover .sidebar-command-kbd {
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: var(--fb-surface);
+  border: 1px solid var(--fb-border-strong);
+  color: var(--fb-text-2);
 }

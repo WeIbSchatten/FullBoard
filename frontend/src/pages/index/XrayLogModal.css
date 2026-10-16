@@ -12,9 +12,9 @@
 }
 
 .log-container {
-  --log-blocked: #e04141;
-  --log-proxy: #3c89e8;
-  --log-divider: rgba(128, 128, 128, 0.18);
+  --log-blocked: var(--fb-error);
+  --log-proxy: var(--fb-info);
+  --log-divider: var(--fb-border);
 
   margin-top: 12px;
   padding: 10px 12px;
@@ -111,15 +111,15 @@
 }
 
 body.dark .log-container {
-  --log-blocked: #ff7575;
-  --log-proxy: #6aa6ee;
-  --log-divider: rgba(255, 255, 255, 0.1);
+  --log-blocked: var(--fb-error);
+  --log-proxy: var(--fb-info);
+  --log-divider: var(--fb-border);
 }
 
 html[data-theme='ultra-dark'] .log-container {
-  --log-blocked: #ff8a8a;
-  --log-proxy: #7fb6f1;
-  --log-divider: rgba(255, 255, 255, 0.12);
+  --log-blocked: var(--fb-error);
+  --log-proxy: var(--fb-info);
+  --log-divider: var(--fb-border);
 }
 
 .xraylog-modal-mobile .ant-modal-content {

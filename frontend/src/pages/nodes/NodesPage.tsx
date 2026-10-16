@@ -384,7 +384,7 @@ export default function NodesPage() {
                     type="info"
                     showIcon
                     style={{ marginBottom: 12 }}
-                    message={t('pages.nodes.remote.manageHint')}
+                    title={t('pages.nodes.remote.manageHint')}
                   />
                   <NodeList
                     nodes={nodes}

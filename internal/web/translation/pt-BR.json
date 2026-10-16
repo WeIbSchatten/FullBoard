@@ -122,11 +122,29 @@
     "hosts": "Hosts",
     "docs": "Documentação",
     "openMenu": "Abrir menu",
-    "pinSidebar": "Fixar barra lateral",
-    "unpinSidebar": "Desafixar barra lateral",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "Gerenciar",
+    "sectionInfra": "Infraestrutura",
+    "sectionSystem": "Sistema",
+    "collapseSidebar": "Recolher menu",
+    "expandSidebar": "Expandir menu",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeAmoled": "Preto AMOLED",
+    "account": "Conta",
+    "hint": {
+      "dashboard": "Saúde do servidor, tráfego e status do Xray num relance",
+      "connections": "Entradas, saídas e proxy web do Telegram",
+      "clients": "Usuários, chaves, limites e assinaturas",
+      "groups": "Agrupe clientes para gerenciar limites e acesso juntos",
+      "nodes": "Painéis FullBoard nos seus outros servidores",
+      "hosts": "Endereços e substituições usados em links e assinaturas",
+      "xray": "Núcleo: roteamento, balanceadores, DNS e JSON",
+      "settings": "Painel, segurança, notificações e assinaturas",
+      "apiDocs": "Referência da API REST para automação"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "Alterações não salvas",
+      "allSaved": "Todas as alterações salvas"
     },
     "xray": {
       "importRules": "Importar regras",

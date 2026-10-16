@@ -118,7 +118,7 @@ export default function ClientBindingsCard({ modal }: { modal: ModalApi }) {
           type="error"
           showIcon
           style={{ marginBottom: 12 }}
-          message={t('pages.tgWebProxy.bindings.syncError', { error: data.syncError })}
+          title={t('pages.tgWebProxy.bindings.syncError', { error: data.syncError })}
         />
       )}
       <Table

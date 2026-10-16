@@ -13,11 +13,11 @@
 }
 
 body.light .config-block .ant-tag.ant-tag-filled.ant-tag-gold {
-  color: #874d00;
+  color: var(--fb-warning);
 }
 
 body.light .config-block-text {
-  color: #595959;
+  color: var(--fb-text-2);
 }
 
 .config-block .ant-collapse-extra {

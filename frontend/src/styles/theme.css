@@ -1,0 +1,368 @@
+/* FullBoard design tokens — DreamCut monochrome.
+   Every surface, text and accent colour in the panel resolves to one of these;
+   antd receives the same values through buildAntdThemeConfig (hooks/useTheme.tsx). */
+
+:root {
+  --fb-font:
+    ui-sans-serif, -apple-system, 'Segoe UI Variable Text', 'Segoe UI', system-ui, Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --fb-font-mono:
+    ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --fb-radius-lg: 16px;
+  --fb-radius: 12px;
+  --fb-radius-sm: 8px;
+  --fb-radius-pill: 999px;
+  --fb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fb-sider-width: 248px;
+  --fb-rail-width: 72px;
+  --fb-topbar-height: 64px;
+}
+
+/* Dark — the primary look */
+body.dark,
+body.dark .ant-app,
+.dark {
+  --fb-bg: #0a0a0a;
+  --fb-bg-glow: rgba(255, 255, 255, 0.035);
+  --fb-sider: #0e0e0e;
+  --fb-surface: #141414;
+  --fb-surface-2: #1b1b1b;
+  --fb-surface-3: #232323;
+  --fb-surface-hover: rgba(255, 255, 255, 0.04);
+  --fb-elevated: #1a1a1a;
+  --fb-border: rgba(255, 255, 255, 0.08);
+  --fb-border-strong: rgba(255, 255, 255, 0.14);
+  --fb-text: #f5f5f5;
+  --fb-text-2: #b4b4b4;
+  --fb-text-3: #7a7a7a;
+  --fb-accent: #f5f5f5;
+  --fb-accent-hover: #ffffff;
+  --fb-on-accent: #0a0a0a;
+  --fb-accent-soft: rgba(255, 255, 255, 0.08);
+  --fb-accent-soft-2: rgba(255, 255, 255, 0.13);
+  --fb-focus: rgba(255, 255, 255, 0.28);
+  --fb-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px rgba(0, 0, 0, 0.35);
+  --fb-shadow-pop: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --fb-success: #7dcea0;
+  --fb-success-bg: rgba(125, 206, 160, 0.12);
+  --fb-warning: #e2b86b;
+  --fb-warning-bg: rgba(226, 184, 107, 0.12);
+  --fb-error: #ec7a7a;
+  --fb-error-bg: rgba(236, 122, 122, 0.12);
+  --fb-info: #9db8db;
+  --fb-info-bg: rgba(157, 184, 219, 0.12);
+  --fb-purple: #b8a3e3;
+  --fb-purple-bg: rgba(184, 163, 227, 0.14);
+  --fb-chart-1: #f5f5f5;
+  --fb-chart-2: #8a8a8a;
+  --fb-chart-fill: rgba(255, 255, 255, 0.07);
+  --fb-grid: rgba(255, 255, 255, 0.06);
+  --fb-code-bg: #101010;
+}
+
+/* AMOLED — true black surfaces, same accents */
+html[data-theme='ultra-dark'] body.dark,
+html[data-theme='ultra-dark'] .dark {
+  --fb-bg: #000000;
+  --fb-bg-glow: rgba(255, 255, 255, 0.02);
+  --fb-sider: #000000;
+  --fb-surface: #0a0a0a;
+  --fb-surface-2: #111111;
+  --fb-surface-3: #181818;
+  --fb-elevated: #0f0f0f;
+  --fb-border: rgba(255, 255, 255, 0.07);
+  --fb-border-strong: rgba(255, 255, 255, 0.12);
+  --fb-code-bg: #050505;
+}
+
+/* Light — paper counterpart of the same language */
+body.light,
+.light {
+  --fb-bg: #f3f3f2;
+  --fb-bg-glow: rgba(0, 0, 0, 0.025);
+  --fb-sider: #fafaf9;
+  --fb-surface: #ffffff;
+  --fb-surface-2: #f4f4f3;
+  --fb-surface-3: #ebebea;
+  --fb-surface-hover: rgba(0, 0, 0, 0.035);
+  --fb-elevated: #ffffff;
+  --fb-border: rgba(0, 0, 0, 0.08);
+  --fb-border-strong: rgba(0, 0, 0, 0.15);
+  --fb-text: #111111;
+  --fb-text-2: #4d4d4d;
+  --fb-text-3: #808080;
+  --fb-accent: #111111;
+  --fb-accent-hover: #000000;
+  --fb-on-accent: #ffffff;
+  --fb-accent-soft: rgba(0, 0, 0, 0.05);
+  --fb-accent-soft-2: rgba(0, 0, 0, 0.09);
+  --fb-focus: rgba(0, 0, 0, 0.22);
+  --fb-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --fb-shadow-pop: 0 24px 64px rgba(0, 0, 0, 0.14);
+  --fb-success: #1f7a45;
+  --fb-success-bg: rgba(31, 122, 69, 0.1);
+  --fb-warning: #9a6512;
+  --fb-warning-bg: rgba(176, 120, 20, 0.12);
+  --fb-error: #b3362f;
+  --fb-error-bg: rgba(179, 54, 47, 0.09);
+  --fb-info: #33608f;
+  --fb-info-bg: rgba(51, 96, 143, 0.09);
+  --fb-purple: #6b4fb3;
+  --fb-purple-bg: rgba(107, 79, 179, 0.1);
+  --fb-chart-1: #111111;
+  --fb-chart-2: #9a9a9a;
+  --fb-chart-fill: rgba(0, 0, 0, 0.06);
+  --fb-grid: rgba(0, 0, 0, 0.07);
+  --fb-code-bg: #f6f6f5;
+}
+
+html,
+body {
+  background: var(--fb-bg);
+  color: var(--fb-text);
+  font-family: var(--fb-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+::selection {
+  background: var(--fb-accent);
+  color: var(--fb-on-accent);
+}
+
+code,
+kbd,
+pre,
+.mono {
+  font-family: var(--fb-font-mono);
+}
+
+/* Thin monochrome scrollbars everywhere */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--fb-border-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--fb-border-strong);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--fb-focus);
+  outline-offset: 2px;
+}
+
+html[data-theme-animations='off'] *,
+html[data-theme-animations='off'] *::before,
+html[data-theme-animations='off'] *::after {
+  transition: none !important;
+}
+
+/* ---------- antd component polish that tokens alone cannot express ---------- */
+
+/* White primary on dark: keep checkmarks, radio dots and selected text readable. */
+body.dark .ant-checkbox-checked .ant-checkbox-inner::after,
+body.dark .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+  border-color: var(--fb-on-accent);
+}
+body.dark .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+  background: var(--fb-on-accent);
+}
+body.dark .ant-radio-checked .ant-radio-inner::after,
+body.dark .ant-radio-wrapper-checked .ant-radio-inner::after {
+  background: var(--fb-on-accent);
+}
+
+.ant-btn {
+  font-weight: 500;
+  box-shadow: none !important;
+}
+.ant-btn-variant-solid.ant-btn-color-primary:not(:disabled) {
+  color: var(--fb-on-accent);
+}
+.ant-btn-variant-solid.ant-btn-color-dangerous:not(:disabled) {
+  color: #fff;
+}
+body.dark .ant-btn-variant-solid.ant-btn-color-dangerous:not(:disabled) {
+  background: #c94a4a;
+}
+body.dark .ant-btn-variant-solid.ant-btn-color-dangerous:not(:disabled):hover {
+  background: #d65c5c;
+}
+
+.ant-tag {
+  border-radius: var(--fb-radius-pill);
+  padding-inline: 8px;
+  font-weight: 500;
+}
+
+.ant-tooltip .ant-tooltip-inner {
+  border-radius: var(--fb-radius-sm);
+}
+
+.ant-modal .ant-modal-container,
+.ant-modal .ant-modal-content {
+  border: 1px solid var(--fb-border);
+  box-shadow: var(--fb-shadow-pop);
+}
+.ant-modal-mask,
+.ant-drawer-mask {
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+body.dark .ant-modal-mask,
+body.dark .ant-drawer-mask {
+  background-color: rgba(0, 0, 0, 0.62) !important;
+}
+.ant-drawer .ant-drawer-content {
+  border-inline-start: 1px solid var(--fb-border);
+}
+.ant-dropdown .ant-dropdown-menu,
+.ant-select-dropdown,
+.ant-popover .ant-popover-inner {
+  border: 1px solid var(--fb-border);
+  box-shadow: var(--fb-shadow-pop) !important;
+}
+
+/* Tall action menus must stay inside the viewport even when antd flips them upward. */
+.ant-dropdown .ant-dropdown-menu {
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+.ant-dropdown-menu-item-divider {
+  background-color: var(--fb-border) !important;
+}
+
+/* Tables: quiet header, hairline rows, soft hover */
+.ant-table-wrapper .ant-table {
+  background: transparent;
+}
+.ant-table-wrapper .ant-table-thead > tr > th,
+.ant-table-wrapper .ant-table-thead > tr > td {
+  background: var(--fb-surface-2) !important;
+  color: var(--fb-text-3);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--fb-border) !important;
+}
+.ant-table-wrapper .ant-table-thead > tr > th::before {
+  display: none;
+}
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--fb-border);
+}
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-row:hover > td,
+.ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+  background: var(--fb-surface-hover) !important;
+}
+.ant-table-wrapper .ant-table-container {
+  border-radius: var(--fb-radius) !important;
+  overflow: hidden;
+  border: 1px solid var(--fb-border);
+}
+.ant-table-wrapper .ant-table-thead > tr:first-child > *:first-child,
+.ant-table-wrapper .ant-table-thead > tr:first-child > *:last-child {
+  border-radius: 0 !important;
+}
+.ant-table-wrapper .ant-table-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+
+/* Alerts: tinted, borderless, calm */
+.ant-alert {
+  border-radius: var(--fb-radius);
+  border-color: transparent !important;
+}
+.ant-alert-warning {
+  background: var(--fb-warning-bg) !important;
+}
+.ant-alert-error {
+  background: var(--fb-error-bg) !important;
+}
+.ant-alert-info {
+  background: var(--fb-info-bg) !important;
+}
+.ant-alert-success {
+  background: var(--fb-success-bg) !important;
+}
+
+.ant-empty-description {
+  color: var(--fb-text-3);
+}
+
+/* Segmented looks like a pill switcher */
+.ant-segmented {
+  padding: 3px;
+  border-radius: var(--fb-radius);
+  background: var(--fb-surface-2);
+  border: 1px solid var(--fb-border);
+}
+.ant-segmented .ant-segmented-item {
+  border-radius: calc(var(--fb-radius) - 3px);
+}
+.ant-segmented .ant-segmented-item-selected,
+.ant-segmented .ant-segmented-thumb {
+  background: var(--fb-accent) !important;
+  color: var(--fb-on-accent) !important;
+  box-shadow: none;
+}
+
+/* Status dots */
+.online-dot,
+.xray-error-dot,
+.fb-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-inline-end: 6px;
+  vertical-align: middle;
+}
+.online-dot {
+  background: var(--fb-success);
+  animation: fb-pulse 1.6s ease-in-out infinite;
+  --fb-pulse-color: var(--fb-success);
+}
+.xray-error-dot {
+  background: var(--fb-purple);
+  animation: fb-pulse 1.6s ease-in-out infinite;
+  --fb-pulse-color: var(--fb-purple);
+}
+@keyframes fb-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--fb-pulse-color) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .online-dot,
+  .xray-error-dot {
+    animation: none;
+  }
+}
+
+/* Long forms scroll inside the dialog so the footer actions stay reachable. */
+.ant-modal .ant-modal-body {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ant-tabs .ant-tabs-tab .ant-tabs-tab-icon:not(:last-child) {
+  margin-inline-end: 8px;
+}
