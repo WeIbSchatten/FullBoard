@@ -488,3 +488,38 @@ func TestLocalDedicatedBindingUnaffectedByRemotePath(t *testing.T) {
 		t.Fatalf("local binding NodeId = %v, want nil", row.NodeId)
 	}
 }
+
+func TestDisabledClientLosesItsDedicatedSecretOnTheBackend(t *testing.T) {
+	_ = setupBindingTest(t)
+	rec := createBindingClient(t, "carol", "sub-c", true)
+	svc := &TgWebProxyService{}
+	if _, err := svc.BindClient(TgWebProxyBindRequest{Email: "carol", ProfileName: "default", Dedicated: true}); err != nil {
+		t.Fatalf("bind: %v", err)
+	}
+	if _, err := svc.SyncBindings(context.Background()); err != nil {
+		t.Fatalf("sync: %v", err)
+	}
+	if err := database.GetDB().Model(&rec).Update("enable", false).Error; err != nil {
+		t.Fatal(err)
+	}
+	if _, err := svc.SyncBindings(context.Background()); err != nil {
+		t.Fatalf("sync after disable: %v", err)
+	}
+
+	var ib model.Inbound
+	if err := database.GetDB().Where("remark = ?", tgWebProxyManagedRemark("carol")).First(&ib).Error; err != nil {
+		t.Fatalf("managed MTProto inbound: %v", err)
+	}
+	var settings struct {
+		Clients []struct {
+			Email  string `json:"email"`
+			Enable bool   `json:"enable"`
+		} `json:"clients"`
+	}
+	if err := json.Unmarshal([]byte(ib.Settings), &settings); err != nil {
+		t.Fatal(err)
+	}
+	if len(settings.Clients) != 1 || settings.Clients[0].Enable {
+		t.Fatalf("disabled client still enabled on its MTProto backend: %s", ib.Settings)
+	}
+}
