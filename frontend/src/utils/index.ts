@@ -795,7 +795,7 @@ export class CookieManager {
 // Literal palette values (mirroring styles/theme.css): progress rings paint
 // via SVG attributes, which cannot resolve CSS variables.
 const USAGE_COLORS = {
-  light: { success: '#1f7a45', warning: '#9a6512', danger: '#b3362f', purple: '#6b4fb3' },
+  light: { success: '#1f7a45', warning: '#8a5a10', danger: '#b3362f', purple: '#6b4fb3' },
   dark: { success: '#7dcea0', warning: '#e2b86b', danger: '#ec7a7a', purple: '#b8a3e3' },
 } as const;
 
