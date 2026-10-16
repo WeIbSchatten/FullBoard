@@ -1189,7 +1189,6 @@
         "failed": "Failed to route backend via outbound",
         "hint": "For a public (non-loopback) MTProxy, creates a loopback tunnel to that address and sends it through the chosen outbound. A local MTProxy stays on 127.0.0.1:port — the same layout as WEB Panel Proxy / stock tproxy-server. Tunneling 127.0.0.1 through a remote outbound dials the far side loopback and breaks the relay.",
         "warning": "The remote MTProxy must accept this profile secret.",
-        "doneLocal": "Local MTProxy is dialed on this host. A remote outbound cannot carry 127.0.0.1.",
         "hintLocal": "This profile points at a local MTProxy. Like WEB Panel Proxy, the relay dials it directly on this host. Apply restores/keeps backend as host:port without an Xray tunnel.",
         "warningLocal": "Local MTProxy backends are not sent through a remote outbound. Telegram leaves from this server IP, same as WEB Panel Proxy.",
         "doneLocalDirect": "Profile backend kept on the local MTProxy (direct). No Xray tunnel was created."
