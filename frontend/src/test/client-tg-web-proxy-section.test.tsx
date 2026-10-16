@@ -25,9 +25,17 @@ function mockHttp(bindings: unknown[]) {
   return { get, post };
 }
 
-function pickOption(text: string) {
-  const select = document.querySelector('.ant-select');
+// The node picker renders first; the profile picker is the one still empty.
+function profileSelect(): Element {
+  const select = Array.from(document.querySelectorAll('.ant-select')).find((el) =>
+    el.querySelector('.ant-select-placeholder'),
+  );
   if (!select) throw new Error('profile select not rendered');
+  return select;
+}
+
+function pickOption(text: string) {
+  const select = profileSelect();
   fireEvent.mouseDown(select);
   const option = Array.from(document.querySelectorAll('.ant-select-item-option')).find(
     (o) => (o.textContent ?? '').trim() === text,
@@ -45,10 +53,12 @@ describe('ClientTgWebProxySection', () => {
 
     await screen.findByText('Dedicated secret');
     await waitFor(() => expect(document.querySelector('.ant-select-loading')).toBeNull());
-    fireEvent.mouseDown(document.querySelector('.ant-select')!);
-    const offered = Array.from(document.querySelectorAll('.ant-select-item-option')).map((o) =>
-      (o.textContent ?? '').trim(),
-    );
+    fireEvent.mouseDown(profileSelect());
+    const offered = Array.from(
+      document.querySelectorAll(
+        '.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option',
+      ),
+    ).map((o) => (o.textContent ?? '').trim());
     expect(offered).toEqual(['default']);
 
     pickOption('default');
