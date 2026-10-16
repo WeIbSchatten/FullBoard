@@ -50,7 +50,7 @@ describe('computeTrafficDisplay', () => {
       { up: 0.95 * gb, down: 0, total: gb, enabled: true, trafficDiff: diff },
       false,
     );
-    expect(d.strokeColor).toBe('#9a6512');
+    expect(d.strokeColor).toBe('#8a5a10');
   });
 
   it('paints the dark palette so rings stay legible on dark surfaces', () => {
