@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Space, Table, Tag, Typography, Upload, Input } from 'antd';
 import type { UploadProps } from 'antd';
@@ -34,18 +34,7 @@ export default function PublicSiteTab({ disabled }: { disabled?: boolean }) {
   // null = follow server snapshot; string = unsaved local edits
   const [draft, setDraft] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const previewRef = useRef<HTMLIFrameElement>(null);
   const html = draft ?? site?.indexHtml ?? '';
-
-  useEffect(() => {
-    const frame = previewRef.current;
-    if (!frame) return;
-    const doc = frame.contentDocument;
-    if (!doc) return;
-    doc.open();
-    doc.write(html);
-    doc.close();
-  }, [html]);
 
   const save = async () => {
     setSaving(true);
@@ -102,11 +91,11 @@ export default function PublicSiteTab({ disabled }: { disabled?: boolean }) {
   };
 
   return (
-    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+    <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
       <Alert
         type="info"
         showIcon
-        message={t('pages.tgWebProxy.publicSite.hint')}
+        title={t('pages.tgWebProxy.publicSite.hint')}
         description={
           site ? (
             <span>
@@ -138,19 +127,20 @@ export default function PublicSiteTab({ disabled }: { disabled?: boolean }) {
           onChange={(e) => setDraft(e.target.value)}
           rows={16}
           disabled={disabled}
-          style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
+          style={{ fontFamily: 'var(--fb-font-mono)' }}
         />
       </Card>
       <Card title={t('pages.tgWebProxy.publicSite.preview')}>
         <iframe
-          ref={previewRef}
           title="public-site-preview"
           sandbox=""
+          srcDoc={html}
           style={{
             width: '100%',
             height: 320,
-            border: '1px solid var(--ant-color-border)',
-            borderRadius: 8,
+            border: '1px solid var(--fb-border)',
+            borderRadius: 12,
+            background: '#fff',
           }}
         />
       </Card>
