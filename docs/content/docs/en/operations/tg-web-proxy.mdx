@@ -143,25 +143,22 @@ shared secret. Dedicated bindings own their backends: unbinding deletes the
 
 ## Route backend via outbound
 
-On a profile row, **Route via outbound** creates a loopback tunnel inbound
-(dokodemo-style) that rewrites to the profile's current MTProxy backend and
-points the profile `backend` at `127.0.0.1:<tunnel-port>`.
-
-A **public** MTProxy address is sent through the chosen Xray outbound. A
-**loopback or private** address is dialed on this host through a freedom
-outbound that allows `127.0.0.1`. The stock `direct` outbound blocks
-`geoip:private`, so that hop never reaches a local MTProxy. Sending
-`127.0.0.1` through a remote outbound dials the far side's loopback instead.
-Either way the proxy stays dead while an outbound connectivity check can
-still pass, because that check only probes the outbound itself. The MTProxy
-must accept the profile secret.
+Same layout as [WEB Panel Proxy](https://gitlab.com/POLESNIESOVETI12/web-panel-proxy)
+and stock `tproxy-server`: a **local** MTProxy stays `127.0.0.1:<port>` — the
+relay dials it on this host. **Route via outbound** only builds an Xray tunnel
+when the backend is a **public** MTProxy address; that tunnel is then sent
+through the chosen outbound. Tunneling `127.0.0.1` through a remote outbound
+dials the far side's loopback and breaks the relay while an outbound check can
+still pass. The MTProxy must accept the profile secret.
 
 ## Public site
 
 The **Public site** tab manages a panel-owned landing page under
-`/var/lib/fullboard/tproxy-site` (`index.html` editor, asset upload, sandbox
-preview). Saving activates `public_dir` on that directory and clears
-`public_upstream`.
+`/srv/tproxy-site` (`index.html` editor, asset upload, sandbox preview) — the
+same path stock tproxy / WEB Panel Proxy installs use so the `tproxy` user can
+read the files. The default page is a dark “Anywhere app” signup shell (operator
+camouflage); edit or reset it from the panel. Saving activates `public_dir` on
+that directory and clears `public_upstream`.
 
 ## Config
 

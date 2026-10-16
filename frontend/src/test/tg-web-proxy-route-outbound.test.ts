@@ -5,12 +5,10 @@ import {
   assignedInboundTag,
   buildTproxyBackendRule,
   buildTproxyTunnelInbound,
-  ensureTproxyLocalOutbound,
+  canRouteBackendViaOutbound,
   isHostLocalOnly,
   loopbackBackend,
   MTPROXY_EGRESS_INBOUND_TAG,
-  TPROXY_LOCAL_OUTBOUND_TAG,
-  outboundTagForBackendRewrite,
   unwrapBackendTarget,
   parseBackendHostPort,
   pickLoopbackListenPort,
@@ -88,21 +86,19 @@ describe('helpers', () => {
   });
 });
 
-describe('outboundTagForBackendRewrite', () => {
-  it('keeps a loopback MTProxy on direct so a remote outbound cannot dial 127.0.0.1', () => {
+describe('canRouteBackendViaOutbound', () => {
+  it('keeps a loopback or private MTProxy off remote outbounds', () => {
     expect(isHostLocalOnly('127.0.0.1')).toBe(true);
     expect(isHostLocalOnly('::1')).toBe(true);
     expect(isHostLocalOnly('10.8.0.1')).toBe(true);
     expect(isHostLocalOnly('192.168.1.9')).toBe(true);
     expect(isHostLocalOnly('172.16.5.5')).toBe(true);
-    expect(outboundTagForBackendRewrite('127.0.0.1', 'Fin-t3um9k7iu1')).toBe(
-      TPROXY_LOCAL_OUTBOUND_TAG,
-    );
+    expect(canRouteBackendViaOutbound('127.0.0.1')).toBe(false);
   });
 
   it('sends a public MTProxy through the chosen outbound', () => {
     expect(isHostLocalOnly('203.0.113.10')).toBe(false);
-    expect(outboundTagForBackendRewrite('203.0.113.10', 'Fin-t3um9k7iu1')).toBe('Fin-t3um9k7iu1');
+    expect(canRouteBackendViaOutbound('203.0.113.10')).toBe(true);
   });
 
   it('follows a tunnel that already rewrites to loopback instead of nesting it', () => {
@@ -116,29 +112,6 @@ describe('outboundTagForBackendRewrite', () => {
         },
       ]),
     ).toEqual({ host: '127.0.0.1', port: 2398 });
-  });
-
-  it('adds a freedom outbound that can dial loopback when direct blocks private IPs', () => {
-    const template: XraySettingsValue = {
-      outbounds: [
-        {
-          tag: 'direct',
-          protocol: 'freedom',
-          settings: {
-            finalRules: [{ action: 'block', ip: ['geoip:private'] }, { action: 'allow' }],
-          },
-        },
-      ],
-    };
-    ensureTproxyLocalOutbound(template);
-    ensureTproxyLocalOutbound(template);
-    const added = (template.outbounds ?? []).filter(
-      (o) => o && typeof o === 'object' && 'tag' in o && o.tag === TPROXY_LOCAL_OUTBOUND_TAG,
-    );
-    expect(added).toHaveLength(1);
-    const settings = (added[0] as { settings?: { finalRules?: { action: string }[] } }).settings;
-    expect(settings?.finalRules?.[0]?.action).toBe('allow');
-    expect(settings?.finalRules?.[1]?.action).toBe('block');
   });
 });
 
