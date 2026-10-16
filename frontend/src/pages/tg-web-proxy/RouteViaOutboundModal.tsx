@@ -11,16 +11,12 @@ import { getMessage } from '@/utils/messageBus';
 import {
   applyTproxyBackendRule,
   assignedInboundTag,
-  buildLocalMtproxyDirectRule,
   buildTproxyBackendRule,
   buildTproxyTunnelInbound,
-  ensureTproxyLocalOutbound,
-  isHostLocalOnly,
+  canRouteBackendViaOutbound,
   loopbackBackend,
-  outboundTagForBackendRewrite,
   parseBackendHostPort,
   pickLoopbackListenPort,
-  TPROXY_LOCAL_OUTBOUND_TAG,
   unwrapBackendTarget,
   type ProfileEgressInbound,
 } from '@/lib/tgWebProxyRouteOutbound';
@@ -85,8 +81,26 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
   const usedPorts = sourcesQuery.data?.usedPorts ?? [];
   const loading = sourcesQuery.isFetching;
 
+  const localBackend = !!rewrite && !canRouteBackendViaOutbound(rewrite.host);
+
   const submit = async () => {
-    if (!profile || !rewrite || !outboundTag || !listenPort) return;
+    if (!profile || !rewrite) return;
+    // Same model as WEB Panel Proxy: local MTProxy stays 127.0.0.1:port.
+    if (!canRouteBackendViaOutbound(rewrite.host)) {
+      setSaving(true);
+      try {
+        const direct = `${rewrite.host}:${rewrite.port}`;
+        await onApplied({ ...profile, backend: direct });
+        getMessage().success(t('pages.tgWebProxy.routeVia.doneLocalDirect'));
+        onClose();
+      } catch (e) {
+        getMessage().error((e as Error).message);
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+    if (!outboundTag || !listenPort) return;
     setSaving(true);
     try {
       const inbound = buildTproxyTunnelInbound({
@@ -105,16 +119,12 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       const cfg = await fetchXrayConfig();
       const template = structuredClone(cfg.xraySetting) as XraySettingsValue;
       const tag = assignedInboundTag(addMsg.obj as { tag?: string } | undefined, inbound.tag);
-      const dialOutbound = outboundTagForBackendRewrite(rewrite.host, outboundTag);
-      if (dialOutbound === TPROXY_LOCAL_OUTBOUND_TAG) ensureTproxyLocalOutbound(template);
-      const rule = buildTproxyBackendRule(tag, dialOutbound);
+      const rule = buildTproxyBackendRule(tag, outboundTag);
       if (!rule) {
         getMessage().error(t('pages.tgWebProxy.routeVia.failed'));
         return;
       }
       applyTproxyBackendRule(template, rule, 'top');
-      const localCatch = buildLocalMtproxyDirectRule(rewrite);
-      if (localCatch) applyTproxyBackendRule(template, localCatch, 'top');
       const updateMsg = await HttpUtil.post('/panel/api/xray/update', {
         xraySetting: JSON.stringify(template),
       });
@@ -124,13 +134,7 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       }
 
       await onApplied({ ...profile, backend: loopbackBackend(listenPort) });
-      getMessage().success(
-        t(
-          isHostLocalOnly(rewrite.host)
-            ? 'pages.tgWebProxy.routeVia.doneLocal'
-            : 'pages.tgWebProxy.routeVia.done',
-        ),
-      );
+      getMessage().success(t('pages.tgWebProxy.routeVia.done'));
       onClose();
     } catch (e) {
       getMessage().error((e as Error).message);
@@ -147,7 +151,12 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       onOk={submit}
       okText={t('pages.tgWebProxy.routeVia.apply')}
       confirmLoading={saving}
-      okButtonProps={{ disabled: !rewrite || !outboundTag || !listenPort || loading }}
+      okButtonProps={{
+        disabled:
+          !rewrite ||
+          loading ||
+          (!localBackend && (!outboundTag || !listenPort || usedPorts.includes(listenPort ?? -1))),
+      }}
       afterOpenChange={(isOpen) => {
         if (!isOpen) {
           setOutboundTag(undefined);
@@ -157,42 +166,61 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       destroyOnHidden
     >
       <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
-        <Alert type="warning" showIcon title={t('pages.tgWebProxy.routeVia.warning')} />
+        <Alert
+          type="warning"
+          showIcon
+          title={t(
+            localBackend
+              ? 'pages.tgWebProxy.routeVia.warningLocal'
+              : 'pages.tgWebProxy.routeVia.warning',
+          )}
+        />
         <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-          {t('pages.tgWebProxy.routeVia.hint')}
+          {t(
+            localBackend ? 'pages.tgWebProxy.routeVia.hintLocal' : 'pages.tgWebProxy.routeVia.hint',
+          )}
         </Typography.Paragraph>
         <Form layout="vertical">
           <Form.Item label={t('pages.tgWebProxy.profile.backend')}>
             <Typography.Text code>{profile?.backend}</Typography.Text>
           </Form.Item>
-          <Form.Item label={t('pages.tgWebProxy.routeVia.outbound')} required>
-            <Select
-              showSearch
-              loading={loading}
-              value={outboundTag}
-              onChange={setOutboundTag}
-              options={tags.map((tag) => ({ value: tag, label: tag }))}
-              placeholder={t('pages.tgWebProxy.routeVia.outboundPlaceholder')}
-            />
-          </Form.Item>
-          <Form.Item label={t('pages.tgWebProxy.routeVia.listenPort')} required>
-            <InputNumber
-              min={1}
-              max={65535}
-              style={{ width: '100%' }}
-              value={listenPort}
-              onChange={(v) => setListenPortOverride(typeof v === 'number' ? v : null)}
-            />
-          </Form.Item>
-          {listenPort ? (
+          {localBackend && rewrite ? (
             <Typography.Text type="secondary">
               {t('pages.tgWebProxy.routeVia.resultBackend')}:{' '}
-              <Typography.Text code>{loopbackBackend(listenPort)}</Typography.Text>
+              <Typography.Text code>{`${rewrite.host}:${rewrite.port}`}</Typography.Text>
             </Typography.Text>
-          ) : null}
-          {usedPorts.includes(listenPort ?? -1) ? (
-            <Alert type="error" showIcon title={t('pages.tgWebProxy.routeVia.portInUse')} />
-          ) : null}
+          ) : (
+            <>
+              <Form.Item label={t('pages.tgWebProxy.routeVia.outbound')} required>
+                <Select
+                  showSearch
+                  loading={loading}
+                  value={outboundTag}
+                  onChange={setOutboundTag}
+                  options={tags.map((tag) => ({ value: tag, label: tag }))}
+                  placeholder={t('pages.tgWebProxy.routeVia.outboundPlaceholder')}
+                />
+              </Form.Item>
+              <Form.Item label={t('pages.tgWebProxy.routeVia.listenPort')} required>
+                <InputNumber
+                  min={1}
+                  max={65535}
+                  style={{ width: '100%' }}
+                  value={listenPort}
+                  onChange={(v) => setListenPortOverride(typeof v === 'number' ? v : null)}
+                />
+              </Form.Item>
+              {listenPort ? (
+                <Typography.Text type="secondary">
+                  {t('pages.tgWebProxy.routeVia.resultBackend')}:{' '}
+                  <Typography.Text code>{loopbackBackend(listenPort)}</Typography.Text>
+                </Typography.Text>
+              ) : null}
+              {usedPorts.includes(listenPort ?? -1) ? (
+                <Alert type="error" showIcon title={t('pages.tgWebProxy.routeVia.portInUse')} />
+              ) : null}
+            </>
+          )}
         </Form>
       </Space>
     </Modal>

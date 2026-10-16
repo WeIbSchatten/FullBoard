@@ -134,6 +134,12 @@ export function outboundTagForBackendRewrite(host: string, selectedOutbound: str
   return isHostLocalOnly(host) ? TPROXY_LOCAL_OUTBOUND_TAG : selectedOutbound;
 }
 
+// Local MTProxy must stay a direct loopback dial (WEB Panel Proxy model). A
+// tunnel+remote outbound dials 127.0.0.1 on the far side and kills the relay.
+export function canRouteBackendViaOutbound(host: string): boolean {
+  return !isHostLocalOnly(host);
+}
+
 export function tproxyLocalOutbound(): Record<string, unknown> {
   return {
     tag: TPROXY_LOCAL_OUTBOUND_TAG,

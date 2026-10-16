@@ -4436,14 +4436,14 @@
             "type": "boolean"
           },
           "configPublicDir": {
-            "example": "/var/lib/fullboard/tproxy-site",
+            "example": "/srv/tproxy-site",
             "type": "string"
           },
           "defaultHtml": {
             "type": "string"
           },
           "dir": {
-            "example": "/var/lib/fullboard/tproxy-site",
+            "example": "/srv/tproxy-site",
             "type": "string"
           },
           "files": {
@@ -18926,7 +18926,7 @@
         "tags": [
           "Telegram WEB Proxy"
         ],
-        "summary": "Panel-managed static site under /var/lib/fullboard/tproxy-site: index.html, asset list and whether config public_dir points at it.",
+        "summary": "Panel-managed static site under /srv/tproxy-site: index.html, asset list and whether config public_dir points at it.",
         "operationId": "get_panel_api_tgWebProxy_publicSite",
         "responses": {
           "200": {
@@ -18951,9 +18951,9 @@
                   "success": true,
                   "obj": {
                     "active": true,
-                    "configPublicDir": "/var/lib/fullboard/tproxy-site",
+                    "configPublicDir": "/srv/tproxy-site",
                     "defaultHtml": "",
-                    "dir": "/var/lib/fullboard/tproxy-site",
+                    "dir": "/srv/tproxy-site",
                     "files": [
                       {
                         "name": "index.html",

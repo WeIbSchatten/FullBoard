@@ -5,6 +5,7 @@ import {
   assignedInboundTag,
   buildTproxyBackendRule,
   buildTproxyTunnelInbound,
+  canRouteBackendViaOutbound,
   ensureTproxyLocalOutbound,
   isHostLocalOnly,
   loopbackBackend,
@@ -102,6 +103,8 @@ describe('outboundTagForBackendRewrite', () => {
 
   it('sends a public MTProxy through the chosen outbound', () => {
     expect(isHostLocalOnly('203.0.113.10')).toBe(false);
+    expect(canRouteBackendViaOutbound('203.0.113.10')).toBe(true);
+    expect(canRouteBackendViaOutbound('127.0.0.1')).toBe(false);
     expect(outboundTagForBackendRewrite('203.0.113.10', 'Fin-t3um9k7iu1')).toBe('Fin-t3um9k7iu1');
   });
 
