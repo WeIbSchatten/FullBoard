@@ -22,30 +22,30 @@ interface DateTimePickerProps {
 }
 
 const LIGHT_THEME = {
-  primaryColor: '#1677ff',
+  primaryColor: '#111111',
   backgroundColor: '#ffffff',
-  borderColor: '#d9d9d9',
-  hoverColor: 'rgba(22, 119, 255, 0.10)',
+  borderColor: 'rgba(0, 0, 0, 0.12)',
+  hoverColor: 'rgba(0, 0, 0, 0.05)',
   selectedTextColor: '#ffffff',
-  textColor: 'rgba(0, 0, 0, 0.88)',
+  textColor: '#111111',
 };
 
 const DARK_THEME = {
-  primaryColor: '#1677ff',
-  backgroundColor: '#23252b',
+  primaryColor: '#f5f5f5',
+  backgroundColor: '#1a1a1a',
   borderColor: 'rgba(255, 255, 255, 0.12)',
-  hoverColor: 'rgba(22, 119, 255, 0.18)',
-  selectedTextColor: '#ffffff',
-  textColor: 'rgba(255, 255, 255, 0.88)',
+  hoverColor: 'rgba(255, 255, 255, 0.08)',
+  selectedTextColor: '#0a0a0a',
+  textColor: '#f5f5f5',
 };
 
 const ULTRA_DARK_THEME = {
-  primaryColor: '#1677ff',
-  backgroundColor: '#101013',
-  borderColor: 'rgba(255, 255, 255, 0.08)',
-  hoverColor: 'rgba(22, 119, 255, 0.16)',
-  selectedTextColor: '#ffffff',
-  textColor: 'rgba(255, 255, 255, 0.88)',
+  primaryColor: '#f5f5f5',
+  backgroundColor: '#0f0f0f',
+  borderColor: 'rgba(255, 255, 255, 0.1)',
+  hoverColor: 'rgba(255, 255, 255, 0.08)',
+  selectedTextColor: '#0a0a0a',
+  textColor: '#f5f5f5',
 };
 
 export default function DateTimePicker({

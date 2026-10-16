@@ -5,6 +5,7 @@ import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { buildAntdThemeConfig } from '@/hooks/useTheme';
+import '@/styles/theme.css';
 import enUS from '../../internal/web/translation/en-US.json';
 
 if (!i18next.isInitialized) {

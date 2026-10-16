@@ -22,7 +22,7 @@ describe('computeTrafficDisplay', () => {
     );
     expect(d.percent).toBe(100);
     expect(d.isUnlimited).toBe(true);
-    expect(d.strokeColor).toBe('#722ed1');
+    expect(d.strokeColor).toBe('#6b4fb3');
   });
 
   it('marks depleted clients with exception status', () => {
@@ -40,7 +40,7 @@ describe('computeTrafficDisplay', () => {
       { up: 0.5 * gb, down: 0, total: gb, enabled: false, trafficDiff: 0 },
       false,
     );
-    expect(d.strokeColor).toBe('#bcbcbc');
+    expect(d.strokeColor).toBe('#cfcfcf');
     expect(d.status).toBeUndefined();
   });
 
@@ -50,6 +50,14 @@ describe('computeTrafficDisplay', () => {
       { up: 0.95 * gb, down: 0, total: gb, enabled: true, trafficDiff: diff },
       false,
     );
-    expect(d.strokeColor).toBe('#faad14');
+    expect(d.strokeColor).toBe('#8a5a10');
+  });
+
+  it('paints the dark palette so rings stay legible on dark surfaces', () => {
+    const d = computeTrafficDisplay(
+      { up: 0.95 * gb, down: 0, total: gb, enabled: true, trafficDiff: 0.1 * gb },
+      true,
+    );
+    expect(d.strokeColor).toBe('#e2b86b');
   });
 });

@@ -11,12 +11,7 @@ import {
 } from '@ant-design/icons';
 
 import { HttpUtil, CPUFormatter, SizeFormatter, ClipboardManager, FileManager } from '@/utils';
-import {
-  USAGE_CRIT_COLOR,
-  USAGE_CRIT_PERCENT,
-  USAGE_WARN_COLOR,
-  USAGE_WARN_PERCENT,
-} from '@/models/status';
+import { USAGE_CRIT_PERCENT, USAGE_WARN_PERCENT } from '@/models/status';
 import { useTheme } from '@/hooks/useTheme';
 import { useStatusQuery } from '@/api/queries/useStatusQuery';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -155,11 +150,11 @@ export default function IndexPage() {
     if (crit.length)
       return {
         text: t('pages.index.healthCritical', { list: list(crit) }),
-        color: USAGE_CRIT_COLOR,
+        level: 'crit' as const,
       };
     const warm = items.filter((i) => i.value >= USAGE_WARN_PERCENT);
     if (warm.length)
-      return { text: t('pages.index.healthWarm', { list: list(warm) }), color: USAGE_WARN_COLOR };
+      return { text: t('pages.index.healthWarm', { list: list(warm) }), level: 'warn' as const };
     return null;
   }, [status, t]);
 
@@ -210,20 +205,18 @@ export default function IndexPage() {
                 />
 
                 {health && (
-                  <div className="ov-health" style={{ color: health.color }}>
+                  <div className={`ov-health ov-health--${health.level}`}>
                     <span className="ov-health-mark" />
                     {health.text}
                   </div>
                 )}
-
-                <hr className="ov-rule" />
 
                 <div className="ov-vitals">
                   <VitalTile
                     icon={<DashboardOutlined />}
                     label={t('pages.index.cpu')}
                     percent={status.cpu.percent}
-                    statusColor={status.cpu.color}
+                    level={status.cpu.level}
                     detail={`${CPUFormatter.cpuCoreFormat(status.cpuCores)} / ${status.logicalPro}T · ${CPUFormatter.cpuSpeedFormat(status.cpuSpeedMhz)}`}
                     footLeft={`${t('pages.index.avg')} ${mean(history.series.cpu).toFixed(0)}%`}
                     footRight={`${t('pages.index.peak')} ${peak(history.series.cpu).toFixed(0)}%`}
@@ -234,7 +227,7 @@ export default function IndexPage() {
                     icon={<DatabaseOutlined />}
                     label={t('pages.index.memory')}
                     percent={status.mem.percent}
-                    statusColor={status.mem.color}
+                    level={status.mem.level}
                     detail={`${SizeFormatter.sizeFormat(status.mem.current)} / ${SizeFormatter.sizeFormat(status.mem.total)}`}
                     footLeft={`${t('pages.index.avg')} ${mean(history.series.mem).toFixed(0)}%`}
                     footRight={`${t('pages.index.peak')} ${peak(history.series.mem).toFixed(0)}%`}
@@ -245,7 +238,7 @@ export default function IndexPage() {
                     icon={<SwapOutlined />}
                     label={t('pages.index.swap')}
                     percent={status.swap.percent}
-                    statusColor={status.swap.color}
+                    level={status.swap.level}
                     detail={`${SizeFormatter.sizeFormat(status.swap.current)} / ${SizeFormatter.sizeFormat(status.swap.total)}`}
                     footLeft={`${t('pages.index.avg')} ${mean(history.series.swap).toFixed(1)}%`}
                     footRight={`${t('pages.index.peak')} ${peak(history.series.swap).toFixed(0)}%`}
@@ -256,7 +249,7 @@ export default function IndexPage() {
                     icon={<HddOutlined />}
                     label={t('pages.index.storage')}
                     percent={status.disk.percent}
-                    statusColor={status.disk.color}
+                    level={status.disk.level}
                     detail={`${SizeFormatter.sizeFormat(status.disk.current)} / ${SizeFormatter.sizeFormat(totalDisk)}`}
                     footLeft={`${t('pages.index.free')} ${SizeFormatter.sizeFormat(freeDisk)}`}
                     footRight={`${t('pages.index.avg')} ${mean(history.series.diskUsage).toFixed(1)}%`}
@@ -314,11 +307,7 @@ export default function IndexPage() {
           />
         </LazyMount>
         <LazyMount when={sysHistoryOpen}>
-          <SystemHistoryModal
-            open={sysHistoryOpen}
-            status={status}
-            onClose={() => setSysHistoryOpen(false)}
-          />
+          <SystemHistoryModal open={sysHistoryOpen} onClose={() => setSysHistoryOpen(false)} />
         </LazyMount>
         <LazyMount when={xrayMetricsOpen}>
           <XrayMetricsModal open={xrayMetricsOpen} onClose={() => setXrayMetricsOpen(false)} />
@@ -352,7 +341,7 @@ export default function IndexPage() {
                 size={isMobile ? 'small' : 'middle'}
                 icon={<CloudDownloadOutlined />}
               >
-                {isMobile ? 'Download' : 'config.json'}
+                {isMobile ? t('download') : 'config.json'}
               </Button>,
               <Button
                 key="copy"
@@ -361,7 +350,7 @@ export default function IndexPage() {
                 size={isMobile ? 'small' : 'middle'}
                 icon={<CopyOutlined />}
               >
-                Copy
+                {t('copy')}
               </Button>,
             ]}
           >

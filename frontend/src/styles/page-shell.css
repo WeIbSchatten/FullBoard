@@ -1,3 +1,5 @@
+/* Shared page scaffolding for every panel route. */
+
 .index-page,
 .clients-page,
 .inbounds-page,
@@ -9,139 +11,203 @@
 .hosts-page,
 .tg-web-proxy-page,
 .connections-page {
-  --bg-page: transparent;
-  --bg-card: rgba(255, 255, 255, 0.78);
-  min-height: 100vh;
+  --bg-card: var(--fb-surface);
+  background: transparent !important;
+}
+
+.content-main .ant-layout,
+.content-main .ant-layout-content {
   background: transparent;
 }
 
-.index-page.is-dark,
-.clients-page.is-dark,
-.inbounds-page.is-dark,
-.xray-page.is-dark,
-.settings-page.is-dark,
-.nodes-page.is-dark,
-.groups-page.is-dark,
-.api-docs-page.is-dark,
-.hosts-page.is-dark,
-.tg-web-proxy-page.is-dark,
-.connections-page.is-dark {
-  --bg-page: transparent;
-  --bg-card: rgba(19, 21, 28, 0.92);
+.content-area {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 8px 32px 40px;
 }
 
-.index-page.is-dark.is-ultra,
-.clients-page.is-dark.is-ultra,
-.inbounds-page.is-dark.is-ultra,
-.xray-page.is-dark.is-ultra,
-.settings-page.is-dark.is-ultra,
-.nodes-page.is-dark.is-ultra,
-.groups-page.is-dark.is-ultra,
-.api-docs-page.is-dark.is-ultra,
-.hosts-page.is-dark.is-ultra,
-.tg-web-proxy-page.is-dark.is-ultra {
-  --bg-page: transparent;
-  --bg-card: rgba(12, 12, 15, 0.78);
-}
-
-.index-page .ant-layout,
-.index-page .ant-layout-content,
-.clients-page .ant-layout,
-.clients-page .ant-layout-content,
-.inbounds-page .ant-layout,
-.inbounds-page .ant-layout-content,
-.xray-page .ant-layout,
-.xray-page .ant-layout-content,
-.settings-page .ant-layout,
-.settings-page .ant-layout-content,
-.nodes-page .ant-layout,
-.nodes-page .ant-layout-content,
-.groups-page .ant-layout,
-.groups-page .ant-layout-content,
-.api-docs-page .ant-layout,
-.api-docs-page .ant-layout-content,
-.hosts-page .ant-layout,
-.hosts-page .ant-layout-content,
-.tg-web-proxy-page .ant-layout,
-.tg-web-proxy-page .ant-layout-content {
-  background: transparent;
-}
-
-.index-page .content-shell,
-.clients-page .content-shell,
-.inbounds-page .content-shell,
-.xray-page .content-shell,
-.settings-page .content-shell,
-.nodes-page .content-shell,
-.groups-page .content-shell,
-.api-docs-page .content-shell,
-.hosts-page .content-shell,
-.tg-web-proxy-page .content-shell {
-  background: transparent;
-}
-
-.index-page .content-area,
-.clients-page .content-area,
-.inbounds-page .content-area,
-.xray-page .content-area,
-.settings-page .content-area,
-.nodes-page .content-area,
-.groups-page .content-area,
-.hosts-page .content-area,
-.api-docs-page .content-area,
-.tg-web-proxy-page .content-area {
-  padding: 12px 24px 28px;
+/* Connections hosts whole pages as tabs; only the outer shell pads. */
+.connections-page .content-area {
+  padding: 0;
+  max-width: none;
 }
 
 @media (max-width: 768px) {
-  .clients-page .content-area,
-  .inbounds-page .content-area,
-  .nodes-page .content-area,
-  .groups-page .content-area,
-  .hosts-page .content-area,
-  .tg-web-proxy-page .content-area {
-    padding: 8px 12px 20px;
+  .content-area {
+    padding: 4px 12px 28px;
   }
 }
 
 .loading-spacer {
-  min-height: calc(100vh - 120px);
+  min-height: calc(100vh - 160px);
 }
 
-/* Tall action menus (e.g. the inbound/client context menus) must stay inside
-   the viewport even when antd flips them upward near the screen edge. */
-.ant-dropdown .ant-dropdown-menu {
-  max-height: calc(100vh - 32px);
-  overflow-y: auto;
+/* ---------- Page tabs ---------- */
+
+.content-main .ant-tabs-nav::before {
+  border-bottom-color: var(--fb-border) !important;
 }
 
-.ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled):not(
-    .ant-dropdown-menu-item-danger
-  ):hover,
-.ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled):not(
-    .ant-dropdown-menu-item-danger
-  ):hover
-  .ant-dropdown-menu-title-content,
-.ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled):not(
-    .ant-dropdown-menu-item-danger
-  ):hover
-  > .anticon {
-  color: var(--ant-color-primary) !important;
+.content-main .ant-tabs-ink-bar {
+  background: var(--fb-accent) !important;
+  height: 2px !important;
 }
 
-.ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled):not(
-    .ant-dropdown-menu-item-danger
-  ):hover {
-  background-color: color-mix(in srgb, var(--ant-color-primary) 14%, transparent) !important;
+/* Section switcher: Connections and other top-level page tabs */
+.fb-segmented-tabs > .ant-tabs-nav {
+  margin-bottom: 20px !important;
 }
 
-.ant-dropdown-menu-item-divider {
-  background-color: var(--ant-color-border) !important;
+.fb-segmented-tabs > .ant-tabs-nav::before {
+  display: none;
 }
 
-body.dark .ant-dropdown-menu-item-divider {
-  background-color: rgba(255, 255, 255, 0.12) !important;
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+  flex: 0 1 auto !important;
+  background: var(--fb-surface);
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius);
+  padding: 4px;
 }
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab {
+  border-radius: var(--fb-radius-sm);
+  margin: 0 !important;
+  padding: 7px 16px !important;
+  color: var(--fb-text-2);
+  font-weight: 500;
+  transition:
+    background 0.15s var(--fb-ease),
+    color 0.15s var(--fb-ease);
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab {
+  margin-inline-start: 2px !important;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab:hover {
+  color: var(--fb-text);
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab-active {
+  background: var(--fb-accent);
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--fb-on-accent) !important;
+  font-weight: 600;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-ink-bar {
+  display: none;
+}
+
+.fb-segmented-tabs > .ant-tabs-nav .ant-tabs-tab .anticon {
+  margin-inline-end: 6px;
+}
+
+/* ---------- Sticky action bar (Settings / Xray) ---------- */
+
+.fb-actionbar {
+  position: sticky;
+  top: 76px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 10px 10px 16px;
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius-lg);
+  background: color-mix(in srgb, var(--fb-surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.fb-actionbar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--fb-text-3);
+}
+
+.fb-actionbar-status.is-dirty {
+  color: var(--fb-warning);
+}
+
+.fb-actionbar-status .fb-dot {
+  background: currentColor;
+  margin: 0;
+}
+
+.fb-actionbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fb-section-nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius);
+  background: var(--fb-surface);
+  width: max-content;
+  max-width: 100%;
+}
+
+.fb-section-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.fb-section-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--fb-radius-sm);
+  background: transparent;
+  color: var(--fb-text-2);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s var(--fb-ease),
+    color 0.15s var(--fb-ease);
+}
+
+.fb-section-nav-item:hover {
+  color: var(--fb-text);
+  background: var(--fb-accent-soft);
+}
+
+.fb-section-nav-item.is-active {
+  background: var(--fb-accent);
+  color: var(--fb-on-accent);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .fb-actionbar {
+    top: 60px;
+    padding: 8px 8px 8px 12px;
+  }
+}
+
+/* ---------- Legacy header rows inside Settings / Xray cards ---------- */
 
 .settings-page .header-row,
 .xray-page .header-row {
@@ -161,43 +227,7 @@ body.dark .ant-dropdown-menu-item-divider {
   justify-content: flex-end;
 }
 
-.panel-chrome .ant-tabs-nav::before {
-  border-bottom: none !important;
-}
-
-.panel-chrome .ant-tabs-tab {
-  border-radius: 999px !important;
-  padding: 6px 16px !important;
-  margin: 0 4px 0 0 !important;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    box-shadow 0.15s;
-}
-
-.panel-chrome .ant-tabs-ink-bar {
-  display: none !important;
-}
-
-.panel-chrome .ant-tabs-tab-active {
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
-}
-
-body.light .panel-chrome .ant-tabs-tab-active {
-  background: rgba(15, 23, 42, 0.05);
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.35);
-}
-
-.panel-chrome .ant-btn {
-  border-radius: 12px;
-}
-
-.panel-chrome .ant-btn-round,
-.panel-chrome .ant-input-affix-wrapper-borderless,
-.panel-chrome .ant-input-search .ant-input-affix-wrapper {
-  border-radius: 999px;
-}
+/* ---------- Icon-only tab strips (mobile) ---------- */
 
 .icons-only .ant-tabs-nav {
   margin-bottom: 8px;
@@ -226,22 +256,4 @@ body.light .panel-chrome .ant-tabs-tab-active {
 
 .icons-only .ant-tabs-nav-operations {
   display: none;
-}
-
-.clients-page .summary-card,
-.inbounds-page .summary-card,
-.nodes-page .summary-card,
-.groups-page .summary-card,
-.hosts-page .summary-card {
-  padding: 16px;
-}
-
-@media (max-width: 768px) {
-  .clients-page .summary-card,
-  .inbounds-page .summary-card,
-  .nodes-page .summary-card,
-  .groups-page .summary-card,
-  .hosts-page .summary-card {
-    padding: 8px;
-  }
 }

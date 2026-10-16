@@ -620,11 +620,9 @@ export default function InboundsPage() {
             },
           });
           break;
-        default:
-          messageApi.info(`General action "${key}" — coming in a later 5f subphase`);
       }
     },
-    [modal, importInbound, exportAllLinks, exportAllSubs, refresh, messageApi, t],
+    [modal, importInbound, exportAllLinks, exportAllSubs, refresh, t],
   );
 
   const onRowAction = useCallback(

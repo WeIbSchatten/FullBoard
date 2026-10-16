@@ -2,20 +2,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import {
-  Alert,
   Button,
   Card,
-  Col,
   ConfigProvider,
   FloatButton,
   Layout,
   message,
   Radio,
   Result,
-  Row,
-  Space,
   Spin,
 } from 'antd';
+import { SaveOutlined } from '@ant-design/icons';
 
 import { useTheme } from '@/hooks/useTheme';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -23,6 +20,9 @@ import { useXraySetting } from '@/hooks/useXraySetting';
 import type { XraySettingsValue } from '@/hooks/useXraySetting';
 import { JsonEditor } from '@/components/form';
 import { setMessageInstance } from '@/utils/messageBus';
+import PageActionBar from '@/components/ui/PageActionBar';
+import SectionNav from '@/components/ui/SectionNav';
+import { useXraySections } from '@/layouts/sectionModel';
 
 import { BasicsTab } from './basics';
 import { propagateOutboundTagRename } from './basics/helpers';
@@ -85,6 +85,7 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
   const [advSettings, setAdvSettings] = useState<AdvKey>('xraySetting');
   const location = useLocation();
   const navigate = useNavigate();
+  const sections = useXraySections();
   const pathSection =
     forceSection === 'outbound' ||
     location.pathname === '/outbound' ||
@@ -223,8 +224,6 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
     saveAll();
   }
 
-  const scrollTarget = () => document.getElementById('content-layout') || window;
-
   const pageClass = `xray-page ${isDark ? 'is-dark' : ''} ${isUltra ? 'is-ultra' : ''}`.trim();
 
   const sectionBody = (() => {
@@ -341,29 +340,28 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
                 }
               />
             ) : (
-              <Row gutter={[isMobile ? 8 : 16, isMobile ? 0 : 12]}>
-                <Col span={24}>
-                  <Card hoverable>
-                    <Row className="header-row">
-                      <Col xs={24} sm={14} className="header-actions">
-                        <Space>
-                          <Button type="primary" disabled={saveDisabled} onClick={onSaveAll}>
-                            {t('pages.xray.save')}
-                          </Button>
-                        </Space>
-                      </Col>
-                      <Col xs={24} sm={10} className="header-info">
-                        <FloatButton.BackTop target={scrollTarget} visibilityHeight={200} />
-                        <Alert type="warning" showIcon title={t('pages.settings.infoDesc')} />
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-
-                <Col span={24}>
-                  <Card hoverable>{sectionBody}</Card>
-                </Col>
-              </Row>
+              <>
+                <PageActionBar dirty={!saveDisabled}>
+                  <Button
+                    type="primary"
+                    icon={<SaveOutlined />}
+                    disabled={saveDisabled}
+                    onClick={onSaveAll}
+                  >
+                    {t('pages.xray.save')}
+                  </Button>
+                </PageActionBar>
+                {pathSection !== 'outbound' && (
+                  <SectionNav
+                    items={sections}
+                    active={activeSection}
+                    onChange={(key) => navigate({ pathname: '/xray', hash: key })}
+                    ariaLabel={t('menu.xray')}
+                  />
+                )}
+                <Card>{sectionBody}</Card>
+                <FloatButton.BackTop visibilityHeight={400} />
+              </>
             )}
           </Spin>
         </Layout.Content>

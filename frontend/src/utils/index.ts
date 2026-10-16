@@ -792,11 +792,11 @@ export class CookieManager {
   }
 }
 
-const COLORS = {
-  success: '#389e0a',
-  warning: '#faad14',
-  danger: '#ff4d4f',
-  purple: '#722ed1',
+// Literal palette values (mirroring styles/theme.css): progress rings paint
+// via SVG attributes, which cannot resolve CSS variables.
+const USAGE_COLORS = {
+  light: { success: '#1f7a45', warning: '#8a5a10', danger: '#b3362f', purple: '#6b4fb3' },
+  dark: { success: '#7dcea0', warning: '#e2b86b', danger: '#ec7a7a', purple: '#b8a3e3' },
 } as const;
 
 export type UsageColor = 'purple' | 'green' | 'orange' | 'red';
@@ -805,11 +805,6 @@ export interface ClientUsageStats {
   total: number;
   up: number;
   down: number;
-}
-
-export interface ExpiryClient {
-  enable: boolean;
-  expiryTime: number | null;
 }
 
 export class ColorUtils {
@@ -839,33 +834,15 @@ export class ColorUtils {
   static clientUsageColor(
     clientStats: ClientUsageStats | null | undefined,
     trafficDiff: number,
+    isDark: boolean = false,
   ): string {
+    const COLORS = USAGE_COLORS[isDark ? 'dark' : 'light'];
     switch (true) {
       case !clientStats || clientStats.total == 0:
         return COLORS.purple;
       case clientStats!.up + clientStats!.down < clientStats!.total - trafficDiff:
         return COLORS.success;
       case clientStats!.up + clientStats!.down < clientStats!.total:
-        return COLORS.warning;
-      default:
-        return COLORS.danger;
-    }
-  }
-
-  static userExpiryColor(threshold: number, client: ExpiryClient, isDark: boolean = false): string {
-    if (!client.enable) return isDark ? '#2c3950' : '#bcbcbc';
-    const now = new Date().getTime();
-    const expiry = client.expiryTime;
-    switch (true) {
-      case expiry === null:
-        return COLORS.purple;
-      case (expiry as number) < 0:
-        return COLORS.success;
-      case (expiry as number) == 0:
-        return COLORS.purple;
-      case now < (expiry as number) - threshold:
-        return COLORS.success;
-      case now < (expiry as number):
         return COLORS.warning;
       default:
         return COLORS.danger;

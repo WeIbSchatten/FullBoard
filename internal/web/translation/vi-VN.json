@@ -122,11 +122,29 @@
     "hosts": "Hosts",
     "docs": "Tài liệu",
     "openMenu": "Mở menu",
-    "pinSidebar": "Ghim thanh bên",
-    "unpinSidebar": "Bỏ ghim thanh bên",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "Quản lý",
+    "sectionInfra": "Hạ tầng",
+    "sectionSystem": "Hệ thống",
+    "collapseSidebar": "Thu gọn menu",
+    "expandSidebar": "Mở rộng menu",
+    "themeLight": "Sáng",
+    "themeDark": "Tối",
+    "themeAmoled": "Đen AMOLED",
+    "account": "Tài khoản",
+    "hint": {
+      "dashboard": "Tổng quan máy chủ, lưu lượng và trạng thái Xray",
+      "connections": "Inbound, outbound và Telegram Web Proxy",
+      "clients": "Người dùng, khóa, giới hạn và gói đăng ký",
+      "groups": "Gom nhóm client để quản lý giới hạn và quyền truy cập",
+      "nodes": "Các bảng FullBoard trên máy chủ khác của bạn",
+      "hosts": "Địa chỉ và ghi đè dùng trong liên kết và gói đăng ký",
+      "xray": "Cấu hình lõi: định tuyến, cân bằng tải, DNS và JSON",
+      "settings": "Bảng điều khiển, bảo mật, thông báo và đăng ký",
+      "apiDocs": "Tài liệu REST API để tự động hóa"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "Có thay đổi chưa lưu",
+      "allSaved": "Đã lưu mọi thay đổi"
     },
     "xray": {
       "importRules": "Nhập quy tắc",

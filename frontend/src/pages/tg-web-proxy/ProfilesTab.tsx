@@ -215,14 +215,14 @@ export default function ProfilesTab({
             type="info"
             showIcon
             style={{ marginBottom: 12 }}
-            message={t('pages.tgWebProxy.profile.needConfig')}
+            title={t('pages.tgWebProxy.profile.needConfig')}
           />
         )}
         <Alert
           type="warning"
           showIcon
           style={{ marginBottom: 12 }}
-          message={t('pages.tgWebProxy.profile.backendWarning')}
+          title={t('pages.tgWebProxy.profile.backendWarning')}
         />
         <Table
           rowKey="name"

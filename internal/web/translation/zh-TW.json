@@ -122,11 +122,29 @@
     "hosts": "主機",
     "docs": "文件",
     "openMenu": "開啟選單",
-    "pinSidebar": "固定側邊欄",
-    "unpinSidebar": "取消固定側邊欄",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "管理",
+    "sectionInfra": "基礎設施",
+    "sectionSystem": "系統",
+    "collapseSidebar": "收合側邊欄",
+    "expandSidebar": "展開側邊欄",
+    "themeLight": "淺色",
+    "themeDark": "深色",
+    "themeAmoled": "AMOLED 純黑",
+    "account": "帳戶",
+    "hint": {
+      "dashboard": "伺服器狀態、流量與 Xray 運行情況一覽",
+      "connections": "入站、出站與 Telegram Web 代理",
+      "clients": "使用者及其金鑰、限額與訂閱",
+      "groups": "將客戶端分組，統一管理限額與存取",
+      "nodes": "其他伺服器上的 FullBoard 面板",
+      "hosts": "用戶端連結與訂閱中使用的位址和覆寫設定",
+      "xray": "核心設定：路由、負載平衡、DNS 與 JSON",
+      "settings": "面板、安全、通知與訂閱",
+      "apiDocs": "用於自動化的 REST API 參考"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "有未儲存的變更",
+      "allSaved": "所有變更已儲存"
     },
     "xray": {
       "save": "儲存",

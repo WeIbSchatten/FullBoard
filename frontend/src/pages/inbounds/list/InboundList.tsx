@@ -215,7 +215,6 @@ export default function InboundList({
 
   return (
     <Card
-      hoverable
       title={
         <Space>
           <Button
@@ -227,11 +226,7 @@ export default function InboundList({
             {!isMobile && t('pages.inbounds.addInbound')}
           </Button>
           <Dropdown trigger={['click']} menu={generalActionsMenu}>
-            <Button
-              type="primary"
-              icon={<MenuOutlined />}
-              aria-label={t('pages.inbounds.generalActions')}
-            >
+            <Button icon={<MenuOutlined />} aria-label={t('pages.inbounds.generalActions')}>
               {!isMobile && t('pages.inbounds.generalActions')}
             </Button>
           </Dropdown>

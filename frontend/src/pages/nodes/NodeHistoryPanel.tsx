@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HttpUtil } from '@/utils';
+import { useChartColors } from '@/hooks/useTheme';
 import { Sparkline } from '@/components/viz';
 import './NodeHistoryPanel.css';
 
@@ -28,6 +29,7 @@ const REFRESH_MS = 15000;
 const formatKbps = (v: number) => v.toLocaleString(undefined, { maximumFractionDigits: 1 });
 
 export default function NodeHistoryPanel({ node, bucket = 30 }: NodeHistoryPanelProps) {
+  const chartStroke = useChartColors().series[0];
   const { t } = useTranslation();
   const [cpuPoints, setCpuPoints] = useState<number[]>([]);
   const [cpuLabels, setCpuLabels] = useState<string[]>([]);
@@ -110,7 +112,7 @@ export default function NodeHistoryPanel({ node, bucket = 30 }: NodeHistoryPanel
           data={cpuPoints}
           labels={cpuLabels}
           height={120}
-          stroke="#008771"
+          stroke={chartStroke}
           showGrid
           showAxes
           tickCountX={4}
@@ -126,7 +128,7 @@ export default function NodeHistoryPanel({ node, bucket = 30 }: NodeHistoryPanel
           data={memPoints}
           labels={memLabels}
           height={120}
-          stroke="#7c4dff"
+          stroke={chartStroke}
           showGrid
           showAxes
           tickCountX={4}
@@ -142,7 +144,7 @@ export default function NodeHistoryPanel({ node, bucket = 30 }: NodeHistoryPanel
           data={netUpPoints}
           labels={netUpLabels}
           height={120}
-          stroke="#1677ff"
+          stroke={chartStroke}
           showGrid
           showAxes
           tickCountX={4}
@@ -160,7 +162,7 @@ export default function NodeHistoryPanel({ node, bucket = 30 }: NodeHistoryPanel
           data={netDownPoints}
           labels={netDownLabels}
           height={120}
-          stroke="#fa8c16"
+          stroke={chartStroke}
           showGrid
           showAxes
           tickCountX={4}

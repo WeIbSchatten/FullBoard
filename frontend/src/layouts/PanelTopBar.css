@@ -1,64 +1,61 @@
 .panel-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex: 0 0 auto;
-  min-height: 64px;
-  padding: 12px 24px 4px;
-  background: transparent;
+  min-height: 76px;
+  padding: 14px 32px;
+  background: color-mix(in srgb, var(--fb-bg) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom: 1px solid transparent;
 }
 
-.panel-topbar-crumbs {
+.panel-chrome--top .panel-topbar {
+  top: 60px;
+}
+
+.panel-topbar-lead {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   min-width: 0;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.45);
+}
+
+.panel-topbar-heading {
+  min-width: 0;
+}
+
+.panel-topbar-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--fb-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-body.light .panel-topbar-crumbs {
-  color: rgba(17, 24, 39, 0.45);
-}
-
-.panel-topbar-crumb-root {
-  color: inherit;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.panel-topbar-crumb-root:hover {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-body.light .panel-topbar-crumb-root:hover {
-  color: rgba(17, 24, 39, 0.85);
-}
-
-.panel-topbar-crumb-sep {
-  opacity: 0.55;
-}
-
-.panel-topbar-crumb-current {
-  color: rgba(255, 255, 255, 0.92);
+.panel-topbar-hint {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--fb-text-3);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-body.light .panel-topbar-crumb-current {
-  color: rgba(17, 24, 39, 0.92);
 }
 
 .panel-topbar-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
@@ -66,42 +63,24 @@ body.light .panel-topbar-crumb-current {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-width: 220px;
-  max-width: 360px;
-  height: 40px;
-  padding: 0 14px 0 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.045);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  color: rgba(255, 255, 255, 0.55);
+  width: 260px;
+  height: 38px;
+  padding: 0 8px 0 14px;
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius);
+  background: var(--fb-surface);
+  color: var(--fb-text-3);
+  font: inherit;
+  font-size: 13.5px;
   cursor: pointer;
   transition:
-    background 0.2s,
-    border-color 0.2s,
-    color 0.2s;
+    border-color 0.15s,
+    color 0.15s;
 }
 
-body.light .panel-topbar-search {
-  border-color: rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.72);
-  color: rgba(17, 24, 39, 0.5);
-}
-
-.panel-topbar-search:hover,
-.panel-topbar-search:focus-visible {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.88);
-  outline: none;
-}
-
-body.light .panel-topbar-search:hover,
-body.light .panel-topbar-search:focus-visible {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(15, 23, 42, 0.14);
-  color: rgba(17, 24, 39, 0.88);
+.panel-topbar-search:hover {
+  border-color: var(--fb-border-strong);
+  color: var(--fb-text-2);
 }
 
 .panel-topbar-search-icon {
@@ -110,100 +89,88 @@ body.light .panel-topbar-search:focus-visible {
 
 .panel-topbar-search-text {
   flex: 1 1 auto;
-  text-align: left;
-  font-size: 13px;
+  text-align: start;
 }
 
 .panel-topbar-search-kbd {
   display: inline-flex;
-  gap: 4px;
+  gap: 3px;
 }
 
 .panel-topbar-search-kbd kbd {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 20px;
+  min-width: 22px;
+  height: 22px;
   padding: 0 5px;
+  border: 1px solid var(--fb-border);
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.28);
+  background: var(--fb-surface-2);
+  color: var(--fb-text-3);
   font-size: 11px;
-  font-family: inherit;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--fb-font);
 }
 
-body.light .panel-topbar-search-kbd kbd {
-  border-color: rgba(15, 23, 42, 0.1);
-  background: rgba(15, 23, 42, 0.06);
-  color: rgba(17, 24, 39, 0.55);
-}
-
-.panel-topbar-user {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 10px 4px 4px;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.88);
-  text-decoration: none;
-  transition: background 0.15s;
-}
-
-body.light .panel-topbar-user {
-  color: rgba(17, 24, 39, 0.88);
-}
-
-.panel-topbar-user:hover {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-body.light .panel-topbar-user:hover {
-  background: rgba(15, 23, 42, 0.05);
-}
-
-.panel-topbar-avatar {
+.panel-topbar-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #60a5fa, #2563eb);
-  color: #fff;
-  font-size: 14px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius);
+  background: var(--fb-surface);
+  color: var(--fb-text-2);
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
-.panel-topbar-user-name {
-  font-size: 13px;
-  font-weight: 500;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.panel-topbar-icon-btn:hover {
+  border-color: var(--fb-border-strong);
+  color: var(--fb-text);
 }
 
-@media (max-width: 768px) {
-  .panel-topbar {
-    padding: 56px 12px 4px;
-  }
+.panel-topbar-burger {
+  display: none;
+}
 
+@media (max-width: 1100px) {
   .panel-topbar-search {
-    min-width: 0;
-    width: 40px;
+    width: 38px;
     padding: 0;
     justify-content: center;
   }
 
   .panel-topbar-search-text,
-  .panel-topbar-search-kbd,
-  .panel-topbar-user-name {
+  .panel-topbar-search-kbd {
     display: none;
   }
+}
 
-  .panel-topbar-user {
-    padding: 0;
+@media (max-width: 768px) {
+  .panel-topbar {
+    min-height: 60px;
+    padding: 10px 14px;
+  }
+
+  .panel-chrome--top .panel-topbar {
+    top: 0;
+  }
+
+  .panel-topbar-burger {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  .panel-topbar-title {
+    font-size: 18px;
+  }
+
+  .panel-topbar-hint {
+    display: none;
   }
 }

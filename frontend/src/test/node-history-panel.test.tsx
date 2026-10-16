@@ -1,8 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import NodeHistoryPanel from '@/pages/nodes/NodeHistoryPanel';
 import { HttpUtil, Msg } from '@/utils';
+
+import { renderWithProviders } from './test-utils';
 
 const plots = vi.hoisted(() => [] as { scales: { y: { range: () => [number, number] } } }[]);
 
@@ -35,7 +37,7 @@ describe('NodeHistoryPanel', () => {
       return new Msg(true, '', [{ t: 1_700_000_000, v: samples[metric] }]);
     });
 
-    render(<NodeHistoryPanel node={{ id: 7 }} />);
+    renderWithProviders(<NodeHistoryPanel node={{ id: 7 }} />);
 
     // Sparkline updates its chart refs in a passive effect after the DOM commits.
     await waitFor(() => {

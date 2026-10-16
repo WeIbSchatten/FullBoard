@@ -122,11 +122,29 @@
     "hosts": "المضيفات",
     "docs": "التوثيق",
     "openMenu": "فتح القائمة",
-    "pinSidebar": "تثبيت الشريط الجانبي",
-    "unpinSidebar": "إلغاء تثبيت الشريط الجانبي",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "الإدارة",
+    "sectionInfra": "البنية التحتية",
+    "sectionSystem": "النظام",
+    "collapseSidebar": "طي القائمة",
+    "expandSidebar": "توسيع القائمة",
+    "themeLight": "فاتح",
+    "themeDark": "داكن",
+    "themeAmoled": "أسود AMOLED",
+    "account": "الحساب",
+    "hint": {
+      "dashboard": "حالة الخادم وحركة المرور وXray في لمحة",
+      "connections": "الواردة والصادرة ووكيل Telegram على الويب",
+      "clients": "المستخدمون ومفاتيحهم وحدودهم واشتراكاتهم",
+      "groups": "اجمع العملاء لإدارة الحدود والوصول معًا",
+      "nodes": "لوحات FullBoard على خوادمك الأخرى",
+      "hosts": "العناوين والتجاوزات المستخدمة في روابط العملاء والاشتراكات",
+      "xray": "إعداد النواة: التوجيه والموازنات وDNS وJSON",
+      "settings": "اللوحة والأمان والإشعارات والاشتراكات",
+      "apiDocs": "مرجع REST API للأتمتة"
+    }
   },
   "pages": {
     "login": {
@@ -1832,7 +1850,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "allSaved": "تم حفظ كل التغييرات"
     },
     "xray": {
       "save": "احفظ",

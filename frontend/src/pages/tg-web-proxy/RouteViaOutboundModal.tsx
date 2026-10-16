@@ -156,8 +156,8 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
       }}
       destroyOnHidden
     >
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <Alert type="warning" showIcon message={t('pages.tgWebProxy.routeVia.warning')} />
+      <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
+        <Alert type="warning" showIcon title={t('pages.tgWebProxy.routeVia.warning')} />
         <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
           {t('pages.tgWebProxy.routeVia.hint')}
         </Typography.Paragraph>
@@ -191,7 +191,7 @@ export default function RouteViaOutboundModal({ profile, open, onClose, onApplie
             </Typography.Text>
           ) : null}
           {usedPorts.includes(listenPort ?? -1) ? (
-            <Alert type="error" showIcon message={t('pages.tgWebProxy.routeVia.portInUse')} />
+            <Alert type="error" showIcon title={t('pages.tgWebProxy.routeVia.portInUse')} />
           ) : null}
         </Form>
       </Space>

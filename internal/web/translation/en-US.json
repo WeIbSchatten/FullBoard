@@ -122,11 +122,29 @@
     "apiDocs": "API Docs",
     "docs": "Documentation",
     "openMenu": "Open menu",
-    "pinSidebar": "Pin sidebar",
-    "unpinSidebar": "Unpin sidebar",
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
-    "connections": "Connections"
+    "connections": "Connections",
+    "sectionManage": "Manage",
+    "sectionInfra": "Infrastructure",
+    "sectionSystem": "System",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeAmoled": "AMOLED black",
+    "account": "Account",
+    "hint": {
+      "dashboard": "Server health, traffic and Xray status at a glance",
+      "connections": "Inbounds, outbounds and Telegram Web Proxy",
+      "clients": "Users, their keys, limits and subscriptions",
+      "groups": "Bundle clients to manage limits and access together",
+      "nodes": "FullBoard panels on your other servers",
+      "hosts": "Addresses and overrides used in client links and subscriptions",
+      "xray": "Core config: routing, balancers, DNS and raw JSON",
+      "settings": "Panel, security, notifications and subscriptions",
+      "apiDocs": "REST API reference for automation"
+    }
   },
   "pages": {
     "login": {
@@ -2125,7 +2143,9 @@
         "issued": "Invite ready — copy it to the master panel",
         "issueFailed": "Could not create enroll invite",
         "expiresIn": "Expires in about {minutes} minutes"
-      }
+      },
+      "unsavedChanges": "Unsaved changes",
+      "allSaved": "All changes saved"
     },
     "xray": {
       "save": "Save",
