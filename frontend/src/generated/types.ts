@@ -1013,6 +1013,11 @@ export interface PublicSiteFile {
   size: number;
 }
 
+export interface PublicSitePreset {
+  html: string;
+  id: string;
+}
+
 export interface PublicSiteSnapshot {
   active: boolean;
   configPublicDir: string;
@@ -1020,6 +1025,7 @@ export interface PublicSiteSnapshot {
   dir: string;
   files: PublicSiteFile[];
   indexHtml: string;
+  presets: PublicSitePreset[];
 }
 
 export interface RealityScanResult {

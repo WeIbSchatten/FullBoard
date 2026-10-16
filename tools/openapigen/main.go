@@ -153,6 +153,7 @@ func run(root, outDir string) error {
 				"RelayJobStatus",
 				"RelayInstallRequest",
 				"PublicSiteFile",
+				"PublicSitePreset",
 				"PublicSiteSnapshot",
 				"CaddyH2WSStatus",
 				"DedicatedSpec",

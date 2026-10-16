@@ -2662,7 +2662,11 @@
         "upload": "Upload file",
         "reset": "Reset template",
         "save": "Save & activate",
-        "size": "Size"
+        "size": "Size",
+        "preset": "تحميل قالب…",
+        "presetSignup": "صفحة تسجيل التطبيق",
+        "presetCats": "القطط تصلح الاتصال",
+        "presetLoaded": "تم تحميل القالب في المحرر. احفظ لنشره."
       },
       "routeVia": {
         "button": "Route via outbound",
