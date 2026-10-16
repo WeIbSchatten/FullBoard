@@ -70,28 +70,32 @@ function Editor({ email }: { email: string }) {
   );
 
   if (nodeId == null && localSnapshot.data && !localSnapshot.data.configExists) {
-    return <Alert type="info" showIcon message={t('pages.tgWebProxy.bindings.notConfigured')} />;
+    return <Alert type="info" showIcon title={t('pages.tgWebProxy.bindings.notConfigured')} />;
   }
 
   return (
     <Space orientation="vertical" style={{ width: '100%' }}>
-      <Select
-        style={{ width: '100%' }}
-        value={nodeId ?? 0}
-        options={nodeOptions}
-        placeholder={t('pages.tgWebProxy.bindings.selectNode')}
-        onChange={(value) =>
-          setDraft((d) => ({
-            ...d,
-            nodeId: value === 0 ? null : value,
-            profile: undefined,
-            dedicated: value === 0 ? d.dedicated : true,
-          }))
-        }
-      />
-      <Typography.Text type="secondary">
-        {t('pages.tgWebProxy.bindings.remoteHint')}
-      </Typography.Text>
+      {(nodeOptions.length > 1 || nodeId != null) && (
+        <>
+          <Select
+            style={{ width: '100%' }}
+            value={nodeId ?? 0}
+            options={nodeOptions}
+            placeholder={t('pages.tgWebProxy.bindings.selectNode')}
+            onChange={(value) =>
+              setDraft((d) => ({
+                ...d,
+                nodeId: value === 0 ? null : value,
+                profile: undefined,
+                dedicated: value === 0 ? d.dedicated : true,
+              }))
+            }
+          />
+          <Typography.Text type="secondary">
+            {t('pages.tgWebProxy.bindings.remoteHint')}
+          </Typography.Text>
+        </>
+      )}
       <Select
         allowClear
         style={{ width: '100%' }}
@@ -102,7 +106,7 @@ function Editor({ email }: { email: string }) {
         onChange={(value) => setDraft((d) => ({ ...d, profile: value }))}
       />
       {remoteSnapshot.isError && (
-        <Alert type="error" showIcon message={(remoteSnapshot.error as Error).message} />
+        <Alert type="error" showIcon title={(remoteSnapshot.error as Error).message} />
       )}
       <Space align="center">
         <Switch
@@ -141,7 +145,7 @@ function Editor({ email }: { email: string }) {
         <Alert
           type="error"
           showIcon
-          message={t('pages.tgWebProxy.bindings.syncError', { error: bindings.data.syncError })}
+          title={t('pages.tgWebProxy.bindings.syncError', { error: bindings.data.syncError })}
         />
       )}
       <Space>
