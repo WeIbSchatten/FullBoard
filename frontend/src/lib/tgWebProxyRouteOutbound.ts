@@ -6,10 +6,6 @@ import type { XraySettingsValue } from '@/hooks/useXraySetting';
 // connections (followRedirect) and sends them through the chosen outbound.
 export const MTPROXY_EGRESS_INBOUND_TAG = 'mtproxy-egress';
 
-// Stock freedom "direct" blocks geoip:private, so a rewrite to 127.0.0.1 never
-// dials. This outbound allows only that loopback.
-export const TPROXY_LOCAL_OUTBOUND_TAG = 'tproxy-local';
-
 export interface TproxyRouteRule extends ChainRoutingRule {
   port?: string;
 }
@@ -130,28 +126,10 @@ export function isHostLocalOnly(host: string): boolean {
   return false;
 }
 
-export function outboundTagForBackendRewrite(host: string, selectedOutbound: string): string {
-  return isHostLocalOnly(host) ? TPROXY_LOCAL_OUTBOUND_TAG : selectedOutbound;
-}
-
-export function tproxyLocalOutbound(): Record<string, unknown> {
-  return {
-    tag: TPROXY_LOCAL_OUTBOUND_TAG,
-    protocol: 'freedom',
-    settings: {
-      finalRules: [{ action: 'allow', ip: ['127.0.0.1'] }, { action: 'block' }],
-    },
-  };
-}
-
-export function ensureTproxyLocalOutbound(template: XraySettingsValue): void {
-  const outbounds = Array.isArray(template.outbounds) ? [...template.outbounds] : [];
-  const exists = outbounds.some(
-    (o) => o && typeof o === 'object' && 'tag' in o && o.tag === TPROXY_LOCAL_OUTBOUND_TAG,
-  );
-  if (exists) return;
-  outbounds.push(tproxyLocalOutbound() as (typeof outbounds)[number]);
-  template.outbounds = outbounds;
+// Local MTProxy must stay a direct loopback dial (WEB Panel Proxy model). A
+// tunnel+remote outbound dials 127.0.0.1 on the far side and kills the relay.
+export function canRouteBackendViaOutbound(host: string): boolean {
+  return !isHostLocalOnly(host);
 }
 
 export function assignedInboundTag(
@@ -187,32 +165,12 @@ export function unwrapBackendTarget(
   return { host: rewriteHost, port };
 }
 
-export function buildLocalMtproxyDirectRule(rewrite: BackendEndpoint): TproxyRouteRule | null {
-  if (!isHostLocalOnly(rewrite.host)) return null;
-  return {
-    type: 'field',
-    outboundTag: TPROXY_LOCAL_OUTBOUND_TAG,
-    ip: [rewrite.host],
-    port: String(rewrite.port),
-  };
-}
-
 function inboundTagsOf(rule: unknown): string[] {
   if (!rule || typeof rule !== 'object') return [];
   const tags = (rule as { inboundTag?: unknown }).inboundTag;
   if (typeof tags === 'string') return [tags];
   if (!Array.isArray(tags)) return [];
   return tags.filter((t): t is string => typeof t === 'string');
-}
-
-function isSameLocalCatch(existing: unknown, rule: TproxyRouteRule): boolean {
-  if (inboundTagsOf(rule).length > 0 || inboundTagsOf(existing).length > 0) return false;
-  if (!rule.ip || !rule.port) return false;
-  if (!existing || typeof existing !== 'object') return false;
-  const prev = existing as { ip?: unknown; port?: unknown };
-  if (String(prev.port ?? '') !== rule.port) return false;
-  const ips = Array.isArray(prev.ip) ? prev.ip.map(String) : [];
-  return rule.ip.every((ip) => ips.includes(ip));
 }
 
 export function applyTproxyBackendRule(
@@ -226,7 +184,6 @@ export function applyTproxyBackendRule(
   const kept = rules.filter((existing) => {
     if (replaceTags.size > 0 && inboundTagsOf(existing).some((t) => replaceTags.has(t)))
       return false;
-    if (isSameLocalCatch(existing, rule)) return false;
     return true;
   });
   template.routing.rules = (position === 'top' ? [rule, ...kept] : [...kept, rule]) as never;

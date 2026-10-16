@@ -4410,14 +4410,14 @@ export const SCHEMAS: Record<string, unknown> = {
         "type": "boolean"
       },
       "configPublicDir": {
-        "example": "/var/lib/fullboard/tproxy-site",
+        "example": "/srv/tproxy-site",
         "type": "string"
       },
       "defaultHtml": {
         "type": "string"
       },
       "dir": {
-        "example": "/var/lib/fullboard/tproxy-site",
+        "example": "/srv/tproxy-site",
         "type": "string"
       },
       "files": {

@@ -3128,7 +3128,7 @@ export const sections: readonly Section[] = [
         method: 'GET',
         path: '/panel/api/tgWebProxy/publicSite',
         summary:
-          'Panel-managed static site under /var/lib/fullboard/tproxy-site: index.html, asset list and whether config public_dir points at it.',
+          'Panel-managed static site under /srv/tproxy-site: index.html, asset list and whether config public_dir points at it.',
         responseSchema: 'PublicSiteSnapshot',
       },
       {

@@ -143,19 +143,21 @@ FullBoard делает это сам.
 
 ## Маршрутизация backend через outbound
 
-На строке профиля **Route via outbound** создаёт loopback tunnel-inbound
-(dokodemo), который переписывает трафик на текущий MTProxy backend профиля,
-добавляет routing-правило на выбранный Xray outbound и меняет `backend` профиля
-на `127.0.0.1:<порт-туннеля>`. Удалённый MTProxy по-прежнему должен принимать
-секрет профиля; private/geoip-правила outbound могут резать Telegram —
-проверьте после применения.
+Как в [WEB Panel Proxy](https://gitlab.com/POLESNIESOVETI12/web-panel-proxy) и
+stock `tproxy-server`: **локальный** MTProxy остаётся `127.0.0.1:<порт>` — релей
+набирает его на этом хосте. **Route via outbound** строит Xray-туннель только
+для **публичного** адреса MTProxy и тогда отправляет его через выбранный
+outbound. Туннель `127.0.0.1` через удалённый outbound открывает loopback на
+дальней стороне и ломает релей, при этом проверка outbound может всё ещё
+проходить. MTProxy должен принимать секрет профиля.
 
 ## Публичный сайт
 
 Вкладка **Public site** управляет лендингом панели в
-`/var/lib/fullboard/tproxy-site` (редактор `index.html`, загрузка ассетов,
-preview в sandbox). Сохранение включает `public_dir` на этот каталог и очищает
-`public_upstream`.
+`/srv/tproxy-site` (редактор `index.html`, загрузка ассетов, preview в sandbox)
+— тот же путь, что у stock tproxy / WEB Panel Proxy, чтобы пользователь
+`tproxy` мог читать файлы. Сохранение включает `public_dir` на этот каталог и
+очищает `public_upstream`.
 
 ## Конфигурация
 
