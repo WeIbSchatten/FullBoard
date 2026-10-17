@@ -30,7 +30,8 @@ test('starts expanded with labelled sections so every page is named', async () =
   const sider = view.container.querySelector('.ant-layout-sider');
 
   expect(sider?.classList.contains('ant-layout-sider-collapsed')).toBe(false);
-  expect(screen.getByText('Manage')).toBeTruthy();
+  expect(screen.getByText('Users')).toBeTruthy();
+  expect(screen.getByText('Traffic')).toBeTruthy();
   expect(screen.getByText('Infrastructure')).toBeTruthy();
   expect(screen.getByText('Clients')).toBeTruthy();
 });
@@ -57,10 +58,10 @@ test('collapses to the icon rail and restores the choice after a reload', async 
   expect(localStorage.getItem('sidebar-collapsed')).toBe('false');
 });
 
-test('highlights Connections for legacy inbound deep links', async () => {
-  const view = await renderSidebar('/inbounds');
+test('highlights Subscriptions on the subscriptions hub', async () => {
+  const view = await renderSidebar('/subscriptions');
   const selected = view.container.querySelector('.sider-nav .ant-menu-item-selected');
-  expect(selected?.textContent).toBe('Connections');
+  expect(selected?.textContent).toBe('Subscriptions');
 });
 
 test('labels the palette shortcut with the modifier the platform actually uses', async () => {

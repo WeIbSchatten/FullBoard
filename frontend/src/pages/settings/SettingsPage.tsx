@@ -53,7 +53,9 @@ function isIp(h: string): boolean {
   return parts.length === 2 ? groups < 8 : groups === 8;
 }
 
-export default function SettingsPage() {
+// `section` pins one settings screen (used by the Settings, Subscriptions and
+// Notifications hubs); without it the page reads the section from the hash.
+export default function SettingsPage({ section }: { section?: string } = {}) {
   const { t } = useTranslation();
   const { isDark, isUltra, antdThemeConfig } = useTheme();
   const { isMobile } = useMediaQuery();
@@ -83,7 +85,7 @@ export default function SettingsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const sections = useSettingsSections();
-  const slug = location.hash.replace(/^#/, '');
+  const slug = section ?? location.hash.replace(/^#/, '');
   const activeSlug = sections.some((s) => s.key === slug) ? slug : 'general';
 
   function rebuildUrlAfterRestart(): string {
@@ -230,7 +232,7 @@ export default function SettingsPage() {
               <div className="loading-spacer" />
             ) : (
               <>
-                {confAlerts.length > 0 && alertVisible && (
+                {activeSlug === 'general' && confAlerts.length > 0 && alertVisible && (
                   <Alert
                     type="error"
                     showIcon
@@ -269,12 +271,14 @@ export default function SettingsPage() {
                   </Button>
                 </PageActionBar>
 
-                <SectionNav
-                  items={sections}
-                  active={activeSlug}
-                  onChange={(key) => navigate({ hash: key }, { replace: true })}
-                  ariaLabel={t('menu.settings')}
-                />
+                {!section && (
+                  <SectionNav
+                    items={sections}
+                    active={activeSlug}
+                    onChange={(key) => navigate({ hash: key }, { replace: true })}
+                    ariaLabel={t('menu.settings')}
+                  />
+                )}
 
                 <Card>{categoryBody}</Card>
                 <FloatButton.BackTop visibilityHeight={400} />

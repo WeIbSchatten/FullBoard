@@ -114,7 +114,7 @@
     "clients": "客戶端",
     "groups": "群組",
     "nodes": "節點",
-    "settings": "面板設定",
+    "settings": "設定",
     "xray": "Xray 設定",
     "routing": "路由",
     "outbounds": "出站",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "管理",
     "sectionInfra": "基礎設施",
     "sectionSystem": "系統",
     "collapseSidebar": "收合側邊欄",
@@ -136,14 +135,13 @@
     "account": "帳戶",
     "hint": {
       "dashboard": "伺服器狀態、流量與 Xray 運行情況一覽",
-      "connections": "入站、出站與 Telegram Web 代理",
-      "clients": "使用者及其金鑰、限額與訂閱",
-      "groups": "將客戶端分組，統一管理限額與存取",
-      "nodes": "其他伺服器上的 FullBoard 面板",
-      "hosts": "用戶端連結與訂閱中使用的位址和覆寫設定",
-      "xray": "核心設定：路由、負載平衡、DNS 與 JSON",
-      "settings": "面板、安全、通知與訂閱",
-      "apiDocs": "用於自動化的 REST API 參考"
+      "connections": "入站、出站、路由、DNS 與 Telegram WEB Proxy",
+      "clients": "使用者、群組、金鑰、限額與訂閱",
+      "settings": "面板、安全與 Xray 核心範本",
+      "apiDocs": "用於自動化的 REST API 參考",
+      "subscriptions": "供用戶端應用使用的訂閱連結、格式與負載平衡",
+      "notifications": "Telegram、Discord 與郵件通知和機器人",
+      "nodesHosts": "其他 FullBoard 伺服器及連結中使用的位址"
     },
     "appearance": {
       "title": "外觀",
@@ -157,7 +155,14 @@
       "size": "介面大小",
       "sizeAuto": "自動",
       "sizeAutoHint": "自動為此螢幕選擇 {percent}%"
-    }
+    },
+    "subscriptions": "訂閱",
+    "notifications": "通知",
+    "nodesHosts": "節點與主機",
+    "sectionUsers": "使用者",
+    "sectionTraffic": "流量",
+    "xrayCore": "Xray 核心",
+    "xrayJson": "Xray JSON"
   },
   "pages": {
     "login": {

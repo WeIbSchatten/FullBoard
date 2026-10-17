@@ -114,7 +114,7 @@
     "clients": "Klien",
     "groups": "Grup",
     "nodes": "Node",
-    "settings": "Pengaturan Panel",
+    "settings": "Pengaturan",
     "xray": "Konfigurasi Xray",
     "routing": "Pengalihan",
     "outbounds": "Outbound",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "Kelola",
     "sectionInfra": "Infrastruktur",
     "sectionSystem": "Sistem",
     "collapseSidebar": "Ciutkan menu",
@@ -136,14 +135,13 @@
     "account": "Akun",
     "hint": {
       "dashboard": "Kondisi server, trafik, dan status Xray sekilas",
-      "connections": "Inbound, outbound, dan Telegram Web Proxy",
-      "clients": "Pengguna, kunci, batas, dan langganan",
-      "groups": "Kelompokkan klien untuk mengelola batas dan akses bersama",
-      "nodes": "Panel FullBoard di server Anda yang lain",
-      "hosts": "Alamat dan penimpaan untuk tautan dan langganan klien",
-      "xray": "Konfigurasi inti: routing, balancer, DNS, dan JSON",
-      "settings": "Panel, keamanan, notifikasi, dan langganan",
-      "apiDocs": "Referensi REST API untuk otomatisasi"
+      "connections": "Inbound, outbound, routing, DNS, dan Telegram WEB Proxy",
+      "clients": "Pengguna, grup, kunci, batas, dan langganan",
+      "settings": "Panel, keamanan, dan templat inti Xray",
+      "apiDocs": "Referensi REST API untuk otomatisasi",
+      "subscriptions": "Tautan langganan, format, dan penyeimbang untuk aplikasi klien",
+      "notifications": "Peringatan dan bot Telegram, Discord, dan email",
+      "nodesHosts": "Server FullBoard lain dan alamat yang dipakai di tautan"
     },
     "appearance": {
       "title": "Tampilan",
@@ -157,7 +155,14 @@
       "size": "Ukuran antarmuka",
       "sizeAuto": "Otomatis",
       "sizeAutoHint": "Otomatis memilih {percent}% untuk layar ini"
-    }
+    },
+    "subscriptions": "Langganan",
+    "notifications": "Notifikasi",
+    "nodesHosts": "Node & host",
+    "sectionUsers": "Pengguna",
+    "sectionTraffic": "Lalu lintas",
+    "xrayCore": "Inti Xray",
+    "xrayJson": "JSON Xray"
   },
   "pages": {
     "login": {

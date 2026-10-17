@@ -114,7 +114,7 @@
     "clients": "クライアント",
     "groups": "グループ",
     "nodes": "ノード",
-    "settings": "パネル設定",
+    "settings": "設定",
     "xray": "Xray 設定",
     "routing": "ルーティング",
     "outbounds": "アウトバウンド",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "管理",
     "sectionInfra": "インフラ",
     "sectionSystem": "システム",
     "collapseSidebar": "サイドバーを折りたたむ",
@@ -136,14 +135,13 @@
     "account": "アカウント",
     "hint": {
       "dashboard": "サーバーの状態、トラフィック、Xray の状況をひと目で",
-      "connections": "インバウンド、アウトバウンド、Telegram Web プロキシ",
-      "clients": "ユーザー、キー、制限、サブスクリプション",
-      "groups": "クライアントをまとめて制限とアクセスを一括管理",
-      "nodes": "他のサーバーにある FullBoard パネル",
-      "hosts": "クライアントリンクとサブスクリプションで使うアドレスと上書き",
-      "xray": "コア設定：ルーティング、バランサー、DNS、JSON",
-      "settings": "パネル、セキュリティ、通知、サブスクリプション",
-      "apiDocs": "自動化のための REST API リファレンス"
+      "connections": "インバウンド、アウトバウンド、ルーティング、DNS、Telegram WEB Proxy",
+      "clients": "ユーザー、グループ、キー、制限、サブスクリプション",
+      "settings": "パネル、セキュリティ、Xray コアテンプレート",
+      "apiDocs": "自動化のための REST API リファレンス",
+      "subscriptions": "クライアントアプリ向けのサブスクリプションリンク、形式、バランサー",
+      "notifications": "Telegram・Discord・メールの通知とボット",
+      "nodesHosts": "他の FullBoard サーバーとリンクで使うアドレス"
     },
     "appearance": {
       "title": "外観",
@@ -157,7 +155,14 @@
       "size": "インターフェースのサイズ",
       "sizeAuto": "自動",
       "sizeAutoHint": "自動ではこの画面に {percent}% を選びます"
-    }
+    },
+    "subscriptions": "サブスクリプション",
+    "notifications": "通知",
+    "nodesHosts": "ノードとホスト",
+    "sectionUsers": "ユーザー",
+    "sectionTraffic": "トラフィック",
+    "xrayCore": "Xray コア",
+    "xrayJson": "Xray JSON"
   },
   "pages": {
     "login": {

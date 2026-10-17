@@ -1,4 +1,4 @@
-export type NavSection = 'main' | 'manage' | 'infra' | 'system';
+export type NavSection = 'main' | 'users' | 'traffic' | 'infra' | 'system';
 
 export interface NavRoute {
   key: string;
@@ -7,45 +7,74 @@ export interface NavRoute {
   section: NavSection;
 }
 
-// Single source for sidebar order, top-bar titles and page hints.
+// Single source for sidebar order, top-bar titles and page hints. Pages group
+// related screens as tabs, so each task has one place in the sidebar.
 export const NAV_ROUTES: NavRoute[] = [
   { key: '/', titleKey: 'menu.dashboard', hintKey: 'menu.hint.dashboard', section: 'main' },
+  { key: '/clients', titleKey: 'menu.clients', hintKey: 'menu.hint.clients', section: 'users' },
+  {
+    key: '/subscriptions',
+    titleKey: 'menu.subscriptions',
+    hintKey: 'menu.hint.subscriptions',
+    section: 'users',
+  },
   {
     key: '/connections',
     titleKey: 'menu.connections',
     hintKey: 'menu.hint.connections',
-    section: 'manage',
+    section: 'traffic',
   },
-  { key: '/clients', titleKey: 'menu.clients', hintKey: 'menu.hint.clients', section: 'manage' },
-  { key: '/groups', titleKey: 'menu.groups', hintKey: 'menu.hint.groups', section: 'manage' },
-  { key: '/nodes', titleKey: 'menu.nodes', hintKey: 'menu.hint.nodes', section: 'infra' },
-  { key: '/hosts', titleKey: 'menu.hosts', hintKey: 'menu.hint.hosts', section: 'infra' },
-  { key: '/xray', titleKey: 'menu.xray', hintKey: 'menu.hint.xray', section: 'system' },
-  { key: '/routing', titleKey: 'menu.routing', hintKey: 'menu.hint.xray', section: 'system' },
+  { key: '/nodes', titleKey: 'menu.nodesHosts', hintKey: 'menu.hint.nodesHosts', section: 'infra' },
   {
-    key: '/settings',
-    titleKey: 'menu.settings',
-    hintKey: 'menu.hint.settings',
+    key: '/notifications',
+    titleKey: 'menu.notifications',
+    hintKey: 'menu.hint.notifications',
     section: 'system',
   },
+  { key: '/settings', titleKey: 'menu.settings', hintKey: 'menu.hint.settings', section: 'system' },
   { key: '/api-docs', titleKey: 'menu.apiDocs', hintKey: 'menu.hint.apiDocs', section: 'system' },
 ];
 
 export const NAV_SECTION_TITLE_KEYS: Record<Exclude<NavSection, 'main'>, string> = {
-  manage: 'menu.sectionManage',
+  users: 'menu.sectionUsers',
+  traffic: 'menu.sectionTraffic',
   infra: 'menu.sectionInfra',
   system: 'menu.sectionSystem',
 };
 
-// Legacy deep links (/inbounds, /outbound, /tg-web-proxy) redirect into Connections.
-const ROUTE_ALIASES: Record<string, string> = {
-  '/inbounds': '/connections',
-  '/outbound': '/connections',
-  '/tg-web-proxy': '/connections',
+// Where each pre-1.4.8 page or section lives now; keys are "path" or "path#hash".
+const LEGACY_LOCATIONS: Record<string, string> = {
+  '/inbounds': '/connections#inbounds',
+  '/outbound': '/connections#outbounds',
+  '/tg-web-proxy': '/connections#tg-web-proxy',
+  '/routing': '/connections#routing',
+  '/groups': '/clients#groups',
+  '/hosts': '/nodes#hosts',
+  '/xray': '/settings#xray',
+  '/xray#basic': '/settings#xray',
+  '/xray#advanced': '/settings#xray-advanced',
+  '/xray#routing': '/connections#routing',
+  '/xray#balancer': '/connections#balancers',
+  '/xray#dns': '/connections#dns',
+  '/xray#outbound': '/connections#outbounds',
+  '/settings#general': '/settings',
+  '/settings#telegram': '/notifications#telegram',
+  '/settings#discord': '/notifications#discord',
+  '/settings#email': '/notifications#email',
+  '/settings#subscription': '/subscriptions',
+  '/settings#subscription-formats': '/subscriptions#formats',
+  '/settings#subscription-balancers': '/subscriptions#balancers',
 };
+
+// Maps an old location to its new home, or returns null when it is current.
+export function legacyTarget(pathname: string, hash: string): string | null {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  const slug = hash.replace(/^#/, '');
+  if (slug && LEGACY_LOCATIONS[`${path}#${slug}`]) return LEGACY_LOCATIONS[`${path}#${slug}`];
+  return LEGACY_LOCATIONS[path] ?? null;
+}
 
 export function routeForPath(pathname: string): NavRoute {
   const clean = pathname.replace(/\/+$/, '') || '/';
-  const target = ROUTE_ALIASES[clean] ?? clean;
-  return NAV_ROUTES.find((r) => r.key === target) ?? NAV_ROUTES[0];
+  return NAV_ROUTES.find((r) => r.key === clean) ?? NAV_ROUTES[0];
 }

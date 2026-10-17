@@ -114,7 +114,7 @@
     "clients": "العملاء",
     "groups": "المجموعات",
     "nodes": "النودز",
-    "settings": "إعدادات اللوحة",
+    "settings": "الإعدادات",
     "xray": "إعدادات Xray",
     "routing": "التوجيه",
     "outbounds": "الصادرات",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "الإدارة",
     "sectionInfra": "البنية التحتية",
     "sectionSystem": "النظام",
     "collapseSidebar": "طي القائمة",
@@ -136,14 +135,13 @@
     "account": "الحساب",
     "hint": {
       "dashboard": "حالة الخادم وحركة المرور وXray في لمحة",
-      "connections": "الواردة والصادرة ووكيل Telegram على الويب",
-      "clients": "المستخدمون ومفاتيحهم وحدودهم واشتراكاتهم",
-      "groups": "اجمع العملاء لإدارة الحدود والوصول معًا",
-      "nodes": "لوحات FullBoard على خوادمك الأخرى",
-      "hosts": "العناوين والتجاوزات المستخدمة في روابط العملاء والاشتراكات",
-      "xray": "إعداد النواة: التوجيه والموازنات وDNS وJSON",
-      "settings": "اللوحة والأمان والإشعارات والاشتراكات",
-      "apiDocs": "مرجع REST API للأتمتة"
+      "connections": "الواردة والصادرة والتوجيه وDNS وTelegram WEB Proxy",
+      "clients": "المستخدمون والمجموعات والمفاتيح والحدود والاشتراكات",
+      "settings": "اللوحة والأمان وقالب نواة Xray",
+      "apiDocs": "مرجع REST API للأتمتة",
+      "subscriptions": "روابط الاشتراك والصيغ والموازِنات لتطبيقات العملاء",
+      "notifications": "تنبيهات وبوتات تيليجرام وديسكورد والبريد",
+      "nodesHosts": "خوادم FullBoard الأخرى والعناوين المستخدمة في الروابط"
     },
     "appearance": {
       "title": "المظهر",
@@ -157,7 +155,14 @@
       "size": "حجم الواجهة",
       "sizeAuto": "تلقائي",
       "sizeAutoHint": "التلقائي يختار {percent}% لهذه الشاشة"
-    }
+    },
+    "subscriptions": "الاشتراكات",
+    "notifications": "الإشعارات",
+    "nodesHosts": "العُقد والمضيفون",
+    "sectionUsers": "المستخدمون",
+    "sectionTraffic": "حركة المرور",
+    "xrayCore": "نواة Xray",
+    "xrayJson": "JSON Xray"
   },
   "pages": {
     "login": {

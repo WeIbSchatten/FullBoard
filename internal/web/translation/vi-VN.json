@@ -114,7 +114,7 @@
     "clients": "Khách hàng",
     "groups": "Nhóm",
     "nodes": "Nút",
-    "settings": "Cài đặt bảng điều khiển",
+    "settings": "Cài đặt",
     "xray": "Cấu hình Xray",
     "routing": "Định tuyến",
     "outbounds": "Outbound",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "Quản lý",
     "sectionInfra": "Hạ tầng",
     "sectionSystem": "Hệ thống",
     "collapseSidebar": "Thu gọn menu",
@@ -136,14 +135,13 @@
     "account": "Tài khoản",
     "hint": {
       "dashboard": "Tổng quan máy chủ, lưu lượng và trạng thái Xray",
-      "connections": "Inbound, outbound và Telegram Web Proxy",
-      "clients": "Người dùng, khóa, giới hạn và gói đăng ký",
-      "groups": "Gom nhóm client để quản lý giới hạn và quyền truy cập",
-      "nodes": "Các bảng FullBoard trên máy chủ khác của bạn",
-      "hosts": "Địa chỉ và ghi đè dùng trong liên kết và gói đăng ký",
-      "xray": "Cấu hình lõi: định tuyến, cân bằng tải, DNS và JSON",
-      "settings": "Bảng điều khiển, bảo mật, thông báo và đăng ký",
-      "apiDocs": "Tài liệu REST API để tự động hóa"
+      "connections": "Inbound, outbound, định tuyến, DNS và Telegram WEB Proxy",
+      "clients": "Người dùng, nhóm, khóa, giới hạn và đăng ký",
+      "settings": "Bảng điều khiển, bảo mật và mẫu lõi Xray",
+      "apiDocs": "Tài liệu REST API để tự động hóa",
+      "subscriptions": "Liên kết đăng ký, định dạng và bộ cân bằng cho ứng dụng",
+      "notifications": "Cảnh báo và bot Telegram, Discord, email",
+      "nodesHosts": "Các máy chủ FullBoard khác và địa chỉ dùng trong liên kết"
     },
     "appearance": {
       "title": "Giao diện",
@@ -157,7 +155,14 @@
       "size": "Kích thước giao diện",
       "sizeAuto": "Tự động",
       "sizeAutoHint": "Tự động chọn {percent}% cho màn hình này"
-    }
+    },
+    "subscriptions": "Đăng ký",
+    "notifications": "Thông báo",
+    "nodesHosts": "Nút & máy chủ",
+    "sectionUsers": "Người dùng",
+    "sectionTraffic": "Lưu lượng",
+    "xrayCore": "Lõi Xray",
+    "xrayJson": "JSON Xray"
   },
   "pages": {
     "login": {
