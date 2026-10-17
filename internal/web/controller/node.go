@@ -234,7 +234,8 @@ func (a *NodeController) add(c *gin.Context) {
 }
 
 func (a *NodeController) enrollFromInvite(c *gin.Context) {
-	req, ok := middleware.BindJSONAndValidate[service.EnrollFromInviteRequest](c)
+	// The panel UI posts form-encoded; API clients may send JSON.
+	req, ok := middleware.BindAndValidate[service.EnrollFromInviteRequest](c)
 	if !ok {
 		return
 	}
