@@ -21,7 +21,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useAllSettings } from '@/api/queries/useAllSettings';
 import { AllSettingSchema } from '@/schemas/setting';
 import PageActionBar from '@/components/ui/PageActionBar';
-import SectionNav from '@/components/ui/SectionNav';
+import SectionLayout from '@/components/ui/SectionLayout';
 import { useSettingsSections } from '@/layouts/sectionModel';
 import GeneralTab from './GeneralTab';
 import SecurityTab from './SecurityTab';
@@ -269,14 +269,14 @@ export default function SettingsPage() {
                   </Button>
                 </PageActionBar>
 
-                <SectionNav
+                <SectionLayout
                   items={sections}
                   active={activeSlug}
                   onChange={(key) => navigate({ hash: key }, { replace: true })}
                   ariaLabel={t('menu.settings')}
-                />
-
-                <Card>{categoryBody}</Card>
+                >
+                  <Card>{categoryBody}</Card>
+                </SectionLayout>
                 <FloatButton.BackTop visibilityHeight={400} />
               </>
             )}
