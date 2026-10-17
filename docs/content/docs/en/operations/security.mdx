@@ -55,9 +55,8 @@ port, and your inbound ports. The `fullboard` menu (**23 — Firewall Management
 
 ## Network tuning (BBR)
 
-The `fullboard` menu (**26 — Enable BBR**) toggles Google's BBR congestion control
-(`net.ipv4.tcp_congestion_control = bbr`, `net.core.default_qdisc = fq`), which
-often improves throughput on congested links.
+Install and update enable BBR, `fq` and larger TCP buffers by default; see
+[Performance](/docs/operations/performance) for the details and how to opt out.
 
 ## Keep current
 

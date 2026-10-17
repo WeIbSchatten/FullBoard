@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { Logo } from '@/components/logo';
+import { Mark } from '@/components/logo';
 import { TelegramIcon } from '@/components/icons';
 import { DocsThemeSwitch } from '@/components/theme-switch';
 import { appName, productRepoUrl, telegramChannel, telegramChannelUrl, siteUrl } from './shared';
@@ -18,7 +18,7 @@ export function baseOptions(lang: string): BaseLayoutProps {
     nav: {
       title: (
         <span className="inline-flex items-center gap-2 font-semibold">
-          <Logo className="h-6" />
+          <Mark className="h-6" />
           {appName}
         </span>
       ),

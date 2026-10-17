@@ -90,7 +90,9 @@ func pwaHeadInjection(basePath, pageName string) []byte {
 	}
 
 	basePath = normalizeWebBasePath(basePath)
-	return []byte(`<link rel="manifest" href="` + htmlpkg.EscapeString(basePath+"manifest.webmanifest") + `"><script data-cfasync="false" defer src="` + htmlpkg.EscapeString(basePath+"pwa-register.js") + `"></script>`)
+	return []byte(`<link rel="icon" type="image/png" href="` + htmlpkg.EscapeString(basePath+"icons/fullboard-32.png") + `">` +
+		`<link rel="apple-touch-icon" href="` + htmlpkg.EscapeString(basePath+"icons/fullboard-192.png") + `">` +
+		`<link rel="manifest" href="` + htmlpkg.EscapeString(basePath+"manifest.webmanifest") + `"><script data-cfasync="false" defer src="` + htmlpkg.EscapeString(basePath+"pwa-register.js") + `"></script>`)
 }
 
 func serveDistPage(c *gin.Context, name string) {

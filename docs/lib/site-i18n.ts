@@ -29,7 +29,8 @@ export interface SiteMessages {
 }
 
 const en: SiteMessages = {
-  tagline: 'Advanced web panel for managing Xray-core servers',
+  tagline:
+    'A clean, monochrome control panel for Xray-core, Telegram WEB Proxy and your whole fleet of nodes',
   getStarted: 'Get started',
   viewOnGitHub: 'View on GitHub',
   documentation: 'Documentation',
@@ -47,12 +48,12 @@ const en: SiteMessages = {
     {
       title: 'Every major protocol',
       description:
-        'VLESS, VMess, Trojan, Shadowsocks, WireGuard, Hysteria2, SOCKS, HTTP and Dokodemo-door — managed from one panel.',
+        'VLESS + REALITY, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC, Hysteria2, MTProto and more — managed from one panel.',
     },
     {
-      title: 'REALITY & XTLS-Vision',
+      title: 'Telegram WEB Proxy',
       description:
-        'First-class support for VLESS + REALITY with x25519 keys, short IDs and the xtls-rprx-vision flow for stealth and speed.',
+        'Run the official tproxy-server relay behind your own site, with per-client secrets, share links and MTProxy backends the panel starts for you.',
     },
     {
       title: 'Clients & traffic control',
@@ -62,7 +63,7 @@ const en: SiteMessages = {
     {
       title: 'Multi-node & subscriptions',
       description:
-        'Coordinate multiple servers, managed hosts and external proxies, and serve VLESS / Clash / JSON subscriptions.',
+        'Add servers with a one-shot invite, push inbounds to every node and serve raw / Clash / JSON subscriptions.',
     },
     {
       title: 'Telegram & Discord bots',
@@ -80,7 +81,8 @@ const en: SiteMessages = {
 };
 
 const ru: SiteMessages = {
-  tagline: 'Продвинутая веб-панель для управления серверами Xray-core',
+  tagline:
+    'Аккуратная монохромная панель для Xray-core, Telegram WEB Proxy и всего парка ваших узлов',
   getStarted: 'Начать',
   viewOnGitHub: 'Открыть на GitHub',
   documentation: 'Документация',
@@ -98,12 +100,12 @@ const ru: SiteMessages = {
     {
       title: 'Все основные протоколы',
       description:
-        'VLESS, VMess, Trojan, Shadowsocks, WireGuard, Hysteria2, SOCKS, HTTP и Dokodemo-door — под управлением из одной панели.',
+        'VLESS + REALITY, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC, Hysteria2, MTProto и другие — под управлением из одной панели.',
     },
     {
-      title: 'REALITY и XTLS-Vision',
+      title: 'Telegram WEB Proxy',
       description:
-        'Первоклассная поддержка VLESS + REALITY с ключами x25519, short ID и потоком xtls-rprx-vision для скрытности и скорости.',
+        'Официальный релей tproxy-server за вашим сайтом: отдельные секреты для клиентов, ссылки для подключения и MTProxy-бэкенды, которые панель запускает сама.',
     },
     {
       title: 'Клиенты и контроль трафика',
@@ -113,7 +115,7 @@ const ru: SiteMessages = {
     {
       title: 'Мультинода и подписки',
       description:
-        'Координация нескольких серверов, управляемых хостов и внешних прокси, а также выдача подписок VLESS / Clash / JSON.',
+        'Подключение серверов по одноразовому приглашению, выкладка инбаундов на все узлы и подписки raw / Clash / JSON.',
     },
     {
       title: 'Telegram- и Discord-боты',

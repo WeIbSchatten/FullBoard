@@ -1,0 +1,114 @@
+---
+title: Performance
+description: Get full link speed and low latency out of FullBoard — BBR and TCP buffers, choosing a transport, reading CPU load, and a step-by-step speed checklist.
+icon: Gauge
+---
+
+A slow proxy is almost never slow because of one setting. Work through this page
+top to bottom: each step removes one common cap on speed or latency.
+
+## 1. Kernel network tuning (BBR)
+
+Most distributions boot with `cubic` congestion control, the `fq_codel` qdisc
+and small socket buffers. On a path with 50–200 ms of round-trip time that caps a
+single TCP stream far below what the link can carry, and the first packet loss
+halves the speed again.
+
+Since **1.4.4** `install.sh` and `update.sh` write
+`/etc/sysctl.d/99-fullboard-network.conf` and apply it immediately:
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| `net.ipv4.tcp_congestion_control` | `bbr` | Paces by measured bandwidth instead of backing off on every loss |
+| `net.core.default_qdisc` | `fq` | The pacing qdisc BBR is designed for |
+| `net.core.rmem_max` / `wmem_max` | 32 MiB | Lets one stream fill a long, fat pipe |
+| `net.ipv4.tcp_rmem` / `tcp_wmem` | `4096 … 32 MiB` | Auto-tuning ceiling for every socket |
+| `net.ipv4.tcp_mtu_probing` | `1` | Survives paths that silently drop large packets |
+| `net.ipv4.tcp_slow_start_after_idle` | `0` | No speed reset after a pause (video, browsing) |
+| `net.ipv4.tcp_notsent_lowat` | `16384` | Keeps send queues short → lower latency under load |
+| `net.ipv4.tcp_fastopen` | `3` | One round trip less on reconnects |
+
+Check it on the server:
+
+```bash
+sysctl net.ipv4.tcp_congestion_control net.core.default_qdisc
+# net.ipv4.tcp_congestion_control = bbr
+# net.core.default_qdisc = fq
+```
+
+Apply it right now on an older install without waiting for an update:
+
+```bash
+fullboard update        # re-runs the tuning
+# or only the tuning, by hand:
+modprobe tcp_bbr
+cat /etc/sysctl.d/99-fullboard-network.conf   # present after 1.4.4
+sysctl -p /etc/sysctl.d/99-fullboard-network.conf
+```
+
+<Callout type="info">
+  Set `XUI_NET_TUNING=false` in `/etc/default/fullboard` before installing or updating to keep your own
+  sysctl settings. OpenVZ/LXC containers often cannot change these keys — the installer then skips the
+  step and says so.
+</Callout>
+
+## 2. Pick a fast transport
+
+Encryption and framing cost CPU and round trips. From fastest to slowest for a
+typical VPS:
+
+1. **VLESS + REALITY + `xtls-rprx-vision`** over TCP (Raw). Vision splices TLS
+   traffic without re-encrypting it, so it has the lowest CPU cost and latency.
+2. **XHTTP / gRPC / WebSocket + TLS** — needed behind a CDN, but every byte is
+   encrypted twice (TLS + the CDN hop) and the CDN adds its own latency.
+3. **mKCP** and anything over UDP-in-TCP — only when TCP is throttled.
+
+Avoid **Mux** for speed tests and downloads: it multiplexes many streams over one
+TCP connection, so one lost packet stalls all of them.
+
+## 3. Read the CPU load correctly
+
+During a speed test Xray uses CPU roughly in proportion to throughput. On one
+vCPU, 50–60 % at a few hundred Mbit/s is normal, and it falls back to idle after
+the test. CPU only limits speed when a core sits at **100 %** — check per core:
+
+```bash
+top -1          # press 1 to see every core
+```
+
+If one core is pinned at 100 %, prefer REALITY + Vision (step 2), or move to a
+plan with more or faster cores.
+
+## 4. Speed checklist
+
+<Steps>
+<Step>
+
+**Measure the server itself.** If the VPS can't reach the speed directly, no proxy setting will help.
+
+```bash
+curl -o /dev/null -w '%{speed_download}\n' https://speed.cloudflare.com/__down?bytes=200000000
+```
+
+</Step>
+<Step>
+
+**Measure latency to the server** from the client side (`ping <server>`). The proxy adds on top of this, it can't go below it.
+
+</Step>
+<Step>
+
+**Check the tuning** (section 1) shows `bbr` and `fq`.
+
+</Step>
+<Step>
+
+**Test without a CDN** — connect to the server's IP directly with REALITY. If that is fast and the CDN path is slow, the CDN is the bottleneck.
+
+</Step>
+<Step>
+
+**Check routing.** A routing rule that sends traffic through WARP or another outbound adds that hop's speed limit and latency. Look at **Xray → Routing** and **Outbounds**.
+
+</Step>
+</Steps>
