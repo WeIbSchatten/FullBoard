@@ -10,7 +10,7 @@ import (
 )
 
 func TestUpdateAllSettingCustomCss(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	s := &SettingService{}
 
 	t.Run("oversized stylesheet is rejected", func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestUpdateAllSettingCustomCss(t *testing.T) {
 }
 
 func TestCustomCssBundleActiveDefaultServesEmpty(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	s := &SettingService{}
 	all, err := s.GetAllSetting()
 	if err != nil {
@@ -87,7 +87,7 @@ func TestCustomCssBundleActiveDefaultServesEmpty(t *testing.T) {
 }
 
 func TestCustomCssBundleRejectsThirdPreset(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	s := &SettingService{}
 	all, err := s.GetAllSetting()
 	if err != nil {
@@ -107,7 +107,7 @@ func TestCustomCssBundleRejectsThirdPreset(t *testing.T) {
 }
 
 func TestCustomCssBundlePreservesNavVisibility(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	s := &SettingService{}
 	all, err := s.GetAllSetting()
 	if err != nil {

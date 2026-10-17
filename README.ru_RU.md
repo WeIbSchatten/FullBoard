@@ -31,10 +31,9 @@
   </picture>
 </p>
 
-**FullBoard** — self-hosted веб-панель для серверов [Xray-core](https://github.com/XTLS/Xray-core).
-Она выросла из идеи 3x-ui в отдельный продукт: новый интерфейс, официальный релей
-**Telegram WEB Proxy** с отдельными секретами для клиентов, подключение узлов по одноразовому
-приглашению и серверы, которые сразу настроены на скорость.
+**FullBoard** — self-hosted веб-панель для серверов [Xray-core](https://github.com/XTLS/Xray-core):
+спокойный интерфейс, официальный релей **Telegram WEB Proxy** с отдельными секретами для клиентов,
+подключение узлов по одноразовому приглашению и управление множеством серверов из одного места.
 
 > [!IMPORTANT]
 > Проект предназначен для личного использования. Не используйте его в незаконных целях.
@@ -50,7 +49,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/in
 - скачает последний релиз и проверит `.sha256`;
 - сгенерирует случайные логин, пароль и секретный путь панели;
 - поставит systemd-службу с защищённой песочницей;
-- включит **BBR + fq** и увеличенные TCP-буферы (отключается через `XUI_NET_TUNING=false`);
 - настроит Fail2ban для лимитов IP по клиентам.
 
 Дальше откройте выведенный адрес или выполните `fullboard` для меню управления.
@@ -60,7 +58,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/in
 
 ```bash
 # конкретный релиз
-bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v1.4.4
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v1.4.6
 
 # сборка dev из main
 bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) dev-latest
@@ -151,11 +149,10 @@ flowchart LR
 
 ## Скорость
 
-Свежие серверы обычно стартуют с `cubic` + `fq_codel` и маленькими буферами сокетов. На дальних
-маршрутах это сильно ограничивает одно соединение. FullBoard при установке и обновлении пишет
-`/etc/sysctl.d/99-fullboard-network.conf` (BBR, `fq`, буферы 32 МиБ, MTU probing). Самый быстрый
-транспорт — **VLESS + REALITY + Vision**. Полный чек-лист — в разделе
-[Производительность](docs/content/docs/ru/operations/performance.mdx).
+Самый быстрый транспорт — **VLESS + REALITY + Vision** при прямом подключении. Будет ли BBR быстрее
+стандартного `cubic`, зависит от маршрута, поэтому FullBoard сам TCP-настройки не меняет: сравните оба
+варианта по шагам из раздела [Производительность](docs/content/docs/ru/operations/performance.mdx)
+и оставьте лучший (BBR включается одним пунктом в меню `fullboard`).
 
 ## Управление
 
@@ -199,7 +196,7 @@ XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 | `XUI_INIT_WEB_BASE_PATH` | Начальный путь панели | `/` |
 | `XUI_PORT` | Переопределение порта панели | — |
 | `XUI_ENABLE_FAIL2BAN` | Лимиты IP через Fail2ban | `true` |
-| `XUI_NET_TUNING` | BBR + fq + TCP-буферы при установке и обновлении | `true` |
+| `XUI_NET_TUNING` | `true` — записать BBR + fq при установке и обновлении | `false` |
 | `XUI_LOG_LEVEL` | `debug`, `info`, `warning`, `error` | `info` |
 | `XUI_TUNNEL_HEALTH_MONITOR` | Проверка URL и перезапуск Xray после серии сбоев | `false` |
 | `NODE_TOKEN_ENCRYPTION` | Шифрование токенов узлов: `off`, `migration`, `required` | `off` |
@@ -231,7 +228,6 @@ Arch, Manjaro, openSUSE, Alpine, Windows. Архитектуры: `amd64`, `386`
 
 ## Благодарности
 
-- [3x-ui](https://github.com/MHSanaei/3x-ui) — проект, из которого вырос FullBoard.
 - [Xray-core](https://github.com/XTLS/Xray-core) и [tproxy-server](https://github.com/telegramdesktop/tproxy-server).
 - [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) и [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0).
 

@@ -24,7 +24,7 @@ const hostileCss = `body{color:red}</style><script>alert(1)</script>`
 func newCustomCssTestEngine(t *testing.T, settings map[string]string) *gin.Engine {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "x-ui.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
 	for key, value := range settings {
 		if err := database.GetDB().Create(&model.Setting{Key: key, Value: value}).Error; err != nil {
 			t.Fatalf("seed %s: %v", key, err)
@@ -39,7 +39,7 @@ func newCustomCssTestEngine(t *testing.T, settings map[string]string) *gin.Engin
 	t.Cleanup(func() { SetDistFS(oldDistFS) })
 
 	engine := gin.New()
-	engine.Use(sessions.Sessions("3x-ui", cookie.NewStore([]byte("custom-css-test-secret"))))
+	engine.Use(sessions.Sessions("fullboard", cookie.NewStore([]byte("custom-css-test-secret"))))
 	engine.Use(func(c *gin.Context) {
 		c.Set("base_path", "/admin/")
 		c.Set("I18n", func(_ locale.I18nType, key string, _ ...string) string { return key })
