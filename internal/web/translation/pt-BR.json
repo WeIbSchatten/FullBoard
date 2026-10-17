@@ -144,6 +144,19 @@
       "xray": "Núcleo: roteamento, balanceadores, DNS e JSON",
       "settings": "Painel, segurança, notificações e assinaturas",
       "apiDocs": "Referência da API REST para automação"
+    },
+    "appearance": {
+      "title": "Aparência",
+      "style": "Estilo",
+      "preset": {
+        "mono": "Monocromático",
+        "monoHint": "Tinta e papel, nada mais",
+        "pastel": "Pastel",
+        "pastelHint": "Limão, rosa, lilás e azul-marinho"
+      },
+      "size": "Tamanho da interface",
+      "sizeAuto": "Auto",
+      "sizeAutoHint": "Auto escolhe {percent}% para esta tela"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "Reiniciar serviço Xray",
     "restartXraySuccess": "O serviço Xray foi reiniciado com sucesso",
     "settings": "Configurações"
+  },
+  "tableColumns": "Colunas",
+  "tableColumnsShowAll": "Mostrar todas",
+  "shortcuts": {
+    "title": "Atalhos de teclado",
+    "palette": "Paleta de comandos",
+    "search": "Buscar na página",
+    "help": "Mostrar esta lista"
   }
 }

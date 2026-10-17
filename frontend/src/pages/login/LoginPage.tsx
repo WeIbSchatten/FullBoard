@@ -22,6 +22,7 @@ import { setMessageInstance } from '@/utils/messageBus';
 import { useTheme } from '@/hooks/useTheme';
 import BrandMark from '@/components/ui/BrandMark';
 import ThemeSwitch from '@/components/ui/ThemeSwitch';
+import { AppearanceButton } from '@/components/ui/AppearancePanel';
 import { LoginFormSchema, TwoFactorCodeSchema, type LoginFormValues } from '@/schemas/login';
 import './LoginPage.css';
 
@@ -136,6 +137,7 @@ export default function LoginPage() {
         <Layout.Content className="login-content">
           <div className="login-toolbar">
             <ThemeSwitch />
+            <AppearanceButton placement="bottomRight" />
             <Popover
               rootClassName={isDark ? 'dark' : 'light'}
               placement="bottomRight"
