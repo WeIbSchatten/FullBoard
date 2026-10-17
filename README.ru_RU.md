@@ -1,43 +1,43 @@
-[English](/README.md) | [Русский](/README.ru_RU.md)
-
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./media/fullboard-dark.png">
-    <img alt="FullBoard" src="./media/fullboard-light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./media/brand/fullboard-logo-dark.svg">
+    <img alt="FullBoard" src="./media/brand/fullboard-logo-light.svg" height="56">
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://github.com/WeIbSchatten/FullBoard/releases"><img src="https://img.shields.io/github/v/release/WeIbSchatten/FullBoard" alt="Release"></a>
-  <a href="https://github.com/WeIbSchatten/FullBoard/actions"><img src="https://img.shields.io/github/actions/workflow/status/WeIbSchatten/FullBoard/release.yml.svg" alt="Build"></a>
-  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GPL%20V3-blue.svg?longCache=true" alt="License"></a>
-  <a href="https://pkg.go.dev/github.com/WeIbSchatten/FullBoard/v3"><img src="https://pkg.go.dev/badge/github.com/WeIbSchatten/FullBoard/v3.svg" alt="Go Reference"></a>
+  <b>Одна спокойная монохромная панель для Xray-core, Telegram WEB Proxy и всех ваших серверов.</b>
 </p>
 
-**FullBoard** — веб-панель с открытым исходным кодом для управления серверами [Xray-core](https://github.com/XTLS/Xray-core). Единый многоязычный интерфейс для развёртывания, настройки и мониторинга множества прокси- и VPN-протоколов — от одного VPS до многоузловых инсталляций.
+<p align="center">
+  <a href="https://github.com/WeIbSchatten/FullBoard/releases"><img src="https://img.shields.io/github/v/release/WeIbSchatten/FullBoard?style=flat-square&color=111111&label=release" alt="Release"></a>
+  <a href="https://github.com/WeIbSchatten/FullBoard/actions"><img src="https://img.shields.io/github/actions/workflow/status/WeIbSchatten/FullBoard/release.yml?style=flat-square&color=111111" alt="Build"></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GPL--3.0-111111?style=flat-square" alt="License"></a>
+  <a href="https://pkg.go.dev/github.com/WeIbSchatten/FullBoard/v3"><img src="https://img.shields.io/badge/go-reference-111111?style=flat-square" alt="Go Reference"></a>
+</p>
+
+<p align="center">
+  <a href="./README.md">English</a> · <b>Русский</b>
+  &nbsp;|&nbsp;
+  <a href="#быстрый-старт">Быстрый старт</a> ·
+  <a href="#возможности">Возможности</a> ·
+  <a href="./docs/content/docs/ru/index.mdx">Документация</a>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./media/screenshots/overview-dark.png">
+    <img alt="Обзор FullBoard" src="./media/screenshots/overview-light.png" width="900">
+  </picture>
+</p>
+
+**FullBoard** — self-hosted веб-панель для серверов [Xray-core](https://github.com/XTLS/Xray-core).
+Она выросла из идеи 3x-ui в отдельный продукт: новый интерфейс, официальный релей
+**Telegram WEB Proxy** с отдельными секретами для клиентов, подключение узлов по одноразовому
+приглашению и серверы, которые сразу настроены на скорость.
 
 > [!IMPORTANT]
 > Проект предназначен для личного использования. Не используйте его в незаконных целях.
-
-## Возможности
-
-- **Многопротокольные входящие подключения**: VLESS, VMess, Trojan, Shadowsocks, WireGuard, AmneziaWG, TUIC v5, Hysteria2, MTProto, HTTP, SOCKS (Mixed), Dokodemo-door / Tunnel и TUN.
-- **Современные транспорты и защита**: TCP (Raw), mKCP, WebSocket, gRPC, HTTPUpgrade и XHTTP с TLS, XTLS и REALITY.
-- **Встроенный AmneziaWG**: устойчивый к DPI WireGuard работает внутри панели на userspace-стеке — без модуля ядра, DKMS и дополнительных пакетов.
-- **Собственный сервер TUIC v5**: QUIC-сервер внутри процесса с маршрутизацией Xray и учётом трафика по клиентам (BBR и New Reno).
-- **MTProto-прокси**: FakeTLS-секреты, ad-tag и квоты для каждого клиента, применяются на лету без разрыва соединений.
-- **Fallback**: несколько протоколов на одном порту (например, VLESS и Trojan на 443).
-- **Управление клиентами**: квоты трафика, сроки действия, лимиты IP с доверенными адресами, лимиты устройств по HWID, плановое продление, онлайн-статус, ссылки, QR-коды и подписки.
-- **Статистика трафика** по входящим, клиентам и исходящим подключениям со сбросом.
-- **Несколько узлов**: управление множеством серверов из одной панели, включая клонирование входящих на другие узлы.
-- **Исходящие и маршрутизация**: WARP, NordVPN, PIA, свои правила, балансировщики с цепочками fallback и цепочки прокси. Категории geosite/geoip доступны прямо из редактора правил.
-- **Сервер подписок**: raw, JSON и Clash с выбором по User-Agent клиента, а также [свои шаблоны страницы](docs/custom-subscription-templates.md).
-- **Боты Telegram и Discord** для удалённого мониторинга и управления.
-- **REST API** с ограниченными по правам и сроку токенами и встроенным справочником API.
-- **Устанавливаемая панель (PWA)** для рабочего стола и телефона.
-- **Хранилище**: SQLite (по умолчанию) или PostgreSQL.
-- **13 языков интерфейса**, тёмная и светлая темы.
-- **Интеграция с Fail2ban** для ограничения IP по клиентам.
 
 ## Быстрый старт
 
@@ -45,133 +45,196 @@
 bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh)
 ```
 
-Установка конкретного релиза — добавьте его тег:
+Установщик:
+
+- скачает последний релиз и проверит `.sha256`;
+- сгенерирует случайные логин, пароль и секретный путь панели;
+- поставит systemd-службу с защищённой песочницей;
+- включит **BBR + fq** и увеличенные TCP-буферы (отключается через `XUI_NET_TUNING=false`);
+- настроит Fail2ban для лимитов IP по клиентам.
+
+Дальше откройте выведенный адрес или выполните `fullboard` для меню управления.
+
+<details>
+<summary>Другие способы установки</summary>
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v3.7.0
-```
+# конкретный релиз
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v1.4.4
 
-Установка сборки **dev** (последний pre-release из `main`) — передайте `dev-latest`:
-
-```bash
+# сборка dev из main
 bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) dev-latest
+
+# Docker (по умолчанию SQLite; встроенный PostgreSQL — с --profile postgres)
+docker compose up -d
 ```
 
-Установщик генерирует случайные логин, пароль и путь доступа. После установки выполните `fullboard`, чтобы открыть меню управления: запуск/остановка службы, просмотр и сброс учётных данных, SSL-сертификаты и многое другое.
+Установка без вопросов (cloud-init и т. п.): задайте `XUI_NONINTERACTIVE=1` или запускайте без TTY.
+Учётные данные будут записаны в `/etc/fullboard/install-result.env`. См. [`deploy/`](deploy/).
 
-Каждый файл релиза сопровождается `.sha256`. И `install.sh`, и механизм обновления проверяют архив и прерываются при несовпадении.
+</details>
 
-Полная документация (установка, настройка, эксплуатация, справочник API) находится в папке [`docs/`](docs/).
+## Возможности
 
-### Автоматическая установка
+<table>
+<tr>
+<td width="50%" valign="top">
 
-Установщик умеет работать **без вопросов** (например, из cloud-init). Задайте `XUI_NONINTERACTIVE=1` или запустите без TTY — он сгенерирует случайные учётные данные и запишет их в `/etc/fullboard/install-result.env`. См. [`deploy/`](deploy/):
+### Протоколы
+VLESS + REALITY / XTLS-Vision, VMess, Trojan, Shadowsocks, WireGuard, **AmneziaWG**
+(внутри процесса, без модуля ядра), **TUIC v5**, Hysteria2, MTProto, SOCKS / HTTP, Tunnel и TUN.
+Транспорты: Raw, XHTTP, WebSocket, gRPC, HTTPUpgrade, mKCP.
 
-- [Cloud-init user-data](deploy/cloud-init/) для любого облака
-- [Заметки по Hetzner Cloud](deploy/marketplace/hetzner/)
+</td>
+<td width="50%" valign="top">
 
-### Управление
+### Telegram WEB Proxy
+Официальный релей `tproxy-server` ставится из панели и работает за вашим сайтом-заглушкой.
+Профили, ссылки и QR-коды, **отдельный секрет каждому клиенту**, MTProxy-бэкенды панель
+запускает и закрывает файрволом сама.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### Клиенты
+Квоты трафика, сроки действия, лимиты IP и устройств (HWID), плановое продление, группы,
+онлайн-статус, ссылки, QR-коды и подписки raw / Clash / JSON.
+
+</td>
+<td valign="top">
+
+### Много серверов — одна панель
+Сервер добавляется по **одноразовому приглашению**, без копирования API-токенов.
+Синхронизация и клонирование инбаундов, mTLS между главной панелью и узлами, уведомления
+о падении узлов в Telegram и Discord.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### Маршрутизация
+Исходящие WARP, NordVPN и PIA, балансировщики с цепочками fallback, цепочки прокси и редактор
+правил с категориями geosite / geoip.
+
+</td>
+<td valign="top">
+
+### Эксплуатация
+REST API с ограниченными токенами и встроенным справочником, PWA, резервные копии, боты
+Telegram и Discord, SQLite или PostgreSQL, 13 языков, светлая / тёмная / AMOLED темы.
+
+</td>
+</tr>
+</table>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./media/screenshots/clients-dark.png">
+    <img alt="Страница клиентов" src="./media/screenshots/clients-light.png" width="900">
+  </picture>
+</p>
+
+## Как всё связано
+
+```mermaid
+flowchart LR
+  Admin["Браузер админа"] -->|HTTPS| Panel["Панель FullBoard"]
+  Panel -->|конфиг + gRPC API| Xray["Xray-core"]
+  Panel -->|systemd| Relay["tproxy-server + MTProxy"]
+  Panel -->|mTLS API| Nodes["Другие узлы FullBoard"]
+  Users["Клиентские приложения"] -->|VLESS / Trojan / ...| Xray
+  TG["Приложения Telegram"] -->|HTTPS / WebSocket| Relay
+```
+
+## Скорость
+
+Свежие серверы обычно стартуют с `cubic` + `fq_codel` и маленькими буферами сокетов. На дальних
+маршрутах это сильно ограничивает одно соединение. FullBoard при установке и обновлении пишет
+`/etc/sysctl.d/99-fullboard-network.conf` (BBR, `fq`, буферы 32 МиБ, MTU probing). Самый быстрый
+транспорт — **VLESS + REALITY + Vision**. Полный чек-лист — в разделе
+[Производительность](docs/content/docs/ru/operations/performance.mdx).
+
+## Управление
 
 | Команда | Назначение |
 | --- | --- |
 | `fullboard` | Интерактивное меню |
-| `fullboard start` / `stop` / `restart` | Управление службой |
-| `fullboard status` | Статус службы |
-| `fullboard settings` | Текущие настройки панели |
+| `fullboard start` / `stop` / `restart` / `status` | Управление службой |
+| `fullboard settings` | Адрес и настройки панели |
 | `fullboard log` | Последние логи |
 | `fullboard update` | Обновление до последнего релиза |
 | `fullboard uninstall` | Удаление панели |
 
-Пути: бинарник и ресурсы Xray — `/usr/local/fullboard`, база и состояние — `/etc/fullboard`, логи — `/var/log/fullboard`, служба — `fullboard.service`.
+Файлы: бинарник и Xray — `/usr/local/fullboard`, база — `/etc/fullboard`, логи —
+`/var/log/fullboard`, служба — `fullboard.service`.
 
-## Поддерживаемые платформы
+<details>
+<summary>База данных: SQLite или PostgreSQL</summary>
 
-**ОС:** Ubuntu, Debian, Armbian, Fedora, CentOS, RHEL, AlmaLinux, Rocky Linux, Oracle Linux, Amazon Linux, Virtuozzo, Arch, Manjaro, Parch, openSUSE (Tumbleweed / Leap), Alpine и Windows.
-
-**Архитектуры:** `amd64` · `386` · `arm64` (aarch64) · `armv7` · `armv6` · `armv5` · `s390x`.
-
-## База данных
-
-FullBoard поддерживает два бэкенда, выбор делается при установке:
-
-- **SQLite** (по умолчанию): один файл `/etc/fullboard/fullboard.db`. Без настройки, подходит для небольших и средних инсталляций.
-- **PostgreSQL**: рекомендуется для большого числа клиентов и нескольких узлов. Установщик может поставить PostgreSQL локально или использовать DSN существующего сервера.
-
-Бэкенд выбирается переменными окружения (установщик записывает их в `/etc/default/fullboard`):
+SQLite (`/etc/fullboard/fullboard.db`) используется по умолчанию и не требует настройки.
+PostgreSQL лучше подходит для большого числа клиентов или узлов. Установщик может поставить его
+локально или подключиться к существующему по DSN:
 
 ```
 XUI_DB_TYPE=postgres
 XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 ```
 
-### Перенос SQLite в PostgreSQL
+Чтобы перенести данные, выполните `fullboard migrate-db --dsn "<dsn>"`. Затем пропишите обе
+переменные в `/etc/default/fullboard` и выполните `systemctl restart fullboard`.
 
-```bash
-fullboard migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
-# затем задайте XUI_DB_TYPE и XUI_DB_DSN в /etc/default/fullboard и перезапустите:
-systemctl restart fullboard
-```
+</details>
 
-Исходный файл SQLite не изменяется; удалите его вручную после проверки нового бэкенда.
-
-## Docker
-
-```bash
-docker compose up -d
-```
-
-По умолчанию используется SQLite. Чтобы подключить встроенный сервис PostgreSQL, раскомментируйте две строки `XUI_DB_*` в `docker-compose.yml` и запустите с профилем:
-
-```bash
-docker compose --profile postgres up -d
-```
-
-Образ включает Fail2ban (включён по умолчанию) для **лимитов IP** по клиентам. Блокировка выполняется через `iptables`, что требует capability `NET_ADMIN`. В `docker-compose.yml` она уже выдана; при запуске через `docker run` добавьте её сами, иначе блокировки только логируются:
-
-```bash
-docker run -d --cap-add=NET_ADMIN --cap-add=NET_RAW -p 2053:2053 -v $PWD/db/:/etc/fullboard/ ghcr.io/weibschatten/fullboard
-```
-
-## Переменные окружения
+<details>
+<summary>Переменные окружения</summary>
 
 | Переменная | Описание | По умолчанию |
 | --- | --- | --- |
-| `XUI_DB_TYPE` | Бэкенд БД: `sqlite` или `postgres` | `sqlite` |
+| `XUI_DB_TYPE` | `sqlite` или `postgres` | `sqlite` |
 | `XUI_DB_DSN` | Строка подключения PostgreSQL | — |
 | `XUI_DB_FOLDER` | Каталог файла SQLite | `/etc/fullboard` |
-| `XUI_DB_MAX_OPEN_CONNS` | Макс. открытых соединений (пул PostgreSQL) | — |
-| `XUI_DB_MAX_IDLE_CONNS` | Макс. простаивающих соединений (пул PostgreSQL) | — |
-| `XUI_INIT_WEB_BASE_PATH` | Начальный URI-путь панели | `/` |
+| `XUI_INIT_WEB_BASE_PATH` | Начальный путь панели | `/` |
 | `XUI_PORT` | Переопределение порта панели | — |
-| `XUI_ENABLE_FAIL2BAN` | Ограничение IP через Fail2ban | `true` |
-| `XUI_LOG_LEVEL` | Уровень логов (`debug`, `info`, `warning`, `error`) | `info` |
-| `XUI_DEBUG` | Режим отладки | `false` |
-| `XUI_TUNNEL_HEALTH_MONITOR` | Проверка URL и перезапуск Xray после серии сбоев (перезапуск отключает всех клиентов) | `false` |
-| `XUI_TUNNEL_HEALTH_PROXY` | Прокси для проверки, например локальный inbound (`socks5://127.0.0.1:1080`) | — |
-| `XUI_TUNNEL_HEALTH_URL` | Проверяемый URL | `https://www.cloudflare.com/cdn-cgi/trace` |
-| `XUI_TUNNEL_HEALTH_INTERVAL` | Интервал проверок | `30s` |
-| `XUI_TUNNEL_HEALTH_TIMEOUT` | Таймаут проверки | `10s` |
-| `XUI_TUNNEL_HEALTH_FAILURES` | Сбоев подряд до перезапуска | `3` |
-| `XUI_TUNNEL_HEALTH_COOLDOWN` | Минимальная пауза между перезапусками | `5m` |
-| `NODE_TOKEN_ENCRYPTION` | Шифрование токенов узлов: `off`, `migration` или `required` | `off` |
-| `XUI_NODE_TOKEN_KEY_FILE` | JSON-связка ключей (режим `0600`) | `/etc/fullboard/node_token_key.json` |
-| `XUI_NODE_TOKEN_KEY` | Один base64-ключ 32 байта, если файл ключей недоступен | — |
+| `XUI_ENABLE_FAIL2BAN` | Лимиты IP через Fail2ban | `true` |
+| `XUI_NET_TUNING` | BBR + fq + TCP-буферы при установке и обновлении | `true` |
+| `XUI_LOG_LEVEL` | `debug`, `info`, `warning`, `error` | `info` |
+| `XUI_TUNNEL_HEALTH_MONITOR` | Проверка URL и перезапуск Xray после серии сбоев | `false` |
+| `NODE_TOKEN_ENCRYPTION` | Шифрование токенов узлов: `off`, `migration`, `required` | `off` |
 
 Полный список — в [справочнике переменных окружения](docs/content/docs/ru/reference/env-vars.mdx).
 
-## Языки интерфейса
+</details>
 
-English · فارسی · العربية · 中文（简体） · 中文（繁體） · Español · Русский · Українська · Türkçe · Tiếng Việt · 日本語 · Bahasa Indonesia · Português (Brasil)
+**Платформы:** Ubuntu, Debian, Armbian, Fedora, CentOS / RHEL / Alma / Rocky / Oracle, Amazon Linux,
+Arch, Manjaro, openSUSE, Alpine, Windows. Архитектуры: `amd64`, `386`, `arm64`, `armv7`, `armv6`,
+`armv5`, `s390x`.
+
+## Документация
+
+| | |
+| --- | --- |
+| [Установка](docs/content/docs/ru/guide/installation.mdx) | Скрипт, Docker, вручную |
+| [Первый вход](docs/content/docs/ru/guide/first-login.mdx) | Открыть и защитить панель |
+| [REALITY](docs/content/docs/ru/config/reality.mdx) | VLESS + REALITY + Vision по шагам |
+| [Telegram WEB Proxy](docs/content/docs/ru/operations/tg-web-proxy.mdx) | Релей, профили, секреты клиентов |
+| [Несколько узлов](docs/content/docs/ru/operations/multi-node.mdx) | Приглашения, синхронизация, mTLS |
+| [Производительность](docs/content/docs/ru/operations/performance.mdx) | BBR, транспорты, чек-лист скорости |
+| [Решение проблем](docs/content/docs/ru/help/troubleshooting.mdx) | Частые проблемы и решения |
 
 ## Участие в разработке
 
-Мы рады вкладу. Перед созданием issue или pull request прочитайте [руководство](/CONTRIBUTING.md). Об уязвимостях — см. [SECURITY.md](/SECURITY.md).
+Перед pull request прочитайте [руководство](CONTRIBUTING.md). Об уязвимостях сообщайте по
+инструкции в [SECURITY.md](SECURITY.md).
 
 ## Благодарности
 
-- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) (GPL-3.0): расширенные правила маршрутизации с иранскими доменами, акцент на безопасность и блокировку рекламы.
-- [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0): автоматически обновляемые правила на основе данных о заблокированных в России доменах и адресах.
+- [3x-ui](https://github.com/MHSanaei/3x-ui) — проект, из которого вырос FullBoard.
+- [Xray-core](https://github.com/XTLS/Xray-core) и [tproxy-server](https://github.com/telegramdesktop/tproxy-server).
+- [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) и [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0).
 
 ## Лицензия
 
-FullBoard распространяется по лицензии [GNU General Public License v3.0](/LICENSE).
+[GPL-3.0](LICENSE).

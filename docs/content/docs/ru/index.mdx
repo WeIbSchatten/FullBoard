@@ -36,17 +36,50 @@ icon: House
     href="/docs/config/reality"
     description="Настройте VLESS + REALITY с XTLS-Vision."
   />
+  <Card
+    title="Telegram WEB Proxy"
+    href="/docs/operations/tg-web-proxy"
+    description="Установите релей, добавьте профили и выдайте клиентам свои секреты."
+  />
+  <Card
+    title="Несколько узлов"
+    href="/docs/operations/multi-node"
+    description="Подключайте серверы по одноразовому приглашению и управляйте ими из одной панели."
+  />
+  <Card
+    title="Производительность"
+    href="/docs/operations/performance"
+    description="BBR, TCP-буферы, транспорты и чек-лист скорости."
+  />
 </Cards>
 
 ## Ключевые возможности
 
 - **Все основные протоколы** — VLESS, VMess, Trojan, Shadowsocks, WireGuard,
-  AmneziaWG, TUIC v5, Hysteria2, SOCKS, HTTP и Dokodemo-door.
+  AmneziaWG, TUIC v5, Hysteria2, MTProto, SOCKS, HTTP и Dokodemo-door.
 - **REALITY и XTLS-Vision** — современные транспорты, устойчивые к цензуре.
+- **Telegram WEB Proxy** — официальный релей `tproxy-server` за вашим сайтом, с отдельными
+  секретами для клиентов и MTProxy-бэкендами, которые панель запускает сама.
 - **Управление каждым клиентом** — квоты трафика, даты истечения, ограничения по IP, ссылки
   для подключения и QR-коды.
-- **Подписки** — форматы VLESS, Clash/Mihomo и JSON.
-- **Эксплуатация** — управление несколькими узлами, Telegram- и Discord-боты, резервные копии и REST API.
+- **Подписки** — форматы raw, Clash/Mihomo и JSON.
+- **Парк серверов** — одноразовые приглашения узлов, синхронизация инбаундов, Telegram- и
+  Discord-боты, резервные копии и REST API.
+- **Быстро из коробки** — установщик сам включает BBR, `fq` и большие TCP-буферы.
+
+## Как всё связано
+
+<Mermaid
+  chart={`
+flowchart LR
+  Admin["Браузер админа"] -->|HTTPS| Panel["Панель FullBoard"]
+  Panel -->|конфиг + gRPC API| Xray["Xray-core"]
+  Panel -->|systemd| Relay["tproxy-server + MTProxy"]
+  Panel -->|mTLS API| Nodes["Другие узлы FullBoard"]
+  Users["Клиентские приложения"] -->|VLESS / Trojan / ...| Xray
+  TG["Приложения Telegram"] -->|HTTPS / WebSocket| Relay
+`}
+/>
 
 <Callout type="info">
   Впервые работаете с Xray? Сначала прочитайте [Что такое FullBoard?](/docs/guide) — там объясняется, как панель, Xray-core и
