@@ -1411,6 +1411,58 @@ EOF
     ${xui_folder}/fullboard migrate
 }
 
+# Stock kernels ship cubic + fq_codel and small socket buffers, which cap a
+# single proxied TCP stream far below the link on high-RTT paths. BBR + fq
+# and larger buffers are what proxy hosts need; XUI_NET_TUNING=false opts out.
+setup_network_tuning() {
+    local conf="/etc/sysctl.d/99-fullboard-network.conf" iface
+    if [[ "${XUI_NET_TUNING:-true}" != "true" ]]; then
+        echo -e "${yellow}XUI_NET_TUNING=${XUI_NET_TUNING}, skipping network tuning.${plain}"
+        return 0
+    fi
+    command -v sysctl > /dev/null 2>&1 || return 0
+    [[ -d /etc/sysctl.d ]] || return 0
+    modprobe tcp_bbr > /dev/null 2>&1 || true
+    if ! grep -qw bbr /proc/sys/net/ipv4/tcp_available_congestion_control 2> /dev/null; then
+        echo -e "${yellow}Kernel has no BBR (container or old kernel); network tuning skipped.${plain}"
+        return 0
+    fi
+    cat > "${conf}.tmp.$$" << 'SYSCTL'
+# Written by FullBoard install/update; set XUI_NET_TUNING=false to stop it.
+net.core.default_qdisc = fq
+net.ipv4.tcp_congestion_control = bbr
+net.core.rmem_max = 33554432
+net.core.wmem_max = 33554432
+net.ipv4.tcp_rmem = 4096 131072 33554432
+net.ipv4.tcp_wmem = 4096 65536 33554432
+net.core.netdev_max_backlog = 16384
+net.core.somaxconn = 8192
+net.ipv4.tcp_max_syn_backlog = 8192
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.tcp_slow_start_after_idle = 0
+net.ipv4.tcp_notsent_lowat = 16384
+net.ipv4.ip_local_port_range = 10240 65535
+SYSCTL
+    mv -f "${conf}.tmp.$$" "$conf" && chmod 644 "$conf"
+    if [[ -f /etc/sysctl.d/99-bbr-fullboard.conf ]]; then
+        rm -f /etc/sysctl.d/99-bbr-fullboard.conf
+    fi
+    if [[ -f /etc/sysctl.conf ]]; then
+        sed -i -E 's/^(net\.core\.default_qdisc|net\.ipv4\.tcp_congestion_control)/# &/' /etc/sysctl.conf
+    fi
+    # -e: a key the kernel lacks (e.g. inside a VPS without netns sysctls) is skipped, not fatal.
+    sysctl -e -p "$conf" > /dev/null 2>&1 || true
+    # default_qdisc only affects qdiscs created later; switch live interfaces now.
+    if command -v tc > /dev/null 2>&1; then
+        for iface in $(ip -o link show up 2> /dev/null | awk -F': ' '{print $2}' | cut -d@ -f1); do
+            [[ "$iface" == "lo" ]] && continue
+            tc qdisc replace dev "$iface" root fq > /dev/null 2>&1 || true
+        done
+    fi
+    echo -e "${green}Network tuning: $(sysctl -n net.ipv4.tcp_congestion_control 2> /dev/null) + $(sysctl -n net.core.default_qdisc 2> /dev/null)${plain}"
+}
+
 # setup_fail2ban auto-installs and configures fail2ban for the IP Limit feature
 # by invoking the freshly installed fullboard CLI. IP Limit is load-bearing on
 # fail2ban (without it the panel disables the limitIp field and zeroes existing
@@ -2032,6 +2084,9 @@ install_x-ui() {
     # IP Limit relies on fail2ban; install + configure it now so the feature
     # works out of the box (no-op when XUI_ENABLE_FAIL2BAN=false). Never fatal.
     setup_fail2ban
+
+    # BBR + fq and larger TCP buffers for proxy throughput. Never fatal.
+    setup_network_tuning
 
     echo -e "${green}fullboard ${tag_version}${plain} installation finished, it is running now..."
     echo -e ""
