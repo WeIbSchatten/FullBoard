@@ -1,15 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Button, ConfigProvider, Layout, Modal, Result, Spin, message } from 'antd';
-import {
-  DashboardOutlined,
-  FileTextOutlined,
-  GlobalOutlined,
-  SettingOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
-
-import SectionLayout from '@/components/ui/SectionLayout';
+import PanelTabs from '@/layouts/PanelTabs';
 
 import { useTheme } from '@/hooks/useTheme';
 import { setMessageInstance } from '@/utils/messageBus';
@@ -41,7 +33,6 @@ export default function TgWebProxyPage() {
     return classes.join(' ');
   }, [isDark, isUltra]);
 
-  const [section, setSection] = useState('overview');
   const loading = !status && !statusQuery.error;
   const fetchError = statusQuery.error ? (statusQuery.error as Error).message : '';
 
@@ -75,55 +66,49 @@ export default function TgWebProxyPage() {
                     title={t('pages.tgWebProxy.unsupported')}
                   />
                 )}
-                <SectionLayout
-                  active={section}
-                  onChange={setSection}
-                  ariaLabel={t('menu.tgWebProxy')}
+                <PanelTabs
+                  defaultActiveKey="overview"
                   items={[
                     {
                       key: 'overview',
-                      icon: <DashboardOutlined />,
                       label: t('pages.tgWebProxy.tabs.overview'),
+                      children: <OverviewTab status={status} modal={modal} />,
                     },
                     {
                       key: 'profiles',
-                      icon: <UnorderedListOutlined />,
                       label: t('pages.tgWebProxy.tabs.profiles'),
+                      children: (
+                        <ProfilesTab
+                          snapshot={snapshotQuery.data}
+                          loading={snapshotQuery.isFetching}
+                          modal={modal}
+                        />
+                      ),
                     },
                     {
                       key: 'config',
-                      icon: <SettingOutlined />,
                       label: t('pages.tgWebProxy.tabs.config'),
+                      children: snapshotQuery.data ? (
+                        <ConfigTab
+                          key={snapshotQuery.dataUpdatedAt}
+                          snapshot={snapshotQuery.data}
+                        />
+                      ) : (
+                        <Spin />
+                      ),
                     },
                     {
                       key: 'publicSite',
-                      icon: <GlobalOutlined />,
                       label: t('pages.tgWebProxy.tabs.publicSite'),
+                      children: <PublicSiteTab disabled={!status.supported} />,
                     },
                     {
                       key: 'logs',
-                      icon: <FileTextOutlined />,
                       label: t('pages.tgWebProxy.tabs.logs'),
+                      children: <LogsTab disabled={!status.supported} />,
                     },
                   ]}
-                >
-                  {section === 'overview' && <OverviewTab status={status} modal={modal} />}
-                  {section === 'profiles' && (
-                    <ProfilesTab
-                      snapshot={snapshotQuery.data}
-                      loading={snapshotQuery.isFetching}
-                      modal={modal}
-                    />
-                  )}
-                  {section === 'config' &&
-                    (snapshotQuery.data ? (
-                      <ConfigTab key={snapshotQuery.dataUpdatedAt} snapshot={snapshotQuery.data} />
-                    ) : (
-                      <Spin />
-                    ))}
-                  {section === 'publicSite' && <PublicSiteTab disabled={!status.supported} />}
-                  {section === 'logs' && <LogsTab disabled={!status.supported} />}
-                </SectionLayout>
+                />
               </>
             )}
           </Spin>

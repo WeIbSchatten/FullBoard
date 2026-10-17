@@ -21,7 +21,7 @@ import type { XraySettingsValue } from '@/hooks/useXraySetting';
 import { JsonEditor } from '@/components/form';
 import { setMessageInstance } from '@/utils/messageBus';
 import PageActionBar from '@/components/ui/PageActionBar';
-import SectionLayout from '@/components/ui/SectionLayout';
+import SectionNav from '@/components/ui/SectionNav';
 import { useXraySections } from '@/layouts/sectionModel';
 
 import { BasicsTab } from './basics';
@@ -351,18 +351,15 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
                     {t('pages.xray.save')}
                   </Button>
                 </PageActionBar>
-                {pathSection === 'outbound' ? (
-                  <Card>{sectionBody}</Card>
-                ) : (
-                  <SectionLayout
+                {pathSection !== 'outbound' && (
+                  <SectionNav
                     items={sections}
                     active={activeSection}
                     onChange={(key) => navigate({ pathname: '/xray', hash: key })}
                     ariaLabel={t('menu.xray')}
-                  >
-                    <Card>{sectionBody}</Card>
-                  </SectionLayout>
+                  />
                 )}
+                <Card>{sectionBody}</Card>
                 <FloatButton.BackTop visibilityHeight={400} />
               </>
             )}
