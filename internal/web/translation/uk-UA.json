@@ -114,7 +114,7 @@
     "clients": "Клієнти",
     "groups": "Групи",
     "nodes": "Вузли",
-    "settings": "Налаштування панелі",
+    "settings": "Налаштування",
     "xray": "Конфігурації Xray",
     "routing": "Маршрутизація",
     "outbounds": "Вихідні",
@@ -125,7 +125,6 @@
     "subFormats": "Формати підписки",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "Керування",
     "sectionInfra": "Інфраструктура",
     "sectionSystem": "Система",
     "collapseSidebar": "Згорнути меню",
@@ -136,14 +135,13 @@
     "account": "Обліковий запис",
     "hint": {
       "dashboard": "Стан сервера, трафік і статус Xray",
-      "connections": "Вхідні та вихідні підключення, Telegram Web Proxy",
-      "clients": "Користувачі, їхні ключі, ліміти та підписки",
-      "groups": "Об'єднуйте клієнтів, щоб керувати лімітами й доступом разом",
-      "nodes": "Панелі FullBoard на інших ваших серверах",
-      "hosts": "Адреси та перевизначення для посилань і підписок клієнтів",
-      "xray": "Конфігурація ядра: маршрутизація, балансувальники, DNS і JSON",
-      "settings": "Панель, безпека, сповіщення та підписки",
-      "apiDocs": "Довідник REST API для автоматизації"
+      "connections": "Інбаунди, аутбаунди, маршрутизація, DNS і Telegram WEB Proxy",
+      "clients": "Користувачі, групи, ключі, ліміти й підписки",
+      "settings": "Панель, безпека й шаблон ядра Xray",
+      "apiDocs": "Довідник REST API для автоматизації",
+      "subscriptions": "Посилання підписки, формати й балансувальники для клієнтських застосунків",
+      "notifications": "Сповіщення й боти Telegram, Discord і пошта",
+      "nodesHosts": "Інші сервери FullBoard і адреси для посилань"
     },
     "appearance": {
       "title": "Зовнішній вигляд",
@@ -157,7 +155,14 @@
       "size": "Розмір інтерфейсу",
       "sizeAuto": "Авто",
       "sizeAutoHint": "«Авто» обирає {percent}% для цього екрана"
-    }
+    },
+    "subscriptions": "Підписки",
+    "notifications": "Сповіщення",
+    "nodesHosts": "Вузли й хости",
+    "sectionUsers": "Користувачі",
+    "sectionTraffic": "Трафік",
+    "xrayCore": "Ядро Xray",
+    "xrayJson": "JSON Xray"
   },
   "pages": {
     "login": {

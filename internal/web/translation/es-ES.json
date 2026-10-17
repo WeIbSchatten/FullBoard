@@ -114,7 +114,7 @@
     "clients": "Clientes",
     "groups": "Grupos",
     "nodes": "Nodos",
-    "settings": "Ajustes del panel",
+    "settings": "Ajustes",
     "xray": "Configuración Xray",
     "routing": "Enrutamiento",
     "outbounds": "Salidas",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "Gestión",
     "sectionInfra": "Infraestructura",
     "sectionSystem": "Sistema",
     "collapseSidebar": "Contraer menú",
@@ -136,14 +135,13 @@
     "account": "Cuenta",
     "hint": {
       "dashboard": "Estado del servidor, tráfico y Xray de un vistazo",
-      "connections": "Entradas, salidas y proxy web de Telegram",
-      "clients": "Usuarios, sus claves, límites y suscripciones",
-      "groups": "Agrupa clientes para gestionar límites y acceso a la vez",
-      "nodes": "Paneles FullBoard en tus otros servidores",
-      "hosts": "Direcciones y ajustes usados en enlaces y suscripciones",
-      "xray": "Núcleo: enrutamiento, balanceadores, DNS y JSON",
-      "settings": "Panel, seguridad, notificaciones y suscripciones",
-      "apiDocs": "Referencia de la API REST para automatizar"
+      "connections": "Inbounds, outbounds, enrutamiento, DNS y Telegram WEB Proxy",
+      "clients": "Usuarios, grupos, claves, límites y suscripciones",
+      "settings": "Panel, seguridad y plantilla del núcleo Xray",
+      "apiDocs": "Referencia de la API REST para automatizar",
+      "subscriptions": "Enlaces de suscripción, formatos y balanceadores para las apps cliente",
+      "notifications": "Alertas y bots de Telegram, Discord y correo",
+      "nodesHosts": "Otros servidores FullBoard y direcciones usadas en los enlaces"
     },
     "appearance": {
       "title": "Apariencia",
@@ -157,7 +155,14 @@
       "size": "Tamaño de la interfaz",
       "sizeAuto": "Auto",
       "sizeAutoHint": "Auto elige {percent}% para esta pantalla"
-    }
+    },
+    "subscriptions": "Suscripciones",
+    "notifications": "Notificaciones",
+    "nodesHosts": "Nodos y hosts",
+    "sectionUsers": "Usuarios",
+    "sectionTraffic": "Tráfico",
+    "xrayCore": "Núcleo Xray",
+    "xrayJson": "JSON de Xray"
   },
   "pages": {
     "login": {

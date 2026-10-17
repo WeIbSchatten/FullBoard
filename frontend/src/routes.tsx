@@ -1,17 +1,26 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
+import { createBrowserRouter, Navigate, useLocation, type RouteObject } from 'react-router';
 import { Spin } from 'antd';
 
 import PanelLayout from '@/layouts/PanelLayout';
+import { legacyTarget } from '@/layouts/navModel';
 
 const IndexPage = lazy(() => import('@/pages/index/IndexPage'));
-const ConnectionsPage = lazy(() => import('@/pages/connections/ConnectionsPage'));
-const ClientsPage = lazy(() => import('@/pages/clients/ClientsPage'));
-const GroupsPage = lazy(() => import('@/pages/groups/GroupsPage'));
-const NodesPage = lazy(() => import('@/pages/nodes/NodesPage'));
-const HostsPage = lazy(() => import('@/pages/hosts/HostsPage'));
-const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage'));
-const XrayPage = lazy(() => import('@/pages/xray/XrayPage'));
+const hub = (
+  name:
+    | 'ConnectionsHub'
+    | 'ClientsHub'
+    | 'NodesHub'
+    | 'SubscriptionsHub'
+    | 'NotificationsHub'
+    | 'SettingsHub',
+) => lazy(() => import('@/pages/hubs/Hubs').then((m) => ({ default: m[name] })));
+const ConnectionsHub = hub('ConnectionsHub');
+const ClientsHub = hub('ClientsHub');
+const NodesHub = hub('NodesHub');
+const SubscriptionsHub = hub('SubscriptionsHub');
+const NotificationsHub = hub('NotificationsHub');
+const SettingsHub = hub('SettingsHub');
 const ApiDocsPage = lazy(() => import('@/pages/api-docs/ApiDocsPage'));
 
 function withSuspense(node: React.ReactNode) {
@@ -35,23 +44,30 @@ function withSuspense(node: React.ReactNode) {
   );
 }
 
+// Pages that became tabs of a hub keep working as bookmarks.
+function LegacyRedirect() {
+  const { pathname, hash, search } = useLocation();
+  return <Navigate to={(legacyTarget(pathname, hash) ?? '/') + search} replace />;
+}
+
 const routes: RouteObject[] = [
   {
     path: '/',
     element: <PanelLayout />,
     children: [
       { index: true, element: withSuspense(<IndexPage />) },
-      { path: 'connections', element: withSuspense(<ConnectionsPage />) },
-      { path: 'inbounds', element: <Navigate to="/connections#inbounds" replace /> },
-      { path: 'outbound', element: <Navigate to="/connections#outbounds" replace /> },
-      { path: 'tg-web-proxy', element: <Navigate to="/connections#tg-web-proxy" replace /> },
-      { path: 'clients', element: withSuspense(<ClientsPage />) },
-      { path: 'groups', element: withSuspense(<GroupsPage />) },
-      { path: 'nodes', element: withSuspense(<NodesPage />) },
-      { path: 'hosts', element: withSuspense(<HostsPage />) },
-      { path: 'settings', element: withSuspense(<SettingsPage />) },
-      { path: 'xray', element: withSuspense(<XrayPage />) },
-      { path: 'routing', element: withSuspense(<XrayPage />) },
+      { path: 'clients', element: withSuspense(<ClientsHub />) },
+      { path: 'subscriptions', element: withSuspense(<SubscriptionsHub />) },
+      { path: 'connections', element: withSuspense(<ConnectionsHub />) },
+      { path: 'nodes', element: withSuspense(<NodesHub />) },
+      { path: 'notifications', element: withSuspense(<NotificationsHub />) },
+      { path: 'settings', element: withSuspense(<SettingsHub />) },
+      ...['inbounds', 'outbound', 'tg-web-proxy', 'routing', 'groups', 'hosts', 'xray'].map(
+        (path) => ({
+          path,
+          element: <LegacyRedirect />,
+        }),
+      ),
       { path: 'api-docs', element: withSuspense(<ApiDocsPage />) },
     ],
   },

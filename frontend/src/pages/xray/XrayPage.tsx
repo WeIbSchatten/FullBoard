@@ -86,14 +86,7 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
   const location = useLocation();
   const navigate = useNavigate();
   const sections = useXraySections();
-  const pathSection =
-    forceSection === 'outbound' ||
-    location.pathname === '/outbound' ||
-    (location.pathname === '/connections' && location.hash.replace(/^#/, '') === 'outbounds')
-      ? 'outbound'
-      : forceSection === 'routing' || location.pathname === '/routing'
-        ? 'routing'
-        : '';
+  const pathSection = forceSection && SECTION_SLUGS.includes(forceSection) ? forceSection : '';
   const chainRequest = useMemo(() => {
     const params = new URLSearchParams(location.search);
     const nodeId = Number(params.get('chainNode'));
@@ -204,7 +197,7 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
       JSON.parse(xraySetting);
     } catch (e) {
       messageApi.error(`Advanced JSON: ${(e as Error).message}`);
-      navigate('/xray#advanced');
+      navigate('/settings#xray-advanced');
       return;
     }
     if (templateSettings) {
@@ -351,7 +344,7 @@ export default function XrayPage({ forceSection }: { forceSection?: string } = {
                     {t('pages.xray.save')}
                   </Button>
                 </PageActionBar>
-                {pathSection !== 'outbound' && (
+                {!pathSection && (
                   <SectionNav
                     items={sections}
                     active={activeSection}
