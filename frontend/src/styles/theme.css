@@ -236,7 +236,7 @@ body.dark .ant-drawer-mask {
 
 /* Tall action menus must stay inside the viewport even when antd flips them upward. */
 .ant-dropdown .ant-dropdown-menu {
-  max-height: calc(100vh - 32px);
+  max-height: calc(100vh / var(--fb-zoom, 1) - 32px);
   overflow-y: auto;
 }
 .ant-dropdown-menu-item-divider {
@@ -358,7 +358,7 @@ body.dark .ant-drawer-mask {
 
 /* Long forms scroll inside the dialog so the footer actions stay reachable. */
 .ant-modal .ant-modal-body {
-  max-height: calc(100vh - 220px);
+  max-height: calc(100vh / var(--fb-zoom, 1) - 220px);
   overflow-y: auto;
   overscroll-behavior: contain;
 }

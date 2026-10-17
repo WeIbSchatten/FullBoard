@@ -1,6 +1,6 @@
 .connections-page {
   background: transparent;
-  min-height: 60vh;
+  min-height: calc(60vh / var(--fb-zoom, 1));
   width: 100%;
 }
 

@@ -190,7 +190,7 @@ export default function HappRoutingEditorModal({
                       value={jsonText}
                       onChange={setJsonText}
                       minHeight="320px"
-                      maxHeight="50vh"
+                      maxHeight="calc(50vh / var(--fb-zoom, 1))"
                     />
                   </Space>
                 ),

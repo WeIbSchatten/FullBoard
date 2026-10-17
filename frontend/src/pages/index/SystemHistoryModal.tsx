@@ -309,7 +309,7 @@ export default function SystemHistoryModal({ open, onClose }: SystemHistoryModal
     <Modal
       open={open}
       footer={null}
-      width={isMobile ? '95vw' : 900}
+      width={isMobile ? 'calc(95vw / var(--fb-zoom, 1))' : 900}
       onCancel={onClose}
       title={
         <div className="metric-modal-title">

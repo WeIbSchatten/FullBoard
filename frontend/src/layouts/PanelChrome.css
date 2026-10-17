@@ -1,5 +1,5 @@
 .panel-chrome {
-  min-height: 100vh;
+  min-height: calc(100vh / var(--fb-zoom, 1));
   font-family: var(--fb-font);
   background:
     radial-gradient(1100px 520px at 70% -220px, var(--fb-bg-glow), transparent 70%), var(--fb-bg) !important;
@@ -18,7 +18,7 @@
 .panel-chrome > .content-shell {
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--fb-zoom, 1));
   width: 100%;
   background: transparent !important;
   display: flex;

@@ -95,8 +95,12 @@ export default function LogModal({ open, onClose }: LogModalProps) {
     <Modal
       open={open}
       footer={null}
-      width={isMobile ? '100vw' : 800}
-      style={isMobile ? { top: 0, paddingBottom: 0, maxWidth: '100vw' } : undefined}
+      width={isMobile ? 'calc(100vw / var(--fb-zoom, 1))' : 800}
+      style={
+        isMobile
+          ? { top: 0, paddingBottom: 0, maxWidth: 'calc(100vw / var(--fb-zoom, 1))' }
+          : undefined
+      }
       className={isMobile ? 'logmodal-mobile' : undefined}
       onCancel={onClose}
       title={titleNode}
