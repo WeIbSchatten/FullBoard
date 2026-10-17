@@ -86,7 +86,7 @@ export default function SubscriptionGeneralTab({
                   title={t('pages.settings.subFormatsTipTitle')}
                   description={t('pages.settings.subFormatsTipDesc')}
                   action={
-                    <Button size="small" onClick={() => navigate('/settings#subscription-formats')}>
+                    <Button size="small" onClick={() => navigate('/subscriptions#formats')}>
                       {t('pages.settings.subFormatsTipAction')}
                     </Button>
                   }

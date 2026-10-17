@@ -114,7 +114,7 @@
     "clients": "Kullanıcılar",
     "groups": "Gruplar",
     "nodes": "Düğümler",
-    "settings": "Panel Ayarları",
+    "settings": "Ayarlar",
     "xray": "Xray Yapılandırmaları",
     "routing": "Yönlendirme",
     "outbounds": "Giden Bağlantılar",
@@ -125,7 +125,6 @@
     "subFormats": "Abonelik Formatları",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "Yönetim",
     "sectionInfra": "Altyapı",
     "sectionSystem": "Sistem",
     "collapseSidebar": "Menüyü daralt",
@@ -136,14 +135,13 @@
     "account": "Hesap",
     "hint": {
       "dashboard": "Sunucu durumu, trafik ve Xray durumu bir bakışta",
-      "connections": "Gelen, giden bağlantılar ve Telegram Web Proxy",
-      "clients": "Kullanıcılar, anahtarları, limitleri ve abonelikleri",
-      "groups": "Limitleri ve erişimi birlikte yönetmek için istemcileri gruplayın",
-      "nodes": "Diğer sunucularınızdaki FullBoard panelleri",
-      "hosts": "İstemci bağlantılarında ve aboneliklerde kullanılan adresler",
-      "xray": "Çekirdek ayarları: yönlendirme, dengeleyiciler, DNS ve JSON",
-      "settings": "Panel, güvenlik, bildirimler ve abonelikler",
-      "apiDocs": "Otomasyon için REST API başvurusu"
+      "connections": "Inbound, outbound, yönlendirme, DNS ve Telegram WEB Proxy",
+      "clients": "Kullanıcılar, gruplar, anahtarlar, limitler ve abonelikler",
+      "settings": "Panel, güvenlik ve Xray çekirdek şablonu",
+      "apiDocs": "Otomasyon için REST API başvurusu",
+      "subscriptions": "İstemci uygulamaları için abonelik bağlantıları, biçimler ve dengeleyiciler",
+      "notifications": "Telegram, Discord ve e-posta uyarıları ile botlar",
+      "nodesHosts": "Diğer FullBoard sunucuları ve bağlantılarda kullanılan adresler"
     },
     "appearance": {
       "title": "Görünüm",
@@ -157,7 +155,14 @@
       "size": "Arayüz boyutu",
       "sizeAuto": "Otomatik",
       "sizeAutoHint": "Otomatik bu ekran için %{percent} seçer"
-    }
+    },
+    "subscriptions": "Abonelikler",
+    "notifications": "Bildirimler",
+    "nodesHosts": "Düğümler ve hostlar",
+    "sectionUsers": "Kullanıcılar",
+    "sectionTraffic": "Trafik",
+    "xrayCore": "Xray çekirdeği",
+    "xrayJson": "Xray JSON"
   },
   "pages": {
     "login": {

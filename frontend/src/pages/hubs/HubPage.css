@@ -1,0 +1,29 @@
+.hub-page {
+  background: transparent;
+  min-height: calc(60vh / var(--fb-zoom, 1));
+  width: 100%;
+}
+
+/* Nested page Layouts already bring their own content-area padding. */
+.hub-page > .ant-tabs {
+  width: 100%;
+}
+
+.hub-page .ant-tabs-content-holder,
+.hub-page .ant-tabs-tabpane {
+  min-width: 0;
+}
+
+.hub-page .ant-tabs-tabpane > .ant-layout {
+  min-height: 0;
+}
+
+.hub-page .ant-tabs-tabpane > .ant-layout > .ant-layout-content.content-area,
+.hub-page .ant-tabs-tabpane > .ant-layout.content-area {
+  padding-top: 8px;
+}
+
+.hub-page--single > .ant-layout > .ant-layout-content.content-area,
+.hub-page--single > .ant-layout.content-area {
+  padding-top: 8px;
+}

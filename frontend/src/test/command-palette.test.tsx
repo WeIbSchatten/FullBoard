@@ -108,9 +108,13 @@ describe('CommandPalette component', () => {
     });
 
     const input = screen.getByPlaceholderText(/Type a command or search/i);
-    fireEvent.change(input, { target: { value: 'settings' } });
+    fireEvent.change(input, { target: { value: 'notif' } });
 
-    expect(screen.getAllByText(/Panel Settings/i).length).toBeGreaterThan(0);
+    const items = [...document.querySelectorAll('.command-palette-item')].map(
+      (el) => el.textContent,
+    );
+    expect(items.some((text) => /Notifications/.test(text ?? ''))).toBe(true);
+    expect(items.some((text) => /Overview/.test(text ?? ''))).toBe(false);
   });
 
   it('resets query on close and does not persist query on reopen', async () => {
