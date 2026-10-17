@@ -31,7 +31,7 @@ The default SQLite database path is `/etc/fullboard/fullboard.db`. See
 | `XUI_PORT`               | —       | Override the panel port (1–65535). Takes precedence over the stored setting. |
 | `XUI_INIT_WEB_BASE_PATH` | `/`     | Initial web base path on **first** launch (e.g. `/panel`).               |
 | `XUI_ENABLE_FAIL2BAN`    | `true`  | Enable Fail2ban-based IP-limit enforcement.                              |
-| `XUI_NET_TUNING`         | `true`  | Write BBR + fq + TCP buffer sysctls on install/update (`false` keeps yours). |
+| `XUI_NET_TUNING`         | `false` | Set `true` to write BBR + fq (`99-fullboard-network.conf`) on install/update. |
 | `XUI_SKIP_HSTS`          | `false` | Skip the HSTS header — set `true` when TLS is terminated by a reverse proxy. |
 
 ## Node token encryption
