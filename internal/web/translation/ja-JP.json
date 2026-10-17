@@ -144,6 +144,19 @@
       "xray": "コア設定：ルーティング、バランサー、DNS、JSON",
       "settings": "パネル、セキュリティ、通知、サブスクリプション",
       "apiDocs": "自動化のための REST API リファレンス"
+    },
+    "appearance": {
+      "title": "外観",
+      "style": "スタイル",
+      "preset": {
+        "mono": "モノクローム",
+        "monoHint": "インクと紙、余計なものなし",
+        "pastel": "パステル",
+        "pastelHint": "レモン、ピンク、ライラック、ネイビー"
+      },
+      "size": "インターフェースのサイズ",
+      "sizeAuto": "自動",
+      "sizeAutoHint": "自動ではこの画面に {percent}% を選びます"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "Xrayサービスを再起動",
     "restartXraySuccess": "Xrayサービスが正常に再起動されました",
     "settings": "設定"
+  },
+  "tableColumns": "列",
+  "tableColumnsShowAll": "すべて表示",
+  "shortcuts": {
+    "title": "キーボードショートカット",
+    "palette": "コマンドパレット",
+    "search": "ページ内検索",
+    "help": "この一覧を表示"
   }
 }

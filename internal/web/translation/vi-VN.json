@@ -144,6 +144,19 @@
       "xray": "Cấu hình lõi: định tuyến, cân bằng tải, DNS và JSON",
       "settings": "Bảng điều khiển, bảo mật, thông báo và đăng ký",
       "apiDocs": "Tài liệu REST API để tự động hóa"
+    },
+    "appearance": {
+      "title": "Giao diện",
+      "style": "Phong cách",
+      "preset": {
+        "mono": "Đơn sắc",
+        "monoHint": "Mực và giấy, không thừa",
+        "pastel": "Pastel",
+        "pastelHint": "Vàng chanh, hồng, tím nhạt và xanh navy"
+      },
+      "size": "Kích thước giao diện",
+      "sizeAuto": "Tự động",
+      "sizeAutoHint": "Tự động chọn {percent}% cho màn hình này"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "Khởi động lại dịch vụ Xray",
     "restartXraySuccess": "Dịch vụ Xray đã được khởi động lại thành công",
     "settings": "Cài đặt"
+  },
+  "tableColumns": "Cột",
+  "tableColumnsShowAll": "Hiện tất cả",
+  "shortcuts": {
+    "title": "Phím tắt",
+    "palette": "Bảng lệnh",
+    "search": "Tìm trong trang",
+    "help": "Hiện danh sách này"
   }
 }

@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { ConfigProvider, Layout } from 'antd';
 
 import { useWebSocketBridge } from '@/api/websocketBridge';
@@ -7,6 +7,8 @@ import { useTheme } from '@/hooks/useTheme';
 import CommandPalette from '@/components/command-palette/CommandPalette';
 import AppSidebar from '@/layouts/AppSidebar';
 import PanelTopBar from '@/layouts/PanelTopBar';
+import KeyboardShortcuts from '@/layouts/KeyboardShortcuts';
+import { AppearanceDialog } from '@/components/ui/AppearancePanel';
 import { NavLayoutProvider, useNavLayout } from '@/layouts/NavLayoutContext';
 import { MobileNavProvider } from '@/layouts/MobileNavContext';
 import './PanelChrome.css';
@@ -33,12 +35,15 @@ export default function PanelLayout() {
   useWebSocketBridge();
   usePageTitle();
   const { antdThemeConfig } = useTheme();
+  const navigate = useNavigate();
   return (
     <ConfigProvider theme={antdThemeConfig}>
       <NavLayoutProvider>
         <MobileNavProvider>
           <PanelChrome />
           <CommandPalette />
+          <KeyboardShortcuts navigate={navigate} />
+          <AppearanceDialog />
         </MobileNavProvider>
       </NavLayoutProvider>
     </ConfigProvider>
