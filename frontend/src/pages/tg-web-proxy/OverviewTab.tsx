@@ -6,7 +6,6 @@ import {
   Button,
   Card,
   Col,
-  Collapse,
   Descriptions,
   Row,
   Space,
@@ -50,8 +49,6 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
   const admin = status.admin;
   const job = status.job;
   const caddyNeedsFix = !!status.caddyEncode?.needsFix && !!status.usesWebSocket;
-  const serviceHealthy =
-    !!status.binaryInstalled && !!admin?.reachable && !!admin?.healthy && !!admin?.ready;
 
   const confirmUpdate = () =>
     modal.confirm({
@@ -222,177 +219,169 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
       </Col>
 
       <Col span={24}>
-        <Collapse
-          defaultActiveKey={serviceHealthy && !caddyNeedsFix ? [] : ['service']}
-          items={[
-            {
-              key: 'service',
-              label: t('pages.tgWebProxy.servicePanel'),
-              children: (
-                <Row gutter={[16, 16]}>
-                  {caddyNeedsFix && (
-                    <Col span={24}>
-                      <Alert
-                        type="warning"
-                        showIcon
-                        title={t('pages.tgWebProxy.caddyEncodeWarn')}
-                        action={
-                          <Button
-                            size="small"
-                            type="primary"
-                            disabled={pending}
-                            onClick={() => fixCaddy()}
-                          >
-                            {t('pages.tgWebProxy.actions.fixCaddy')}
-                          </Button>
-                        }
-                      />
-                    </Col>
-                  )}
-                  <Col xs={24} lg={14}>
-                    <Card
+        <section className="tg-service" aria-label={t('pages.tgWebProxy.servicePanel')}>
+          <h3 className="tg-service-title">{t('pages.tgWebProxy.servicePanel')}</h3>
+          <Row gutter={[16, 16]}>
+            {caddyNeedsFix && (
+              <Col span={24}>
+                <Alert
+                  type="warning"
+                  showIcon
+                  title={t('pages.tgWebProxy.caddyEncodeWarn')}
+                  action={
+                    <Button
                       size="small"
-                      title={t('pages.tgWebProxy.services')}
-                      extra={
-                        <Space>
-                          <Button
-                            size="small"
-                            icon={<SafetyCertificateOutlined />}
-                            disabled={!status.binaryInstalled || pending}
-                            onClick={() => check()}
-                          >
-                            {t('pages.tgWebProxy.actions.check')}
-                          </Button>
-                          {status.binaryInstalled ? (
-                            <Button
-                              size="small"
-                              icon={<SyncOutlined />}
-                              disabled={!status.supported || job.state === 'running'}
-                              onClick={confirmUpdate}
-                            >
-                              {t('pages.tgWebProxy.actions.update')}
-                            </Button>
-                          ) : (
-                            <Button
-                              size="small"
-                              type="primary"
-                              icon={<CloudDownloadOutlined />}
-                              disabled={!status.supported || job.state === 'running'}
-                              onClick={() => setInstallOpen(true)}
-                            >
-                              {t('pages.tgWebProxy.actions.install')}
-                            </Button>
-                          )}
-                        </Space>
-                      }
+                      type="primary"
+                      disabled={pending}
+                      onClick={() => fixCaddy()}
                     >
-                      <Table
-                        rowKey="unit"
+                      {t('pages.tgWebProxy.actions.fixCaddy')}
+                    </Button>
+                  }
+                />
+              </Col>
+            )}
+            <Col xs={24} lg={14}>
+              <Card
+                size="small"
+                title={t('pages.tgWebProxy.services')}
+                extra={
+                  <Space>
+                    <Button
+                      size="small"
+                      icon={<SafetyCertificateOutlined />}
+                      disabled={!status.binaryInstalled || pending}
+                      onClick={() => check()}
+                    >
+                      {t('pages.tgWebProxy.actions.check')}
+                    </Button>
+                    {status.binaryInstalled ? (
+                      <Button
                         size="small"
-                        pagination={false}
-                        dataSource={status.units}
-                        columns={unitColumns}
-                        scroll={{ x: true }}
-                      />
-                    </Card>
-                  </Col>
-                  <Col xs={24} lg={10}>
-                    <Card size="small" title={t('pages.tgWebProxy.relay')}>
-                      <Descriptions size="small" column={1}>
-                        <Descriptions.Item label={t('pages.tgWebProxy.hostname')}>
-                          {status.hostname || '-'}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('pages.tgWebProxy.basePath')}>
-                          {status.basePath || '/'}
-                        </Descriptions.Item>
-                        <Descriptions.Item label={t('pages.tgWebProxy.adminListen')}>
-                          <Typography.Text code>{admin?.address || '-'}</Typography.Text>
-                        </Descriptions.Item>
-                        <Descriptions.Item label="profiles.json">
-                          <Space size={4}>
-                            <Typography.Text code>{status.profilesPath}</Typography.Text>
-                            {status.profilesMode && (
-                              <Tag color={status.profilesModeOk ? 'green' : 'red'}>
-                                {status.profilesMode}
-                              </Tag>
-                            )}
-                          </Space>
-                        </Descriptions.Item>
-                        {admin?.readyDetail && (
-                          <Descriptions.Item label={t('pages.tgWebProxy.readiness')}>
-                            {admin.readyDetail}
-                          </Descriptions.Item>
-                        )}
-                        {admin?.error && (
-                          <Descriptions.Item label={t('pages.tgWebProxy.adminError')}>
-                            {admin.error}
-                          </Descriptions.Item>
-                        )}
-                      </Descriptions>
-                      <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
-                        {METRIC_KEYS.map((key) => (
-                          <Col span={12} key={key}>
-                            <Statistic
-                              title={<Typography.Text code>{key}</Typography.Text>}
-                              value={admin?.metrics?.[key] ?? '-'}
-                            />
-                          </Col>
-                        ))}
-                      </Row>
-                    </Card>
-                  </Col>
-                  {(backends.managed.length > 0 || backends.error) && (
-                    <Col span={24}>
-                      <Card size="small" title={t('pages.tgWebProxy.backends.title')}>
-                        {backends.error && (
-                          <Alert
-                            type="error"
-                            showIcon
-                            style={{ marginBottom: 8 }}
-                            title={backends.error}
-                          />
-                        )}
-                        <Table
-                          rowKey="backend"
-                          size="small"
-                          pagination={false}
-                          dataSource={backends.managed}
-                          columns={backendColumns}
-                          scroll={{ x: true }}
-                        />
-                      </Card>
-                    </Col>
-                  )}
-                  {job.state !== 'idle' && (
-                    <Col span={24}>
-                      <Card
-                        size="small"
-                        title={
-                          <Space>
-                            {t('pages.tgWebProxy.job')}
-                            <Tag>{job.kind}</Tag>
-                            <Badge
-                              status={
-                                job.state === 'running'
-                                  ? 'processing'
-                                  : job.state === 'succeeded'
-                                    ? 'success'
-                                    : 'error'
-                              }
-                              text={job.state}
-                            />
-                          </Space>
-                        }
+                        icon={<SyncOutlined />}
+                        disabled={!status.supported || job.state === 'running'}
+                        onClick={confirmUpdate}
                       >
-                        <pre className="tg-web-proxy-log">{job.log || '…'}</pre>
-                      </Card>
-                    </Col>
+                        {t('pages.tgWebProxy.actions.update')}
+                      </Button>
+                    ) : (
+                      <Button
+                        size="small"
+                        type="primary"
+                        icon={<CloudDownloadOutlined />}
+                        disabled={!status.supported || job.state === 'running'}
+                        onClick={() => setInstallOpen(true)}
+                      >
+                        {t('pages.tgWebProxy.actions.install')}
+                      </Button>
+                    )}
+                  </Space>
+                }
+              >
+                <Table
+                  rowKey="unit"
+                  size="small"
+                  pagination={false}
+                  dataSource={status.units}
+                  columns={unitColumns}
+                  scroll={{ x: true }}
+                />
+              </Card>
+            </Col>
+            <Col xs={24} lg={10}>
+              <Card size="small" title={t('pages.tgWebProxy.relay')}>
+                <Descriptions size="small" column={1}>
+                  <Descriptions.Item label={t('pages.tgWebProxy.hostname')}>
+                    {status.hostname || '-'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label={t('pages.tgWebProxy.basePath')}>
+                    {status.basePath || '/'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label={t('pages.tgWebProxy.adminListen')}>
+                    <Typography.Text code>{admin?.address || '-'}</Typography.Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="profiles.json">
+                    <Space size={4}>
+                      <Typography.Text code>{status.profilesPath}</Typography.Text>
+                      {status.profilesMode && (
+                        <Tag color={status.profilesModeOk ? 'green' : 'red'}>
+                          {status.profilesMode}
+                        </Tag>
+                      )}
+                    </Space>
+                  </Descriptions.Item>
+                  {admin?.readyDetail && (
+                    <Descriptions.Item label={t('pages.tgWebProxy.readiness')}>
+                      {admin.readyDetail}
+                    </Descriptions.Item>
                   )}
+                  {admin?.error && (
+                    <Descriptions.Item label={t('pages.tgWebProxy.adminError')}>
+                      {admin.error}
+                    </Descriptions.Item>
+                  )}
+                </Descriptions>
+                <Row gutter={[8, 8]} style={{ marginTop: 8 }}>
+                  {METRIC_KEYS.map((key) => (
+                    <Col span={12} key={key}>
+                      <Statistic
+                        title={<Typography.Text code>{key}</Typography.Text>}
+                        value={admin?.metrics?.[key] ?? '-'}
+                      />
+                    </Col>
+                  ))}
                 </Row>
-              ),
-            },
-          ]}
-        />
+              </Card>
+            </Col>
+            {(backends.managed.length > 0 || backends.error) && (
+              <Col span={24}>
+                <Card size="small" title={t('pages.tgWebProxy.backends.title')}>
+                  {backends.error && (
+                    <Alert
+                      type="error"
+                      showIcon
+                      style={{ marginBottom: 8 }}
+                      title={backends.error}
+                    />
+                  )}
+                  <Table
+                    rowKey="backend"
+                    size="small"
+                    pagination={false}
+                    dataSource={backends.managed}
+                    columns={backendColumns}
+                    scroll={{ x: true }}
+                  />
+                </Card>
+              </Col>
+            )}
+            {job.state !== 'idle' && (
+              <Col span={24}>
+                <Card
+                  size="small"
+                  title={
+                    <Space>
+                      {t('pages.tgWebProxy.job')}
+                      <Tag>{job.kind}</Tag>
+                      <Badge
+                        status={
+                          job.state === 'running'
+                            ? 'processing'
+                            : job.state === 'succeeded'
+                              ? 'success'
+                              : 'error'
+                        }
+                        text={job.state}
+                      />
+                    </Space>
+                  }
+                >
+                  <pre className="tg-web-proxy-log">{job.log || '…'}</pre>
+                </Card>
+              </Col>
+            )}
+          </Row>
+        </section>
       </Col>
 
       <InstallModal open={installOpen} onClose={() => setInstallOpen(false)} />
