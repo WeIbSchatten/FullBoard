@@ -74,7 +74,12 @@ export default function PromptModal({
       destroyOnHidden
     >
       {json ? (
-        <JsonEditor value={value} onChange={setValue} minHeight="240px" maxHeight="60vh" />
+        <JsonEditor
+          value={value}
+          onChange={setValue}
+          minHeight="240px"
+          maxHeight="calc(60vh / var(--fb-zoom, 1))"
+        />
       ) : type === 'textarea' ? (
         <Input.TextArea
           ref={(el) => {

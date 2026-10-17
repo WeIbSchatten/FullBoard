@@ -23,7 +23,7 @@ function withSuspense(node: React.ReactNode) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            minHeight: '60vh',
+            minHeight: 'calc(60vh / var(--fb-zoom, 1))',
           }}
         >
           <Spin size="large" />

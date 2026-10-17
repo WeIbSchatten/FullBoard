@@ -30,7 +30,7 @@
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: 60vh;
+  max-height: calc(60vh / var(--fb-zoom, 1));
   overflow-y: auto;
   border: 1px solid var(--ant-color-border);
   border-radius: 6px;
@@ -73,7 +73,7 @@
 .log-container-mobile {
   padding: 8px;
   white-space: normal;
-  max-height: 70vh;
+  max-height: calc(70vh / var(--fb-zoom, 1));
 }
 
 .log-empty {
@@ -164,7 +164,7 @@ html[data-theme='ultra-dark'] .log-container {
 
 .logmodal-mobile .ant-modal-content {
   border-radius: 0;
-  height: 100vh;
+  height: calc(100vh / var(--fb-zoom, 1));
 }
 
 .logmodal-mobile .ant-modal-body {

@@ -3,7 +3,7 @@
 }
 
 .nord-modal .ant-modal-body {
-  max-height: min(720px, calc(100vh - 160px));
+  max-height: min(720px, calc(100vh / var(--fb-zoom, 1) - 160px));
   overflow-y: auto;
   padding-right: 2px;
 }
@@ -280,12 +280,12 @@
 
 @media (max-width: 575px) {
   .nord-modal {
-    max-width: calc(100vw - 24px);
+    max-width: calc(100vw / var(--fb-zoom, 1) - 24px);
     margin: 12px auto;
   }
 
   .nord-modal .ant-modal-body {
-    max-height: calc(100vh - 124px);
+    max-height: calc(100vh / var(--fb-zoom, 1) - 124px);
   }
 
   .nord-account-card {

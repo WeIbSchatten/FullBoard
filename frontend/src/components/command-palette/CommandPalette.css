@@ -7,7 +7,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 12vh;
+  padding-top: calc(12vh / var(--fb-zoom, 1));
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -34,8 +34,8 @@
 .command-palette-modal {
   position: relative;
   width: 680px;
-  max-width: 92vw;
-  max-height: 72vh;
+  max-width: calc(92vw / var(--fb-zoom, 1));
+  max-height: calc(72vh / var(--fb-zoom, 1));
   display: flex;
   flex-direction: column;
   border-radius: var(--fb-radius-lg);
@@ -106,7 +106,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 8px;
-  max-height: calc(72vh - 116px);
+  max-height: calc(72vh / var(--fb-zoom, 1) - 116px);
 }
 
 .command-palette-group {
