@@ -113,12 +113,12 @@ func desiredBackends(profiles []RelayProfile) ([]backendGroup, error) {
 }
 
 type mtproxyEnv struct {
-	workers, maxConnections string
-	natArgs                 []string
+	maxConnections string
+	natArgs        []string
 }
 
 func readMTProxyEnv(path string) mtproxyEnv {
-	env := mtproxyEnv{workers: "1", maxConnections: "4096"}
+	env := mtproxyEnv{maxConnections: "4096"}
 	f, err := os.Open(path)
 	if err != nil {
 		return env
@@ -132,10 +132,6 @@ func readMTProxyEnv(path string) mtproxyEnv {
 		}
 		value = strings.Trim(strings.TrimSpace(value), `"'`)
 		switch key {
-		case "MTPROXY_WORKERS":
-			if value != "" {
-				env.workers = value
-			}
 		case "MTPROXY_MAX_CONNECTIONS":
 			if value != "" {
 				env.maxConnections = value
@@ -147,38 +143,93 @@ func readMTProxyEnv(path string) mtproxyEnv {
 	return env
 }
 
-func managedBackendUnitName(port int) string {
-	return managedBackendUnit + strconv.Itoa(port)
+// backendInstance is one MTProxy process serving several backend ports: each
+// process keeps its own middle-end pool, so fewer processes means less CPU.
+type backendInstance struct {
+	ports   []int
+	secrets []string
+	groups  []backendGroup
 }
 
-// mtproxyArgs mirrors the stock mtproxy.service command line. No --address:
-// MTProxy binds its outbound middle-end sockets to it too.
-func mtproxyArgs(paths MTProxyPaths, env mtproxyEnv, g backendGroup, statsPort int) []string {
-	args := []string{paths.Binary, "-u", "mtproxy", "-p", strconv.Itoa(statsPort), "-H", strconv.Itoa(g.port)}
-	for _, s := range g.secrets {
+// packInstances fills each process up to MTProxy's 16-secret limit.
+func packInstances(groups []backendGroup) []backendInstance {
+	var out []backendInstance
+	for _, g := range groups {
+		if n := len(out); n > 0 {
+			last := &out[n-1]
+			merged := slices.Clone(last.secrets)
+			for _, s := range g.secrets {
+				if !slices.Contains(merged, s) {
+					merged = append(merged, s)
+				}
+			}
+			if len(merged) <= maxSecretsPerMTProxy {
+				slices.Sort(merged)
+				last.secrets = merged
+				last.ports = append(last.ports, g.port)
+				last.groups = append(last.groups, g)
+				continue
+			}
+		}
+		out = append(out, backendInstance{ports: []int{g.port}, secrets: slices.Clone(g.secrets), groups: []backendGroup{g}})
+	}
+	return out
+}
+
+func (inst backendInstance) unit() string {
+	return managedBackendUnit + strconv.Itoa(inst.ports[0])
+}
+
+func joinPorts(ports []int) string {
+	parts := make([]string, len(ports))
+	for i, p := range ports {
+		parts[i] = strconv.Itoa(p)
+	}
+	return strings.Join(parts, ",")
+}
+
+// mtproxyArgs mirrors the stock mtproxy.service command line minus -M: one
+// process is enough for a personal relay and halves the middle-end sockets.
+// No --address: MTProxy binds its outbound middle-end sockets to it too.
+func mtproxyArgs(paths MTProxyPaths, env mtproxyEnv, inst backendInstance, statsPort int) []string {
+	args := []string{paths.Binary, "-u", "mtproxy", "-p", strconv.Itoa(statsPort), "-H", joinPorts(inst.ports)}
+	for _, s := range inst.secrets {
 		args = append(args, "-S", s)
 	}
 	args = append(args, env.natArgs...)
-	return append(args, "--aes-pwd", paths.AESSecret, paths.ConfigFile, "-M", env.workers, "-C", env.maxConnections)
+	return append(args, "--aes-pwd", paths.AESSecret, paths.ConfigFile, "-C", env.maxConnections)
 }
 
 // backendFingerprint changes whenever the instance must restart: new secrets,
 // new env, or a refreshed proxy-multi.conf from the upstream timer.
-func backendFingerprint(paths MTProxyPaths, env mtproxyEnv, g backendGroup) string {
+func backendFingerprint(paths MTProxyPaths, env mtproxyEnv, inst backendInstance) string {
 	h := sha256.New()
-	fmt.Fprintln(h, strings.Join(mtproxyArgs(paths, env, g, 0), " "))
+	fmt.Fprintln(h, strings.Join(mtproxyArgs(paths, env, inst, 0), " "))
 	if st, err := os.Stat(paths.ConfigFile); err == nil {
 		fmt.Fprintln(h, st.ModTime().UnixNano(), st.Size())
 	}
 	return hex.EncodeToString(h.Sum(nil))[:16]
 }
 
-func backendDescription(g backendGroup, statsPort int, fingerprint string) string {
-	return fmt.Sprintf("FullBoard MTProxy backend 127.0.0.1:%d stats=%d fp=%s", g.port, statsPort, fingerprint)
+func backendDescription(inst backendInstance, statsPort int, fingerprint string) string {
+	return fmt.Sprintf("FullBoard MTProxy backend ports=%s stats=%d fp=%s", joinPorts(inst.ports), statsPort, fingerprint)
 }
 
-func parseBackendDescription(desc string) (statsPort int, fingerprint string) {
+func parseBackendDescription(desc string) (ports []int, statsPort int, fingerprint string) {
 	for _, field := range strings.Fields(desc) {
+		// 1.4.3-1.4.6 units named a single "127.0.0.1:<port>".
+		if v, ok := strings.CutPrefix(field, "127.0.0.1:"); ok {
+			if n, err := strconv.Atoi(v); err == nil {
+				ports = append(ports, n)
+			}
+		}
+		if v, ok := strings.CutPrefix(field, "ports="); ok {
+			for _, p := range strings.Split(v, ",") {
+				if n, err := strconv.Atoi(p); err == nil {
+					ports = append(ports, n)
+				}
+			}
+		}
 		if v, ok := strings.CutPrefix(field, "stats="); ok {
 			statsPort, _ = strconv.Atoi(v)
 		}
@@ -186,7 +237,7 @@ func parseBackendDescription(desc string) (statsPort int, fingerprint string) {
 			fingerprint = v
 		}
 	}
-	return statsPort, fingerprint
+	return ports, statsPort, fingerprint
 }
 
 // FreeLoopbackPort asks the kernel for an unused loopback TCP port.
@@ -289,17 +340,41 @@ func (m *Manager) reconcileBackendsLocked(ctx context.Context) RelayBackendsStat
 		st.Error = err.Error()
 		return st
 	}
-	wanted := map[string]bool{}
-	for _, g := range groups {
-		wanted[managedBackendUnitName(g.port)] = true
+	// Ports our running units already hold are ours; anything else listening
+	// on a profile's port is a backend the owner runs by hand.
+	units := m.listManagedUnits(ctx)
+	states := make(map[string]unitState, len(units))
+	ours := map[int]bool{}
+	for _, unit := range units {
+		cur := m.managedUnitState(ctx, unit)
+		states[unit] = cur
+		ports, _, _ := parseBackendDescription(cur.description)
+		for _, p := range ports {
+			ours[p] = cur.active
+		}
 	}
-	for _, unit := range m.listManagedUnits(ctx) {
+	var served []backendGroup
+	for _, g := range groups {
+		if !ours[g.port] && portBusy(g.port) {
+			st.Managed = append(st.Managed, RelayManagedBackend{
+				Backend: loopbackAddr(g.port), Profiles: g.profiles, External: true,
+			})
+			continue
+		}
+		served = append(served, g)
+	}
+	instances := packInstances(served)
+	wanted := map[string]bool{}
+	for _, inst := range instances {
+		wanted[inst.unit()] = true
+	}
+	for _, unit := range units {
 		if !wanted[unit] {
 			_ = m.systemctl(ctx, "stop", unit+".service")
 			_, _ = m.run(ctx, "systemctl", "reset-failed", unit+".service")
 		}
 	}
-	if len(groups) == 0 {
+	if len(instances) == 0 {
 		m.applyBackendFirewall(ctx, nil)
 		return st
 	}
@@ -310,31 +385,31 @@ func (m *Manager) reconcileBackendsLocked(ctx context.Context) RelayBackendsStat
 	env := readMTProxyEnv(m.mtproxy.EnvFile)
 	var guarded []int
 	var errs []string
-	for _, g := range groups {
-		unit := managedBackendUnitName(g.port)
-		row := RelayManagedBackend{Backend: loopbackAddr(g.port), Profiles: g.profiles, Unit: unit}
-		fp := backendFingerprint(m.mtproxy, env, g)
-		cur := m.managedUnitState(ctx, unit)
-		statsPort, curFP := parseBackendDescription(cur.description)
-		switch {
-		case cur.active && curFP == fp:
-			row.Active = true
-		case !cur.active && portBusy(g.port):
-			row.External = true
-		default:
-			port, serr := m.startManagedBackend(ctx, unit, env, g, fp)
+	for _, inst := range instances {
+		unit := inst.unit()
+		fp := backendFingerprint(m.mtproxy, env, inst)
+		cur, known := states[unit]
+		if !known {
+			cur = m.managedUnitState(ctx, unit)
+		}
+		_, statsPort, curFP := parseBackendDescription(cur.description)
+		active := cur.active && curFP == fp
+		if !active {
+			port, serr := m.startManagedBackend(ctx, unit, env, inst, fp)
 			if serr != nil {
-				errs = append(errs, fmt.Sprintf("%s: %v", row.Backend, serr))
+				errs = append(errs, fmt.Sprintf("127.0.0.1:%s: %v", joinPorts(inst.ports), serr))
 			}
-			row.Active, statsPort = serr == nil, port
+			active, statsPort = serr == nil, port
 		}
-		if !row.External {
-			guarded = append(guarded, g.port)
-			if statsPort > 0 {
-				guarded = append(guarded, statsPort)
-			}
+		guarded = append(guarded, inst.ports...)
+		if statsPort > 0 {
+			guarded = append(guarded, statsPort)
 		}
-		st.Managed = append(st.Managed, row)
+		for _, g := range inst.groups {
+			st.Managed = append(st.Managed, RelayManagedBackend{
+				Backend: loopbackAddr(g.port), Profiles: g.profiles, Unit: unit, Active: active,
+			})
+		}
 	}
 	m.applyBackendFirewall(ctx, guarded)
 	if m.backendFirewallErr != "" {
@@ -348,7 +423,7 @@ func (m *Manager) reconcileBackendsLocked(ctx context.Context) RelayBackendsStat
 
 func loopbackAddr(port int) string { return net.JoinHostPort("127.0.0.1", strconv.Itoa(port)) }
 
-func (m *Manager) startManagedBackend(ctx context.Context, unit string, env mtproxyEnv, g backendGroup, fp string) (int, error) {
+func (m *Manager) startManagedBackend(ctx context.Context, unit string, env mtproxyEnv, inst backendInstance, fp string) (int, error) {
 	statsPort, err := FreeLoopbackPort()
 	if err != nil {
 		return 0, err
@@ -356,12 +431,12 @@ func (m *Manager) startManagedBackend(ctx context.Context, unit string, env mtpr
 	_, _ = m.run(ctx, "systemctl", "stop", unit+".service")
 	_, _ = m.run(ctx, "systemctl", "reset-failed", unit+".service")
 	args := []string{
-		"--unit=" + unit, "--description=" + backendDescription(g, statsPort, fp), "--collect",
+		"--unit=" + unit, "--description=" + backendDescription(inst, statsPort, fp), "--collect",
 		"--property=Restart=always", "--property=RestartSec=3s", "--property=LimitNOFILE=1048576",
 		"--property=WorkingDirectory=" + filepath.Dir(m.mtproxy.Binary),
 		"--",
 	}
-	args = append(args, mtproxyArgs(m.mtproxy, env, g, statsPort)...)
+	args = append(args, mtproxyArgs(m.mtproxy, env, inst, statsPort)...)
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 	if out, err := m.run(ctx, "systemd-run", args...); err != nil {
