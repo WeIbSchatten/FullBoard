@@ -61,7 +61,7 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
       onOk: () => update(),
     });
 
-  const backends = status.backends ?? { managed: [], error: '' };
+  const backends = { managed: status.backends?.managed ?? [], error: status.backends?.error ?? '' };
   const backendColumns = [
     {
       title: t('pages.tgWebProxy.profile.backend'),

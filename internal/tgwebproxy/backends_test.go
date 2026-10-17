@@ -2,6 +2,7 @@ package tgwebproxy
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"slices"
@@ -144,5 +145,19 @@ func TestSuspendedDedicatedProfileKeepsSecretButLosesItsBackend(t *testing.T) {
 	after, _ := profileByName(t, m, DedicatedProfileName("a@x"))
 	if after.Secret != before.Secret || !servedBackend(after.Backend) {
 		t.Fatalf("re-enabled profile = %+v, want the old secret %s on a served backend", after, before.Secret)
+	}
+}
+
+// The Overview tab reads backends.managed.length; a null list crashed the page
+// on hosts without systemd (no relay installed yet).
+func TestStatusAlwaysReportsABackendList(t *testing.T) {
+	m, _ := newTestManager(t, &fakeRunner{})
+	m.supported = func() bool { return false }
+	raw, err := json.Marshal(m.Status(context.Background()).Backends)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(raw), `"managed":[]`) {
+		t.Fatalf("backends = %s, want an empty managed list", raw)
 	}
 }

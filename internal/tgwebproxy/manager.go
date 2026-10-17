@@ -75,6 +75,7 @@ func (m *Manager) Status(ctx context.Context) RelayStatus {
 		ProfilesPath: paths.ProfilesFile,
 		ProfilesMode: FileMode(paths.ProfilesFile),
 		Units:        []RelayUnitStatus{},
+		Backends:     RelayBackendsStatus{Managed: []RelayManagedBackend{}},
 	}
 	if _, err := os.Stat(paths.Binary); err == nil {
 		st.BinaryInstalled = true

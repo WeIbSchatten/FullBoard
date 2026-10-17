@@ -62,6 +62,10 @@ func TestPWAHeadInjectionUsesRuntimeBasePath(t *testing.T) {
 			if !strings.Contains(head, `src="`+strings.Replace(test.wantPath, "manifest.webmanifest", "pwa-register.js", 1)+`"`) {
 				t.Fatalf("registration URL = %q", head)
 			}
+			// Without it browsers fall back to /favicon.ico and show no brand mark.
+			if !strings.Contains(head, `rel="icon" type="image/png" href="`+strings.Replace(test.wantPath, "manifest.webmanifest", "icons/fullboard-32.png", 1)+`"`) {
+				t.Fatalf("favicon link missing or not under the base path: %q", head)
+			}
 		})
 	}
 }
