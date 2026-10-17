@@ -1,8 +1,8 @@
 <p align="center">
   <a href="https://weibschatten.github.io/FullBoard">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="public/logo-dark.png" />
-      <img src="public/logo-light.png" alt="FullBoard" width="180" />
+      <source media="(prefers-color-scheme: dark)" srcset="public/logo-dark.svg" />
+      <img src="public/logo-light.svg" alt="FullBoard" width="180" />
     </picture>
   </a>
 </p>
