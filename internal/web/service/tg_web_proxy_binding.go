@@ -71,6 +71,7 @@ type tgBindingRow struct {
 	ProfileName string
 	Dedicated   bool
 	NodeId      *int
+	Enable      bool
 }
 
 func (r tgBindingRow) effectiveProfile() string {
@@ -93,7 +94,7 @@ func (r tgBindingRow) view() TgWebProxyBinding {
 
 func tgBindingRows(db *gorm.DB) *gorm.DB {
 	return db.Table("client_tg_web_proxy AS b").
-		Select("b.client_id AS client_id, c.email AS email, b.profile_name AS profile_name, b.dedicated AS dedicated, b.node_id AS node_id").
+		Select("b.client_id AS client_id, c.email AS email, b.profile_name AS profile_name, b.dedicated AS dedicated, b.node_id AS node_id, c.enable AS enable").
 		Joins("JOIN clients c ON c.id = b.client_id").
 		Order("b.id ASC")
 }
@@ -171,11 +172,7 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 		remoteByNode[*r.NodeId] = append(remoteByNode[*r.NodeId], r)
 	}
 
-	specs, err := s.prepareDedicatedSpecs(localRows, nil)
-	if err != nil {
-		return tgwebproxy.RelayApplyResult{}, err
-	}
-	res, err := tgWebProxy().SyncDedicatedProfiles(ctx, specs)
+	res, err := tgWebProxy().SyncDedicatedProfiles(ctx, dedicatedSpecs(localRows))
 	if err != nil {
 		return res, err
 	}
@@ -187,11 +184,7 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 		}
 	}
 
-	wanted := make(map[string]struct{}, len(rows))
-	for _, r := range rows {
-		wanted[strings.ToLower(r.Email)] = struct{}{}
-	}
-	s.cleanupManagedBackends(wanted)
+	s.removeLegacyManagedBackends()
 
 	if len(remoteErrs) > 0 {
 		return res, errors.New(strings.Join(remoteErrs, "; "))
@@ -200,11 +193,7 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 }
 
 func (s *TgWebProxyService) syncRemoteDedicated(ctx context.Context, nodeID int, rows []tgBindingRow) error {
-	specs, err := s.prepareDedicatedSpecs(rows, &nodeID)
-	if err != nil {
-		return err
-	}
-	_, err = (&NodeService{}).SyncRemoteTgWebProxyDedicated(nodeID, specs)
+	_, err := (&NodeService{}).SyncRemoteTgWebProxyDedicated(nodeID, dedicatedSpecs(rows))
 	return err
 }
 

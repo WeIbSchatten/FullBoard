@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sync"
 )
 
 var errUnsupported = errors.New("tg-web-proxy management requires Linux with systemd")
@@ -18,6 +19,12 @@ type Manager struct {
 	jobs  *jobRunner
 	// supported is swappable so tests can exercise the systemd paths off Linux.
 	supported func() bool
+
+	mtproxy            MTProxyPaths
+	backendsMu         sync.Mutex
+	backendFirewall    string
+	backendFirewallErr string
+	lastBackends       RelayBackendsStatus
 }
 
 func NewManager(paths Paths, run commandRunner) *Manager {
@@ -29,31 +36,33 @@ func NewManager(paths Paths, run commandRunner) *Manager {
 		run:       run,
 		jobs:      &jobRunner{dir: paths.JobDir, sourceDir: paths.SourceDir, run: run},
 		supported: systemdAvailable,
+		mtproxy:   DefaultMTProxyPaths,
 	}
 }
 
 func (m *Manager) Store() *Store { return m.store }
 
 type RelayStatus struct {
-	Supported       bool              `json:"supported" example:"true"`
-	Platform        string            `json:"platform" example:"linux/amd64"`
-	BinaryInstalled bool              `json:"binaryInstalled" example:"true"`
-	BinaryPath      string            `json:"binaryPath" example:"/usr/local/bin/tproxy-server"`
-	ConfigPath      string            `json:"configPath" example:"/etc/tproxy-server/config.json"`
-	ProfilesPath    string            `json:"profilesPath" example:"/etc/tproxy-server/profiles.json"`
-	ConfigExists    bool              `json:"configExists" example:"true"`
-	ProfilesExists  bool              `json:"profilesExists" example:"true"`
-	ProfilesMode    string            `json:"profilesMode" example:"0400"`
-	ProfilesModeOK  bool              `json:"profilesModeOk" example:"true"`
-	ProfileCount    int               `json:"profileCount" example:"1"`
-	Hostname        string            `json:"hostname" example:"proxy.example.com"`
-	BasePath        string            `json:"basePath" example:""`
-	ConfigError     string            `json:"configError" example:""`
-	Units           []RelayUnitStatus `json:"units"`
-	Admin           *RelayAdminProbe  `json:"admin"`
-	Job             RelayJobStatus    `json:"job"`
-	CaddyEncode     CaddyH2WSStatus   `json:"caddyEncode"`
-	UsesWebSocket   bool              `json:"usesWebSocket" example:"false"`
+	Supported       bool                `json:"supported" example:"true"`
+	Platform        string              `json:"platform" example:"linux/amd64"`
+	BinaryInstalled bool                `json:"binaryInstalled" example:"true"`
+	BinaryPath      string              `json:"binaryPath" example:"/usr/local/bin/tproxy-server"`
+	ConfigPath      string              `json:"configPath" example:"/etc/tproxy-server/config.json"`
+	ProfilesPath    string              `json:"profilesPath" example:"/etc/tproxy-server/profiles.json"`
+	ConfigExists    bool                `json:"configExists" example:"true"`
+	ProfilesExists  bool                `json:"profilesExists" example:"true"`
+	ProfilesMode    string              `json:"profilesMode" example:"0400"`
+	ProfilesModeOK  bool                `json:"profilesModeOk" example:"true"`
+	ProfileCount    int                 `json:"profileCount" example:"1"`
+	Hostname        string              `json:"hostname" example:"proxy.example.com"`
+	BasePath        string              `json:"basePath" example:""`
+	ConfigError     string              `json:"configError" example:""`
+	Units           []RelayUnitStatus   `json:"units"`
+	Admin           *RelayAdminProbe    `json:"admin"`
+	Job             RelayJobStatus      `json:"job"`
+	CaddyEncode     CaddyH2WSStatus     `json:"caddyEncode"`
+	UsesWebSocket   bool                `json:"usesWebSocket" example:"false"`
+	Backends        RelayBackendsStatus `json:"backends"`
 }
 
 func (m *Manager) Status(ctx context.Context) RelayStatus {
@@ -89,6 +98,7 @@ func (m *Manager) Status(ctx context.Context) RelayStatus {
 			st.Units = append(st.Units, m.unitStatus(ctx, unit))
 		}
 		st.CaddyEncode = inspectCaddyEncode(caddyfileForEncode)
+		st.Backends = m.LastBackends()
 	}
 	st.Job = m.jobs.status(ctx)
 	return st
@@ -119,12 +129,14 @@ type RelayApplyResult struct {
 	CaddyWarning    string `json:"caddyWarning,omitempty" example:""`
 	CaddyPatched    bool   `json:"caddyPatched,omitempty" example:"false"`
 	CaddyPatchError string `json:"caddyPatchError,omitempty" example:""`
+	BackendError    string `json:"backendError,omitempty" example:""`
 }
 
 // afterCommit restarts a running relay: it reads its config only at start-up.
 func (m *Manager) afterCommit(ctx context.Context) RelayApplyResult {
 	res := RelayApplyResult{}
 	res = m.maybeWarnOrPatchCaddy(ctx, res)
+	res.BackendError = m.ReconcileBackends(ctx).Error
 	if !m.supported() || !m.relayActive(ctx) {
 		return res
 	}

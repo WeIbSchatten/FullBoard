@@ -164,36 +164,6 @@ func TestBindClientRemoteRequiresDedicated(t *testing.T) {
 	}
 }
 
-func TestPrepareDedicatedSpecsSetsNodeIDOnManagedInbound(t *testing.T) {
-	setupBindingTest(t)
-	rec := createBindingClient(t, "remote@wp", "sub-r", true)
-	n := &model.Node{
-		Name: "eu", Scheme: "https", Address: "eu.example.com", Port: 2053,
-		BasePath: "/", Enable: true, AllowPrivateAddress: true, PanelVersion: "v3.9.0",
-	}
-	if err := database.GetDB().Create(n).Error; err != nil {
-		t.Fatalf("seed node: %v", err)
-	}
-	nodeID := n.Id
-	rows := []tgBindingRow{{
-		ClientId: rec.Id, Email: rec.Email, ProfileName: "default", Dedicated: true, NodeId: &nodeID,
-	}}
-	specs, err := (&TgWebProxyService{}).prepareDedicatedSpecs(rows, &nodeID)
-	if err != nil {
-		t.Fatalf("prepare: %v", err)
-	}
-	if len(specs) != 1 || specs[0].Backend == "" {
-		t.Fatalf("specs = %+v", specs)
-	}
-	var ib model.Inbound
-	if err := database.GetDB().Where("remark = ?", tgWebProxyManagedRemark(rec.Email)).First(&ib).Error; err != nil {
-		t.Fatalf("inbound: %v", err)
-	}
-	if ib.NodeID == nil || *ib.NodeID != nodeID {
-		t.Fatalf("inbound NodeID = %v, want %d", ib.NodeID, nodeID)
-	}
-}
-
 func TestBindClientReplacesExistingBinding(t *testing.T) {
 	setupBindingTest(t)
 	createBindingClient(t, "alice", "sub-a", true)
@@ -430,14 +400,6 @@ func TestRemoteDedicatedSyncAndSubscriptionShareHost(t *testing.T) {
 		t.Fatalf("syncDedicated calls = %d, want 1", nSync)
 	}
 
-	var ib model.Inbound
-	if err := database.GetDB().Where("remark = ?", tgWebProxyManagedRemark("eu-client")).First(&ib).Error; err != nil {
-		t.Fatalf("managed inbound: %v", err)
-	}
-	if ib.NodeID == nil || *ib.NodeID != nodeID {
-		t.Fatalf("inbound NodeID = %v, want %d", ib.NodeID, nodeID)
-	}
-
 	links, err = svc.ClientLinksBySubId("sub-eu")
 	if err != nil {
 		t.Fatalf("links after sync: %v", err)
@@ -490,7 +452,7 @@ func TestLocalDedicatedBindingUnaffectedByRemotePath(t *testing.T) {
 }
 
 func TestDisabledClientLosesItsDedicatedSecretOnTheBackend(t *testing.T) {
-	_ = setupBindingTest(t)
+	m := setupBindingTest(t)
 	rec := createBindingClient(t, "carol", "sub-c", true)
 	svc := &TgWebProxyService{}
 	if _, err := svc.BindClient(TgWebProxyBindRequest{Email: "carol", ProfileName: "default", Dedicated: true}); err != nil {
@@ -499,27 +461,15 @@ func TestDisabledClientLosesItsDedicatedSecretOnTheBackend(t *testing.T) {
 	if _, err := svc.SyncBindings(context.Background()); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
+	before, _ := relayProfile(t, m, tgwebproxy.DedicatedProfileName("carol"))
 	if err := database.GetDB().Model(&rec).Update("enable", false).Error; err != nil {
 		t.Fatal(err)
 	}
 	if _, err := svc.SyncBindings(context.Background()); err != nil {
 		t.Fatalf("sync after disable: %v", err)
 	}
-
-	var ib model.Inbound
-	if err := database.GetDB().Where("remark = ?", tgWebProxyManagedRemark("carol")).First(&ib).Error; err != nil {
-		t.Fatalf("managed MTProto inbound: %v", err)
-	}
-	var settings struct {
-		Clients []struct {
-			Email  string `json:"email"`
-			Enable bool   `json:"enable"`
-		} `json:"clients"`
-	}
-	if err := json.Unmarshal([]byte(ib.Settings), &settings); err != nil {
-		t.Fatal(err)
-	}
-	if len(settings.Clients) != 1 || settings.Clients[0].Enable {
-		t.Fatalf("disabled client still enabled on its MTProto backend: %s", ib.Settings)
+	after, ok := relayProfile(t, m, tgwebproxy.DedicatedProfileName("carol"))
+	if !ok || after.Backend != tgwebproxy.SuspendedBackend || after.Secret != before.Secret {
+		t.Fatalf("disabled client's profile = %+v (was %+v), want its secret parked on %s", after, before, tgwebproxy.SuspendedBackend)
 	}
 }

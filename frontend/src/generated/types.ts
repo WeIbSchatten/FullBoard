@@ -592,6 +592,7 @@ export interface DedicatedSpec {
   base: string;
   email: string;
   secret?: string;
+  suspended?: boolean;
 }
 
 export interface EnrollConsumeResponse {
@@ -1064,11 +1065,17 @@ export interface RelayAdminProbe {
 }
 
 export interface RelayApplyResult {
+  backendError?: string;
   caddyPatchError?: string;
   caddyPatched?: boolean;
   caddyWarning?: string;
   restartError: string;
   restarted: boolean;
+}
+
+export interface RelayBackendsStatus {
+  error?: string;
+  managed: RelayManagedBackend[];
 }
 
 export interface RelayConfig {
@@ -1131,6 +1138,14 @@ export interface RelayLimits {
   new_streams_per_minute: number;
 }
 
+export interface RelayManagedBackend {
+  active: boolean;
+  backend: string;
+  external: boolean;
+  profiles: string[];
+  unit: string;
+}
+
 export interface RelayProfile {
   backend: string;
   carrier_mode?: string;
@@ -1170,6 +1185,7 @@ export interface RelaySnapshot {
 
 export interface RelayStatus {
   admin?: RelayAdminProbe | null;
+  backends: RelayBackendsStatus;
   basePath: string;
   binaryInstalled: boolean;
   binaryPath: string;

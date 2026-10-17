@@ -80,16 +80,20 @@ func TestSyncDedicatedCreatesOwnSecretAndKeepsItAcrossSyncs(t *testing.T) {
 	if _, err := DecodeSecret(a.Secret); err != nil {
 		t.Fatalf("generated secret invalid: %v", err)
 	}
-	if a.Backend != base.Backend || a.CarrierMode != "websocket" || a.Limits == nil || a.Limits.MaxSessions != 8 {
+	if a.CarrierMode != "websocket" || a.Limits == nil || a.Limits.MaxSessions != 8 {
 		t.Fatalf("dedicated profile did not inherit base settings: %+v", a)
+	}
+	// The stock MTProxy behind the base only knows the base secret.
+	if a.Backend == base.Backend || backendPort(a.Backend) == 0 || a.Backend != b.Backend {
+		t.Fatalf("dedicated backends a=%s b=%s, want one shared managed port other than the base %s", a.Backend, b.Backend, base.Backend)
 	}
 
 	if _, err := m.SyncDedicatedProfiles(context.Background(), specs); err != nil {
 		t.Fatalf("second sync: %v", err)
 	}
 	again, _ := profileByName(t, m, DedicatedProfileName("a@x"))
-	if again.Secret != a.Secret {
-		t.Fatalf("secret rotated by an idempotent sync: %s -> %s", a.Secret, again.Secret)
+	if again.Secret != a.Secret || again.Backend != a.Backend {
+		t.Fatalf("idempotent sync moved the profile: %+v -> %+v", a, again)
 	}
 }
 

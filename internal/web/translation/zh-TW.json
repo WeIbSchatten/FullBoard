@@ -2578,8 +2578,8 @@
         "edit": "Edit profile",
         "name": "Name",
         "backend": "MTProxy backend",
-        "backendHint": "Numeric loopback host:port of an official MTProxy listener.",
-        "backendWarning": "Every profile backend needs its own MTProxy listener on that port, and the port must be covered by the tproxy-firewall rules.",
+        "backendHint": "數字回環 host:port。127.0.0.1:2398 是安裝程式的 MTProxy；其他任何連接埠由面板以此設定檔的密鑰啟動官方 MTProxy。",
+        "backendWarning": "每個獨佔連接埠的設定檔都會取得由面板執行、帶其密鑰的 MTProxy；共用連接埠的設定檔共用一個 MTProxy（最多 16 個密鑰）。",
         "carrierMode": "Carrier mode",
         "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait. Prefer websocket over websocket-lanes on macOS Desktop. Carrier mode is server-side only — share links stay server+secret.",
         "limits": "Per-profile limits",
@@ -2611,7 +2611,7 @@
         "client": "Client",
         "profile": "Profile",
         "dedicated": "Dedicated secret",
-        "dedicatedHint": "Gives the client its own profile and a unique secret, and auto-creates a loopback MTProto inbound for that secret. The link appears a few seconds after saving.",
+        "dedicatedHint": "為用戶端提供獨立設定檔與唯一密鑰，由面板執行的 MTProxy 提供服務。儲存幾秒後顯示連結。",
         "effective": "Effective profile",
         "empty": "No clients are bound yet.",
         "unbind": "Unbind",
@@ -2622,7 +2622,7 @@
         "bind": "Bind",
         "selectNode": "Relay host",
         "local": "This panel (local)",
-        "remoteHint": "Remote bindings use Dedicated only: the managed MTProto inbound and fb: profile are created on the selected node.",
+        "remoteHint": "遠端綁定僅支援 Dedicated：fb: 設定檔及其 MTProxy 會在所選節點上建立。",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
         "notConfigured": "Configure the Telegram WEB Proxy relay first.",
@@ -2685,7 +2685,13 @@
         "warningLocal": "Local MTProxy backends are not sent through a remote outbound. Telegram leaves from this server IP, same as WEB Panel Proxy.",
         "doneLocalDirect": "Profile backend kept on the local MTProxy (direct). No Xray tunnel was created."
       },
-      "servicePanel": "Service"
+      "servicePanel": "Service",
+      "backends": {
+        "title": "MTProxy 後端",
+        "running": "執行中",
+        "external": "其他程序",
+        "stopped": "未執行"
+      }
     }
   },
   "tgbot": {
