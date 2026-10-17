@@ -1,6 +1,7 @@
 package tgwebproxy
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 )
 
 // DefaultCaddyfile is the stock path written by the upstream tproxy-server installer.
@@ -133,7 +135,7 @@ func inspectCaddyEncode(path string) CaddyH2WSStatus {
 // ApplyCaddyEncodeH2WSPatch writes the patched Caddyfile as root:caddy 0640.
 // The panel's UMask=0077 would otherwise leave 0600 root:root and the caddy
 // service user cannot open it (permission denied → crash loop).
-func ApplyCaddyEncodeH2WSPatch(path string) (changed bool, err error) {
+func ApplyCaddyEncodeH2WSPatch(path string, validate func(string) error) (changed bool, err error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
 		return false, wrapCaddyWriteError(err)
@@ -158,7 +160,7 @@ func ApplyCaddyEncodeH2WSPatch(path string) (changed bool, err error) {
 		_ = os.Remove(tmp)
 		return false, wrapCaddyWriteError(err)
 	}
-	if err := ValidateCaddyfile(tmp); err != nil {
+	if err := validate(tmp); err != nil {
 		_ = os.Remove(tmp)
 		return false, err
 	}
@@ -189,21 +191,75 @@ func hardenCaddyfilePerms(path string) error {
 	return os.Chown(path, 0, gid)
 }
 
-// ValidateCaddyfile runs `caddy validate` when the binary is on PATH.
-func ValidateCaddyfile(path string) error {
+// lookCaddyBinary finds caddy for validation; tests swap it for a fake.
+var lookCaddyBinary = func() string {
 	bin, err := exec.LookPath("caddy")
+	if err != nil {
+		return ""
+	}
+	return bin
+}
+
+// validateCaddyfile runs `caddy validate` with caddy.service's Environment=:
+// the stock Caddyfile reads {$ACME_EMAIL} and {$TPROXY_HOSTNAME} from it.
+func (m *Manager) validateCaddyfile(ctx context.Context, path string) error {
+	bin := lookCaddyBinary()
+	if bin == "" {
+		return nil
+	}
+	args := m.caddyUnitEnvironment(ctx)
+	args = append(args, bin, "validate", "--adapter", "caddyfile", "--config", path)
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	out, err := m.run(ctx, "env", args...)
+	if err != nil {
+		return fmt.Errorf("caddy validate: %s", firstNonEmpty(strings.TrimSpace(string(out)), err.Error()))
+	}
+	return nil
+}
+
+func (m *Manager) caddyUnitEnvironment(ctx context.Context) []string {
+	if !m.supported() {
+		return nil
+	}
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	out, err := m.run(ctx, "systemctl", "show", "caddy.service", "-p", "Environment", "--value")
 	if err != nil {
 		return nil
 	}
-	out, err := exec.Command(bin, "validate", "--config", path).CombinedOutput()
-	if err != nil {
-		msg := strings.TrimSpace(string(out))
-		if msg == "" {
-			msg = err.Error()
+	return splitSystemdEnvironment(strings.TrimSpace(string(out)))
+}
+
+// splitSystemdEnvironment splits `systemctl show -p Environment` output, which
+// double-quotes an assignment containing spaces.
+func splitSystemdEnvironment(value string) []string {
+	var out []string
+	var cur strings.Builder
+	inQuote, escaped := false, false
+	flush := func() {
+		if kv := cur.String(); strings.Contains(kv, "=") {
+			out = append(out, kv)
 		}
-		return fmt.Errorf("caddy validate: %s", msg)
+		cur.Reset()
 	}
-	return nil
+	for _, r := range value {
+		switch {
+		case escaped:
+			cur.WriteRune(r)
+			escaped = false
+		case r == '\\':
+			escaped = true
+		case r == '"':
+			inQuote = !inQuote
+		case (r == ' ' || r == '\n') && !inQuote:
+			flush()
+		default:
+			cur.WriteRune(r)
+		}
+	}
+	flush()
+	return out
 }
 
 func wrapCaddyWriteError(err error) error {

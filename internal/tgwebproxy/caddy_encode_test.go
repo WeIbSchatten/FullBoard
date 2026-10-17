@@ -93,7 +93,7 @@ func TestApplyCaddyEncodeH2WSPatchRoundTrip(t *testing.T) {
 	if err := os.WriteFile(path, []byte("host {\n\tencode gzip\n}\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	changed, err := ApplyCaddyEncodeH2WSPatch(path)
+	changed, err := ApplyCaddyEncodeH2WSPatch(path, func(string) error { return nil })
 	if err != nil || !changed {
 		t.Fatalf("apply: changed=%v err=%v", changed, err)
 	}
@@ -116,7 +116,7 @@ func TestApplyCaddyEncodeH2WSPatchRoundTrip(t *testing.T) {
 			t.Fatalf("mode = %o, want 0640 (panel UMask must not leave Caddyfile private to root)", st.Mode().Perm())
 		}
 	}
-	changed, err = ApplyCaddyEncodeH2WSPatch(path)
+	changed, err = ApplyCaddyEncodeH2WSPatch(path, func(string) error { return nil })
 	if err != nil || changed {
 		t.Fatalf("second apply: changed=%v err=%v", changed, err)
 	}
