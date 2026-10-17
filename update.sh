@@ -381,9 +381,13 @@ _xui_service_write_paths_dropin() {
         bin_folder="${main_folder%/}/${bin_folder#./}"
     fi
 
-    # /etc/tproxy-server is the Telegram WEB proxy store the panel writes under
-    # ProtectSystem=full; keep it next to the XUI_* folders in every drop-in.
-    for path in "$db_folder" "$log_folder" "$bin_folder" "$main_folder" "/etc/tproxy-server"; do
+    # /etc/tproxy-server and /etc/caddy are the Telegram WEB proxy stores the
+    # panel writes under ProtectSystem=full. systemd silently drops a '-' entry
+    # whose folder is missing when the panel starts, and a relay installed later
+    # from the panel then hits "read-only file system", so create them up front;
+    # the relay installer re-owns them (root:tproxy / root:caddy) later.
+    mkdir -p /etc/tproxy-server /etc/caddy > /dev/null 2>&1 || true
+    for path in "$db_folder" "$log_folder" "$bin_folder" "$main_folder" "/etc/tproxy-server" "/etc/caddy"; do
         [[ "$path" == /* ]] || continue
         # ReadWritePaths= is a whitespace-separated list, and a folder whose
         # name contains whitespace cannot be written into it without relying on

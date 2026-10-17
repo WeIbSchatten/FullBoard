@@ -18,14 +18,19 @@ const DedicatedPrefix = "fb:"
 const maxProfileNameLength = 64
 
 // DedicatedSpec asks for one per-client profile cloned from Base (carrier mode
-// and limits). Secret/Backend override the generated secret and base backend
-// when the panel has already provisioned a matching MTProto listener.
+// and limits); Secret/Backend pin values, otherwise they are kept or generated.
 type DedicatedSpec struct {
 	Email   string `json:"email" example:"alice"`
 	Base    string `json:"base" example:"default"`
 	Secret  string `json:"secret,omitempty" example:"aabbccddeeff00112233445566778899"`
 	Backend string `json:"backend,omitempty" example:"127.0.0.1:31234"`
+	// Suspended keeps the profile (and so the client's link) but parks it on
+	// SuspendedBackend, which no MTProxy serves, while the client is disabled.
+	Suspended bool `json:"suspended,omitempty" example:"false"`
 }
+
+// SuspendedBackend is a loopback port the panel never listens on.
+const SuspendedBackend = "127.0.0.1:1"
 
 // DedicatedProfileName is deterministic so a binding finds its profile again
 // without a stored name; an email too long for the relay's name rule is hashed.
@@ -61,19 +66,29 @@ func syncDedicated(list []RelayProfile, specs []DedicatedSpec) ([]RelayProfile, 
 		byName[p.Name] = p
 	}
 	wanted := make(map[string]struct{}, len(specs))
+	for _, spec := range specs {
+		wanted[DedicatedProfileName(spec.Email)] = struct{}{}
+	}
+	pool := newDedicatedPool(list, wanted)
 	derived := make(map[string]RelayProfile, len(specs))
 	var missing []DedicatedSpec
 	for _, spec := range specs {
 		name := DedicatedProfileName(spec.Email)
-		wanted[name] = struct{}{}
 		base, ok := byName[spec.Base]
 		if !ok || IsManagedProfileName(spec.Base) {
 			missing = append(missing, spec)
 			continue
 		}
-		next := RelayProfile{Name: name, Backend: base.Backend, CarrierMode: base.CarrierMode}
-		if spec.Backend != "" {
-			next.Backend = spec.Backend
+		next := RelayProfile{Name: name, Backend: spec.Backend, CarrierMode: base.CarrierMode}
+		if spec.Suspended {
+			next.Backend = SuspendedBackend
+		}
+		if next.Backend == "" {
+			backend, err := pool.backendFor(byName[name])
+			if err != nil {
+				return nil, false, nil, err
+			}
+			next.Backend = backend
 		}
 		if base.Limits != nil {
 			limits := *base.Limits
@@ -167,4 +182,58 @@ func (m *Manager) SyncDedicatedProfiles(ctx context.Context, specs []DedicatedSp
 		return res, fmt.Errorf("dedicated profiles not created for: %s", strings.Join(parts, ", "))
 	}
 	return res, nil
+}
+
+// dedicatedPool packs dedicated profiles onto panel-run MTProxy ports, at most
+// maxSecretsPerMTProxy per port, keeping a profile on the port it already has.
+type dedicatedPool struct {
+	load     map[string]int
+	reserved map[string]bool
+	order    []string
+}
+
+func newDedicatedPool(list []RelayProfile, wanted map[string]struct{}) *dedicatedPool {
+	pool := &dedicatedPool{load: map[string]int{}, reserved: map[string]bool{}}
+	for _, p := range list {
+		pool.reserved[p.Backend] = true
+		if _, keep := wanted[p.Name]; !keep || !IsManagedProfileName(p.Name) || !pool.reusable(p.Backend) {
+			continue
+		}
+		if _, seen := pool.load[p.Backend]; !seen {
+			pool.order = append(pool.order, p.Backend)
+		}
+		pool.load[p.Backend]++
+	}
+	return pool
+}
+
+func (pool *dedicatedPool) reusable(backend string) bool {
+	return servedBackend(backend)
+}
+
+func (pool *dedicatedPool) backendFor(existing RelayProfile) (string, error) {
+	if IsManagedProfileName(existing.Name) && pool.reusable(existing.Backend) && pool.load[existing.Backend] > 0 {
+		return existing.Backend, nil
+	}
+	for _, backend := range pool.order {
+		if pool.load[backend] < maxSecretsPerMTProxy {
+			pool.load[backend]++
+			return backend, nil
+		}
+	}
+	for range 8 {
+		port, err := FreeLoopbackPort()
+		if err != nil {
+			return "", err
+		}
+		backend := loopbackAddr(port)
+		if pool.reserved[backend] || port == StockBackendPort {
+			continue
+		}
+		pool.reserved[backend] = true
+		pool.order = append(pool.order, backend)
+		pool.load[backend] = 1
+		return backend, nil
+	}
+	return "", errors.New("no free loopback port for a dedicated MTProxy backend")
 }

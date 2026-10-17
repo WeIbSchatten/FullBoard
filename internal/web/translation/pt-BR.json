@@ -2578,8 +2578,8 @@
         "edit": "Edit profile",
         "name": "Name",
         "backend": "MTProxy backend",
-        "backendHint": "Numeric loopback host:port of an official MTProxy listener.",
-        "backendWarning": "Every profile backend needs its own MTProxy listener on that port, and the port must be covered by the tproxy-firewall rules.",
+        "backendHint": "host:porta de loopback numérico. 127.0.0.1:2398 é o MTProxy do instalador; para qualquer outra porta o painel inicia um MTProxy oficial com o segredo deste perfil.",
+        "backendWarning": "Cada perfil em sua própria porta recebe um MTProxy gerenciado pelo painel com seu segredo; perfis na mesma porta compartilham um MTProxy (até 16 segredos).",
         "carrierMode": "Carrier mode",
         "carrierHint": "https is the conservative default; websocket avoids HTTP stop-and-wait. Prefer websocket over websocket-lanes on macOS Desktop. Carrier mode is server-side only — share links stay server+secret.",
         "limits": "Per-profile limits",
@@ -2611,7 +2611,7 @@
         "client": "Client",
         "profile": "Profile",
         "dedicated": "Dedicated secret",
-        "dedicatedHint": "Gives the client its own profile and a unique secret, and auto-creates a loopback MTProto inbound for that secret. The link appears a few seconds after saving.",
+        "dedicatedHint": "Dá ao cliente seu próprio perfil e um segredo exclusivo, atendido por um MTProxy gerenciado pelo painel. O link aparece alguns segundos após salvar.",
         "effective": "Effective profile",
         "empty": "No clients are bound yet.",
         "unbind": "Unbind",
@@ -2622,7 +2622,7 @@
         "bind": "Bind",
         "selectNode": "Relay host",
         "local": "This panel (local)",
-        "remoteHint": "Remote bindings use Dedicated only: the managed MTProto inbound and fb: profile are created on the selected node.",
+        "remoteHint": "Vínculos remotos usam apenas Dedicado: o perfil fb: e seu MTProxy são criados no nó selecionado.",
         "selectProfile": "Select a profile",
         "saveFirst": "Save the client first; a binding needs an existing client.",
         "notConfigured": "Configure the Telegram WEB Proxy relay first.",
@@ -2685,7 +2685,13 @@
         "warningLocal": "Local MTProxy backends are not sent through a remote outbound. Telegram leaves from this server IP, same as WEB Panel Proxy.",
         "doneLocalDirect": "Profile backend kept on the local MTProxy (direct). No Xray tunnel was created."
       },
-      "servicePanel": "Service"
+      "servicePanel": "Service",
+      "backends": {
+        "title": "Backends MTProxy",
+        "running": "Em execução",
+        "external": "Outro processo",
+        "stopped": "Parado"
+      }
     }
   },
   "tgbot": {

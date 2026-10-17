@@ -88,9 +88,12 @@ Each profile is one entry in `profiles.json`:
 - **Limits** (optional): per-profile caps, which can't exceed the global limits.
 
 <Callout type="info">
-  The relay only forwards traffic. Each backend must be a running MTProxy that
-  accepts the same secret, and the firewall must keep its port closed to the
-  outside.
+  The relay only forwards opaque obfuscated2 traffic, so each backend must be an
+  official MTProxy that knows the profile's secret (mtg cannot serve it: it only
+  takes FakeTLS secrets). `127.0.0.1:2398` is the installer's `mtproxy.service`.
+  For every other backend port FullBoard runs an official MTProxy itself
+  (transient `fullboard-mtproxy-<port>` units, up to 16 secrets per port) and
+  firewalls the port to loopback. Their state is on the Overview tab.
 </Callout>
 
 ### WebSocket carrier and stock Caddy
@@ -98,14 +101,11 @@ Each profile is one entry in `profiles.json`:
 Stock Caddy installs often enable `encode`. That stalls the bridge's
 `GET /api/v1/ws` (classic Upgrade) and HTTP/2 `CONNECT` upgrades (see
 [caddyserver/caddy#6733](https://github.com/caddyserver/caddy/issues/6733));
-HTTPS long-poll still works. FullBoard patches `/etc/caddy/Caddyfile` to
-**disable `encode`** on the site block:
-
-- via **Fix Caddy for WebSocket** on the Overview tab (and when a prior
-  partial h2-only gate is still active).
-
-The patch is idempotent. Re-run it after an upstream install/update that
-rewrites the Caddyfile.
+HTTPS long-poll still works. As soon as a profile uses a websocket carrier,
+FullBoard patches `/etc/caddy/Caddyfile` to **disable `encode`** on the site
+block, validating it with `caddy validate` under `caddy.service`'s environment
+first. **Fix Caddy for WebSocket** on the Overview tab re-applies it, e.g. after
+an upstream update rewrote the Caddyfile.
 
 ## Share links
 
@@ -124,12 +124,11 @@ the **Telegram WEB Proxy** tab and pick a profile, or review bindings under
 link.
 
 - **Shared binding.** The client advertises the chosen profile's own secret.
-  Everyone bound to that profile shares one secret; the profile's existing
-  MTProxy backend must already accept that secret.
+  Everyone bound to that profile shares one secret.
 - **Dedicated secret.** FullBoard creates a profile named `fb:<email>`, cloned
-  from the chosen one (carrier mode, limits) with a fresh random secret, and
-  automatically provisions a loopback MTProto inbound (`fb-tgwp:<email>`) that
-  accepts it — no hand-built inbound per secret. The profile is written to
+  from the chosen one (carrier mode, limits) with a fresh random secret on a
+  panel-run MTProxy port. A disabled client keeps its profile (and link) but is
+  parked on a port nothing serves until it is enabled again. The profile is written to
   `profiles.json` by a background sync a few seconds after you save. The link
   appears once the sync finishes.
 - Disabled clients and clients without a matching relay profile get no link.
@@ -137,9 +136,8 @@ link.
   profiles are managed by FullBoard: edit them by unbinding the client.
 - Deleting a client drops its binding and its `fb:` profile.
 
-Shared bindings still require the chosen profile's backend to accept that
-shared secret. Dedicated bindings own their backends: unbinding deletes the
-`fb-tgwp:` inbound.
+Older releases created `fb-tgwp:<email>` mtg inbounds for dedicated secrets; they
+never worked with the relay and are removed by the next sync.
 
 ## Route backend via outbound
 

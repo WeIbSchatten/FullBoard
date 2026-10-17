@@ -39,8 +39,8 @@ type EnrollConsumeResponse struct {
 }
 
 type EnrollFromInviteRequest struct {
-	Invite string `json:"invite" validate:"required" example:"fb-enroll-1.…"`
-	Name   string `json:"name,omitempty" example:"eu-relay"`
+	Invite string `json:"invite" form:"invite" validate:"required" example:"fb-enroll-1.…"`
+	Name   string `json:"name,omitempty" form:"name" example:"eu-relay"`
 }
 
 // IssueEnrollInvite builds a pasteable invite blob for a master to enroll this panel.

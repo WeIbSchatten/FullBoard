@@ -300,6 +300,7 @@ const (
 	cadenceMtproto       = "@every 10s"
 	cadenceAmneziaWG     = "@every 10s"
 	cadenceTuic          = "@every 10s"
+	cadenceTgWebProxy    = "@every 1m"
 	cadenceClientIPScan  = "@every 10s"
 	cadenceNodeHeartbeat = "@every 5s"
 	cadenceNodeTraffic   = "@every 5s"
@@ -345,6 +346,11 @@ func (s *Server) startTask(restartXray bool, loc *time.Location) {
 	awgJob := job.NewAmneziaWGJob()
 	_, _ = s.cron.AddJob(cadenceAmneziaWG, awgJob)
 	go awgJob.Run()
+
+	// Panel-run MTProxy backends are transient units: re-create them after a reboot
+	tgJob := job.NewTgWebProxyBackendsJob()
+	_, _ = s.cron.AddJob(cadenceTgWebProxy, tgJob)
+	go tgJob.Run()
 
 	tuicJob := job.NewTuicJob()
 	_, _ = s.cron.AddJob(cadenceTuic, tuicJob)
