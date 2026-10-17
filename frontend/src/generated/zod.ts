@@ -626,6 +626,7 @@ export const DedicatedSpecSchema = z.object({
   base: z.string(),
   email: z.string(),
   secret: z.string().optional(),
+  suspended: z.boolean().optional(),
 });
 export type DedicatedSpec = z.infer<typeof DedicatedSpecSchema>;
 
@@ -1137,6 +1138,7 @@ export const RelayAdminProbeSchema = z.object({
 export type RelayAdminProbe = z.infer<typeof RelayAdminProbeSchema>;
 
 export const RelayApplyResultSchema = z.object({
+  backendError: z.string().optional(),
   caddyPatchError: z.string().optional(),
   caddyPatched: z.boolean().optional(),
   caddyWarning: z.string().optional(),
@@ -1144,6 +1146,12 @@ export const RelayApplyResultSchema = z.object({
   restarted: z.boolean(),
 });
 export type RelayApplyResult = z.infer<typeof RelayApplyResultSchema>;
+
+export const RelayBackendsStatusSchema = z.object({
+  error: z.string().optional(),
+  managed: z.array(z.lazy(() => RelayManagedBackendSchema)),
+});
+export type RelayBackendsStatus = z.infer<typeof RelayBackendsStatusSchema>;
 
 export const RelayConfigSchema = z.object({
   admin_listen: z.string(),
@@ -1209,6 +1217,15 @@ export const RelayLimitsSchema = z.object({
 });
 export type RelayLimits = z.infer<typeof RelayLimitsSchema>;
 
+export const RelayManagedBackendSchema = z.object({
+  active: z.boolean(),
+  backend: z.string(),
+  external: z.boolean(),
+  profiles: z.array(z.string()),
+  unit: z.string(),
+});
+export type RelayManagedBackend = z.infer<typeof RelayManagedBackendSchema>;
+
 export const RelayProfileSchema = z.object({
   backend: z.string(),
   carrier_mode: z.string().optional(),
@@ -1252,6 +1269,7 @@ export type RelaySnapshot = z.infer<typeof RelaySnapshotSchema>;
 
 export const RelayStatusSchema = z.object({
   admin: z.lazy(() => RelayAdminProbeSchema).nullable().optional(),
+  backends: z.lazy(() => RelayBackendsStatusSchema),
   basePath: z.string(),
   binaryInstalled: z.boolean(),
   binaryPath: z.string(),

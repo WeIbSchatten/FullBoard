@@ -24,7 +24,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-import type { RelayStatus, RelayUnitStatus } from '@/generated/types';
+import type { RelayManagedBackend, RelayStatus, RelayUnitStatus } from '@/generated/types';
 import { useTgWebProxyMutations } from '@/api/queries/useTgWebProxy';
 import InstallModal from './InstallModal';
 import type { ModalApi } from './types';
@@ -60,6 +60,39 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
       cancelText: t('cancel'),
       onOk: () => update(),
     });
+
+  const backends = status.backends ?? { managed: [], error: '' };
+  const backendColumns = [
+    {
+      title: t('pages.tgWebProxy.profile.backend'),
+      dataIndex: 'backend',
+      key: 'backend',
+      render: (v: string) => <Typography.Text code>{v}</Typography.Text>,
+    },
+    {
+      title: t('pages.tgWebProxy.tabs.profiles'),
+      key: 'profiles',
+      render: (_: unknown, b: RelayManagedBackend) => (
+        <Space size={[4, 4]} wrap>
+          {(b.profiles ?? []).map((name) => (
+            <Tag key={name}>{name}</Tag>
+          ))}
+        </Space>
+      ),
+    },
+    {
+      title: t('status'),
+      key: 'state',
+      render: (_: unknown, b: RelayManagedBackend) =>
+        b.external ? (
+          <Badge status="default" text={t('pages.tgWebProxy.backends.external')} />
+        ) : b.active ? (
+          <Badge status="success" text={t('pages.tgWebProxy.backends.running')} />
+        ) : (
+          <Badge status="error" text={t('pages.tgWebProxy.backends.stopped')} />
+        ),
+    },
+  ];
 
   const unitColumns = [
     {
@@ -146,7 +179,9 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
           <Alert
             type="error"
             showIcon
-            title={t('pages.tgWebProxy.profilesModeBad', { mode: status.profilesMode })}
+            title={t('pages.tgWebProxy.profilesModeBad', {
+              mode: status.profilesMode,
+            })}
           />
         </Col>
       )}
@@ -306,6 +341,28 @@ export default function OverviewTab({ status, modal }: { status: RelayStatus; mo
                       </Row>
                     </Card>
                   </Col>
+                  {(backends.managed.length > 0 || backends.error) && (
+                    <Col span={24}>
+                      <Card size="small" title={t('pages.tgWebProxy.backends.title')}>
+                        {backends.error && (
+                          <Alert
+                            type="error"
+                            showIcon
+                            style={{ marginBottom: 8 }}
+                            title={backends.error}
+                          />
+                        )}
+                        <Table
+                          rowKey="backend"
+                          size="small"
+                          pagination={false}
+                          dataSource={backends.managed}
+                          columns={backendColumns}
+                          scroll={{ x: true }}
+                        />
+                      </Card>
+                    </Col>
+                  )}
                   {job.state !== 'idle' && (
                     <Col span={24}>
                       <Card

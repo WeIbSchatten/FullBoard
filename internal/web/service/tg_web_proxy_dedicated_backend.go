@@ -1,10 +1,6 @@
 package service
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"net"
 	"strings"
 
 	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
@@ -13,157 +9,21 @@ import (
 	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
 )
 
-// Managed dedicated backends are loopback MTProto inbounds owned by a binding.
-// Remark is the stable key; no fakeTlsDomain so HealMtprotoClientSecrets leaves
-// the plain 32-hex secret alone (tg-web-proxy profiles cannot carry FakeTLS).
+// Legacy dedicated backends were mtg inbounds remarked fb-tgwp:<email>; mtg only
+// takes FakeTLS secrets, so they never served the relay. Syncs now remove them.
 const tgWebProxyManagedRemarkPrefix = "fb-tgwp:"
 
-func tgWebProxyManagedRemark(email string) string {
-	return tgWebProxyManagedRemarkPrefix + strings.ToLower(strings.TrimSpace(email))
-}
-
-func allocateLoopbackPort() (int, error) {
-	ln, err := (&net.ListenConfig{}).Listen(context.Background(), "tcp", "127.0.0.1:0")
-	if err != nil {
-		return 0, err
-	}
-	port := ln.Addr().(*net.TCPAddr).Port
-	_ = ln.Close()
-	return port, nil
-}
-
-func loopbackBackend(port int) string {
-	return fmt.Sprintf("127.0.0.1:%d", port)
-}
-
-// prepareDedicatedSpecs provisions a loopback MTProto listener per dedicated
-// binding so each profile secret has a matching backend without a hand-built inbound.
-// nodeID nil = local relay; set = inbound lives on that node and SyncDedicated runs there.
-func (s *TgWebProxyService) prepareDedicatedSpecs(rows []tgBindingRow, nodeID *int) ([]tgwebproxy.DedicatedSpec, error) {
-	if len(rows) == 0 {
-		return nil, nil
-	}
-
-	var byName map[string]tgwebproxy.RelayProfile
-	if nodeID == nil {
-		snap, err := tgWebProxy().Store().Load()
-		if err != nil {
-			return nil, err
-		}
-		byName = make(map[string]tgwebproxy.RelayProfile, len(snap.Profiles))
-		for _, p := range snap.Profiles {
-			byName[p.Name] = p
-		}
-	}
-
-	inboundSvc := &InboundService{}
+// dedicatedSpecs maps bindings to relay specs; the relay host allocates the
+// MTProxy backend and keeps disabled clients parked instead of dropping them.
+func dedicatedSpecs(rows []tgBindingRow) []tgwebproxy.DedicatedSpec {
 	specs := make([]tgwebproxy.DedicatedSpec, 0, len(rows))
 	for _, r := range rows {
-		name := r.effectiveProfile()
-		secret := ""
-		if byName != nil {
-			if p, ok := byName[name]; ok {
-				secret = p.Secret
-			}
-		}
-		if secret == "" {
-			var err error
-			secret, err = tgwebproxy.NewProfileSecret()
-			if err != nil {
-				return nil, err
-			}
-		}
-		backend, err := ensureTgWebProxyManagedBackend(inboundSvc, r.Email, secret, nodeID)
-		if err != nil {
-			return nil, fmt.Errorf("dedicated backend for %s: %w", r.Email, err)
-		}
-		specs = append(specs, tgwebproxy.DedicatedSpec{
-			Email:   r.Email,
-			Base:    r.ProfileName,
-			Secret:  secret,
-			Backend: backend,
-		})
+		specs = append(specs, tgwebproxy.DedicatedSpec{Email: r.Email, Base: r.ProfileName, Suspended: !r.Enable})
 	}
-	return specs, nil
+	return specs
 }
 
-func sameManagedBackendNode(ib *model.Inbound, nodeID *int) bool {
-	return (ib.NodeID == nil && nodeID == nil) ||
-		(ib.NodeID != nil && nodeID != nil && *ib.NodeID == *nodeID)
-}
-
-func ensureTgWebProxyManagedBackend(inboundSvc *InboundService, email, secret string, nodeID *int) (string, error) {
-	email = strings.TrimSpace(email)
-	remark := tgWebProxyManagedRemark(email)
-	db := database.GetDB()
-
-	var existing model.Inbound
-	err := db.Where("remark = ? AND protocol = ?", remark, model.MTProto).First(&existing).Error
-	switch {
-	case err == nil && sameManagedBackendNode(&existing, nodeID):
-		if err := syncManagedMtprotoSecret(inboundSvc, &existing, email, secret); err != nil {
-			return "", err
-		}
-		return loopbackBackend(existing.Port), nil
-	case err == nil:
-		// UpdateInbound restores NodeID from the stored row; recreate instead.
-		if _, delErr := inboundSvc.DelInbound(existing.Id); delErr != nil {
-			return "", delErr
-		}
-	case !database.IsNotFound(err):
-		return "", err
-	}
-
-	port, err := allocateLoopbackPort()
-	if err != nil {
-		return "", err
-	}
-	// Empty clients first: AddInbound rejects emails that already exist as panel clients.
-	created, _, err := inboundSvc.AddInbound(&model.Inbound{
-		UserId:   1,
-		Remark:   remark,
-		Enable:   true,
-		Listen:   "127.0.0.1",
-		Port:     port,
-		Protocol: model.MTProto,
-		Settings: `{"clients":[]}`,
-		NodeID:   nodeID,
-	})
-	if err != nil {
-		return "", err
-	}
-	if err := syncManagedMtprotoSecret(inboundSvc, created, email, secret); err != nil {
-		_, _ = inboundSvc.DelInbound(created.Id)
-		return "", err
-	}
-	logger.Infof("tg-web-proxy: created managed MTProto inbound %d for %s on 127.0.0.1:%d", created.Id, email, port)
-	return loopbackBackend(created.Port), nil
-}
-
-// syncManagedMtprotoSecret writes settings and links the panel client; starts
-// from the full ClientRecord so SyncInbound cannot zero SubID.
-func syncManagedMtprotoSecret(inboundSvc *InboundService, ib *model.Inbound, email, secret string) error {
-	rec, err := inboundSvc.clientService.GetRecordByEmail(nil, email)
-	if err != nil {
-		return err
-	}
-	// Keep the record's enable flag: forcing true here re-armed the secret of a
-	// disabled or depleted client on every binding sync.
-	client := *rec.ToClient()
-	client.Secret = secret
-
-	settings, err := json.Marshal(map[string][]model.Client{"clients": {client}})
-	if err != nil {
-		return err
-	}
-	ib.Settings = string(settings)
-	if err := database.GetDB().Model(&model.Inbound{}).Where("id = ?", ib.Id).Update("settings", ib.Settings).Error; err != nil {
-		return err
-	}
-	return inboundSvc.clientService.SyncInbound(nil, ib.Id, []model.Client{client})
-}
-
-func (s *TgWebProxyService) cleanupManagedBackends(wantedEmails map[string]struct{}) {
+func (s *TgWebProxyService) removeLegacyManagedBackends() {
 	db := database.GetDB()
 	var rows []model.Inbound
 	if err := db.Where("protocol = ? AND remark LIKE ?", model.MTProto, tgWebProxyManagedRemarkPrefix+"%").Find(&rows).Error; err != nil {
@@ -174,13 +34,10 @@ func (s *TgWebProxyService) cleanupManagedBackends(wantedEmails map[string]struc
 	for i := range rows {
 		ib := &rows[i]
 		email := strings.TrimPrefix(ib.Remark, tgWebProxyManagedRemarkPrefix)
-		if _, ok := wantedEmails[strings.ToLower(email)]; ok {
-			continue
-		}
 		if _, err := inboundSvc.DelInbound(ib.Id); err != nil {
 			logger.Warningf("tg-web-proxy: delete managed inbound %d: %v", ib.Id, err)
 			continue
 		}
-		logger.Infof("tg-web-proxy: removed managed MTProto inbound %d for %s", ib.Id, email)
+		logger.Infof("tg-web-proxy: removed legacy mtg inbound %d for %s", ib.Id, email)
 	}
 }

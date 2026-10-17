@@ -8,6 +8,9 @@ import (
 	"sync"
 
 	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
 	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
 )
 
@@ -149,4 +152,18 @@ type TgWebProxySyncDedicatedRequest struct {
 // (used by a master that manages this node's tg-web-proxy remotely).
 func (s *TgWebProxyService) SyncDedicatedProfiles(ctx context.Context, specs []tgwebproxy.DedicatedSpec) (tgwebproxy.RelayApplyResult, error) {
 	return tgWebProxy().SyncDedicatedProfiles(ctx, specs)
+}
+
+// MaintainBackends re-checks dedicated bindings (a client may have been
+// disabled by a quota job) and keeps the panel-run MTProxy listeners up.
+func (s *TgWebProxyService) MaintainBackends(ctx context.Context) {
+	var bindings int64
+	if err := database.GetDB().Model(&model.ClientTgWebProxy{}).Where("dedicated = ?", true).Count(&bindings).Error; err == nil && bindings > 0 {
+		if _, err := s.SyncBindings(ctx); err != nil {
+			logger.Warning("tg-web-proxy binding sync:", err)
+		}
+	}
+	if st := tgWebProxy().ReconcileBackends(ctx); st.Error != "" {
+		logger.Warning("tg-web-proxy backends:", st.Error)
+	}
 }

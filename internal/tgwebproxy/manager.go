@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sync"
 )
 
 var errUnsupported = errors.New("tg-web-proxy management requires Linux with systemd")
@@ -18,6 +19,12 @@ type Manager struct {
 	jobs  *jobRunner
 	// supported is swappable so tests can exercise the systemd paths off Linux.
 	supported func() bool
+
+	mtproxy            MTProxyPaths
+	backendsMu         sync.Mutex
+	backendFirewall    string
+	backendFirewallErr string
+	lastBackends       RelayBackendsStatus
 }
 
 func NewManager(paths Paths, run commandRunner) *Manager {
@@ -29,31 +36,33 @@ func NewManager(paths Paths, run commandRunner) *Manager {
 		run:       run,
 		jobs:      &jobRunner{dir: paths.JobDir, sourceDir: paths.SourceDir, run: run},
 		supported: systemdAvailable,
+		mtproxy:   DefaultMTProxyPaths,
 	}
 }
 
 func (m *Manager) Store() *Store { return m.store }
 
 type RelayStatus struct {
-	Supported       bool              `json:"supported" example:"true"`
-	Platform        string            `json:"platform" example:"linux/amd64"`
-	BinaryInstalled bool              `json:"binaryInstalled" example:"true"`
-	BinaryPath      string            `json:"binaryPath" example:"/usr/local/bin/tproxy-server"`
-	ConfigPath      string            `json:"configPath" example:"/etc/tproxy-server/config.json"`
-	ProfilesPath    string            `json:"profilesPath" example:"/etc/tproxy-server/profiles.json"`
-	ConfigExists    bool              `json:"configExists" example:"true"`
-	ProfilesExists  bool              `json:"profilesExists" example:"true"`
-	ProfilesMode    string            `json:"profilesMode" example:"0400"`
-	ProfilesModeOK  bool              `json:"profilesModeOk" example:"true"`
-	ProfileCount    int               `json:"profileCount" example:"1"`
-	Hostname        string            `json:"hostname" example:"proxy.example.com"`
-	BasePath        string            `json:"basePath" example:""`
-	ConfigError     string            `json:"configError" example:""`
-	Units           []RelayUnitStatus `json:"units"`
-	Admin           *RelayAdminProbe  `json:"admin"`
-	Job             RelayJobStatus    `json:"job"`
-	CaddyEncode     CaddyH2WSStatus   `json:"caddyEncode"`
-	UsesWebSocket   bool              `json:"usesWebSocket" example:"false"`
+	Supported       bool                `json:"supported" example:"true"`
+	Platform        string              `json:"platform" example:"linux/amd64"`
+	BinaryInstalled bool                `json:"binaryInstalled" example:"true"`
+	BinaryPath      string              `json:"binaryPath" example:"/usr/local/bin/tproxy-server"`
+	ConfigPath      string              `json:"configPath" example:"/etc/tproxy-server/config.json"`
+	ProfilesPath    string              `json:"profilesPath" example:"/etc/tproxy-server/profiles.json"`
+	ConfigExists    bool                `json:"configExists" example:"true"`
+	ProfilesExists  bool                `json:"profilesExists" example:"true"`
+	ProfilesMode    string              `json:"profilesMode" example:"0400"`
+	ProfilesModeOK  bool                `json:"profilesModeOk" example:"true"`
+	ProfileCount    int                 `json:"profileCount" example:"1"`
+	Hostname        string              `json:"hostname" example:"proxy.example.com"`
+	BasePath        string              `json:"basePath" example:""`
+	ConfigError     string              `json:"configError" example:""`
+	Units           []RelayUnitStatus   `json:"units"`
+	Admin           *RelayAdminProbe    `json:"admin"`
+	Job             RelayJobStatus      `json:"job"`
+	CaddyEncode     CaddyH2WSStatus     `json:"caddyEncode"`
+	UsesWebSocket   bool                `json:"usesWebSocket" example:"false"`
+	Backends        RelayBackendsStatus `json:"backends"`
 }
 
 func (m *Manager) Status(ctx context.Context) RelayStatus {
@@ -89,6 +98,7 @@ func (m *Manager) Status(ctx context.Context) RelayStatus {
 			st.Units = append(st.Units, m.unitStatus(ctx, unit))
 		}
 		st.CaddyEncode = inspectCaddyEncode(caddyfileForEncode)
+		st.Backends = m.LastBackends()
 	}
 	st.Job = m.jobs.status(ctx)
 	return st
@@ -119,12 +129,14 @@ type RelayApplyResult struct {
 	CaddyWarning    string `json:"caddyWarning,omitempty" example:""`
 	CaddyPatched    bool   `json:"caddyPatched,omitempty" example:"false"`
 	CaddyPatchError string `json:"caddyPatchError,omitempty" example:""`
+	BackendError    string `json:"backendError,omitempty" example:""`
 }
 
 // afterCommit restarts a running relay: it reads its config only at start-up.
 func (m *Manager) afterCommit(ctx context.Context) RelayApplyResult {
 	res := RelayApplyResult{}
 	res = m.maybeWarnOrPatchCaddy(ctx, res)
+	res.BackendError = m.ReconcileBackends(ctx).Error
 	if !m.supported() || !m.relayActive(ctx) {
 		return res
 	}
@@ -139,26 +151,31 @@ func (m *Manager) afterCommit(ctx context.Context) RelayApplyResult {
 // caddyfileForEncode is the stock Caddyfile path; tests swap it to a temp file.
 var caddyfileForEncode = DefaultCaddyfile
 
-func (m *Manager) maybeWarnOrPatchCaddy(_ context.Context, res RelayApplyResult) RelayApplyResult {
+func (m *Manager) maybeWarnOrPatchCaddy(ctx context.Context, res RelayApplyResult) RelayApplyResult {
 	snap, err := m.store.Load()
 	if err != nil || !profilesUseWebSocket(snap.Profiles) {
 		return res
 	}
-	st := inspectCaddyEncode(caddyfileForEncode)
-	if !st.Exists {
+	if st := inspectCaddyEncode(caddyfileForEncode); !st.Exists || !st.NeedsFix {
 		return res
 	}
-	// Never auto-write/reload Caddy on profile save — a panel UMask=0077 write
-	// previously left Caddyfile as root:root 0600 and crashed the caddy unit.
-	if st.NeedsFix {
+	// Validated before the swap and written root:caddy 0640, so a websocket
+	// profile works out of the box instead of waiting for a manual fix.
+	patched, err := m.FixCaddyEncode(ctx)
+	if err != nil {
+		res.CaddyPatchError = err.Error()
 		res.CaddyWarning = "Caddy encode still blocks HTTP/2 WebSocket upgrades; use Fix Caddy for WebSocket"
+		return res
 	}
+	res.CaddyPatched = patched
 	return res
 }
 
 // FixCaddyEncode patches encode for h2 WS (if needed), forces root:caddy 0640, then reloads caddy.
 func (m *Manager) FixCaddyEncode(ctx context.Context) (bool, error) {
-	changed, err := ApplyCaddyEncodeH2WSPatch(caddyfileForEncode)
+	changed, err := ApplyCaddyEncodeH2WSPatch(caddyfileForEncode, func(path string) error {
+		return m.validateCaddyfile(ctx, path)
+	})
 	if err != nil {
 		return false, err
 	}

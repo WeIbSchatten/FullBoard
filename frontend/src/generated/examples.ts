@@ -633,7 +633,8 @@ export const EXAMPLES: Record<string, unknown> = {
     "backend": "127.0.0.1:31234",
     "base": "default",
     "email": "alice",
-    "secret": "aabbccddeeff00112233445566778899"
+    "secret": "aabbccddeeff00112233445566778899",
+    "suspended": false
   },
   "EnrollConsumeResponse": {
     "address": "eu.example.com",
@@ -1146,11 +1147,26 @@ export const EXAMPLES: Record<string, unknown> = {
     "readyDetail": ""
   },
   "RelayApplyResult": {
+    "backendError": "",
     "caddyPatchError": "",
     "caddyPatched": false,
     "caddyWarning": "",
     "restartError": "",
     "restarted": true
+  },
+  "RelayBackendsStatus": {
+    "error": "",
+    "managed": [
+      {
+        "active": true,
+        "backend": "127.0.0.1:40123",
+        "external": false,
+        "profiles": [
+          ""
+        ],
+        "unit": "fullboard-mtproxy-40123"
+      }
+    ]
   },
   "RelayConfig": {
     "admin_listen": "127.0.0.1:8081",
@@ -1240,6 +1256,15 @@ export const EXAMPLES: Record<string, unknown> = {
     "new_streams_burst": 512,
     "new_streams_per_minute": 6000
   },
+  "RelayManagedBackend": {
+    "active": true,
+    "backend": "127.0.0.1:40123",
+    "external": false,
+    "profiles": [
+      ""
+    ],
+    "unit": "fullboard-mtproxy-40123"
+  },
   "RelayProfile": {
     "backend": "127.0.0.1:2398",
     "carrier_mode": "https",
@@ -1328,6 +1353,20 @@ export const EXAMPLES: Record<string, unknown> = {
   },
   "RelayStatus": {
     "admin": null,
+    "backends": {
+      "error": "",
+      "managed": [
+        {
+          "active": true,
+          "backend": "127.0.0.1:40123",
+          "external": false,
+          "profiles": [
+            ""
+          ],
+          "unit": "fullboard-mtproxy-40123"
+        }
+      ]
+    },
     "basePath": "",
     "binaryInstalled": true,
     "binaryPath": "/usr/local/bin/tproxy-server",
@@ -1543,7 +1582,8 @@ export const EXAMPLES: Record<string, unknown> = {
         "backend": "127.0.0.1:31234",
         "base": "default",
         "email": "alice",
-        "secret": "aabbccddeeff00112233445566778899"
+        "secret": "aabbccddeeff00112233445566778899",
+        "suspended": false
       }
     ]
   },
