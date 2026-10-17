@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import { GitHubIcon, TelegramIcon } from '@/components/icons';
-import { Logo } from '@/components/logo';
+import { Logo, Mark } from '@/components/logo';
 import { Features } from '@/components/home/features';
 import { GitHubStatsRow } from '@/components/home/github-stats';
 import { InstallCommand } from '@/components/home/install-command';
@@ -28,16 +28,12 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       {/* Hero */}
       <section className="relative overflow-hidden border-b">
         <div
-          className="pointer-events-none absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-brand/15 to-transparent blur-3xl"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,var(--color-fd-foreground)_0,transparent_55%)] opacity-[0.06]"
           aria-hidden
         />
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center px-4 py-20 text-center sm:py-28">
-          <Logo className="h-20 drop-shadow-sm" />
-          <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-6xl">
-            <span className="bg-gradient-to-r from-cyan-500 to-sky-600 bg-clip-text text-transparent dark:from-cyan-300 dark:to-sky-400">
-              {appName}
-            </span>
-          </h1>
+          <Mark className="h-16 sm:h-20" />
+          <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-6xl">{appName}</h1>
           <p className="mt-4 max-w-2xl text-lg text-fd-muted-foreground sm:text-xl">{m.tagline}</p>
 
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
@@ -86,9 +82,9 @@ function Footer({ prefix, m }: { prefix: string; m: SiteMessages }) {
     <footer className="border-t">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-sm text-fd-muted-foreground sm:flex-row">
         <div className="inline-flex items-center gap-2">
-          <Logo className="h-6" />
+          <Logo className="h-5" />
           <span>
-            {appName} — {m.licenseBefore}
+            — {m.licenseBefore}
             <a
               href={`${productRepoUrl}/blob/main/LICENSE`}
               className="underline hover:text-fd-foreground"

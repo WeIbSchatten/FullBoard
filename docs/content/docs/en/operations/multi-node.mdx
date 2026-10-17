@@ -13,7 +13,29 @@ A **node** is another FullBoard panel that your master panel manages over the no
 API. The master polls each node and shows its status, versions, CPU/memory,
 uptime, and traffic in one place.
 
-### Add a node
+### Add a node with an invite (fastest)
+
+<Steps>
+<Step>
+
+On the **new** server open **Settings → Remote management** and click **Generate invite**.
+If the panel's public address is not detected correctly, fill in the public base URL first.
+
+</Step>
+<Step>
+
+Copy the `fb-enroll-1.…` string. It works **once** and expires in about 30 minutes.
+
+</Step>
+<Step>
+
+On the **master** open **Nodes → Add from invite**, paste it and optionally set a name.
+The master contacts the new panel, receives a fresh admin API token and adds the node.
+
+</Step>
+</Steps>
+
+### Add a node by hand
 
 Provide the node's connection details:
 

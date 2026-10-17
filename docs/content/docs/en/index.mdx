@@ -36,17 +36,50 @@ leaves the page.
     href="/docs/config/reality"
     description="Set up VLESS + REALITY with XTLS-Vision."
   />
+  <Card
+    title="Telegram WEB Proxy"
+    href="/docs/operations/tg-web-proxy"
+    description="Install the relay, add profiles and give clients their own secrets."
+  />
+  <Card
+    title="Multi-node"
+    href="/docs/operations/multi-node"
+    description="Connect more servers with a one-shot invite and manage them from one panel."
+  />
+  <Card
+    title="Performance"
+    href="/docs/operations/performance"
+    description="BBR, TCP buffers, transports and a speed checklist."
+  />
 </Cards>
 
 ## Highlights
 
 - **Every major protocol** — VLESS, VMess, Trojan, Shadowsocks, WireGuard,
-  AmneziaWG, TUIC v5, Hysteria2, SOCKS, HTTP, and Dokodemo-door.
+  AmneziaWG, TUIC v5, Hysteria2, MTProto, SOCKS, HTTP, and Dokodemo-door.
 - **REALITY & XTLS-Vision** — modern, censorship-resistant transports.
+- **Telegram WEB Proxy** — the official `tproxy-server` relay behind your own site,
+  with per-client secrets and MTProxy backends the panel runs for you.
 - **Per-client controls** — traffic quotas, expiry dates, IP limits, share
   links, and QR codes.
-- **Subscriptions** — VLESS, Clash/Mihomo, and JSON formats.
-- **Operations** — multi-node management, Telegram and Discord bots, backups, and a REST API.
+- **Subscriptions** — raw, Clash/Mihomo, and JSON formats.
+- **Fleet management** — one-shot node invites, inbound sync, Telegram and Discord bots,
+  backups, and a REST API.
+- **Fast by default** — BBR, `fq` and large TCP buffers are set up by the installer.
+
+## How it fits together
+
+<Mermaid
+  chart={`
+flowchart LR
+  Admin["Admin browser"] -->|HTTPS| Panel["FullBoard panel"]
+  Panel -->|config + gRPC API| Xray["Xray-core"]
+  Panel -->|systemd| Relay["tproxy-server + MTProxy"]
+  Panel -->|mTLS API| Nodes["Other FullBoard nodes"]
+  Users["Client apps"] -->|VLESS / Trojan / ...| Xray
+  TG["Telegram apps"] -->|HTTPS / WebSocket| Relay
+`}
+/>
 
 <Callout type="info">
   New to Xray? Read [What is FullBoard?](/docs/guide) first — it explains how the panel, Xray-core, and
