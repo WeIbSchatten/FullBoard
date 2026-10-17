@@ -113,41 +113,6 @@ func TestInstallSecretNeverReachesCommandLineOrScript(t *testing.T) {
 	}
 }
 
-func TestAfterCommitWarnsWithoutPatchingCaddy(t *testing.T) {
-	runner := &fakeRunner{}
-	m, _ := newTestManager(t, runner)
-	caddyPath := filepath.Join(t.TempDir(), "Caddyfile")
-	bare := "host {\n\tencode gzip\n}\n"
-	if err := os.WriteFile(caddyPath, []byte(bare), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	prev := caddyfileForEncode
-	caddyfileForEncode = caddyPath
-	t.Cleanup(func() { caddyfileForEncode = prev })
-
-	if _, err := m.SaveConfig(context.Background(), testConfig(), &RelayProfile{
-		Name: "ws", Secret: "000102030405060708090a0b0c0d0e0f", Backend: "127.0.0.1:2398", CarrierMode: "websocket",
-	}); err != nil {
-		t.Fatalf("SaveConfig: %v", err)
-	}
-	res := m.afterCommit(context.Background())
-	if res.CaddyWarning == "" {
-		t.Fatal("expected CaddyWarning when bare encode + websocket profile")
-	}
-	raw, err := os.ReadFile(caddyPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if string(raw) != bare {
-		t.Fatalf("profile save must not rewrite Caddyfile;\ngot:\n%s", raw)
-	}
-	for _, c := range runner.calls {
-		if c.name == "systemctl" && len(c.args) >= 2 && c.args[1] == "caddy.service" {
-			t.Fatalf("profile save must not touch caddy.service: %v", c.args)
-		}
-	}
-}
-
 func TestFixCaddyEncodeUsesReloadOrRestart(t *testing.T) {
 	runner := &fakeRunner{}
 	m, _ := newTestManager(t, runner)
@@ -216,5 +181,71 @@ func TestProbeAdminReadsHealthReadinessAndMetrics(t *testing.T) {
 	}
 	if probe.Metrics["tproxy_sessions_live"] != 3 || probe.Metrics["tproxy_streams_live"] != 17 {
 		t.Fatalf("metrics = %v", probe.Metrics)
+	}
+}
+
+// caddyValidateRunner mimics caddy validate on the stock Caddyfile: without the
+// caddy unit's ACME_EMAIL the global `email {$ACME_EMAIL}` has no argument.
+func caddyValidateRunner() *fakeRunner {
+	return &fakeRunner{respond: func(name string, args []string) ([]byte, error) {
+		joined := strings.Join(args, " ")
+		switch {
+		case name == "systemctl" && strings.HasPrefix(joined, "show caddy.service -p Environment"):
+			return []byte("TPROXY_HOSTNAME=proxy.example.com TPROXY_SITE_ROOT=/srv/tproxy-site ACME_EMAIL=admin@example.com\n"), nil
+		case name == "env" && strings.Contains(joined, "validate"):
+			if !strings.Contains(joined, "ACME_EMAIL=admin@example.com") {
+				return []byte("Error: parsing caddyfile tokens for 'email': wrong argument count"), errors.New("exit status 1")
+			}
+		}
+		return nil, nil
+	}}
+}
+
+func useTestCaddyfile(t *testing.T, content string) string {
+	t.Helper()
+	caddyPath := filepath.Join(t.TempDir(), "Caddyfile")
+	if err := os.WriteFile(caddyPath, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	prevPath, prevLook := caddyfileForEncode, lookCaddyBinary
+	caddyfileForEncode, lookCaddyBinary = caddyPath, func() string { return "caddy" }
+	t.Cleanup(func() { caddyfileForEncode, lookCaddyBinary = prevPath, prevLook })
+	return caddyPath
+}
+
+const stockCaddyfile = "{\n\temail {$ACME_EMAIL}\n}\n{$TPROXY_HOSTNAME} {\n\tencode zstd gzip\n\treverse_proxy 127.0.0.1:8080\n}\n"
+
+func TestFixCaddyEncodeValidatesWithCaddyUnitEnvironment(t *testing.T) {
+	runner := caddyValidateRunner()
+	m, _ := newTestManager(t, runner)
+	caddyPath := useTestCaddyfile(t, stockCaddyfile)
+
+	changed, err := m.FixCaddyEncode(context.Background())
+	if err != nil || !changed {
+		t.Fatalf("FixCaddyEncode on the stock Caddyfile: changed=%v err=%v", changed, err)
+	}
+	raw, _ := os.ReadFile(caddyPath)
+	if activeEncode.Match(raw) {
+		t.Fatalf("encode still active:\n%s", raw)
+	}
+}
+
+func TestSavingWebSocketProfilePatchesCaddyByDefault(t *testing.T) {
+	runner := caddyValidateRunner()
+	m, _ := newTestManager(t, runner)
+	caddyPath := useTestCaddyfile(t, stockCaddyfile)
+
+	res, err := m.SaveConfig(context.Background(), testConfig(), &RelayProfile{
+		Name: "ws", Secret: "000102030405060708090a0b0c0d0e0f", Backend: "127.0.0.1:2398", CarrierMode: "websocket",
+	})
+	if err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+	if !res.CaddyPatched || res.CaddyPatchError != "" || res.CaddyWarning != "" {
+		t.Fatalf("result = %+v, want Caddy patched without warning", res)
+	}
+	raw, _ := os.ReadFile(caddyPath)
+	if activeEncode.Match(raw) {
+		t.Fatalf("encode still active after saving a websocket profile:\n%s", raw)
 	}
 }

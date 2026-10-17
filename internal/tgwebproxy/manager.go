@@ -139,26 +139,31 @@ func (m *Manager) afterCommit(ctx context.Context) RelayApplyResult {
 // caddyfileForEncode is the stock Caddyfile path; tests swap it to a temp file.
 var caddyfileForEncode = DefaultCaddyfile
 
-func (m *Manager) maybeWarnOrPatchCaddy(_ context.Context, res RelayApplyResult) RelayApplyResult {
+func (m *Manager) maybeWarnOrPatchCaddy(ctx context.Context, res RelayApplyResult) RelayApplyResult {
 	snap, err := m.store.Load()
 	if err != nil || !profilesUseWebSocket(snap.Profiles) {
 		return res
 	}
-	st := inspectCaddyEncode(caddyfileForEncode)
-	if !st.Exists {
+	if st := inspectCaddyEncode(caddyfileForEncode); !st.Exists || !st.NeedsFix {
 		return res
 	}
-	// Never auto-write/reload Caddy on profile save — a panel UMask=0077 write
-	// previously left Caddyfile as root:root 0600 and crashed the caddy unit.
-	if st.NeedsFix {
+	// Validated before the swap and written root:caddy 0640, so a websocket
+	// profile works out of the box instead of waiting for a manual fix.
+	patched, err := m.FixCaddyEncode(ctx)
+	if err != nil {
+		res.CaddyPatchError = err.Error()
 		res.CaddyWarning = "Caddy encode still blocks HTTP/2 WebSocket upgrades; use Fix Caddy for WebSocket"
+		return res
 	}
+	res.CaddyPatched = patched
 	return res
 }
 
 // FixCaddyEncode patches encode for h2 WS (if needed), forces root:caddy 0640, then reloads caddy.
 func (m *Manager) FixCaddyEncode(ctx context.Context) (bool, error) {
-	changed, err := ApplyCaddyEncodeH2WSPatch(caddyfileForEncode)
+	changed, err := ApplyCaddyEncodeH2WSPatch(caddyfileForEncode, func(path string) error {
+		return m.validateCaddyfile(ctx, path)
+	})
 	if err != nil {
 		return false, err
 	}
