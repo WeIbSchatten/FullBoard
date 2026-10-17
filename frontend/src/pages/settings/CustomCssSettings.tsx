@@ -3,15 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Button, Checkbox, Input, Radio, Select, Space, Switch, Typography } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
+import { NAV_ROUTES } from '@/layouts/navModel';
 import type { AllSetting } from '@/models/setting';
 import { SettingListItem } from '@/components/ui';
 import { writeCachedNavPosition, type NavPosition } from '@/layouts/NavLayoutContext';
-import {
-  DEFAULT_NAV_VISIBILITY,
-  HIDEABLE_NAV_KEYS,
-  parseNavVisibility,
-  type NavVisibility,
-} from '@/lib/navVisibility';
+import { HIDEABLE_NAV_KEYS, parseNavVisibility, type NavVisibility } from '@/lib/navVisibility';
 
 export const CUSTOM_CSS_MAX_BYTES = 64 * 1024;
 const PREVIEW_STYLE_ID = 'fullboard-custom-css-preview';
@@ -170,30 +166,8 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
   };
 
   const navLabel = (key: string) => {
-    switch (key) {
-      case '/':
-        return t('menu.dashboard');
-      case '/connections':
-        return t('menu.connections');
-      case '/clients':
-        return t('menu.clients');
-      case '/groups':
-        return t('menu.groups');
-      case '/nodes':
-        return t('menu.nodes');
-      case '/hosts':
-        return t('menu.hosts');
-      case '/settings':
-        return t('menu.settings');
-      case '/xray':
-        return t('menu.xray');
-      case '/routing':
-        return t('menu.routing');
-      case '/api-docs':
-        return t('menu.apiDocs');
-      default:
-        return key;
-    }
+    const route = NAV_ROUTES.find((r) => r.key === key);
+    return route ? t(route.titleKey) : key;
   };
 
   return (
@@ -229,7 +203,7 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
         description={t('pages.settings.customCss.navVisibilityDesc')}
       >
         <Space orientation="vertical" style={{ width: '100%' }}>
-          {HIDEABLE_NAV_KEYS.filter((k) => k !== '/routing').map((key) => {
+          {HIDEABLE_NAV_KEYS.map((key) => {
             const hidden = navVis.hidden.includes(key);
             return (
               <Checkbox
@@ -247,18 +221,6 @@ export default function CustomCssSettings({ allSetting, updateSetting }: CustomC
               </Checkbox>
             );
           })}
-          <Checkbox
-            checked={navVis.showRouting}
-            onChange={(e) =>
-              setNavVis({
-                ...(navVis.hidden.length ? navVis : DEFAULT_NAV_VISIBILITY),
-                hidden: navVis.hidden.filter((k) => k !== '/routing'),
-                showRouting: e.target.checked,
-              })
-            }
-          >
-            {t('menu.routing')}
-          </Checkbox>
         </Space>
       </SettingListItem>
       <SettingListItem

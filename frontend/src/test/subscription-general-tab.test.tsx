@@ -132,7 +132,7 @@ describe('SubscriptionGeneralTab', () => {
     const allSetting = new AllSetting({ subClashEnable: true });
 
     renderWithProviders(
-      <MemoryRouter initialEntries={['/settings#subscription']}>
+      <MemoryRouter initialEntries={['/subscriptions']}>
         <SubscriptionGeneralTab allSetting={allSetting} updateSetting={vi.fn()} />
         <LocationProbe />
       </MemoryRouter>,
@@ -140,7 +140,7 @@ describe('SubscriptionGeneralTab', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Open Sub Formats' }));
 
-    expect(screen.getByTestId('location').textContent).toBe('/settings#subscription-formats');
+    expect(screen.getByTestId('location').textContent).toBe('/subscriptions#formats');
   });
 
   it.each([false, true])(

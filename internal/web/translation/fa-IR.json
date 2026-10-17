@@ -114,7 +114,7 @@
     "clients": "کلاینت‌ها",
     "groups": "گروه‌ها",
     "nodes": "نودها",
-    "settings": "تنظیمات پنل",
+    "settings": "تنظیمات",
     "xray": "پیکربندی Xray",
     "routing": "مسیریابی",
     "outbounds": "خروجی‌ها",
@@ -125,7 +125,6 @@
     "subFormats": "Sub Formats",
     "tgWebProxy": "Telegram WEB Proxy",
     "connections": "Connections",
-    "sectionManage": "مدیریت",
     "sectionInfra": "زیرساخت",
     "sectionSystem": "سیستم",
     "collapseSidebar": "جمع کردن منو",
@@ -136,14 +135,13 @@
     "account": "حساب",
     "hint": {
       "dashboard": "وضعیت سرور، ترافیک و Xray در یک نگاه",
-      "connections": "ورودی‌ها، خروجی‌ها و پراکسی وب تلگرام",
-      "clients": "کاربران، کلیدها، محدودیت‌ها و اشتراک‌ها",
-      "groups": "کلاینت‌ها را گروه کنید تا محدودیت و دسترسی را یکجا مدیریت کنید",
-      "nodes": "پنل‌های FullBoard روی سرورهای دیگر شما",
-      "hosts": "آدرس‌ها و بازنویسی‌ها برای لینک‌ها و اشتراک‌های کلاینت",
-      "xray": "پیکربندی هسته: مسیریابی، متعادل‌کننده، DNS و JSON",
-      "settings": "پنل، امنیت، اعلان‌ها و اشتراک‌ها",
-      "apiDocs": "مرجع REST API برای خودکارسازی"
+      "connections": "ورودی‌ها، خروجی‌ها، مسیریابی، DNS و Telegram WEB Proxy",
+      "clients": "کاربران، گروه‌ها، کلیدها، محدودیت‌ها و اشتراک‌ها",
+      "settings": "پنل، امنیت و قالب هسته Xray",
+      "apiDocs": "مرجع REST API برای خودکارسازی",
+      "subscriptions": "لینک‌های اشتراک، قالب‌ها و متعادل‌کننده‌ها برای اپ‌های کلاینت",
+      "notifications": "هشدارها و ربات‌های تلگرام، دیسکورد و ایمیل",
+      "nodesHosts": "سرورهای دیگر FullBoard و آدرس‌های لینک‌ها"
     },
     "appearance": {
       "title": "ظاهر",
@@ -157,7 +155,14 @@
       "size": "اندازه رابط",
       "sizeAuto": "خودکار",
       "sizeAutoHint": "خودکار برای این صفحه {percent}٪ را انتخاب می‌کند"
-    }
+    },
+    "subscriptions": "اشتراک‌ها",
+    "notifications": "اعلان‌ها",
+    "nodesHosts": "نودها و هاست‌ها",
+    "sectionUsers": "کاربران",
+    "sectionTraffic": "ترافیک",
+    "xrayCore": "هسته Xray",
+    "xrayJson": "JSON Xray"
   },
   "pages": {
     "login": {

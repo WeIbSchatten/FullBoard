@@ -7,11 +7,11 @@ import './KeyboardShortcuts.css';
 // g + letter jumps to a page; letters follow the English page names.
 const GO_TARGETS: { key: string; path: string; titleKey: string }[] = [
   { key: 'd', path: '/', titleKey: 'menu.dashboard' },
-  { key: 'c', path: '/connections', titleKey: 'menu.connections' },
   { key: 'u', path: '/clients', titleKey: 'menu.clients' },
-  { key: 'n', path: '/nodes', titleKey: 'menu.nodes' },
-  { key: 'h', path: '/hosts', titleKey: 'menu.hosts' },
-  { key: 'x', path: '/xray', titleKey: 'menu.xray' },
+  { key: 'b', path: '/subscriptions', titleKey: 'menu.subscriptions' },
+  { key: 'c', path: '/connections', titleKey: 'menu.connections' },
+  { key: 'n', path: '/nodes', titleKey: 'menu.nodesHosts' },
+  { key: 'a', path: '/notifications', titleKey: 'menu.notifications' },
   { key: 's', path: '/settings', titleKey: 'menu.settings' },
 ];
 

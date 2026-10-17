@@ -6,20 +6,18 @@ import { Drawer, Layout, Menu, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   ApiOutlined,
+  BellOutlined,
   CloseOutlined,
   ClusterOutlined,
   GithubOutlined,
-  GlobalOutlined,
   LayoutOutlined,
+  LinkOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NodeIndexOutlined,
   ReadOutlined,
   SettingOutlined,
-  SwapOutlined,
-  TagsOutlined,
   TeamOutlined,
-  ThunderboltOutlined,
 } from '@ant-design/icons';
 
 import { formatPanelVersion } from '@/lib/panel-version';
@@ -42,13 +40,11 @@ const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
 
 const ICONS: Record<string, ComponentType> = {
   '/': LayoutOutlined,
-  '/connections': NodeIndexOutlined,
   '/clients': TeamOutlined,
-  '/groups': TagsOutlined,
+  '/subscriptions': LinkOutlined,
+  '/connections': NodeIndexOutlined,
   '/nodes': ClusterOutlined,
-  '/hosts': GlobalOutlined,
-  '/xray': ThunderboltOutlined,
-  '/routing': SwapOutlined,
+  '/notifications': BellOutlined,
   '/settings': SettingOutlined,
   '/api-docs': ApiOutlined,
 };
@@ -108,7 +104,7 @@ export default function AppSidebar() {
   // Sections render as labelled groups in the full sidebar and the drawer.
   const groupedItems = useMemo<MenuProps['items']>(() => {
     const out: NonNullable<MenuProps['items']> = [];
-    const sections: NavSection[] = ['main', 'manage', 'infra', 'system'];
+    const sections: NavSection[] = ['main', 'users', 'traffic', 'infra', 'system'];
     for (const section of sections) {
       const routes = visibleRoutes.filter((r) => r.section === section);
       if (routes.length === 0) continue;
@@ -132,9 +128,7 @@ export default function AppSidebar() {
     [visibleRoutes, routeItem, t],
   );
 
-  const legacyConnection = ['/inbounds', '/outbound', '/tg-web-proxy'].includes(pathname);
-  const selectedKey =
-    pathname === '/routing' ? '/xray' : legacyConnection ? '/connections' : pathname || '/';
+  const selectedKey = pathname || '/';
 
   const onMenuClick = useCallback<NonNullable<MenuProps['onClick']>>(
     ({ key }) => {

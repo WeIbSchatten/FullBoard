@@ -10,7 +10,7 @@
 .api-docs-page,
 .hosts-page,
 .tg-web-proxy-page,
-.connections-page {
+.hub-page {
   --bg-card: var(--fb-surface);
   background: transparent !important;
 }
@@ -27,8 +27,8 @@
   padding: 8px 32px 40px;
 }
 
-/* Connections hosts whole pages as tabs; only the outer shell pads. */
-.connections-page .content-area {
+/* Hub pages host whole pages as tabs; only the outer shell pads. */
+.hub-page .content-area {
   padding: 0;
   max-width: none;
 }
