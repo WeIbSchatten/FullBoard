@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Card, theme } from 'antd';
 
 import { Sparkline } from '@/components/viz';
+import { useChartColors, useTheme } from '@/hooks/useTheme';
 import type { UsageLevel } from '@/models/status';
 import { mean, peak } from './useOverviewHistory';
 
@@ -16,6 +17,8 @@ interface VitalTileProps {
   footRight: string;
   data: number[];
   isMobile: boolean;
+  // Pastel gives each vital its own accent; monochrome keeps the primary.
+  tone?: number;
 }
 
 export default function VitalTile({
@@ -28,15 +31,15 @@ export default function VitalTile({
   footRight,
   data,
   isMobile,
+  tone = 0,
 }: VitalTileProps) {
   const { token } = theme.useToken();
+  const { stylePreset } = useTheme();
+  const tones = useChartColors().series;
+  const okStroke = stylePreset === 'pastel' ? tones[tone % tones.length] : token.colorPrimary;
   const meanColor = token.colorTextTertiary;
   const stroke =
-    level === 'crit'
-      ? token.colorError
-      : level === 'warn'
-        ? token.colorWarning
-        : token.colorPrimary;
+    level === 'crit' ? token.colorError : level === 'warn' ? token.colorWarning : okStroke;
 
   const referenceLines = useMemo(
     () => (data.length > 1 ? [{ y: mean(data), dash: '3 4', color: meanColor }] : []),

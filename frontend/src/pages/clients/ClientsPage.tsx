@@ -53,6 +53,7 @@ import {
   UsergroupAddOutlined,
   UsergroupDeleteOutlined,
 } from '@ant-design/icons';
+import { useColumnVisibility } from '@/components/table/ColumnPicker';
 import { activateOnKey } from '@/utils/a11y';
 
 import { useTheme } from '@/hooks/useTheme';
@@ -1144,7 +1145,7 @@ export default function ClientsPage() {
     if (pag?.pageSize) setPageSizeChoice(pag.pageSize);
   };
 
-  const columns = useMemo<ColumnsType<ClientRecord>>(
+  const allColumns = useMemo<ColumnsType<ClientRecord>>(
     () => [
       {
         title: '',
@@ -1338,6 +1339,11 @@ export default function ClientsPage() {
       clientSpeed,
     ],
   );
+  const { columns, picker: columnPicker } = useColumnVisibility('clients', allColumns, [
+    'drag',
+    'actions',
+    'email',
+  ]);
 
   const tablePagination = {
     current: currentPage,
@@ -1635,6 +1641,7 @@ export default function ClientsPage() {
                         value={searchKey}
                         onChange={(e) => setSearchKey(e.target.value)}
                         placeholder={t('pages.clients.searchPlaceholder')}
+                        data-page-search
                         allowClear
                         prefix={<SearchOutlined />}
                         size={isMobile ? 'small' : 'middle'}
@@ -1668,6 +1675,7 @@ export default function ClientsPage() {
                           label: t(o.labelKey),
                         }))}
                       />
+                      {!isMobile && columnPicker}
                       {activeCount > 0 && (
                         <Button
                           size={isMobile ? 'small' : 'middle'}

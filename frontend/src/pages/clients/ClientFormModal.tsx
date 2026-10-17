@@ -803,7 +803,11 @@ export default function ClientFormModal({
         zIndex={CLIENT_FORM_MODAL_Z_INDEX}
         style={{ top: 20 }}
         styles={{
-          body: { maxHeight: 'calc(100vh - 160px)', overflowY: 'auto', overflowX: 'hidden' },
+          body: {
+            maxHeight: 'calc(100vh / var(--fb-zoom, 1) - 160px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          },
         }}
         onCancel={close}
         footer={

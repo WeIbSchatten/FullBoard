@@ -1,0 +1,35 @@
+.shortcut-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcut-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--fb-border);
+}
+
+.shortcut-list li:last-child {
+  border-bottom: 0;
+}
+
+.shortcut-keys {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.shortcut-keys kbd {
+  min-width: 24px;
+  padding: 2px 7px;
+  border: 1px solid var(--fb-border-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--fb-surface-2);
+  color: var(--fb-text);
+  font-size: 12px;
+  text-align: center;
+}

@@ -144,6 +144,19 @@
       "xray": "إعداد النواة: التوجيه والموازنات وDNS وJSON",
       "settings": "اللوحة والأمان والإشعارات والاشتراكات",
       "apiDocs": "مرجع REST API للأتمتة"
+    },
+    "appearance": {
+      "title": "المظهر",
+      "style": "النمط",
+      "preset": {
+        "mono": "أحادي اللون",
+        "monoHint": "حبر وورق، بلا زيادات",
+        "pastel": "باستيل",
+        "pastelHint": "ليموني ووردي وليلكي وكحلي"
+      },
+      "size": "حجم الواجهة",
+      "sizeAuto": "تلقائي",
+      "sizeAutoHint": "التلقائي يختار {percent}% لهذه الشاشة"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "إعادة تشغيل خدمة Xray",
     "restartXraySuccess": "تمت إعادة تشغيل خدمة Xray بنجاح",
     "settings": "الإعدادات"
+  },
+  "tableColumns": "الأعمدة",
+  "tableColumnsShowAll": "إظهار الكل",
+  "shortcuts": {
+    "title": "اختصارات لوحة المفاتيح",
+    "palette": "لوحة الأوامر",
+    "search": "البحث في الصفحة",
+    "help": "عرض هذه القائمة"
   }
 }

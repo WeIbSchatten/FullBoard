@@ -144,6 +144,19 @@
       "xray": "核心設定：路由、負載平衡、DNS 與 JSON",
       "settings": "面板、安全、通知與訂閱",
       "apiDocs": "用於自動化的 REST API 參考"
+    },
+    "appearance": {
+      "title": "外觀",
+      "style": "風格",
+      "preset": {
+        "mono": "單色",
+        "monoHint": "墨與紙，別無他物",
+        "pastel": "粉彩",
+        "pastelHint": "檸檬黃、粉、淡紫與藏青"
+      },
+      "size": "介面大小",
+      "sizeAuto": "自動",
+      "sizeAutoHint": "自動為此螢幕選擇 {percent}%"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "重啟 Xray 服務",
     "restartXraySuccess": "Xray 服務已成功重啟",
     "settings": "設定"
+  },
+  "tableColumns": "欄位",
+  "tableColumnsShowAll": "全部顯示",
+  "shortcuts": {
+    "title": "鍵盤快捷鍵",
+    "palette": "命令面板",
+    "search": "頁面搜尋",
+    "help": "顯示此清單"
   }
 }

@@ -87,7 +87,12 @@ export default function TextModal({
           />
         )}
         {json ? (
-          <JsonEditor value={activeContent} readOnly minHeight="240px" maxHeight="60vh" />
+          <JsonEditor
+            value={activeContent}
+            readOnly
+            minHeight="240px"
+            maxHeight="calc(60vh / var(--fb-zoom, 1))"
+          />
         ) : (
           <Input.TextArea
             aria-label={title}

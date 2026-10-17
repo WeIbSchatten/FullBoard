@@ -191,8 +191,14 @@ export default function HostFormModal({
       okText={t('save')}
       cancelText={t('cancel')}
       destroyOnHidden
-      width={isMobile ? '95vw' : 760}
-      styles={{ body: { maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' } }}
+      width={isMobile ? 'calc(95vw / var(--fb-zoom, 1))' : 760}
+      styles={{
+        body: {
+          maxHeight: 'calc(70vh / var(--fb-zoom, 1))',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        },
+      }}
     >
       {messageContextHolder}
       <FormProvider {...methods}>

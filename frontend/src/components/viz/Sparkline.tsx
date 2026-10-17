@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react';
+import './uplotPixelRatio';
 import uPlot from 'uplot';
+
+import { uiZoom } from '@/hooks/useTheme';
 import 'uplot/dist/uPlot.min.css';
 import './Sparkline.css';
 
@@ -501,6 +504,11 @@ export default function Sparkline(props: SparklineProps) {
         x: showTooltip,
         y: false,
         drag: { x: false, y: false, setScale: false },
+        // Pointer offsets arrive in zoomed screen px; the plot draws in CSS px.
+        move: (_u, left, top) => {
+          const z = uiZoom();
+          return z === 1 ? [left, top] : [left / z, top / z];
+        },
         points: {
           show: showMarker,
           size: () => (cfgRef.current.markerRadius ?? 3) * 2,

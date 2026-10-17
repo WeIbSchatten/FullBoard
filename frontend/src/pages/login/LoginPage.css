@@ -1,6 +1,6 @@
 .login-app {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--fb-zoom, 1));
   overflow: hidden;
   background: var(--fb-bg) !important;
   color: var(--fb-text);
@@ -40,7 +40,7 @@
 .login-content {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--fb-zoom, 1));
 }
 
 .login-toolbar {
@@ -69,7 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--fb-zoom, 1));
   padding: 80px 16px 40px;
 }
 

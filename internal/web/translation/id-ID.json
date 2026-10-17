@@ -144,6 +144,19 @@
       "xray": "Konfigurasi inti: routing, balancer, DNS, dan JSON",
       "settings": "Panel, keamanan, notifikasi, dan langganan",
       "apiDocs": "Referensi REST API untuk otomatisasi"
+    },
+    "appearance": {
+      "title": "Tampilan",
+      "style": "Gaya",
+      "preset": {
+        "mono": "Monokrom",
+        "monoHint": "Tinta dan kertas, tanpa tambahan",
+        "pastel": "Pastel",
+        "pastelHint": "Lemon, merah muda, lila, dan biru tua"
+      },
+      "size": "Ukuran antarmuka",
+      "sizeAuto": "Otomatis",
+      "sizeAutoHint": "Otomatis memilih {percent}% untuk layar ini"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "Mulai Ulang Layanan Xray",
     "restartXraySuccess": "Layanan Xray berhasil dimulai ulang",
     "settings": "Pengaturan"
+  },
+  "tableColumns": "Kolom",
+  "tableColumnsShowAll": "Tampilkan semua",
+  "shortcuts": {
+    "title": "Pintasan keyboard",
+    "palette": "Palet perintah",
+    "search": "Cari di halaman",
+    "help": "Tampilkan daftar ini"
   }
 }

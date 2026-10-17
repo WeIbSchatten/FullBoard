@@ -31,6 +31,7 @@ import { HttpUtil } from '@/utils';
 import { activateOnKey } from '@/utils/a11y';
 
 import { buildRowActionsMenu } from './RowActions';
+import { useColumnVisibility } from '@/components/table/ColumnPicker';
 import { useInboundColumns } from './useInboundColumns';
 import { buildHostRemarksByInboundId, formatHostRemarksLabel } from './helpers';
 import InboundStatsModal from './InboundStatsModal';
@@ -166,7 +167,7 @@ export default function InboundList({
     if (ok) setSelectedRowKeys([]);
   }, [onBulkDelete, selectedRowKeys]);
 
-  const columns = useInboundColumns({
+  const allColumns = useInboundColumns({
     hasAnyRemark,
     hasAnySubSortIndex,
     hasActiveNode,
@@ -180,9 +181,15 @@ export default function InboundList({
     onRowAction,
     onSwitchEnable,
   });
+  const { columns, picker: columnPicker } = useColumnVisibility('inbounds', allColumns, [
+    'id',
+    'action',
+    'remark',
+  ]);
 
   const tableScrollX = useMemo(
-    () => columns.reduce((sum, c) => sum + (typeof c.width === 'number' ? c.width : 0), 0),
+    () =>
+      columns.reduce((sum, c) => sum + (!c.hidden && typeof c.width === 'number' ? c.width : 0), 0),
     [columns],
   );
 
@@ -245,11 +252,13 @@ export default function InboundList({
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
             placeholder={t('search')}
+            data-page-search
             allowClear
             prefix={<SearchOutlined />}
             style={{ maxWidth: isMobile ? 110 : 200 }}
             aria-label={t('search')}
           />
+          {!isMobile && columnPicker}
           {selectedRowKeys.length > 0 && (
             <>
               <Tag

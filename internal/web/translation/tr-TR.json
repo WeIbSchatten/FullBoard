@@ -144,6 +144,19 @@
       "xray": "Çekirdek ayarları: yönlendirme, dengeleyiciler, DNS ve JSON",
       "settings": "Panel, güvenlik, bildirimler ve abonelikler",
       "apiDocs": "Otomasyon için REST API başvurusu"
+    },
+    "appearance": {
+      "title": "Görünüm",
+      "style": "Stil",
+      "preset": {
+        "mono": "Monokrom",
+        "monoHint": "Mürekkep ve kâğıt, fazlası yok",
+        "pastel": "Pastel",
+        "pastelHint": "Limon, pembe, leylak ve lacivert"
+      },
+      "size": "Arayüz boyutu",
+      "sizeAuto": "Otomatik",
+      "sizeAutoHint": "Otomatik bu ekran için %{percent} seçer"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "Xray Hizmetini Yeniden Başlat",
     "restartXraySuccess": "Xray hizmeti başarıyla yeniden başlatıldı",
     "settings": "Ayarlar"
+  },
+  "tableColumns": "Sütunlar",
+  "tableColumnsShowAll": "Tümünü göster",
+  "shortcuts": {
+    "title": "Klavye kısayolları",
+    "palette": "Komut paleti",
+    "search": "Sayfada ara",
+    "help": "Bu listeyi göster"
   }
 }

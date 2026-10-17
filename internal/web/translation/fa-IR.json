@@ -144,6 +144,19 @@
       "xray": "پیکربندی هسته: مسیریابی، متعادل‌کننده، DNS و JSON",
       "settings": "پنل، امنیت، اعلان‌ها و اشتراک‌ها",
       "apiDocs": "مرجع REST API برای خودکارسازی"
+    },
+    "appearance": {
+      "title": "ظاهر",
+      "style": "سبک",
+      "preset": {
+        "mono": "تک‌رنگ",
+        "monoHint": "جوهر و کاغذ، بدون اضافه",
+        "pastel": "پاستلی",
+        "pastelHint": "لیمویی، صورتی، یاسی و سرمه‌ای"
+      },
+      "size": "اندازه رابط",
+      "sizeAuto": "خودکار",
+      "sizeAutoHint": "خودکار برای این صفحه {percent}٪ را انتخاب می‌کند"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "راه‌اندازی مجدد سرویس Xray",
     "restartXraySuccess": "سرویس Xray با موفقیت مجدداً راه‌اندازی شد",
     "settings": "تنظیمات"
+  },
+  "tableColumns": "ستون‌ها",
+  "tableColumnsShowAll": "نمایش همه",
+  "shortcuts": {
+    "title": "میان‌برهای صفحه‌کلید",
+    "palette": "پالت فرمان",
+    "search": "جست‌وجو در صفحه",
+    "help": "نمایش این فهرست"
   }
 }

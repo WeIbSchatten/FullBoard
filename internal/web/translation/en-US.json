@@ -144,6 +144,19 @@
       "xray": "Core config: routing, balancers, DNS and raw JSON",
       "settings": "Panel, security, notifications and subscriptions",
       "apiDocs": "REST API reference for automation"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "style": "Style",
+      "preset": {
+        "mono": "Monochrome",
+        "monoHint": "Ink and paper, nothing extra",
+        "pastel": "Pastel",
+        "pastelHint": "Lemon, pink, lilac and navy"
+      },
+      "size": "Interface size",
+      "sizeAuto": "Auto",
+      "sizeAutoHint": "Auto picks {percent}% for this screen"
     }
   },
   "pages": {
@@ -2997,5 +3010,13 @@
     "restartXray": "Restart Xray Service",
     "restartXraySuccess": "Xray has been successfully relaunched",
     "settings": "Settings"
+  },
+  "tableColumns": "Columns",
+  "tableColumnsShowAll": "Show all",
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "palette": "Command palette",
+    "search": "Focus the page search",
+    "help": "Show this list"
   }
 }
