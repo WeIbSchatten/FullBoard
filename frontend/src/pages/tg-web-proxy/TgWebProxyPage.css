@@ -22,3 +22,12 @@
   white-space: nowrap;
   vertical-align: bottom;
 }
+
+.tg-service-title {
+  margin: 4px 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fb-text-3);
+}
