@@ -12,13 +12,3 @@
   border: 1px solid var(--fb-border);
   border-radius: var(--fb-radius-sm);
 }
-
-/* Metric names are identifiers: keep them on one line instead of breaking mid-word. */
-.tg-web-proxy-page .ant-statistic-title code {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: bottom;
-}
