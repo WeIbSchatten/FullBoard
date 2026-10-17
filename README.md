@@ -31,10 +31,9 @@
   </picture>
 </p>
 
-**FullBoard** is a self-hosted web panel for [Xray-core](https://github.com/XTLS/Xray-core) servers.
-It started from the 3x-ui idea and grew into its own product: a redesigned interface, the official
-**Telegram WEB Proxy** relay with per-client secrets, one-shot node invites, and servers that come up
-tuned for speed.
+**FullBoard** is a self-hosted web panel for [Xray-core](https://github.com/XTLS/Xray-core) servers:
+a calm interface, the official **Telegram WEB Proxy** relay with per-client secrets, one-shot node
+invites, and many servers managed from one place.
 
 > [!IMPORTANT]
 > FullBoard is meant for personal use. Do not use it for anything illegal where you live.
@@ -50,7 +49,6 @@ The installer:
 - downloads the latest release and verifies its `.sha256`;
 - generates a random username, password and secret web path;
 - installs the systemd service with a hardened sandbox;
-- enables **BBR + fq** and larger TCP buffers (opt out with `XUI_NET_TUNING=false`);
 - sets up Fail2ban for per-client IP limits.
 
 Then open the printed URL, or run `fullboard` for the management menu.
@@ -60,7 +58,7 @@ Then open the printed URL, or run `fullboard` for the management menu.
 
 ```bash
 # a specific release
-bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v1.4.4
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) v1.4.6
 
 # the rolling dev build from main
 bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh) dev-latest
@@ -150,11 +148,10 @@ flowchart LR
 
 ## Speed
 
-Fresh servers usually ship with `cubic` + `fq_codel` and small socket buffers. On long routes that
-caps a single connection well below the link. FullBoard writes
-`/etc/sysctl.d/99-fullboard-network.conf` on install and update (BBR, `fq`, 32 MiB buffers, MTU
-probing). For the fastest transport, use **VLESS + REALITY + Vision**. The full checklist is in
-[Performance](docs/content/docs/en/operations/performance.mdx).
+The fastest transport is **VLESS + REALITY + Vision** over a direct connection. Whether BBR beats
+the kernel's default `cubic` depends on your route, so FullBoard does not change TCP settings on its
+own: compare both with the steps in [Performance](docs/content/docs/en/operations/performance.mdx)
+and keep the winner (BBR is one click in the `fullboard` menu).
 
 ## Management
 
@@ -197,7 +194,7 @@ To move existing data, run `fullboard migrate-db --dsn "<dsn>"`. Then set the tw
 | `XUI_INIT_WEB_BASE_PATH` | Initial web path of the panel | `/` |
 | `XUI_PORT` | Override the panel port | — |
 | `XUI_ENABLE_FAIL2BAN` | Fail2ban-based IP limits | `true` |
-| `XUI_NET_TUNING` | BBR + fq + TCP buffers on install/update | `true` |
+| `XUI_NET_TUNING` | `true` writes BBR + fq on install/update | `false` |
 | `XUI_LOG_LEVEL` | `debug`, `info`, `warning`, `error` | `info` |
 | `XUI_TUNNEL_HEALTH_MONITOR` | Probe a URL and restart Xray after repeated failures | `false` |
 | `NODE_TOKEN_ENCRYPTION` | Node API tokens at rest: `off`, `migration`, `required` | `off` |
@@ -229,7 +226,6 @@ vulnerability, see [SECURITY.md](SECURITY.md).
 
 ## Acknowledgments
 
-- [3x-ui](https://github.com/MHSanaei/3x-ui), the project FullBoard grew out of.
 - [Xray-core](https://github.com/XTLS/Xray-core) and [tproxy-server](https://github.com/telegramdesktop/tproxy-server).
 - [Iran v2ray rules](https://github.com/chocolate4u/Iran-v2ray-rules) and [Russia v2ray rules](https://github.com/runetfreedom/russia-v2ray-rules-dat) (GPL-3.0).
 

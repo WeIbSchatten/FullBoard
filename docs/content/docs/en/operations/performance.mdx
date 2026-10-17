@@ -1,56 +1,40 @@
 ---
 title: Performance
-description: Get full link speed and low latency out of FullBoard — BBR and TCP buffers, choosing a transport, reading CPU load, and a step-by-step speed checklist.
+description: Get full link speed and low latency out of FullBoard — testing BBR against cubic, choosing a transport, reading CPU load, and a step-by-step speed checklist.
 icon: Gauge
 ---
 
 A slow proxy is almost never slow because of one setting. Work through this page
 top to bottom: each step removes one common cap on speed or latency.
 
-## 1. Kernel network tuning (BBR)
+## 1. Congestion control (BBR) — measure, then decide
 
-Most distributions boot with `cubic` congestion control, the `fq_codel` qdisc
-and small socket buffers. On a path with 50–200 ms of round-trip time that caps a
-single TCP stream far below what the link can carry, and the first packet loss
-halves the speed again.
+Most distributions boot with `cubic` and the `fq_codel` qdisc. **BBR + fq** often
+helps on long, clean routes, but on paths with policers or traffic shaping it can
+cause more loss, lower throughput and higher latency than `cubic`. FullBoard
+therefore leaves the kernel alone by default.
 
-Since **1.4.4** `install.sh` and `update.sh` write
-`/etc/sysctl.d/99-fullboard-network.conf` and apply it immediately:
-
-| Setting | Value | Why |
-| --- | --- | --- |
-| `net.ipv4.tcp_congestion_control` | `bbr` | Paces by measured bandwidth instead of backing off on every loss |
-| `net.core.default_qdisc` | `fq` | The pacing qdisc BBR is designed for |
-| `net.core.rmem_max` / `wmem_max` | 32 MiB | Lets one stream fill a long, fat pipe |
-| `net.ipv4.tcp_rmem` / `tcp_wmem` | `4096 … 32 MiB` | Auto-tuning ceiling for every socket |
-| `net.ipv4.tcp_mtu_probing` | `1` | Survives paths that silently drop large packets |
-| `net.ipv4.tcp_slow_start_after_idle` | `0` | No speed reset after a pause (video, browsing) |
-| `net.ipv4.tcp_notsent_lowat` | `16384` | Keeps send queues short → lower latency under load |
-| `net.ipv4.tcp_fastopen` | `3` | One round trip less on reconnects |
-
-Check it on the server:
-
-```bash
-sysctl net.ipv4.tcp_congestion_control net.core.default_qdisc
-# net.ipv4.tcp_congestion_control = bbr
-# net.core.default_qdisc = fq
-```
-
-Apply it right now on an older install without waiting for an update:
-
-```bash
-fullboard update        # re-runs the tuning
-# or only the tuning, by hand:
-modprobe tcp_bbr
-cat /etc/sysctl.d/99-fullboard-network.conf   # present after 1.4.4
-sysctl -p /etc/sysctl.d/99-fullboard-network.conf
-```
-
-<Callout type="info">
-  Set `XUI_NET_TUNING=false` in `/etc/default/fullboard` before installing or updating to keep your own
-  sysctl settings. OpenVZ/LXC containers often cannot change these keys — the installer then skips the
-  step and says so.
+<Callout type="warn">
+  1.4.4 and 1.4.5 applied a larger profile automatically (BBR, 32 MiB buffers, `tcp_notsent_lowat`,
+  `fq` forced onto live interfaces). On some hosts that made speed and ping worse. Updating to 1.4.6
+  removes `/etc/sysctl.d/99-fullboard-network.conf` and restores the kernel defaults.
 </Callout>
+
+Compare both on your own route — run the same speed test after each step:
+
+```bash
+# A: kernel default
+sysctl -w net.ipv4.tcp_congestion_control=cubic net.core.default_qdisc=fq_codel
+# B: BBR
+modprobe tcp_bbr && sysctl -w net.ipv4.tcp_congestion_control=bbr net.core.default_qdisc=fq
+```
+
+`sysctl -w` lasts until reboot. Keep the winner permanently with **BBR** in the
+`fullboard` menu, or set `XUI_NET_TUNING=true` in `/etc/default/fullboard` and run
+`fullboard update` (it writes only those two keys).
+
+Signs of a policed path: many retransmits while downloading
+(`nstat -az TcpRetransSegs` rising quickly, `ss -tin` showing `retrans:`).
 
 ## 2. Pick a fast transport
 
@@ -98,7 +82,7 @@ curl -o /dev/null -w '%{speed_download}\n' https://speed.cloudflare.com/__down?b
 </Step>
 <Step>
 
-**Check the tuning** (section 1) shows `bbr` and `fq`.
+**Compare BBR and cubic** (section 1) on your route.
 
 </Step>
 <Step>

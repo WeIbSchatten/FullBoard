@@ -1411,15 +1411,41 @@ EOF
     ${xui_folder}/fullboard migrate
 }
 
-# Stock kernels ship cubic + fq_codel and small socket buffers, which cap a
-# single proxied TCP stream far below the link on high-RTT paths. BBR + fq
-# and larger buffers are what proxy hosts need; XUI_NET_TUNING=false opts out.
-setup_network_tuning() {
-    local conf="/etc/sysctl.d/99-fullboard-network.conf" iface
-    if [[ "${XUI_NET_TUNING:-true}" != "true" ]]; then
-        echo -e "${yellow}XUI_NET_TUNING=${XUI_NET_TUNING}, skipping network tuning.${plain}"
-        return 0
+# 1.4.4/1.4.5 applied an aggressive TCP profile on every install/update (BBR,
+# 32 MiB buffers, notsent_lowat, fq forced onto live NICs). On some hosts it
+# lowered throughput and raised latency, so tuning is now opt-in
+# (XUI_NET_TUNING=true or the `fullboard` BBR menu) and the old profile is undone.
+FULLBOARD_NET_CONF="/etc/sysctl.d/99-fullboard-network.conf"
+
+revert_network_tuning() {
+    local iface
+    [[ -f "$FULLBOARD_NET_CONF" ]] || return 0
+    rm -f "$FULLBOARD_NET_CONF"
+    command -v sysctl > /dev/null 2>&1 || return 0
+    # Kernel defaults for every key the old profile set; distro files re-apply on top.
+    sysctl -e -w net.ipv4.tcp_congestion_control=cubic \
+        net.core.default_qdisc=fq_codel \
+        net.core.rmem_max=212992 net.core.wmem_max=212992 \
+        "net.ipv4.tcp_rmem=4096 131072 6291456" "net.ipv4.tcp_wmem=4096 16384 4194304" \
+        net.core.netdev_max_backlog=1000 net.ipv4.tcp_fastopen=1 \
+        net.ipv4.tcp_mtu_probing=0 net.ipv4.tcp_slow_start_after_idle=1 \
+        net.ipv4.tcp_notsent_lowat=4294967295 \
+        "net.ipv4.ip_local_port_range=32768 60999" > /dev/null 2>&1 || true
+    sysctl --system > /dev/null 2>&1 || true
+    # Drop the forced root fq so each NIC gets its default (mq/fq_codel) back.
+    if command -v tc > /dev/null 2>&1; then
+        for iface in $(ip -o link show up 2> /dev/null | awk -F': ' '{print $2}' | cut -d@ -f1); do
+            [[ "$iface" == "lo" ]] && continue
+            tc qdisc show dev "$iface" root 2> /dev/null | grep -q '^qdisc fq ' &&
+                tc qdisc del dev "$iface" root > /dev/null 2>&1
+        done
     fi
+    echo -e "${yellow}Removed the FullBoard 1.4.4 network profile and restored kernel TCP defaults.${plain}"
+}
+
+setup_network_tuning() {
+    revert_network_tuning
+    [[ "${XUI_NET_TUNING:-false}" == "true" ]] || return 0
     command -v sysctl > /dev/null 2>&1 || return 0
     [[ -d /etc/sysctl.d ]] || return 0
     modprobe tcp_bbr > /dev/null 2>&1 || true
@@ -1427,39 +1453,14 @@ setup_network_tuning() {
         echo -e "${yellow}Kernel has no BBR (container or old kernel); network tuning skipped.${plain}"
         return 0
     fi
-    cat > "${conf}.tmp.$$" << 'SYSCTL'
-# Written by FullBoard install/update; set XUI_NET_TUNING=false to stop it.
+    # Only BBR + fq: the same pair as the `fullboard` menu, nothing that changes buffering.
+    cat > "$FULLBOARD_NET_CONF" << 'SYSCTL'
+# Written by FullBoard because XUI_NET_TUNING=true; remove the variable to undo on next update.
 net.core.default_qdisc = fq
 net.ipv4.tcp_congestion_control = bbr
-net.core.rmem_max = 33554432
-net.core.wmem_max = 33554432
-net.ipv4.tcp_rmem = 4096 131072 33554432
-net.ipv4.tcp_wmem = 4096 65536 33554432
-net.core.netdev_max_backlog = 16384
-net.core.somaxconn = 8192
-net.ipv4.tcp_max_syn_backlog = 8192
-net.ipv4.tcp_fastopen = 3
-net.ipv4.tcp_mtu_probing = 1
-net.ipv4.tcp_slow_start_after_idle = 0
-net.ipv4.tcp_notsent_lowat = 16384
-net.ipv4.ip_local_port_range = 10240 65535
 SYSCTL
-    mv -f "${conf}.tmp.$$" "$conf" && chmod 644 "$conf"
-    if [[ -f /etc/sysctl.d/99-bbr-fullboard.conf ]]; then
-        rm -f /etc/sysctl.d/99-bbr-fullboard.conf
-    fi
-    if [[ -f /etc/sysctl.conf ]]; then
-        sed -i -E 's/^(net\.core\.default_qdisc|net\.ipv4\.tcp_congestion_control)/# &/' /etc/sysctl.conf
-    fi
-    # -e: a key the kernel lacks (e.g. inside a VPS without netns sysctls) is skipped, not fatal.
-    sysctl -e -p "$conf" > /dev/null 2>&1 || true
-    # default_qdisc only affects qdiscs created later; switch live interfaces now.
-    if command -v tc > /dev/null 2>&1; then
-        for iface in $(ip -o link show up 2> /dev/null | awk -F': ' '{print $2}' | cut -d@ -f1); do
-            [[ "$iface" == "lo" ]] && continue
-            tc qdisc replace dev "$iface" root fq > /dev/null 2>&1 || true
-        done
-    fi
+    chmod 644 "$FULLBOARD_NET_CONF"
+    sysctl -e -p "$FULLBOARD_NET_CONF" > /dev/null 2>&1 || true
     echo -e "${green}Network tuning: $(sysctl -n net.ipv4.tcp_congestion_control 2> /dev/null) + $(sysctl -n net.core.default_qdisc 2> /dev/null)${plain}"
 }
 
@@ -2085,7 +2086,7 @@ install_x-ui() {
     # works out of the box (no-op when XUI_ENABLE_FAIL2BAN=false). Never fatal.
     setup_fail2ban
 
-    # BBR + fq and larger TCP buffers for proxy throughput. Never fatal.
+    # Undo the 1.4.4 TCP profile; BBR + fq only with XUI_NET_TUNING=true. Never fatal.
     setup_network_tuning
 
     echo -e "${green}fullboard ${tag_version}${plain} installation finished, it is running now..."
