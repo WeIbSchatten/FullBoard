@@ -156,6 +156,8 @@ func run(root, outDir string) error {
 				"PublicSitePreset",
 				"PublicSiteSnapshot",
 				"CaddyH2WSStatus",
+				"RelayBackendsStatus",
+				"RelayManagedBackend",
 				"DedicatedSpec",
 			),
 		},

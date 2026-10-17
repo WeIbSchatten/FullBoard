@@ -48,6 +48,9 @@ export function reportApply(
   } else if (res.caddyPatched) {
     getMessage().info(t('pages.tgWebProxy.toasts.caddyFixed'));
   }
+  if (res.backendError) {
+    getMessage().warning(res.backendError);
+  }
 }
 
 export default function ProfilesTab({
@@ -219,7 +222,7 @@ export default function ProfilesTab({
           />
         )}
         <Alert
-          type="warning"
+          type="info"
           showIcon
           style={{ marginBottom: 12 }}
           title={t('pages.tgWebProxy.profile.backendWarning')}

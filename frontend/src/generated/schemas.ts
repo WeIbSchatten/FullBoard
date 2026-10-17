@@ -2493,7 +2493,7 @@ export const SCHEMAS: Record<string, unknown> = {
     "type": "object"
   },
   "DedicatedSpec": {
-    "description": "DedicatedSpec asks for one per-client profile cloned from Base (carrier mode\nand limits). Secret/Backend override the generated secret and base backend\nwhen the panel has already provisioned a matching MTProto listener.",
+    "description": "DedicatedSpec asks for one per-client profile cloned from Base (carrier mode\nand limits); Secret/Backend pin values, otherwise they are kept or generated.",
     "properties": {
       "backend": {
         "example": "127.0.0.1:31234",
@@ -2510,6 +2510,11 @@ export const SCHEMAS: Record<string, unknown> = {
       "secret": {
         "example": "aabbccddeeff00112233445566778899",
         "type": "string"
+      },
+      "suspended": {
+        "description": "Suspended keeps the profile (and so the client's link) but parks it on\nSuspendedBackend, which no MTProxy serves, while the client is disabled.",
+        "example": false,
+        "type": "boolean"
       }
     },
     "required": [
@@ -4630,6 +4635,9 @@ export const SCHEMAS: Record<string, unknown> = {
   },
   "RelayApplyResult": {
     "properties": {
+      "backendError": {
+        "type": "string"
+      },
       "caddyPatchError": {
         "type": "string"
       },
@@ -4651,6 +4659,24 @@ export const SCHEMAS: Record<string, unknown> = {
     "required": [
       "restartError",
       "restarted"
+    ],
+    "type": "object"
+  },
+  "RelayBackendsStatus": {
+    "description": "RelayBackendsStatus reports the panel-run MTProxy listeners behind profiles.",
+    "properties": {
+      "error": {
+        "type": "string"
+      },
+      "managed": {
+        "items": {
+          "$ref": "#/components/schemas/RelayManagedBackend"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "managed"
     ],
     "type": "object"
   },
@@ -4918,6 +4944,40 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "RelayManagedBackend": {
+    "properties": {
+      "active": {
+        "example": true,
+        "type": "boolean"
+      },
+      "backend": {
+        "example": "127.0.0.1:40123",
+        "type": "string"
+      },
+      "external": {
+        "example": false,
+        "type": "boolean"
+      },
+      "profiles": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "unit": {
+        "example": "fullboard-mtproxy-40123",
+        "type": "string"
+      }
+    },
+    "required": [
+      "active",
+      "backend",
+      "external",
+      "profiles",
+      "unit"
+    ],
+    "type": "object"
+  },
   "RelayProfile": {
     "properties": {
       "backend": {
@@ -5078,6 +5138,9 @@ export const SCHEMAS: Record<string, unknown> = {
         ],
         "nullable": true
       },
+      "backends": {
+        "$ref": "#/components/schemas/RelayBackendsStatus"
+      },
       "basePath": {
         "type": "string"
       },
@@ -5150,6 +5213,7 @@ export const SCHEMAS: Record<string, unknown> = {
       }
     },
     "required": [
+      "backends",
       "basePath",
       "binaryInstalled",
       "binaryPath",
