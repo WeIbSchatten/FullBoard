@@ -6,6 +6,45 @@ import type { MappingAlgorithm } from 'antd/es/theme/interface';
 
 const STORAGE_DARK = 'dark-mode';
 const STORAGE_ULTRA = 'isUltraDarkThemeEnabled';
+const STORAGE_STYLE = 'fb-style';
+const STORAGE_SCALE = 'fb-ui-scale';
+
+export type StylePreset = 'mono' | 'pastel';
+export const STYLE_PRESETS: StylePreset[] = ['mono', 'pastel'];
+export type UiScale = 'auto' | '90' | '100' | '110' | '125' | '150';
+export const UI_SCALES: UiScale[] = ['auto', '90', '100', '110', '125', '150'];
+
+function readChoice<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
+  const raw = localStorage.getItem(key);
+  return allowed.includes(raw as T) ? (raw as T) : fallback;
+}
+
+// Panel px sizes were tuned for ~1440px windows; wide monitors at 100% OS
+// scaling get a proportional zoom instead of a sea of empty space.
+export function autoUiScale(windowWidth: number): number {
+  if (windowWidth < 1800) return 1;
+  if (windowWidth < 2300) return 1.1;
+  if (windowWidth < 3000) return 1.25;
+  return 1.5;
+}
+
+export function resolveUiScale(scale: UiScale, windowWidth: number): number {
+  return scale === 'auto' ? autoUiScale(windowWidth) : Number(scale) / 100;
+}
+
+// Current document zoom; canvas code divides pointer offsets by it.
+export function uiZoom(): number {
+  return parseFloat(document.documentElement.style.zoom) || 1;
+}
+
+function applyAppearance(style: StylePreset, scale: UiScale) {
+  const root = document.documentElement;
+  root.setAttribute('data-style', style);
+  const zoom = resolveUiScale(scale, window.innerWidth);
+  root.style.zoom = zoom === 1 ? '' : String(zoom);
+  // vh/vw ignore zoom, so viewport-sized rules divide by this (see styles).
+  root.style.setProperty('--fb-zoom', String(zoom));
+}
 
 function readBool(key: string, fallback: boolean): boolean {
   const raw = localStorage.getItem(key);
@@ -33,7 +72,10 @@ function applyDom(isDark: boolean, isUltra: boolean) {
 // module load so the document is in the right theme before React mounts.
 const initialDark = readBool(STORAGE_DARK, true);
 const initialUltra = readBool(STORAGE_ULTRA, false);
+const initialStyle = readChoice(STORAGE_STYLE, STYLE_PRESETS, 'mono');
+const initialScale = readChoice(STORAGE_SCALE, UI_SCALES, 'auto');
 applyDom(initialDark, initialUltra);
+applyAppearance(initialStyle, initialScale);
 
 // Mirrors styles/theme.css; antd needs literal colours to derive hover/active shades.
 interface Palette {
@@ -55,6 +97,7 @@ interface Palette {
   warning: string;
   error: string;
   info: string;
+  chart: [string, string, string];
 }
 
 const DARK: Palette = {
@@ -76,6 +119,7 @@ const DARK: Palette = {
   warning: '#e2b86b',
   error: '#ec7a7a',
   info: '#9db8db',
+  chart: ['#f5f5f5', '#9db8db', '#e2b86b'],
 };
 
 const ULTRA: Palette = {
@@ -107,6 +151,62 @@ const LIGHT: Palette = {
   warning: '#8a5a10',
   error: '#b3362f',
   info: '#33608f',
+  chart: ['#111111', '#33608f', '#8a5a10'],
+};
+
+// Pastel: lemon / pink / lilac / navy on near-black graphite or lavender paper.
+const PASTEL_DARK: Palette = {
+  bg: '#0b0b0d',
+  surface: '#19191c',
+  surface2: '#222226',
+  elevated: '#1f1f23',
+  border: 'rgba(255, 255, 255, 0.07)',
+  borderStrong: 'rgba(255, 255, 255, 0.13)',
+  text: '#f4f3fa',
+  text2: '#bdbbcf',
+  text3: '#918fa6',
+  accent: '#a8a3f6',
+  accentHover: '#bcb8f9',
+  accentActive: '#938dec',
+  onAccent: '#16163a',
+  accentSoft: 'rgba(168, 163, 246, 0.14)',
+  success: '#8fd8ae',
+  warning: '#f8ffa1',
+  error: '#ff8fa3',
+  info: '#a9c0ff',
+  chart: ['#a8a3f6', '#f6d5ee', '#f8ffa1'],
+};
+
+const PASTEL_ULTRA: Palette = {
+  ...PASTEL_DARK,
+  bg: '#000000',
+  surface: '#111113',
+  surface2: '#18181b',
+  elevated: '#151518',
+  border: 'rgba(255, 255, 255, 0.07)',
+  borderStrong: 'rgba(255, 255, 255, 0.12)',
+};
+
+const PASTEL_LIGHT: Palette = {
+  bg: '#f4f3fb',
+  surface: '#ffffff',
+  surface2: '#efeef9',
+  elevated: '#ffffff',
+  border: 'rgba(36, 49, 107, 0.10)',
+  borderStrong: 'rgba(36, 49, 107, 0.18)',
+  text: '#16163a',
+  text2: '#45456a',
+  text3: '#5e5e80',
+  accent: '#24316b',
+  accentHover: '#2f3e85',
+  accentActive: '#1a2452',
+  onAccent: '#ffffff',
+  accentSoft: 'rgba(168, 163, 246, 0.22)',
+  success: '#1f7a45',
+  warning: '#7d6a00',
+  error: '#b3364f',
+  info: '#3a4fb0',
+  chart: ['#24316b', '#8b84ee', '#c25a9f'],
 };
 
 const FONT_FAMILY = `ui-sans-serif, -apple-system, "Segoe UI Variable Text", "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif`;
@@ -120,10 +220,16 @@ const SHARED_STYLE_CONFIG = {
   cssVar: { key: 'xui' },
 } as const;
 
-function paletteFor(isDark: boolean, isUltra: boolean): Palette {
+function paletteFor(isDark: boolean, isUltra: boolean, style: StylePreset = 'mono'): Palette {
+  if (style === 'pastel') {
+    if (!isDark) return PASTEL_LIGHT;
+    return isUltra ? PASTEL_ULTRA : PASTEL_DARK;
+  }
   if (!isDark) return LIGHT;
   return isUltra ? ULTRA : DARK;
 }
+
+const PASTEL_FONT = `"Manrope Variable", ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif`;
 
 // The dark algorithm blends the seed toward the background (white → #d3d3d3);
 // pin the primary ramp so the accent stays exactly the palette colour.
@@ -143,8 +249,13 @@ function pinPrimary(p: Palette): MappingAlgorithm {
   });
 }
 
-export function buildAntdThemeConfig(isDark: boolean, isUltra: boolean): ThemeConfig {
-  const p = paletteFor(isDark, isUltra);
+export function buildAntdThemeConfig(
+  isDark: boolean,
+  isUltra: boolean,
+  style: StylePreset = 'mono',
+): ThemeConfig {
+  const p = paletteFor(isDark, isUltra, style);
+  const pastel = style === 'pastel';
   return {
     ...SHARED_STYLE_CONFIG,
     algorithm: [isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm, pinPrimary(p)],
@@ -175,12 +286,12 @@ export function buildAntdThemeConfig(isDark: boolean, isUltra: boolean): ThemeCo
       controlItemBgActive: p.accentSoft,
       controlItemBgActiveHover: p.accentSoft,
       controlOutline: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
-      fontFamily: FONT_FAMILY,
+      fontFamily: pastel ? PASTEL_FONT : FONT_FAMILY,
       fontFamilyCode: FONT_FAMILY_CODE,
       fontSize: 14,
-      borderRadius: 10,
-      borderRadiusSM: 8,
-      borderRadiusLG: 16,
+      borderRadius: pastel ? 12 : 10,
+      borderRadiusSM: pastel ? 10 : 8,
+      borderRadiusLG: pastel ? 20 : 16,
       borderRadiusXS: 6,
       controlHeight: 36,
       controlHeightSM: 28,
@@ -346,6 +457,10 @@ interface ThemeContextValue {
   isUltra: boolean;
   mode: ThemeMode;
   setMode: (mode: ThemeMode) => void;
+  stylePreset: StylePreset;
+  setStylePreset: (style: StylePreset) => void;
+  uiScale: UiScale;
+  setUiScale: (scale: UiScale) => void;
   toggleTheme: () => void;
   toggleUltra: () => void;
   antdThemeConfig: ThemeConfig;
@@ -356,12 +471,24 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDark, setIsDark] = useState<boolean>(initialDark);
   const [isUltra, setIsUltra] = useState<boolean>(initialUltra);
+  const [stylePreset, setStylePreset] = useState<StylePreset>(initialStyle);
+  const [uiScale, setUiScale] = useState<UiScale>(initialScale);
 
   useLayoutEffect(() => {
     applyDom(isDark, isUltra);
     localStorage.setItem(STORAGE_DARK, String(isDark));
     localStorage.setItem(STORAGE_ULTRA, String(isUltra));
   }, [isDark, isUltra]);
+
+  useLayoutEffect(() => {
+    applyAppearance(stylePreset, uiScale);
+    localStorage.setItem(STORAGE_STYLE, stylePreset);
+    localStorage.setItem(STORAGE_SCALE, uiScale);
+    if (uiScale !== 'auto') return;
+    const onResize = () => applyAppearance(stylePreset, uiScale);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [stylePreset, uiScale]);
 
   const toggleTheme = useCallback(() => setIsDark((v) => !v), []);
   const toggleUltra = useCallback(() => setIsUltra((v) => !v), []);
@@ -371,11 +498,36 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
   const mode: ThemeMode = !isDark ? 'light' : isUltra ? 'amoled' : 'dark';
 
-  const antdThemeConfig = useMemo(() => buildAntdThemeConfig(isDark, isUltra), [isDark, isUltra]);
+  const antdThemeConfig = useMemo(
+    () => buildAntdThemeConfig(isDark, isUltra, stylePreset),
+    [isDark, isUltra, stylePreset],
+  );
 
   const value = useMemo<ThemeContextValue>(
-    () => ({ isDark, isUltra, mode, setMode, toggleTheme, toggleUltra, antdThemeConfig }),
-    [isDark, isUltra, mode, setMode, toggleTheme, toggleUltra, antdThemeConfig],
+    () => ({
+      isDark,
+      isUltra,
+      mode,
+      setMode,
+      stylePreset,
+      setStylePreset,
+      uiScale,
+      setUiScale,
+      toggleTheme,
+      toggleUltra,
+      antdThemeConfig,
+    }),
+    [
+      isDark,
+      isUltra,
+      mode,
+      setMode,
+      stylePreset,
+      uiScale,
+      toggleTheme,
+      toggleUltra,
+      antdThemeConfig,
+    ],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -394,9 +546,9 @@ export interface ChartColors {
 
 // Canvas charts cannot read CSS variables, so hand them literal palette values.
 export function useChartColors(): ChartColors {
-  const { isDark, isUltra } = useTheme();
+  const { isDark, isUltra, stylePreset } = useTheme();
   return useMemo(() => {
-    const p = paletteFor(isDark, isUltra);
-    return { series: [p.accent, p.info, p.warning], muted: p.text3 };
-  }, [isDark, isUltra]);
+    const p = paletteFor(isDark, isUltra, stylePreset);
+    return { series: p.chart, muted: p.text3 };
+  }, [isDark, isUltra, stylePreset]);
 }

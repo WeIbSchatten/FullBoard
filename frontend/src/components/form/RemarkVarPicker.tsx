@@ -21,7 +21,13 @@ export default function RemarkVarPicker({
 }: RemarkVarPickerProps) {
   const { t } = useTranslation();
   return (
-    <div style={{ maxWidth: 460, maxHeight: 'min(70vh, 640px)', overflowY: 'auto' }}>
+    <div
+      style={{
+        maxWidth: 460,
+        maxHeight: 'min(calc(70vh / var(--fb-zoom, 1)), 640px)',
+        overflowY: 'auto',
+      }}
+    >
       <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 8 }}>
         {t('pages.hosts.remarkVars.intro')}
       </Typography.Paragraph>

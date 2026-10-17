@@ -31,6 +31,7 @@ import { useMobileNav } from '@/layouts/MobileNavContext';
 import { NAV_ROUTES, NAV_SECTION_TITLE_KEYS, type NavSection } from '@/layouts/navModel';
 import BrandMark from '@/components/ui/BrandMark';
 import ThemeSwitch from '@/components/ui/ThemeSwitch';
+import { AppearanceButton } from '@/components/ui/AppearancePanel';
 import './AppSidebar.css';
 
 const DOCS_URL = 'https://github.com/WeIbSchatten/FullBoard/tree/main/docs';
@@ -208,7 +209,10 @@ export default function AppSidebar() {
         onClick={onMenuClick}
       />
       <div className="sider-footer">
-        <ThemeSwitch />
+        <div className="appearance-row">
+          <ThemeSwitch />
+          <AppearanceButton placement="top" />
+        </div>
         {footerLinks(false)}
       </div>
     </Drawer>
@@ -231,6 +235,7 @@ export default function AppSidebar() {
           </div>
           <div className="top-nav-tools">
             <ThemeSwitch compact />
+            <AppearanceButton placement="bottomRight" />
           </div>
         </Layout.Header>
         {drawer}
@@ -257,7 +262,10 @@ export default function AppSidebar() {
             onClick={onMenuClick}
           />
           <div className="sider-footer">
-            <ThemeSwitch compact={collapsed} />
+            <div className={`appearance-row${collapsed ? ' appearance-row--compact' : ''}`}>
+              <ThemeSwitch compact={collapsed} />
+              <AppearanceButton />
+            </div>
             {footerLinks(collapsed)}
             <button
               type="button"

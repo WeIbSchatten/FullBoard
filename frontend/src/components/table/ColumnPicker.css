@@ -1,0 +1,15 @@
+.column-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.column-picker .ant-checkbox-wrapper {
+  margin-inline-start: 0;
+}
+
+.column-picker-reset.ant-btn {
+  align-self: flex-start;
+  padding-inline: 0;
+}

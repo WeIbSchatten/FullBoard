@@ -20,10 +20,10 @@
   background: transparent;
 }
 
+/* Fluid: content lines up with the page title at every width; wide screens
+   get a larger interface size (useTheme autoUiScale) instead of side gutters. */
 .content-area {
   width: 100%;
-  max-width: 1680px;
-  margin: 0 auto;
   padding: 8px 32px 40px;
 }
 
@@ -40,7 +40,7 @@
 }
 
 .loading-spacer {
-  min-height: calc(100vh - 160px);
+  min-height: calc(100vh / var(--fb-zoom, 1) - 160px);
 }
 
 /* ---------- Page tabs ---------- */

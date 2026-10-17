@@ -1,0 +1,215 @@
+/* Style presets layered over theme.css. data-style on <html> picks one;
+   monochrome is the default and needs no overrides beyond the display font. */
+@import '@fontsource-variable/manrope/wght.css';
+@import '@fontsource-variable/unbounded/wght.css';
+
+:root {
+  --fb-font-display: var(--fb-font);
+  --fb-display-weight: 650;
+  --fb-display-tracking: -0.02em;
+}
+
+/* ---------- Pastel: lemon · pink · lilac · navy ---------- */
+
+:root[data-style='pastel'] {
+  --fb-font:
+    'Manrope Variable', ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --fb-font-display: 'Unbounded Variable', 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --fb-display-weight: 600;
+  --fb-display-tracking: -0.01em;
+  --fb-radius-lg: 22px;
+  --fb-radius: 14px;
+  --fb-radius-sm: 10px;
+  --fb-lemon: #f8ffa1;
+  --fb-pink: #f6d5ee;
+  --fb-lilac: #a8a3f6;
+  --fb-navy: #24316b;
+}
+
+html[data-style='pastel'] body.dark,
+html[data-style='pastel'] .dark {
+  --fb-bg: #0b0b0d;
+  --fb-bg-glow: rgba(168, 163, 246, 0.1);
+  --fb-sider: #0f0f12;
+  --fb-surface: #19191c;
+  --fb-surface-2: #222226;
+  --fb-surface-3: #2b2b30;
+  --fb-surface-hover: rgba(168, 163, 246, 0.07);
+  --fb-elevated: #1f1f23;
+  --fb-border: rgba(255, 255, 255, 0.07);
+  --fb-border-strong: rgba(255, 255, 255, 0.13);
+  --fb-text: #f4f3fa;
+  --fb-text-2: #bdbbcf;
+  --fb-text-3: #918fa6;
+  --fb-accent: #a8a3f6;
+  --fb-accent-hover: #bcb8f9;
+  --fb-on-accent: #16163a;
+  --fb-accent-soft: rgba(168, 163, 246, 0.14);
+  --fb-accent-soft-2: rgba(168, 163, 246, 0.22);
+  --fb-focus: rgba(168, 163, 246, 0.55);
+  --fb-gradient: linear-gradient(100deg, #a8a3f6 0%, #d9c3f2 55%, #f6d5ee 100%);
+  --fb-success: #8fd8ae;
+  --fb-success-bg: rgba(143, 216, 174, 0.12);
+  --fb-warning: #f8ffa1;
+  --fb-warning-bg: rgba(248, 255, 161, 0.1);
+  --fb-error: #ff8fa3;
+  --fb-error-bg: rgba(255, 143, 163, 0.12);
+  --fb-info: #a9c0ff;
+  --fb-info-bg: rgba(169, 192, 255, 0.12);
+  --fb-purple: #a8a3f6;
+  --fb-purple-bg: rgba(168, 163, 246, 0.14);
+  --fb-chart-1: #a8a3f6;
+  --fb-chart-2: #f6d5ee;
+  --fb-chart-fill: rgba(168, 163, 246, 0.12);
+  --fb-grid: rgba(255, 255, 255, 0.06);
+  --fb-code-bg: #121215;
+  --fb-tone-1: #a8a3f6;
+  --fb-tone-2: #f6d5ee;
+  --fb-tone-3: #f8ffa1;
+}
+
+html[data-theme='ultra-dark'][data-style='pastel'] body.dark,
+html[data-theme='ultra-dark'][data-style='pastel'] .dark {
+  --fb-bg: #000000;
+  --fb-sider: #000000;
+  --fb-surface: #111113;
+  --fb-surface-2: #18181b;
+  --fb-surface-3: #202024;
+  --fb-elevated: #151518;
+  --fb-code-bg: #08080a;
+}
+
+html[data-style='pastel'] body.light,
+html[data-style='pastel'] .light {
+  --fb-bg: #f4f3fb;
+  --fb-bg-glow: rgba(168, 163, 246, 0.22);
+  --fb-sider: #fbfaff;
+  --fb-surface: #ffffff;
+  --fb-surface-2: #efeef9;
+  --fb-surface-3: #e5e3f5;
+  --fb-surface-hover: rgba(168, 163, 246, 0.12);
+  --fb-elevated: #ffffff;
+  --fb-border: rgba(36, 49, 107, 0.1);
+  --fb-border-strong: rgba(36, 49, 107, 0.18);
+  --fb-text: #16163a;
+  --fb-text-2: #45456a;
+  --fb-text-3: #5e5e80;
+  --fb-accent: #24316b;
+  --fb-accent-hover: #2f3e85;
+  --fb-on-accent: #ffffff;
+  --fb-accent-soft: rgba(168, 163, 246, 0.22);
+  --fb-accent-soft-2: rgba(168, 163, 246, 0.32);
+  --fb-focus: rgba(36, 49, 107, 0.35);
+  --fb-gradient: linear-gradient(100deg, #24316b 0%, #4a4fa8 60%, #8b84ee 100%);
+  --fb-success: #1f7a45;
+  --fb-success-bg: rgba(31, 122, 69, 0.1);
+  --fb-warning: #7d6a00;
+  --fb-warning-bg: rgba(248, 255, 161, 0.55);
+  --fb-error: #b3364f;
+  --fb-error-bg: rgba(246, 213, 238, 0.6);
+  --fb-info: #3a4fb0;
+  --fb-info-bg: rgba(168, 163, 246, 0.18);
+  --fb-purple: #5b52d6;
+  --fb-purple-bg: rgba(168, 163, 246, 0.2);
+  --fb-chart-1: #24316b;
+  --fb-chart-2: #8b84ee;
+  --fb-chart-fill: rgba(36, 49, 107, 0.08);
+  --fb-grid: rgba(36, 49, 107, 0.08);
+  --fb-code-bg: #f7f6fd;
+  --fb-tone-1: #a8a3f6;
+  --fb-tone-2: #f6d5ee;
+  --fb-tone-3: #f8ffa1;
+}
+
+/* Display type: page titles, big numbers and the brand. */
+.panel-topbar-title,
+.sider-brand-name,
+.ov-tile-number,
+.ov-foot-value,
+.ov-strip-value,
+.content-main .summary-card .ant-statistic-content,
+.login-app .brand-name,
+.login-app .welcome {
+  font-family: var(--fb-font-display);
+  font-weight: var(--fb-display-weight);
+  letter-spacing: var(--fb-display-tracking);
+}
+
+html[data-style='pastel'] .ov-tile-number {
+  font-size: 30px;
+}
+
+/* Primary actions wear the gradient; the label stays on-accent for contrast. */
+html[data-style='pastel'] .ant-btn-variant-solid.ant-btn-color-primary:not(:disabled) {
+  background: var(--fb-gradient);
+  border-color: transparent;
+}
+html[data-style='pastel'] .ant-btn-variant-solid.ant-btn-color-primary:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+/* Selected navigation reads as a lilac pill. */
+html[data-style='pastel'] .sider-nav.ant-menu .ant-menu-item-selected {
+  background: var(--fb-accent-soft-2) !important;
+  color: var(--fb-text) !important;
+}
+html[data-style='pastel'] .sider-nav.ant-menu .ant-menu-item-selected .anticon {
+  color: var(--fb-accent);
+}
+html[data-style='pastel'] body.light .sider-nav.ant-menu .ant-menu-item-selected .anticon {
+  color: var(--fb-accent);
+}
+
+html[data-style='pastel'] .ant-segmented .ant-segmented-item-selected,
+html[data-style='pastel'] .ant-segmented .ant-segmented-thumb {
+  background: var(--fb-gradient) !important;
+}
+
+/* Overview vitals: each tile carries its own pastel wash. */
+html[data-style='pastel'] .ov-vitals > .ov-tile {
+  background:
+    radial-gradient(
+      120% 90% at 0% 0%,
+      color-mix(in srgb, var(--tone) 16%, transparent),
+      transparent 70%
+    ),
+    var(--fb-surface);
+}
+html[data-style='pastel'] body.light .ov-vitals > .ov-tile {
+  background:
+    radial-gradient(
+      120% 90% at 0% 0%,
+      color-mix(in srgb, var(--tone) 55%, transparent),
+      transparent 75%
+    ),
+    var(--fb-surface);
+}
+html[data-style='pastel'] .ov-vitals > .ov-tile:nth-child(4n + 1) {
+  --tone: var(--fb-tone-1);
+}
+html[data-style='pastel'] .ov-vitals > .ov-tile:nth-child(4n + 2) {
+  --tone: var(--fb-tone-2);
+}
+html[data-style='pastel'] .ov-vitals > .ov-tile:nth-child(4n + 3) {
+  --tone: var(--fb-tone-3);
+}
+html[data-style='pastel'] .ov-vitals > .ov-tile:nth-child(4n + 4) {
+  --tone: var(--fb-tone-1);
+}
+html[data-style='pastel'] .ov-tile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--tone, var(--fb-accent));
+  color: #16163a;
+  font-size: 13px;
+}
+
+html[data-style='pastel'] .ant-progress-bg,
+html[data-style='pastel'] .ant-progress-bg-outer .ant-progress-bg {
+  background: var(--fb-gradient) !important;
+}

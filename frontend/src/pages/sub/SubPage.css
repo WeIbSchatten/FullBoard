@@ -25,7 +25,7 @@
   --sub-glass-bg: var(--fb-accent-soft);
 
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--fb-zoom, 1));
   background: var(--bg-page);
   color: var(--fb-text);
 }
@@ -88,7 +88,7 @@
     transform: translate(0, 0) scale(1);
   }
   100% {
-    transform: translate(16vw, 14vh) scale(1.18);
+    transform: translate(calc(16vw / var(--fb-zoom, 1)), calc(14vh / var(--fb-zoom, 1))) scale(1.18);
   }
 }
 

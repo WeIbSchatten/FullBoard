@@ -151,8 +151,12 @@ export default function XrayLogModal({ open, onClose }: XrayLogModalProps) {
     <Modal
       open={open}
       footer={null}
-      width={isMobile ? '100vw' : '80vw'}
-      style={isMobile ? { top: 0, paddingBottom: 0, maxWidth: '100vw' } : undefined}
+      width={isMobile ? 'calc(100vw / var(--fb-zoom, 1))' : 'calc(80vw / var(--fb-zoom, 1))'}
+      style={
+        isMobile
+          ? { top: 0, paddingBottom: 0, maxWidth: 'calc(100vw / var(--fb-zoom, 1))' }
+          : undefined
+      }
       className={isMobile ? 'xraylog-modal-mobile' : undefined}
       onCancel={onClose}
       title={

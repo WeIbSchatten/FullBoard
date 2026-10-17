@@ -233,6 +233,7 @@ export default function IndexPage() {
                     footRight={`${t('pages.index.peak')} ${peak(history.series.mem).toFixed(0)}%`}
                     data={history.series.mem}
                     isMobile={isMobile}
+                    tone={1}
                   />
                   <VitalTile
                     icon={<SwapOutlined />}
@@ -244,6 +245,7 @@ export default function IndexPage() {
                     footRight={`${t('pages.index.peak')} ${peak(history.series.swap).toFixed(0)}%`}
                     data={history.series.swap}
                     isMobile={isMobile}
+                    tone={2}
                   />
                   <VitalTile
                     icon={<HddOutlined />}
@@ -255,6 +257,7 @@ export default function IndexPage() {
                     footRight={`${t('pages.index.avg')} ${mean(history.series.diskUsage).toFixed(1)}%`}
                     data={history.series.diskUsage}
                     isMobile={isMobile}
+                    tone={3}
                   />
                 </div>
 
@@ -332,7 +335,11 @@ export default function IndexPage() {
             open={configTextOpen}
             title={t('pages.index.config')}
             width={isMobile ? '100%' : 900}
-            style={isMobile ? { top: 20, maxWidth: 'calc(100vw - 16px)' } : { top: 20 }}
+            style={
+              isMobile
+                ? { top: 20, maxWidth: 'calc(100vw / var(--fb-zoom, 1) - 16px)' }
+                : { top: 20 }
+            }
             onCancel={() => setConfigTextOpen(false)}
             footer={[
               <Button
@@ -357,8 +364,12 @@ export default function IndexPage() {
             <JsonEditor
               value={configText}
               onChange={setConfigText}
-              minHeight={isMobile ? '300px' : 'calc(100vh - 220px)'}
-              maxHeight={isMobile ? '70vh' : 'calc(100vh - 220px)'}
+              minHeight={isMobile ? '300px' : 'calc(100vh / var(--fb-zoom, 1) - 220px)'}
+              maxHeight={
+                isMobile
+                  ? 'calc(70vh / var(--fb-zoom, 1))'
+                  : 'calc(100vh / var(--fb-zoom, 1) - 220px)'
+              }
               readOnly
             />
           </Modal>
