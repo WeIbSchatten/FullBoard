@@ -573,6 +573,9 @@ func import3xUI(src, dst string) error {
 	if res.IPLimitsReset > 0 {
 		fmt.Printf("  WARNING: fail2ban is not active, so IP limits of %d clients were reset to 0 (as a 3x-ui upgrade would)\n", res.IPLimitsReset)
 	}
+	for _, w := range res.Warnings {
+		fmt.Printf("  WARNING: %s\n", w)
+	}
 	for _, f := range res.CertFiles {
 		if f.Exists {
 			fmt.Printf("  certificate file: %s\n", f.Path)
