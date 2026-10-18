@@ -1,6 +1,6 @@
 ---
 title: Резервное копирование и восстановление
-description: Создавайте резервные копии базы данных и сертификатов FullBoard и восстанавливайте их вручную или через Telegram-бота.
+description: Создавайте резервные копии базы данных и сертификатов We1ssBoard и восстанавливайте их вручную или через Telegram-бота.
 icon: DatabaseBackup
 ---
 
@@ -10,7 +10,7 @@ icon: DatabaseBackup
 
 ## Что копировать
 
-- **База данных** — по умолчанию SQLite в `/etc/fullboard/fullboard.db` (или ваша база
+- **База данных** — по умолчанию SQLite в `/etc/we1ssboard/we1ssboard.db` (или ваша база
   данных PostgreSQL, если вы используете этот бэкенд).
 - **Сертификаты** — всё, что находится в `/root/cert/` (или там, где вы храните
   сертификаты TLS).
@@ -21,7 +21,7 @@ icon: DatabaseBackup
 файл базы данных напрямую с сервера:
 
 ```bash title="copy the SQLite database"
-cp /etc/fullboard/fullboard.db /root/fullboard-backup-$(date +%F).db
+cp /etc/we1ssboard/we1ssboard.db /root/we1ssboard-backup-$(date +%F).db
 ```
 
 Чтобы выполнить восстановление, остановите панель, верните базу данных на место и
@@ -39,12 +39,12 @@ cp /etc/fullboard/fullboard.db /root/fullboard-backup-$(date +%F).db
 
 ## Дамп / восстановление SQLite
 
-Команда `fullboard migrate-db` преобразует базу данных SQLite в обычный текстовый дамп
+Команда `we1ssboard migrate-db` преобразует базу данных SQLite в обычный текстовый дамп
 SQL и обратно (удобно для просмотра или переноса между машинами):
 
 ```bash
-fullboard migrate-db --dump /root/fullboard.sql       # SQLite -> SQL text
-fullboard migrate-db --restore /root/fullboard.sql     # SQL text -> SQLite
+we1ssboard migrate-db --dump /root/we1ssboard.sql       # SQLite -> SQL text
+we1ssboard migrate-db --restore /root/we1ssboard.sql     # SQL text -> SQLite
 ```
 
 Чтобы перейти на PostgreSQL, смотрите раздел [База данных](/docs/reference/database).

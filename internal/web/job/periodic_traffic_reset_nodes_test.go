@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 // resetGate holds every node reset open until released, counting how many nodes

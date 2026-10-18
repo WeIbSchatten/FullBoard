@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tuic"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tuic"
 )
 
 func normalizeTuicSettings(inbound *model.Inbound) error {

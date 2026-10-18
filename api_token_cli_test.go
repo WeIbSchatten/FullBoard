@@ -7,11 +7,11 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/panel"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/panel"
 )
 
 func newTokenCLIEnv(t *testing.T) {

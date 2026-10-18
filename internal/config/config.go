@@ -1,4 +1,4 @@
-// Package config provides configuration management utilities for the FullBoard panel,
+// Package config provides configuration management utilities for the We1ssBoard panel,
 // including version information, logging levels, database paths, and environment variable handling.
 package config
 
@@ -41,7 +41,7 @@ const (
 	Error   LogLevel = "error"
 )
 
-// GetBaseVersion returns the raw embedded release version of the FullBoard panel
+// GetBaseVersion returns the raw embedded release version of the We1ssBoard panel
 // (e.g. "3.4.0"). This is the panel's own version, not the Xray version. For the
 // version a panel advertises/displays (which adds a "dev+<sha>" label on dev
 // builds), use GetPanelVersion.
@@ -49,7 +49,7 @@ func GetBaseVersion() string {
 	return strings.TrimSpace(version)
 }
 
-// GetName returns the name of the FullBoard application.
+// GetName returns the name of the We1ssBoard application.
 func GetName() string {
 	return strings.TrimSpace(name)
 }
@@ -161,12 +161,48 @@ func GetDBFolderPath() string {
 	if runtime.GOOS == "windows" {
 		return getBaseDir()
 	}
-	return "/etc/fullboard"
+	return resolveDBFolder("/etc/we1ssboard", legacyDBFolder)
+}
+
+// Pre-1.7.0 (FullBoard) defaults, still honoured where an install was never migrated.
+const (
+	legacyName     = "fullboard"
+	legacyDBFolder = "/etc/fullboard"
+)
+
+// resolveDBFolder keeps a Docker volume or hand-made layout mounted at the legacy
+// folder working after the rename; update.sh moves regular installs instead.
+func resolveDBFolder(current, legacy string) string {
+	if !hasDB(current) && hasDB(legacy) {
+		return legacy
+	}
+	return current
+}
+
+func hasDB(folder string) bool {
+	return fileExists(fmt.Sprintf("%s/%s.db", folder, GetName())) ||
+		fileExists(fmt.Sprintf("%s/%s.db", folder, legacyName))
+}
+
+func legacyFallback(current, legacy string) string {
+	if !fileExists(current) && fileExists(legacy) {
+		return legacy
+	}
+	return current
+}
+
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
 
 // GetDBPath returns the full path to the database file.
 func GetDBPath() string {
-	return fmt.Sprintf("%s/%s.db", GetDBFolderPath(), GetName())
+	return dbPathIn(GetDBFolderPath())
+}
+
+func dbPathIn(folder string) string {
+	return legacyFallback(fmt.Sprintf("%s/%s.db", folder, GetName()), fmt.Sprintf("%s/%s.db", folder, legacyName))
 }
 
 // GetUpdateStatusFilePath returns the path to the panel self-update status
@@ -205,7 +241,7 @@ func GetNodeTokenKeyFile() string {
 	if p := strings.TrimSpace(os.Getenv("XUI_NODE_TOKEN_KEY_FILE")); p != "" {
 		return p
 	}
-	return "/etc/fullboard/node_token_key.json"
+	return legacyFallback("/etc/we1ssboard/node_token_key.json", legacyDBFolder+"/node_token_key.json")
 }
 
 // GetNodeTokenKeyEnv returns the name of the env var holding a single base64
@@ -221,9 +257,9 @@ func GetEnvFilePaths() []string {
 		return nil
 	}
 	return []string{
-		"/etc/default/fullboard",
-		"/etc/conf.d/fullboard",
-		"/etc/sysconfig/fullboard",
+		"/etc/default/we1ssboard",
+		"/etc/conf.d/we1ssboard",
+		"/etc/sysconfig/we1ssboard",
 	}
 }
 
@@ -237,12 +273,12 @@ func GetLogFolder() string {
 	// scatters a log/ directory through the source tree (one per tested package).
 	// Redirect test runs to a shared temp folder so the source tree stays clean.
 	if testing.Testing() {
-		return filepath.Join(os.TempDir(), "fullboard-test-log")
+		return filepath.Join(os.TempDir(), "we1ssboard-test-log")
 	}
 	if runtime.GOOS == "windows" {
 		return filepath.Join(".", "log")
 	}
-	return "/var/log/fullboard"
+	return "/var/log/we1ssboard"
 }
 
 func copyFile(src, dst string) error {
@@ -273,7 +309,7 @@ func init() {
 	if os.Getenv("XUI_DB_FOLDER") != "" {
 		return
 	}
-	oldDBFolder := "/etc/fullboard"
+	oldDBFolder := "/etc/we1ssboard"
 	oldDBPath := fmt.Sprintf("%s/%s.db", oldDBFolder, GetName())
 	newDBFolder := GetDBFolderPath()
 	newDBPath := fmt.Sprintf("%s/%s.db", newDBFolder, GetName())

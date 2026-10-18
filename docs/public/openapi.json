@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "FullBoard Panel API",
+    "title": "We1ssBoard Panel API",
     "version": "3.x",
-    "description": "Programmatic interface to a FullBoard panel. Authenticate either by logging in (cookie) or with a scoped API token from Settings → Security → API Token (Bearer). Token access is limited by its admin, monitor, node-sync, or node-admin scope; treat admin tokens like the panel password."
+    "description": "Programmatic interface to a We1ssBoard panel. Authenticate either by logging in (cookie) or with a scoped API token from Settings → Security → API Token (Bearer). Token access is limited by its admin, monitor, node-sync, or node-admin scope; treat admin tokens like the panel password."
   },
   "servers": [
     {
@@ -21,7 +21,7 @@
       "cookieAuth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "FullBoard",
+        "name": "We1ssBoard",
         "description": "Session cookie set by POST /login. Browser-only."
       }
     },
@@ -3707,7 +3707,7 @@
         "type": "object"
       },
       "Node": {
-        "description": "Node represents a remote FullBoard panel registered with the central panel.\nThe central panel polls each node's existing /panel/api/server/status\nendpoint over HTTP using the per-node ApiToken to populate the runtime\nstatus fields below.",
+        "description": "Node represents a remote We1ssBoard panel registered with the central panel.\nThe central panel polls each node's existing /panel/api/server/status\nendpoint over HTTP using the per-node ApiToken to populate the runtime\nstatus fields below.",
         "properties": {
           "activeCount": {
             "example": 23,
@@ -4836,7 +4836,7 @@
             "type": "string"
           },
           "unit": {
-            "example": "fullboard-tproxy-install-1760000000",
+            "example": "we1ssboard-tproxy-install-1760000000",
             "type": "string"
           }
         },
@@ -4992,7 +4992,7 @@
             "type": "array"
           },
           "unit": {
-            "example": "fullboard-mtproxy-40123",
+            "example": "we1ssboard-mtproxy-40123",
             "type": "string"
           }
         },
@@ -5546,7 +5546,7 @@
         "type": "object"
       },
       "Setting": {
-        "description": "Setting stores key-value configuration settings for the FullBoard panel.",
+        "description": "Setting stores key-value configuration settings for the We1ssBoard panel.",
         "properties": {
           "id": {
             "type": "integer"
@@ -5882,7 +5882,7 @@
         "type": "object"
       },
       "User": {
-        "description": "User represents a user account in the FullBoard panel.",
+        "description": "User represents a user account in the We1ssBoard panel.",
         "properties": {
           "id": {
             "type": "integer"
@@ -5962,7 +5962,7 @@
     },
     {
       "name": "Nodes",
-      "description": "Manage remote FullBoard panels acting as nodes for a central panel. All endpoints under /panel/api/nodes."
+      "description": "Manage remote We1ssBoard panels acting as nodes for a central panel. All endpoints under /panel/api/nodes."
     },
     {
       "name": "Hosts",
@@ -7811,7 +7811,7 @@
         "tags": [
           "Server"
         ],
-        "summary": "Check whether a newer FullBoard release is available on GitHub.",
+        "summary": "Check whether a newer We1ssBoard release is available on GitHub.",
         "operationId": "get_panel_api_server_getPanelUpdateInfo",
         "responses": {
           "200": {
@@ -12384,7 +12384,7 @@
         "tags": [
           "Nodes"
         ],
-        "summary": "Read the remote FullBoard panel's live server status (CPU, memory, disk, Xray state and version), proxied verbatim from the node.",
+        "summary": "Read the remote We1ssBoard panel's live server status (CPU, memory, disk, Xray state and version), proxied verbatim from the node.",
         "operationId": "get_panel_api_nodes_remote_id_status",
         "parameters": [
           {
@@ -12425,7 +12425,7 @@
         "tags": [
           "Nodes"
         ],
-        "summary": "Read the remote FullBoard panel's settings in their redacted view (secrets blank, has* flags set). Requires an admin-scope API token on the node.",
+        "summary": "Read the remote We1ssBoard panel's settings in their redacted view (secrets blank, has* flags set). Requires an admin-scope API token on the node.",
         "operationId": "get_panel_api_nodes_remote_id_settings",
         "parameters": [
           {
@@ -12464,7 +12464,7 @@
         "tags": [
           "Nodes"
         ],
-        "summary": "Save a full settings object on the remote FullBoard panel. Send the object read from GET first; blank secrets keep their stored value. Requires an admin-scope API token on the node.",
+        "summary": "Save a full settings object on the remote We1ssBoard panel. Send the object read from GET first; blank secrets keep their stored value. Requires an admin-scope API token on the node.",
         "operationId": "post_panel_api_nodes_remote_id_settings",
         "parameters": [
           {
@@ -12521,7 +12521,7 @@
         "tags": [
           "Nodes"
         ],
-        "summary": "Restart the Xray core on the remote FullBoard panel.",
+        "summary": "Restart the Xray core on the remote We1ssBoard panel.",
         "operationId": "post_panel_api_nodes_remote_id_restartXray",
         "parameters": [
           {
@@ -12562,7 +12562,7 @@
         "tags": [
           "Nodes"
         ],
-        "summary": "Restart the remote FullBoard panel process. Requires an admin-scope API token on the node.",
+        "summary": "Restart the remote We1ssBoard panel process. Requires an admin-scope API token on the node.",
         "operationId": "post_panel_api_nodes_remote_id_restartPanel",
         "parameters": [
           {
@@ -12797,7 +12797,7 @@
         "tags": [
           "Nodes"
         ],
-        "summary": "Stop the Xray core on the remote FullBoard panel. Requires an admin-scope API token on the node.",
+        "summary": "Stop the Xray core on the remote We1ssBoard panel. Requires an admin-scope API token on the node.",
         "operationId": "post_panel_api_nodes_remote_id_stopXray",
         "parameters": [
           {
@@ -13286,7 +13286,7 @@
                           "profiles": [
                             ""
                           ],
-                          "unit": "fullboard-mtproxy-40123"
+                          "unit": "we1ssboard-mtproxy-40123"
                         }
                       ]
                     },
@@ -13309,7 +13309,7 @@
                       "log": "",
                       "startedAt": 1760000000,
                       "state": "running",
-                      "unit": "fullboard-tproxy-install-1760000000"
+                      "unit": "we1ssboard-tproxy-install-1760000000"
                     },
                     "platform": "linux/amd64",
                     "profileCount": 1,
@@ -15802,7 +15802,7 @@
         "tags": [
           "Settings"
         ],
-        "summary": "Restart the entire FullBoard process after a 3-second grace period. The connection drops immediately; the panel comes back online ~5-10 seconds later.",
+        "summary": "Restart the entire We1ssBoard process after a 3-second grace period. The connection drops immediately; the panel comes back online ~5-10 seconds later.",
         "operationId": "post_panel_api_setting_restartPanel",
         "responses": {
           "200": {
@@ -17386,8 +17386,8 @@
                   },
                   "userAgent": {
                     "type": "string",
-                    "default": "fullboard-outbound-sub/1.0",
-                    "description": "Custom User-Agent sent when fetching this subscription. Defaults to \"fullboard-outbound-sub/1.0\"."
+                    "default": "we1ssboard-outbound-sub/1.0",
+                    "description": "Custom User-Agent sent when fetching this subscription. Defaults to \"we1ssboard-outbound-sub/1.0\"."
                   },
                   "updateInterval": {
                     "type": "integer",
@@ -17484,8 +17484,8 @@
                   },
                   "userAgent": {
                     "type": "string",
-                    "default": "fullboard-outbound-sub/1.0",
-                    "description": "Custom User-Agent sent when fetching this subscription. Defaults to \"fullboard-outbound-sub/1.0\"."
+                    "default": "we1ssboard-outbound-sub/1.0",
+                    "description": "Custom User-Agent sent when fetching this subscription. Defaults to \"we1ssboard-outbound-sub/1.0\"."
                   },
                   "updateInterval": {
                     "type": "integer",
@@ -18209,7 +18209,7 @@
                           "profiles": [
                             ""
                           ],
-                          "unit": "fullboard-mtproxy-40123"
+                          "unit": "we1ssboard-mtproxy-40123"
                         }
                       ]
                     },
@@ -18232,7 +18232,7 @@
                       "log": "",
                       "startedAt": 1760000000,
                       "state": "running",
-                      "unit": "fullboard-tproxy-install-1760000000"
+                      "unit": "we1ssboard-tproxy-install-1760000000"
                     },
                     "platform": "linux/amd64",
                     "profileCount": 1,
@@ -18959,7 +18959,7 @@
                     "log": "",
                     "startedAt": 1760000000,
                     "state": "running",
-                    "unit": "fullboard-tproxy-install-1760000000"
+                    "unit": "we1ssboard-tproxy-install-1760000000"
                   }
                 }
               }
@@ -19002,7 +19002,7 @@
                     "log": "",
                     "startedAt": 1760000000,
                     "state": "running",
-                    "unit": "fullboard-tproxy-install-1760000000"
+                    "unit": "we1ssboard-tproxy-install-1760000000"
                   }
                 }
               }
@@ -19045,7 +19045,7 @@
                     "log": "",
                     "startedAt": 1760000000,
                     "state": "running",
-                    "unit": "fullboard-tproxy-install-1760000000"
+                    "unit": "we1ssboard-tproxy-install-1760000000"
                   }
                 }
               }

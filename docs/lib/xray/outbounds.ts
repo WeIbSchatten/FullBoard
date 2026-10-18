@@ -1,4 +1,4 @@
-// Pure builders for Xray outbound objects, matching the wire shapes FullBoard
+// Pure builders for Xray outbound objects, matching the wire shapes We1ssBoard
 // emits (internal/util/link/outbound.go + the panel's outbound-defaults.ts):
 //   - VLESS uses the FLAT settings form {address,port,id,flow,encryption}.
 //   - VMess uses the vnext form {vnext:[{address,port,users:[...]}]}.

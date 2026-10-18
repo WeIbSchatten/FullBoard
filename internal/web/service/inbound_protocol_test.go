@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // A representative vlessenc/ML-KEM encryption value as produced by `xray

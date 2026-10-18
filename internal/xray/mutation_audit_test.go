@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
 )
 
 // ---------------------------------------------------------------------------

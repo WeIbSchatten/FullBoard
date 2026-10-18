@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 // MessageType identifies the kind of WebSocket message.

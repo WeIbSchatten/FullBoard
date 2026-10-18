@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"maps"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
 )
 
 // HotDiff describes the gRPC API operations needed to bring a running Xray

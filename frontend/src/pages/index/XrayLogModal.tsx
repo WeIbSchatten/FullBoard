@@ -128,7 +128,7 @@ export default function XrayLogModal({ open, onClose }: XrayLogModalProps) {
 
   function download() {
     if (!Array.isArray(logs) || logs.length === 0) {
-      FileManager.downloadTextFile('', 'fullboard.log');
+      FileManager.downloadTextFile('', 'we1ssboard.log');
       return;
     }
     const lines = logs
@@ -144,7 +144,7 @@ export default function XrayLogModal({ open, onClose }: XrayLogModalProps) {
         }
       })
       .join('\n');
-    FileManager.downloadTextFile(lines, 'fullboard.log');
+    FileManager.downloadTextFile(lines, 'we1ssboard.log');
   }
 
   return (

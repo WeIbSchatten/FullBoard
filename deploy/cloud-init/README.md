@@ -1,6 +1,6 @@
-# FullBoard via cloud-init
+# We1ssBoard via cloud-init
 
-A single [`cloud-init.yaml`](cloud-init.yaml) user-data file that installs FullBoard
+A single [`cloud-init.yaml`](cloud-init.yaml) user-data file that installs We1ssBoard
 non-interactively on a fresh Ubuntu/Debian VM and generates **unique random
 credentials per instance**. It works on any cloud-init platform.
 
@@ -11,13 +11,13 @@ credentials per instance**. It works on any cloud-init platform.
    `XUI_NONINTERACTIVE=1` and pipes the project's `install.sh` into `bash`.
 3. `install.sh` runs end-to-end with **zero prompts**, picking secure random
    values for any credential you didn't pin.
-4. The generated credentials are written to `/etc/fullboard/install-result.env`
+4. The generated credentials are written to `/etc/we1ssboard/install-result.env`
    (mode 600), echoed to the **serial console**, and appended to `/etc/motd`.
 
 Retrieve them after boot with either:
 
 ```bash
-sudo cat /etc/fullboard/install-result.env     # over SSH
+sudo cat /etc/we1ssboard/install-result.env     # over SSH
 ```
 
 …or read the provider's **serial console** output (handy before you have SSH).

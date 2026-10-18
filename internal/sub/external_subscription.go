@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // External subscription fetching: a remote URL whose body is a share-link
@@ -149,7 +149,7 @@ func doFetchSubscriptionLinks(rawURL string) ([]string, error) {
 	}
 	// Some providers gate the link body on a known client User-Agent.
 	req.Header.Set("User-Agent", externalSubUserAgent())
-	// A FullBoard donor with an HWID limit answers 404 when the header is empty.
+	// A We1ssBoard donor with an HWID limit answers 404 when the header is empty.
 	if hwid := service.ExternalSubscriptionHwid(); hwid != "" {
 		req.Header.Set("X-HWID", hwid)
 	}

@@ -837,7 +837,7 @@ export default function CommandPalette() {
                 {t('close')}
               </span>
             </div>
-            <span>FullBoard Command Palette</span>
+            <span>We1ssBoard Command Palette</span>
           </div>
         </div>
       </div>

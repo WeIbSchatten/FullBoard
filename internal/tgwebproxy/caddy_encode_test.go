@@ -24,7 +24,7 @@ func TestPatchCaddyEncodeForH2WS(t *testing.T) {
 	if strings.Contains(out, "\n\tencode ") || strings.Contains(out, "\nencode ") {
 		t.Fatalf("active encode must be removed:\n%s", out)
 	}
-	if !strings.Contains(out, "fullboard-h2-ws-begin") || !strings.Contains(out, "encode disabled") {
+	if !strings.Contains(out, "we1ssboard-h2-ws-begin") || !strings.Contains(out, "encode disabled") {
 		t.Fatalf("missing disabled marker block:\n%s", out)
 	}
 	if CaddyEncodeNeedsH2WSPatch(out) {
@@ -38,14 +38,14 @@ func TestPatchCaddyEncodeForH2WS(t *testing.T) {
 
 func TestPatchCaddyEncodeUpgradesPartialH2OnlyGate(t *testing.T) {
 	in := `example.com {
-	# fullboard-h2-ws-begin
+	# we1ssboard-h2-ws-begin
 	@not_h2_ws not {
 		header :protocol *
 		method CONNECT
 		protocol http/2
 	}
 	encode @not_h2_ws zstd gzip
-	# fullboard-h2-ws-end
+	# we1ssboard-h2-ws-end
 }
 `
 	if !CaddyEncodeNeedsH2WSPatch(in) {
@@ -65,10 +65,10 @@ func TestPatchCaddyEncodeUpgradesPartialH2OnlyGate(t *testing.T) {
 
 func TestPatchCaddyEncodeSkipsAlreadyDisabled(t *testing.T) {
 	in := `example.com {
-	# fullboard-h2-ws-begin
+	# we1ssboard-h2-ws-begin
 	# encode disabled: stock encode stalls Telegram web-proxy WebSocket carrier
 	# (classic Upgrade /api/v1/ws and h2 CONNECT). HTTPS long-poll unaffected.
-	# fullboard-h2-ws-end
+	# we1ssboard-h2-ws-end
 }
 `
 	_, changed := PatchCaddyEncodeForH2WS(in)
@@ -119,5 +119,28 @@ func TestApplyCaddyEncodeH2WSPatchRoundTrip(t *testing.T) {
 	changed, err = ApplyCaddyEncodeH2WSPatch(path, func(string) error { return nil })
 	if err != nil || changed {
 		t.Fatalf("second apply: changed=%v err=%v", changed, err)
+	}
+}
+
+// Caddyfiles patched before the 1.7.0 rename carry the old marker; the block
+// must be upgraded in place, not left beside a second one.
+func TestPatchCaddyEncodeUpgradesBlockWrittenBeforeTheRename(t *testing.T) {
+	in := `example.com {
+	# fullboard-h2-ws-begin
+	@not_h2_ws not {
+		header :protocol *
+		method CONNECT
+		protocol http/2
+	}
+	encode @not_h2_ws zstd gzip
+	# fullboard-h2-ws-end
+}
+`
+	out, changed := PatchCaddyEncodeForH2WS(in)
+	if !changed {
+		t.Fatal("expected upgrade of the pre-rename partial gate")
+	}
+	if n := strings.Count(out, "-h2-ws-begin"); n != 1 || strings.Contains(out, "fullboard-h2-ws") {
+		t.Fatalf("want exactly one renamed marker block, got %d:\n%s", n, out)
 	}
 }

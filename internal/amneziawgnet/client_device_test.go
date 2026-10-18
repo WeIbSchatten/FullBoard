@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawg"
 
-	wgutil "github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
+	wgutil "github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
 )
 
 // clientDeviceTestInstance builds a minimal valid client instance with one

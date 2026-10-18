@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // nodeForPlainServer builds an http (non-TLS) node so do()'s token handling can

@@ -1,10 +1,10 @@
 ---
-title: Документация FullBoard
-description: Официальная документация по FullBoard — продвинутой веб-панели для управления серверами Xray-core, прокси, клиентами и подписками.
+title: Документация We1ssBoard
+description: Официальная документация по We1ssBoard — продвинутой веб-панели для управления серверами Xray-core, прокси, клиентами и подписками.
 icon: House
 ---
 
-**FullBoard** — это веб-панель с открытым исходным кодом для развёртывания и управления
+**We1ssBoard** — это веб-панель с открытым исходным кодом для развёртывания и управления
 серверами [Xray-core](https://github.com/XTLS/Xray-core). Она предоставляет современную
 панель управления для входящих подключений, протоколов, клиентов, учёта трафика, подписок
 и многого другого — без ручного редактирования JSON-конфигурации Xray в командной строке.
@@ -17,7 +17,7 @@ icon: House
 
 <Cards>
   <Card
-    title="Что такое FullBoard?"
+    title="Что такое We1ssBoard?"
     href="/docs/guide"
     description="Общая картина: Xray-core, панель и для кого она предназначена."
   />
@@ -72,16 +72,16 @@ icon: House
 <Mermaid
   chart={`
 flowchart LR
-  Admin["Браузер админа"] -->|HTTPS| Panel["Панель FullBoard"]
+  Admin["Браузер админа"] -->|HTTPS| Panel["Панель We1ssBoard"]
   Panel -->|конфиг + gRPC API| Xray["Xray-core"]
   Panel -->|systemd| Relay["tproxy-server + MTProxy"]
-  Panel -->|mTLS API| Nodes["Другие узлы FullBoard"]
+  Panel -->|mTLS API| Nodes["Другие узлы We1ssBoard"]
   Users["Клиентские приложения"] -->|VLESS / Trojan / ...| Xray
   TG["Приложения Telegram"] -->|HTTPS / WebSocket| Relay
 `}
 />
 
 <Callout type="info">
-  Впервые работаете с Xray? Сначала прочитайте [Что такое FullBoard?](/docs/guide) — там объясняется, как панель, Xray-core и
+  Впервые работаете с Xray? Сначала прочитайте [Что такое We1ssBoard?](/docs/guide) — там объясняется, как панель, Xray-core и
   ваши клиентские приложения связаны между собой.
 </Callout>

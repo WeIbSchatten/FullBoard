@@ -1,4 +1,4 @@
-// Package main is the entry point for the FullBoard web panel application.
+// Package main is the entry point for the We1ssBoard web panel application.
 // It initializes the database, web server, and handles command-line operations for managing the panel.
 package main
 
@@ -15,19 +15,19 @@ import (
 	"syscall"
 	_ "unsafe"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/crypto/nodetoken"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/sub"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tunnelmonitor"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/sys"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/global"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/panel"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/tgbot"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/crypto/nodetoken"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/sub"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tunnelmonitor"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/crypto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/sys"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/global"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/panel"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/tgbot"
 
 	"github.com/joho/godotenv"
 	"github.com/op/go-logging"
@@ -70,7 +70,7 @@ func initNodeTokenCrypto() error {
 	return nil
 }
 
-// runWebServer initializes and starts the web server for the FullBoard panel.
+// runWebServer initializes and starts the web server for the We1ssBoard panel.
 func runWebServer() {
 	log.Printf("Starting %v %v", config.GetName(), config.GetPanelVersion())
 
@@ -548,7 +548,7 @@ func GetApiToken(getApiToken bool, tokenName, tokenScope string) {
 	fmt.Println("apiToken:", created.Token)
 }
 
-// migrateDb performs database migration operations for the FullBoard panel.
+// migrateDb performs database migration operations for the We1ssBoard panel.
 func migrateDb() {
 	inboundService := service.InboundService{}
 
@@ -587,7 +587,7 @@ func import3xUI(src, dst string) error {
 }
 
 // loadServiceEnvFile loads the systemd EnvironmentFile so CLI subcommands like
-// "fullboard setting" hit the same database backend as the panel. godotenv.Load does
+// "we1ssboard setting" hit the same database backend as the panel. godotenv.Load does
 // not override variables already in the environment, so it is a no-op for the
 // systemd-managed service.
 func loadServiceEnvFile() {
@@ -602,7 +602,7 @@ func loadServiceEnvFile() {
 	}
 }
 
-// main is the entry point of the FullBoard application.
+// main is the entry point of the We1ssBoard application.
 // It parses command-line arguments to run the web server, migrate database, or update settings.
 func main() {
 	loadServiceEnvFile()
@@ -621,7 +621,7 @@ func main() {
 	var import3xUISrc string
 	var import3xUIDst string
 	import3xUICmd.StringVar(&import3xUISrc, "src", "/etc/x-ui/x-ui.db", "3x-ui SQLite database to import (read-only, never modified)")
-	import3xUICmd.StringVar(&import3xUIDst, "dst", "", "FullBoard SQLite file to create (defaults to the configured fullboard.db; must not exist)")
+	import3xUICmd.StringVar(&import3xUIDst, "dst", "", "We1ssBoard SQLite file to create (defaults to the configured we1ssboard.db; must not exist)")
 
 	migrateDbCmd := flag.NewFlagSet("migrate-db", flag.ExitOnError)
 	var migrateDsn string
@@ -630,7 +630,7 @@ func main() {
 	var migrateRestore string
 	var migrateOut string
 	migrateDbCmd.StringVar(&migrateDsn, "dsn", "", "Destination PostgreSQL DSN (postgres://user:pass@host:port/db?sslmode=disable)")
-	migrateDbCmd.StringVar(&migrateSrc, "src", "", "Source SQLite file (defaults to the configured fullboard.db)")
+	migrateDbCmd.StringVar(&migrateSrc, "src", "", "Source SQLite file (defaults to the configured we1ssboard.db)")
 	migrateDbCmd.StringVar(&migrateDump, "dump", "", "Write a portable SQL text dump of --src to this file (.db -> .dump)")
 	migrateDbCmd.StringVar(&migrateRestore, "restore", "", "Rebuild a SQLite database from this SQL text dump (.dump -> .db); requires --out")
 	migrateDbCmd.StringVar(&migrateOut, "out", "", "Destination SQLite file for --restore (must not already exist)")
@@ -811,9 +811,9 @@ func commandHelp() string {
 	return `
 Commands:
     run            run web panel
-    migrate        migrate from other/old fullboard
+    migrate        migrate from other/old we1ssboard
     migrate-db     SQLite <-> .dump (--dump/--restore) or copy into PostgreSQL (--dsn)
-    import-3xui    build fullboard.db from a 3x-ui x-ui.db and verify nothing was lost
+    import-3xui    build we1ssboard.db from a 3x-ui x-ui.db and verify nothing was lost
     encrypt-tokens encrypt node bearer tokens with the configured active key
     setting        set settings
 `

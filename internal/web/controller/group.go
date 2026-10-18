@@ -3,8 +3,8 @@ package controller
 import (
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 
 	"github.com/gin-gonic/gin"
 )

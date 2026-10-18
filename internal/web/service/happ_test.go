@@ -17,10 +17,10 @@ import (
 
 	"golang.org/x/crypto/chacha20poly1305"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 func initHappTestDB(t *testing.T) {
@@ -31,7 +31,7 @@ func initHappTestDB(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dbDir, "config.json"), []byte(`{"log":{}}`), 0o600); err != nil {
 		t.Fatalf("write Xray config: %v", err)
 	}
-	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "we1ssboard.db"))
 }
 
 func seedHappClient(t *testing.T, subID string) *model.ClientRecord {

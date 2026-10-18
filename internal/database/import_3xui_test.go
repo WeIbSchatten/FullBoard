@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/crypto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 func TestImport3xUICarriesOverEveryRelease(t *testing.T) {
@@ -32,7 +32,7 @@ func TestImport3xUICarriesOverEveryRelease(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			dst := filepath.Join(t.TempDir(), "fullboard", "fullboard.db")
+			dst := filepath.Join(t.TempDir(), "we1ssboard", "we1ssboard.db")
 
 			res, err := Import3xUI(src, dst)
 			if err != nil {
@@ -106,7 +106,7 @@ func TestImport3xUICarriesOverEveryRelease(t *testing.T) {
 
 func TestImport3xUIRefusesExistingDestination(t *testing.T) {
 	src := copyImportFixture(t, "x-ui-v2.8.11.db")
-	dst := filepath.Join(t.TempDir(), "fullboard.db")
+	dst := filepath.Join(t.TempDir(), "we1ssboard.db")
 	if err := os.WriteFile(dst, []byte("live panel"), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -129,7 +129,7 @@ func TestImport3xUIRejectsForeignDatabase(t *testing.T) {
 		t.Fatal(err)
 	}
 	conn.Close()
-	dst := filepath.Join(t.TempDir(), "fullboard.db")
+	dst := filepath.Join(t.TempDir(), "we1ssboard.db")
 
 	_, err = Import3xUI(src, dst)
 	if err == nil || !strings.Contains(err.Error(), `not a 3x-ui database: table "users" is missing`) {
@@ -225,13 +225,13 @@ func addFixtureClient(t *testing.T, path string, inboundID int, client map[strin
 }
 
 // A client on a VLESS and a Trojan inbound has an id in one entry and a password
-// in the other; FullBoard merges them into one record, which is not data loss.
+// in the other; We1ssBoard merges them into one record, which is not data loss.
 func TestImport3xUIMergesClientSharedAcrossInbounds(t *testing.T) {
 	t.Setenv("XUI_ENABLE_FAIL2BAN", "false")
 	src := copyImportFixture(t, "x-ui-v2.8.11.db")
 	addFixtureClient(t, src, 1, map[string]any{"id": "44444444-4444-4444-8444-444444444444", "email": "multi", "enable": true, "subId": "submulti"})
 	addFixtureClient(t, src, 3, map[string]any{"password": "pw-multi", "email": "multi", "enable": true, "subId": "submulti"})
-	dst := filepath.Join(t.TempDir(), "fullboard.db")
+	dst := filepath.Join(t.TempDir(), "we1ssboard.db")
 
 	res, err := Import3xUI(src, dst)
 	if err != nil {
@@ -261,11 +261,11 @@ func TestImport3xUIWarnsWhenInboundsDisagree(t *testing.T) {
 	addFixtureClient(t, src, 1, map[string]any{"id": "55555555-5555-4555-8555-555555555555", "email": "split", "enable": true})
 	addFixtureClient(t, src, 2, map[string]any{"id": "66666666-6666-4666-8666-666666666666", "email": "split", "enable": true})
 
-	res, err := Import3xUI(src, filepath.Join(t.TempDir(), "fullboard.db"))
+	res, err := Import3xUI(src, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	if err != nil {
 		t.Fatalf("Import3xUI: %v", err)
 	}
-	want := "client split: inbounds 1, 2 carry different id; FullBoard keeps one for all of them"
+	want := "client split: inbounds 1, 2 carry different id; We1ssBoard keeps one for all of them"
 	if len(res.Warnings) != 1 || res.Warnings[0] != want {
 		t.Fatalf("Warnings = %q, want [%q]", res.Warnings, want)
 	}

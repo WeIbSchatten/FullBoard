@@ -10,7 +10,7 @@ import { writeCachedNavPosition, type NavPosition } from '@/layouts/NavLayoutCon
 import { HIDEABLE_NAV_KEYS, parseNavVisibility, type NavVisibility } from '@/lib/navVisibility';
 
 export const CUSTOM_CSS_MAX_BYTES = 64 * 1024;
-const PREVIEW_STYLE_ID = 'fullboard-custom-css-preview';
+const PREVIEW_STYLE_ID = 'we1ssboard-custom-css-preview';
 const MAX_PRESETS = 2;
 const DEFAULT_BUNDLE = '{"active":"default","presets":[]}';
 

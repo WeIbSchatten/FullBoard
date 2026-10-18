@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/eventbus"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/eventbus"
 )
 
 func TestFormatEmbed_OutboundDownAndUp(t *testing.T) {

@@ -1,15 +1,15 @@
-# FullBoard Custom Subscription Templates
+# We1ssBoard Custom Subscription Templates
 
-FullBoard can render your users' subscription pages from your own custom HTML templates.
+We1ssBoard can render your users' subscription pages from your own custom HTML templates.
 
 ## How to use a Custom Template
 
-1. Go to the FullBoard panel settings.
+1. Go to the We1ssBoard panel settings.
 2. Under **Settings → Subscription → Information**, locate the **Sub Theme Directory** field.
-3. Provide the absolute path to the folder containing your template (e.g. `/etc/fullboard/sub_templates/my-theme/`).
+3. Provide the absolute path to the folder containing your template (e.g. `/etc/we1ssboard/sub_templates/my-theme/`).
 4. Save the settings.
 
-> **Note:** FullBoard does not ship any templates by default. Create your own template folder anywhere
+> **Note:** We1ssBoard does not ship any templates by default. Create your own template folder anywhere
 > on the server, put an `index.html` (or `sub.html`) inside it, and point **Sub Theme Directory** at
 > that absolute path. Leave the field empty to use the default built-in page.
 

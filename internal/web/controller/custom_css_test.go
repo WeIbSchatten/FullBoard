@@ -12,11 +12,11 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 )
 
 const hostileCss = `body{color:red}</style><script>alert(1)</script>`
@@ -24,7 +24,7 @@ const hostileCss = `body{color:red}</style><script>alert(1)</script>`
 func newCustomCssTestEngine(t *testing.T, settings map[string]string) *gin.Engine {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	for key, value := range settings {
 		if err := database.GetDB().Create(&model.Setting{Key: key, Value: value}).Error; err != nil {
 			t.Fatalf("seed %s: %v", key, err)
@@ -39,7 +39,7 @@ func newCustomCssTestEngine(t *testing.T, settings map[string]string) *gin.Engin
 	t.Cleanup(func() { SetDistFS(oldDistFS) })
 
 	engine := gin.New()
-	engine.Use(sessions.Sessions("fullboard", cookie.NewStore([]byte("custom-css-test-secret"))))
+	engine.Use(sessions.Sessions("we1ssboard", cookie.NewStore([]byte("custom-css-test-secret"))))
 	engine.Use(func(c *gin.Context) {
 		c.Set("base_path", "/admin/")
 		c.Set("I18n", func(_ locale.I18nType, key string, _ ...string) string { return key })
@@ -116,7 +116,7 @@ func TestCustomCssServedAsInertStylesheet(t *testing.T) {
 
 func TestEmptyCustomCssAddsNoLink(t *testing.T) {
 	engine := newCustomCssTestEngine(t, nil)
-	if body := get(engine, "/admin/", false).Body.String(); strings.Contains(body, "fullboard-custom-css") {
+	if body := get(engine, "/admin/", false).Body.String(); strings.Contains(body, "we1ssboard-custom-css") {
 		t.Fatalf("empty custom CSS must not add a link: %s", body)
 	}
 }

@@ -1,10 +1,10 @@
 ---
 title: Telegram WEB Proxy
-description: Установка и управление релеем Telegram WEB proxy (tproxy-server) из FullBoard — конфигурация, профили, ссылки, управление службами, состояние и логи.
+description: Установка и управление релеем Telegram WEB proxy (tproxy-server) из We1ssBoard — конфигурация, профили, ссылки, управление службами, состояние и логи.
 icon: Send
 ---
 
-FullBoard умеет устанавливать и обслуживать
+We1ssBoard умеет устанавливать и обслуживать
 [tproxy-server](https://github.com/telegramdesktop/tproxy-server) — релей,
 через который клиенты Telegram подключаются к MTProxy поверх обычного HTTPS или
 WebSocket. Откройте **Telegram WEB Proxy** в боковом меню (`/panel/tg-web-proxy`).
@@ -26,7 +26,7 @@ WebSocket. Откройте **Telegram WEB Proxy** в боковом меню (`
 | `tproxy-firewall` | Правила файрвола, закрывающие loopback-порты от внешнего мира |
 
 Админ-листенер релея (по умолчанию `127.0.0.1:8081`) отдаёт `/healthz`,
-`/readyz` и `/metrics`. FullBoard опрашивает его **только на стороне сервера** и
+`/readyz` и `/metrics`. We1ssBoard опрашивает его **только на стороне сервера** и
 показывает результат на вкладке «Обзор»; наружу он не публикуется.
 
 ## Установка
@@ -48,7 +48,7 @@ WebSocket. Откройте **Telegram WEB Proxy** в боковом меню (`
 базовый путь, сайт для корня (`--site-dir` или `--site-upstream`) и число
 воркеров MTProxy.
 
-FullBoard скачивает актуальные исходники в `/usr/local/src/tproxy-server` и
+We1ssBoard скачивает актуальные исходники в `/usr/local/src/tproxy-server` и
 запускает `deploy/install.sh` во временном юните systemd, поэтому установка
 переживает перезапуск панели. Секрет передаётся через stdin из файла с правами
 `0400`, который затем удаляется; в списке процессов он не появляется. Лог задачи
@@ -70,7 +70,7 @@ FullBoard скачивает актуальные исходники в `/usr/lo
 
 Если tproxy-server установлен вручную со стандартной раскладкой
 (`/etc/tproxy-server/config.json`, `/etc/tproxy-server/profiles.json`,
-`/usr/local/bin/tproxy-server`), FullBoard подхватит его автоматически,
+`/usr/local/bin/tproxy-server`), We1ssBoard подхватит его автоматически,
 переустанавливать не нужно. Неизвестные ключи в `config.json` при сохранении
 сохраняются.
 
@@ -93,8 +93,8 @@ FullBoard скачивает актуальные исходники в `/usr/lo
   Релей пересылает непрозрачный трафик obfuscated2, поэтому бэкенд — это
   официальный MTProxy, знающий секрет профиля (mtg не подходит: он принимает
   только FakeTLS-секреты). `127.0.0.1:2398` — это `mtproxy.service` установщика.
-  Для любого другого порта FullBoard сам запускает официальный MTProxy
-  (временные юниты `fullboard-mtproxy-<port>`, до 16 секретов на порт) и
+  Для любого другого порта We1ssBoard сам запускает официальный MTProxy
+  (временные юниты `we1ssboard-mtproxy-<port>`, до 16 секретов на порт) и
   закрывает порт файрволом снаружи. Их состояние видно на вкладке Overview.
 </Callout>
 
@@ -104,7 +104,7 @@ FullBoard скачивает актуальные исходники в `/usr/lo
 (обычный Upgrade) и на HTTP/2 `CONNECT`
 ([caddyserver/caddy#6733](https://github.com/caddyserver/caddy/issues/6733));
 HTTPS long-poll при этом работает. Как только у профиля websocket-режим,
-FullBoard сам отключает `encode` в site-блоке `/etc/caddy/Caddyfile`, заранее
+We1ssBoard сам отключает `encode` в site-блоке `/etc/caddy/Caddyfile`, заранее
 проверив файл `caddy validate` с окружением `caddy.service`. Кнопка
 **Исправить Caddy для WebSocket** на вкладке Overview повторяет патч, например
 после upstream-обновления, перезаписавшего Caddyfile.
@@ -115,7 +115,7 @@ FullBoard сам отключает `encode` в site-блоке `/etc/caddy/Cadd
 Для установки в корень ссылка выглядит как
 `https://t.me/webproxy?server=<hostname>&secret=<hex>`. С базовым путём сервер
 становится `<hostname>/<base>`, а секрет кодируется так, как ожидает Telegram;
-FullBoard делает это сам.
+We1ssBoard делает это сам.
 
 ## Привязки клиентов
 
@@ -126,7 +126,7 @@ FullBoard делает это сам.
 
 - **Общая привязка.** Клиент получает секрет самого выбранного профиля. У всех
   клиентов одного профиля секрет общий.
-- **Отдельный секрет.** FullBoard создаёт профиль `fb:<email>`, скопированный с
+- **Отдельный секрет.** We1ssBoard создаёт профиль `fb:<email>`, скопированный с
   выбранного (режим carrier, лимиты), с новым случайным секретом на порту
   MTProxy, который запускает панель. Отключённый клиент сохраняет профиль (и
   ссылку), но «паркуется» на порт без сервера, пока его снова не включат. Профиль пишется в
@@ -134,7 +134,7 @@ FullBoard делает это сам.
   появляется после неё.
 - У отключённых клиентов и клиентов без профиля на релее ссылки нет.
 - Профиль, к которому привязаны клиенты, нельзя удалить или переименовать, а
-  профили `fb:` управляются FullBoard: чтобы изменить их, отвяжите клиента.
+  профили `fb:` управляются We1ssBoard: чтобы изменить их, отвяжите клиента.
 - При удалении клиента удаляются его привязка и профиль `fb:`.
 
 Старые версии создавали для отдельных секретов mtg-инбаунды `fb-tgwp:<email>`;
@@ -169,20 +169,20 @@ outbound. Туннель `127.0.0.1` через удалённый outbound от
 
 **`read-only file system` при сохранении конфига, профиля или Fix Caddy.** Unit
 панели использует `ProtectSystem=full`, из‑за чего `/etc` только для чтения.
-FullBoard нужны `ReadWritePaths=-/etc/tproxy-server -/etc/caddy` и `CAP_CHOWN`
+We1ssBoard нужны `ReadWritePaths=-/etc/tproxy-server -/etc/caddy` и `CAP_CHOWN`
 (файлы tproxy — `root:tproxy`). В актуальном релизе это уже есть; на старом
 unit замените drop-in и перезапустите:
 
 ```bash
-sudo mkdir -p /etc/systemd/system/fullboard.service.d
-sudo tee /etc/systemd/system/fullboard.service.d/20-tproxy.conf >/dev/null <<'EOF'
+sudo mkdir -p /etc/systemd/system/we1ssboard.service.d
+sudo tee /etc/systemd/system/we1ssboard.service.d/20-tproxy.conf >/dev/null <<'EOF'
 [Service]
 ReadWritePaths=-/etc/tproxy-server -/etc/caddy
 # Drop-in полностью заменяет CapabilityBoundingSet — нужен полный набор.
 CapabilityBoundingSet=CAP_DAC_OVERRIDE CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_CHOWN
 EOF
 sudo systemctl daemon-reload
-sudo systemctl restart fullboard
+sudo systemctl restart we1ssboard
 ```
 
 После этого снова сохраните конфиг / профиль или нажмите **Исправить Caddy для
@@ -210,7 +210,7 @@ sudo systemctl restart tproxy-server
    `0400`.
 3. `tproxy-server -config … -profiles-file … -check` проверяет кандидатов. При
    ошибке рабочие файлы не меняются, а ошибка показывается в интерфейсе.
-4. Предыдущие файлы сохраняются как `*.fullboard-prev`, затем кандидаты их
+4. Предыдущие файлы сохраняются как `*.we1ssboard-prev`, затем кандидаты их
    заменяют.
 5. Если релей был запущен, он перезапускается. **Запуск** и **Перезапуск** тоже
    сначала выполняют проверку.

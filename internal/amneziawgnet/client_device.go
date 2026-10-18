@@ -6,8 +6,8 @@ import (
 
 	"github.com/amnezia-vpn/amneziawg-go/v3/device"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
 )
 
 // buildClientUAPIConfig renders a client-mode UAPI set string: the device

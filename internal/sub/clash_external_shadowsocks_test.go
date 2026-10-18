@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // Clash has no shadowsocks tcp/http header, so the inbound path drops the node

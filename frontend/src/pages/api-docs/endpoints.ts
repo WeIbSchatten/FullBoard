@@ -94,9 +94,9 @@ const outboundSubscriptionBodyParams: EndpointParam[] = [
     name: 'userAgent',
     in: 'body (form)',
     type: 'string',
-    desc: 'Custom User-Agent sent when fetching this subscription. Defaults to "fullboard-outbound-sub/1.0".',
+    desc: 'Custom User-Agent sent when fetching this subscription. Defaults to "we1ssboard-outbound-sub/1.0".',
     optional: true,
-    defaultValue: 'fullboard-outbound-sub/1.0',
+    defaultValue: 'we1ssboard-outbound-sub/1.0',
   },
   {
     name: 'updateInterval',
@@ -575,7 +575,7 @@ export const sections: readonly Section[] = [
       {
         method: 'GET',
         path: '/panel/api/server/getPanelUpdateInfo',
-        summary: 'Check whether a newer FullBoard release is available on GitHub.',
+        summary: 'Check whether a newer We1ssBoard release is available on GitHub.',
       },
       {
         method: 'GET',
@@ -1697,7 +1697,7 @@ export const sections: readonly Section[] = [
     id: 'nodes',
     title: 'Nodes',
     description:
-      'Manage remote FullBoard panels acting as nodes for a central panel. All endpoints under /panel/api/nodes.',
+      'Manage remote We1ssBoard panels acting as nodes for a central panel. All endpoints under /panel/api/nodes.',
     endpoints: [
       {
         method: 'GET',
@@ -1732,35 +1732,35 @@ export const sections: readonly Section[] = [
         method: 'GET',
         path: '/panel/api/nodes/remote/:id/status',
         summary:
-          "Read the remote FullBoard panel's live server status (CPU, memory, disk, Xray state and version), proxied verbatim from the node.",
+          "Read the remote We1ssBoard panel's live server status (CPU, memory, disk, Xray state and version), proxied verbatim from the node.",
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
       },
       {
         method: 'GET',
         path: '/panel/api/nodes/remote/:id/settings',
         summary:
-          "Read the remote FullBoard panel's settings in their redacted view (secrets blank, has* flags set). Requires an admin-scope API token on the node.",
+          "Read the remote We1ssBoard panel's settings in their redacted view (secrets blank, has* flags set). Requires an admin-scope API token on the node.",
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
       },
       {
         method: 'POST',
         path: '/panel/api/nodes/remote/:id/settings',
         summary:
-          'Save a full settings object on the remote FullBoard panel. Send the object read from GET first; blank secrets keep their stored value. Requires an admin-scope API token on the node.',
+          'Save a full settings object on the remote We1ssBoard panel. Send the object read from GET first; blank secrets keep their stored value. Requires an admin-scope API token on the node.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
         body: '{\n  "webPort": 2053,\n  "pageSize": 50,\n  "customCss": ".ant-layout { background: #0b1020; }",\n  "...": "every other field from GET /remote/:id/settings"\n}',
       },
       {
         method: 'POST',
         path: '/panel/api/nodes/remote/:id/restartXray',
-        summary: 'Restart the Xray core on the remote FullBoard panel.',
+        summary: 'Restart the Xray core on the remote We1ssBoard panel.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
       },
       {
         method: 'POST',
         path: '/panel/api/nodes/remote/:id/restartPanel',
         summary:
-          'Restart the remote FullBoard panel process. Requires an admin-scope API token on the node.',
+          'Restart the remote We1ssBoard panel process. Requires an admin-scope API token on the node.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
       },
       {
@@ -1831,7 +1831,7 @@ export const sections: readonly Section[] = [
         method: 'POST',
         path: '/panel/api/nodes/remote/:id/stopXray',
         summary:
-          'Stop the Xray core on the remote FullBoard panel. Requires an admin-scope API token on the node.',
+          'Stop the Xray core on the remote We1ssBoard panel. Requires an admin-scope API token on the node.',
         params: [{ name: 'id', in: 'path', type: 'number', desc: 'Node ID.' }],
       },
       {
@@ -2263,7 +2263,7 @@ export const sections: readonly Section[] = [
         method: 'POST',
         path: '/panel/api/setting/restartPanel',
         summary:
-          'Restart the entire FullBoard process after a 3-second grace period. The connection drops immediately; the panel comes back online ~5-10 seconds later.',
+          'Restart the entire We1ssBoard process after a 3-second grace period. The connection drops immediately; the panel comes back online ~5-10 seconds later.',
       },
       {
         method: 'POST',

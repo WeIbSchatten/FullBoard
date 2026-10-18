@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 const legacyHopFinalmask = `{"quicParams":{"udpHop":{"ports":"20000-30000","interval":"5-10"}}}`

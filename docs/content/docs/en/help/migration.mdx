@@ -1,6 +1,6 @@
 ---
 title: Migration
-description: Migrate to FullBoard from fullboard, between servers, or between FullBoard versions.
+description: Migrate to We1ssBoard from we1ssboard, between servers, or between We1ssBoard versions.
 icon: ArrowRightLeft
 ---
 
@@ -13,12 +13,12 @@ Moving to a new server is a database move:
 <Step>
 ### Back up the old server
 
-Copy the database (default `/etc/fullboard/fullboard.db`) and your certificates. See
+Copy the database (default `/etc/we1ssboard/we1ssboard.db`) and your certificates. See
 [Backup & restore](/docs/operations/backup-restore).
 </Step>
 
 <Step>
-### Install FullBoard on the new server
+### Install We1ssBoard on the new server
 
 Use the same install method and a compatible version. See
 [Installation](/docs/guide/installation).
@@ -33,17 +33,17 @@ panel. Update any IP/domain-specific settings.
 
 </Steps>
 
-## Between FullBoard versions
+## Between We1ssBoard versions
 
 Within the same backend, upgrading is usually just re-running the installer or
 pulling a new image — the panel migrates its own database. Across **major**
-versions, read the [release notes](https://github.com/WeIbSchatten/FullBoard/releases)
+versions, read the [release notes](https://github.com/WeIbSchatten/We1ssBoard/releases)
 first and take a backup.
 
-## From fullboard
+## From we1ssboard
 
-Importing an older fullboard panel's database directly into FullBoard is **not
-supported** — the schemas differ. Install FullBoard fresh and recreate
+Importing an older we1ssboard panel's database directly into We1ssBoard is **not
+supported** — the schemas differ. Install We1ssBoard fresh and recreate
 inbounds/clients, exporting share links from the old panel as you go.
 
 <Callout type="warn">

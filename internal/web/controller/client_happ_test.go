@@ -12,8 +12,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 type fakeHappLinkGenerator struct {

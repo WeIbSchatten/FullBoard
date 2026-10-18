@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	wgutil "github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	wgutil "github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
 )
 
 // inboundLinks (the "Export all inbound links" path) must render the remark

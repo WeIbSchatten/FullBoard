@@ -12,11 +12,11 @@ import (
 func TestServePWAAssets(t *testing.T) {
 	oldDistFS := distFS
 	distFS = fstest.MapFS{
-		"dist/manifest.webmanifest":    &fstest.MapFile{Data: []byte(`{"name":"FullBoard"}`)},
-		"dist/pwa-register.js":         &fstest.MapFile{Data: []byte("register")},
-		"dist/service-worker.js":       &fstest.MapFile{Data: []byte("worker")},
-		"dist/icons/fullboard-192.png": &fstest.MapFile{Data: []byte("icon-192")},
-		"dist/icons/fullboard-512.png": &fstest.MapFile{Data: []byte("icon-512")},
+		"dist/manifest.webmanifest":     &fstest.MapFile{Data: []byte(`{"name":"We1ssBoard"}`)},
+		"dist/pwa-register.js":          &fstest.MapFile{Data: []byte("register")},
+		"dist/service-worker.js":        &fstest.MapFile{Data: []byte("worker")},
+		"dist/icons/we1ssboard-192.png": &fstest.MapFile{Data: []byte("icon-192")},
+		"dist/icons/we1ssboard-512.png": &fstest.MapFile{Data: []byte("icon-512")},
 	}
 	t.Cleanup(func() { distFS = oldDistFS })
 
@@ -26,7 +26,7 @@ func TestServePWAAssets(t *testing.T) {
 		contentType string
 		body        string
 	}{
-		{name: "manifest", handler: ServePWAManifest, contentType: "application/manifest+json; charset=utf-8", body: `{"name":"FullBoard"}`},
+		{name: "manifest", handler: ServePWAManifest, contentType: "application/manifest+json; charset=utf-8", body: `{"name":"We1ssBoard"}`},
 		{name: "registration", handler: ServePWARegister, contentType: "application/javascript; charset=utf-8", body: "register"},
 		{name: "worker", handler: ServePWAServiceWorker, contentType: "application/javascript; charset=utf-8", body: "worker"},
 	}
@@ -57,14 +57,14 @@ func TestServePWAAssets(t *testing.T) {
 func TestServePWAIconServesPNG(t *testing.T) {
 	oldDistFS := distFS
 	distFS = fstest.MapFS{
-		"dist/icons/fullboard-192.png": &fstest.MapFile{Data: []byte("icon-192")},
+		"dist/icons/we1ssboard-192.png": &fstest.MapFile{Data: []byte("icon-192")},
 	}
 	t.Cleanup(func() { distFS = oldDistFS })
 
 	gin.SetMode(gin.TestMode)
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
-	context.Params = gin.Params{{Key: "name", Value: "fullboard-192.png"}}
+	context.Params = gin.Params{{Key: "name", Value: "we1ssboard-192.png"}}
 	ServePWAIcon(context)
 
 	if response.Code != 200 {

@@ -10,9 +10,9 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // seedWarp stores warp credentials (with a Warp Plus license key) in the DB.
@@ -70,7 +70,7 @@ func withWarpAPIBase(t *testing.T, base string) {
 }
 
 func TestChangeWarpIPPreservesLicenseKey(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 
 	const license = "WARPPLLUS-KEY-0123456789abcdefgh" // 32 chars, >= 26 gate
 	seedWarp(t, license)
@@ -122,7 +122,7 @@ func TestChangeWarpIPPreservesLicenseKey(t *testing.T) {
 }
 
 func TestChangeWarpIPKeepsLicenseWhenReapplyFails(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 
 	const license = "WARPPLLUS-KEY-0123456789abcdefgh"
 	seedWarp(t, license)

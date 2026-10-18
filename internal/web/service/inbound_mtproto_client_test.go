@@ -4,9 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/mtproto"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/mtproto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
 )
 
 func TestClientCrudMtprotoAppliesImmediately(t *testing.T) {

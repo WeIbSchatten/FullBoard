@@ -11,12 +11,12 @@ const svg = (name) => readFileSync(join(root, 'media', 'brand', name), 'utf8');
 // [svg, css size, background, output path]
 const jobs = [];
 for (const px of [16, 24, 32, 64, 192, 512]) {
-  jobs.push(['fullboard-mark.svg', px, px, 'transparent', `frontend/public/icons/fullboard-${px}.png`]);
+  jobs.push(['we1ssboard-mark.svg', px, px, 'transparent', `frontend/public/icons/we1ssboard-${px}.png`]);
 }
-jobs.push(['fullboard-mark.svg', 256, 256, 'transparent', 'docs/public/favicon.png']);
-jobs.push(['fullboard-mark.svg', 512, 512, 'transparent', 'docs/public/icon.png']);
-jobs.push(['fullboard-logo-light.svg', null, 128, 'transparent', 'media/brand/fullboard-logo-light.png']);
-jobs.push(['fullboard-logo-dark.svg', null, 128, 'transparent', 'media/brand/fullboard-logo-dark.png']);
+jobs.push(['we1ssboard-mark.svg', 256, 256, 'transparent', 'docs/public/favicon.png']);
+jobs.push(['we1ssboard-mark.svg', 512, 512, 'transparent', 'docs/public/icon.png']);
+jobs.push(['we1ssboard-logo-light.svg', null, 128, 'transparent', 'media/brand/we1ssboard-logo-light.png']);
+jobs.push(['we1ssboard-logo-dark.svg', null, 128, 'transparent', 'media/brand/we1ssboard-logo-dark.png']);
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH });
 const page = await browser.newPage();

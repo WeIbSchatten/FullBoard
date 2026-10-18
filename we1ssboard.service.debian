@@ -1,16 +1,16 @@
 [Unit]
-Description=FullBoard Service
+Description=We1ssBoard Service
 After=network.target
 Wants=network.target
 StartLimitIntervalSec=180
 StartLimitBurst=10
 
 [Service]
-EnvironmentFile=-/etc/default/fullboard
+EnvironmentFile=-/etc/default/we1ssboard
 Environment="XRAY_VMESS_AEAD_FORCED=false"
 Type=simple
-WorkingDirectory=/usr/local/fullboard/
-ExecStart=/usr/local/fullboard/fullboard
+WorkingDirectory=/usr/local/we1ssboard/
+ExecStart=/usr/local/we1ssboard/we1ssboard
 ExecReload=/bin/kill -USR1 $MAINPID
 Restart=on-failure
 RestartSec=5s
@@ -24,11 +24,11 @@ RestartSec=5s
 # does not share this service's private /tmp (the download would vanish).
 NoNewPrivileges=yes
 ProtectSystem=full
-# Default stores: DB/update status/node-token in XUI_DB_FOLDER (/etc/fullboard),
-# xray binary/config/geo in XUI_BIN_FOLDER under /usr/local/fullboard, logs in
-# XUI_LOG_FOLDER (/var/log/fullboard). These are the plain-install defaults and the
+# Default stores: DB/update status/node-token in XUI_DB_FOLDER (/etc/we1ssboard),
+# xray binary/config/geo in XUI_BIN_FOLDER under /usr/local/we1ssboard, logs in
+# XUI_LOG_FOLDER (/var/log/we1ssboard). These are the plain-install defaults and the
 # floor, not the whole list: install.sh and update.sh regenerate a drop-in
-# (fullboard.service.d/10-xui-sandbox.conf) with the folders resolved from the XUI_*
+# (we1ssboard.service.d/10-xui-sandbox.conf) with the folders resolved from the XUI_*
 # variables, so a relocated XUI_DB_FOLDER or XUI_LOG_FOLDER stays writable and
 # the list survives an update instead of being reset to these defaults. Changing
 # one of those variables in the env file is not enough by itself: the drop-in has
@@ -43,15 +43,15 @@ ProtectSystem=full
 # through a transient systemd-run unit, which does not inherit these settings.
 # Its plain-child fallback (taken when systemd-run is unavailable) cannot work
 # here -- update.sh stages the release archive beside the main folder, replaces
-# /usr/bin/fullboard and calls the package manager -- so it stops with one clear
+# /usr/bin/we1ssboard and calls the package manager -- so it stops with one clear
 # message instead of failing halfway, and the sandbox deliberately does not
 # grant /usr or /etc to accommodate it.
 # ReadWritePaths= requires systemd >= 231; ReadWriteDirectories= is the deprecated
-# alias for older systemd, needed so ProtectSystem=full keeps /etc/fullboard writable.
+# alias for older systemd, needed so ProtectSystem=full keeps /etc/we1ssboard writable.
 # /etc/tproxy-server: Telegram WEB proxy config/profiles written by the panel.
 # /etc/caddy: stock Caddyfile encode patch for HTTP/2 WebSocket (tg-web-proxy).
-ReadWritePaths=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server -/etc/caddy
-ReadWriteDirectories=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server -/etc/caddy
+ReadWritePaths=-/etc/we1ssboard -/usr/local/we1ssboard -/var/log/we1ssboard -/etc/tproxy-server -/etc/caddy
+ReadWriteDirectories=-/etc/we1ssboard -/usr/local/we1ssboard -/var/log/we1ssboard -/etc/tproxy-server -/etc/caddy
 # A kernel-TUN WireGuard outbound zeroes net.ipv{4,6}.conf.*.rp_filter as Xray starts
 # (#6796). Reopen only /proc/sys/net: kernel.* (core_pattern among them) stays read-only.
 # No ReadWriteDirectories alias needed: ProtectKernelTunables itself requires systemd 232.

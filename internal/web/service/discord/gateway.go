@@ -16,11 +16,11 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 const (
@@ -274,8 +274,8 @@ func (g *GatewayClient) connectAndListen(ctx context.Context) error {
 		Intents: discordIntents,
 		Properties: IdentifyProperties{
 			OS:      "linux",
-			Browser: "FullBoard",
-			Device:  "FullBoard",
+			Browser: "We1ssBoard",
+			Device:  "We1ssBoard",
 		},
 	}
 	dataBytes, _ := json.Marshal(identData)
@@ -484,7 +484,7 @@ func (g *GatewayClient) sendStatus(ctx context.Context) {
 
 	hostname, _ := os.Hostname()
 	if hostname == "" {
-		hostname = "FullBoard"
+		hostname = "We1ssBoard"
 	}
 
 	days := status.Uptime / 86400
@@ -543,7 +543,7 @@ func (g *GatewayClient) sendBackup(ctx context.Context) {
 
 	filename := g.serverService.BackupFilename("")
 	if filename == "" {
-		filename = "fullboard.db"
+		filename = "we1ssboard.db"
 	}
 
 	files := []FileAttachment{

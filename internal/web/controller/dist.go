@@ -11,9 +11,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 )
 
 var distFS fs.FS
@@ -90,8 +90,8 @@ func pwaHeadInjection(basePath, pageName string) []byte {
 	}
 
 	basePath = normalizeWebBasePath(basePath)
-	return []byte(`<link rel="icon" type="image/png" href="` + htmlpkg.EscapeString(basePath+"icons/fullboard-32.png") + `">` +
-		`<link rel="apple-touch-icon" href="` + htmlpkg.EscapeString(basePath+"icons/fullboard-192.png") + `">` +
+	return []byte(`<link rel="icon" type="image/png" href="` + htmlpkg.EscapeString(basePath+"icons/we1ssboard-32.png") + `">` +
+		`<link rel="apple-touch-icon" href="` + htmlpkg.EscapeString(basePath+"icons/we1ssboard-192.png") + `">` +
 		`<link rel="manifest" href="` + htmlpkg.EscapeString(basePath+"manifest.webmanifest") + `"><script data-cfasync="false" defer src="` + htmlpkg.EscapeString(basePath+"pwa-register.js") + `"></script>`)
 }
 
