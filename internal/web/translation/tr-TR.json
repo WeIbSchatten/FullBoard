@@ -150,7 +150,11 @@
         "mono": "Monokrom",
         "monoHint": "Mürekkep ve kâğıt, fazlası yok",
         "pastel": "Pastel",
-        "pastelHint": "Limon, pembe, leylak ve lacivert"
+        "pastelHint": "Limon, pembe, leylak ve lacivert",
+        "ocean": "Okyanus",
+        "oceanHint": "Soğuk grafit üzerinde mavi vurgu",
+        "emerald": "Zümrüt",
+        "emeraldHint": "Derin grafit üzerinde yeşil vurgu"
       },
       "size": "Arayüz boyutu",
       "sizeAuto": "Otomatik",
