@@ -3081,5 +3081,15 @@
     "palette": "コマンドパレット",
     "search": "ページ内検索",
     "help": "この一覧を表示"
+  },
+  "linkTags": {
+    "protocol": "プロトコル",
+    "transport": "トランスポート",
+    "security": "通信路の保護",
+    "encryption": "暗号化",
+    "flow": "フロー",
+    "obfs": "難読化",
+    "noEncryption": "暗号化なし",
+    "noEncryptionHint": "このキーの通信は暗号化されず、経路上の誰でも読み取れます"
   }
 }
