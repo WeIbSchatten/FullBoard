@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 
@@ -25,6 +26,8 @@ type Import3xUIResult struct {
 	// IPLimitsReset counts clients whose limitIp the ResetIpLimitNoFail2ban
 	// migration zeroed because fail2ban is not enforcing on this host.
 	IPLimitsReset int
+	// Warnings name clients whose 3x-ui inbounds disagree on a value one record must hold.
+	Warnings []string
 }
 
 // ImportedFileRef is a certificate or key path the imported data points at.
@@ -74,20 +77,6 @@ func Import3xUI(srcPath, dstPath string) (*Import3xUIResult, error) {
 			return nil, fmt.Errorf("%s is not a 3x-ui database: table %q is missing", srcPath, table)
 		}
 	}
-	before, err := readImportSnapshot(src)
-	if err != nil {
-		return nil, err
-	}
-	srcClients, err := read3xUIClients(src)
-	if err != nil {
-		return nil, err
-	}
-	expect := importExpectations{}
-	if !importSeederRan(before, "ResetIpLimitNoFail2ban") {
-		state, _ := fail2banEnforcementState()
-		expect.ipLimitsReset = state == fail2banAbsent
-	}
-
 	if err := os.MkdirAll(filepath.Dir(dstPath), 0o700); err != nil {
 		return nil, err
 	}
@@ -102,6 +91,18 @@ func Import3xUI(srcPath, dstPath string) (*Import3xUIResult, error) {
 			removeSQLiteFiles(tmpPath)
 		}
 	}()
+
+	// Read the expected state from the snapshot, not the live file: a running
+	// 3x-ui keeps writing (client IPs, traffic) between any two reads.
+	before, srcClients, err := readImportSource(tmpPath)
+	if err != nil {
+		return nil, err
+	}
+	expect := importExpectations{}
+	if !importSeederRan(before, "ResetIpLimitNoFail2ban") {
+		state, _ := fail2banEnforcementState()
+		expect.ipLimitsReset = state == fail2banAbsent
+	}
 
 	if err := InitDB(tmpPath); err != nil {
 		return nil, fmt.Errorf("migrate imported database: %w", err)
@@ -234,8 +235,23 @@ func importValue(v any) string {
 	}
 }
 
+func readImportSource(path string) (importSnapshot, map[string]*import3xUIClient, error) {
+	conn, err := openSQLiteReadOnly(path)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer conn.Close()
+	snap, err := readImportSnapshot(conn)
+	if err != nil {
+		return nil, nil, err
+	}
+	clients, err := read3xUIClients(conn)
+	return snap, clients, err
+}
+
+// import3xUIClient is every per-inbound entry 3x-ui keeps for one email.
 type import3xUIClient struct {
-	model.Client
+	Entries    []model.Client
 	InboundIDs []int
 }
 
@@ -271,11 +287,13 @@ func read3xUIClients(conn *sql.DB) (map[string]*import3xUIClient, error) {
 				continue
 			}
 			email := strings.TrimSpace(c.Email)
-			if existing, ok := clients[email]; ok {
-				existing.InboundIDs = append(existing.InboundIDs, id)
-				continue
+			entry, ok := clients[email]
+			if !ok {
+				entry = &import3xUIClient{}
+				clients[email] = entry
 			}
-			clients[email] = &import3xUIClient{Client: c, InboundIDs: []int{id}}
+			entry.Entries = append(entry.Entries, c)
+			entry.InboundIDs = append(entry.InboundIDs, id)
 		}
 	}
 	return clients, rows.Err()
@@ -308,7 +326,8 @@ func verifyImport(before importSnapshot, srcClients map[string]*import3xUIClient
 		}
 		problems = append(problems, diffImportTable(table, src, dst, expect)...)
 	}
-	problems = append(problems, verifyImportedClients(srcClients, expect)...)
+	clientProblems, warnings := verifyImportedClients(srcClients, expect)
+	problems = append(problems, clientProblems...)
 	if len(problems) > 0 {
 		sort.Strings(problems)
 		return nil, fmt.Errorf("imported data does not match the 3x-ui database:\n  %s", strings.Join(problems, "\n  "))
@@ -318,10 +337,11 @@ func verifyImport(before importSnapshot, srcClients map[string]*import3xUIClient
 		Clients:   len(srcClients),
 		Settings:  len(before["settings"].rows),
 		CertFiles: importedFileRefs(after),
+		Warnings:  warnings,
 	}
 	if expect.ipLimitsReset {
 		for _, c := range srcClients {
-			if c.LimitIP != 0 {
+			if slices.ContainsFunc(c.Entries, func(e model.Client) bool { return e.LimitIP != 0 }) {
 				result.IPLimitsReset++
 			}
 		}
@@ -385,8 +405,30 @@ func describeImportRow(table string, row map[string]string) string {
 	return "?"
 }
 
-func verifyImportedClients(srcClients map[string]*import3xUIClient, expect importExpectations) []string {
-	var problems []string
+// importClientFields are the per-client values a subscriber depends on.
+var importClientFields = []struct {
+	name string
+	get  func(*model.Client) string
+}{
+	{"id", func(c *model.Client) string { return c.ID }},
+	{"password", func(c *model.Client) string { return c.Password }},
+	{"auth", func(c *model.Client) string { return c.Auth }},
+	{"subId", func(c *model.Client) string { return c.SubID }},
+	{"totalGB", func(c *model.Client) string { return fmt.Sprint(c.TotalGB) }},
+	{"expiryTime", func(c *model.Client) string { return fmt.Sprint(c.ExpiryTime) }},
+	{"enable", func(c *model.Client) string { return fmt.Sprint(c.Enable) }},
+	{"limitIp", func(c *model.Client) string { return fmt.Sprint(c.LimitIP) }},
+	{"tgId", func(c *model.Client) string { return fmt.Sprint(c.TgID) }},
+	{"comment", func(c *model.Client) string { return c.Comment }},
+	{"reset", func(c *model.Client) string { return fmt.Sprint(c.Reset) }},
+}
+
+// Empty and zero entries are "not set" on that inbound; the merged record may take the value another inbound sets.
+func importUnset(v string) bool { return v == "" || v == "0" }
+
+// verifyImportedClients requires every merged field to come from one of the
+// email's 3x-ui entries, and warns where those entries disagree.
+func verifyImportedClients(srcClients map[string]*import3xUIClient, expect importExpectations) (problems, warnings []string) {
 	for email, want := range srcClients {
 		var rec model.ClientRecord
 		if err := db.Where("email = ?", email).First(&rec).Error; err != nil {
@@ -394,28 +436,30 @@ func verifyImportedClients(srcClients map[string]*import3xUIClient, expect impor
 			continue
 		}
 		got := rec.ToClient()
-		checks := []struct {
-			field     string
-			want, got any
-		}{
-			{"id", want.ID, got.ID},
-			{"password", want.Password, got.Password},
-			{"auth", want.Auth, got.Auth},
-			{"subId", want.SubID, got.SubID},
-			{"totalGB", want.TotalGB, got.TotalGB},
-			{"expiryTime", want.ExpiryTime, got.ExpiryTime},
-			{"enable", want.Enable, got.Enable},
-			{"limitIp", want.LimitIP, got.LimitIP},
-			{"tgId", want.TgID, got.TgID},
-			{"comment", want.Comment, got.Comment},
-			{"reset", want.Reset, got.Reset},
-		}
-		for _, c := range checks {
-			if c.field == "limitIp" && expect.ipLimitsReset && got.LimitIP == 0 {
+		for _, f := range importClientFields {
+			gotV := f.get(got)
+			if f.name == "limitIp" && expect.ipLimitsReset && gotV == "0" {
 				continue
 			}
-			if fmt.Sprint(c.want) != fmt.Sprint(c.got) {
-				problems = append(problems, fmt.Sprintf("client %s: %s changed from %v to %v", email, c.field, c.want, c.got))
+			allowed := map[string]bool{}
+			set := map[string]bool{}
+			for i := range want.Entries {
+				v := f.get(&want.Entries[i])
+				allowed[v] = true
+				if !importUnset(v) {
+					set[v] = true
+				}
+			}
+			kept := allowed[gotV]
+			if len(set) > 0 {
+				kept = set[gotV]
+			}
+			if !kept {
+				problems = append(problems, fmt.Sprintf("client %s: %s is not any value 3x-ui had", email, f.name))
+			}
+			if len(set) > 1 {
+				warnings = append(warnings, fmt.Sprintf("client %s: inbounds %s carry different %s; FullBoard keeps one for all of them",
+					email, joinInts(want.InboundIDs), f.name))
 			}
 		}
 		for _, inboundID := range want.InboundIDs {
@@ -425,7 +469,16 @@ func verifyImportedClients(srcClients map[string]*import3xUIClient, expect impor
 			}
 		}
 	}
-	return problems
+	sort.Strings(warnings)
+	return problems, warnings
+}
+
+func joinInts(ids []int) string {
+	parts := make([]string, len(ids))
+	for i, id := range ids {
+		parts[i] = fmt.Sprint(id)
+	}
+	return strings.Join(parts, ", ")
 }
 
 func importedFileRefs(after importSnapshot) []ImportedFileRef {
