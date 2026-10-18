@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Dropdown, Modal, Space, Table, message } from 'antd';
+import { Alert, Button, Dropdown, Modal, Space, Table, message } from 'antd';
 import PanelTabs from '@/layouts/PanelTabs';
 import {
   AimOutlined,
@@ -65,6 +65,7 @@ export default function RoutingTab({
     moved: false,
   });
 
+  const routingScript = templateSettings?.routing?.script ?? '';
   const rules = useMemo(
     () => (templateSettings?.routing?.rules || []) as RoutingRule[],
     [templateSettings?.routing?.rules],
@@ -350,6 +351,14 @@ export default function RoutingTab({
     <>
       {modalContextHolder}
       {messageContextHolder}
+      {routingScript.trim() !== '' && (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: 12 }}
+          title={t('pages.xray.routingScriptActive', { section: t('pages.xray.basicTemplate') })}
+        />
+      )}
       <PanelTabs
         defaultActiveKey="basic"
         items={[

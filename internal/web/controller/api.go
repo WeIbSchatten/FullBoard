@@ -36,11 +36,9 @@ func NewAPIController(g *gin.RouterGroup) *APIController {
 
 func (a *APIController) checkAPIAuth(c *gin.Context) {
 	// A valid bearer token is checked first so an mTLS master that also sends an
-	// admin token keeps that token's scope; the cert alone stays node-sync.
-	auth := c.GetHeader("Authorization")
-	if after, ok := strings.CutPrefix(auth, "Bearer "); ok {
-		tok := after
-		if row, ok := a.apiTokenService.MatchToken(tok); ok {
+	// admin or node-admin token keeps that token's scope; the cert alone stays node-sync.
+	if after, ok := strings.CutPrefix(c.GetHeader("Authorization"), "Bearer "); ok {
+		if row, matched := a.apiTokenService.MatchToken(after); matched {
 			if u, err := a.userService.GetFirstUser(); err == nil {
 				session.SetAPIAuthUser(c, u)
 			}
@@ -121,7 +119,20 @@ var nodeSyncScopeAllow = map[string]map[string]struct{}{
 	"/hosts/list":                  {http.MethodGet: {}},
 }
 
-// enforceTokenScope applies explicit allowlists to monitor and node-sync tokens.
+var nodeAdminScopeAllow = map[string]map[string]struct{}{
+	"/server/updatePanel": {http.MethodPost: {}},
+}
+
+func scopeAllows(allow map[string]map[string]struct{}, path, method string) bool {
+	methods, exists := allow[path]
+	if !exists {
+		return false
+	}
+	_, exists = methods[method]
+	return exists
+}
+
+// enforceTokenScope applies explicit allowlists to restricted API tokens.
 // Admin tokens and session-login users retain their existing behavior.
 func (a *APIController) enforceTokenScope(c *gin.Context) {
 	scopeVal, ok := c.Get("api_token_scope")
@@ -148,11 +159,14 @@ func (a *APIController) enforceTokenScope(c *gin.Context) {
 			return
 		}
 	case model.ApiScopeNodeSync:
-		if methods, allowed := nodeSyncScopeAllow[rel]; allowed {
-			if _, allowedMethod := methods[c.Request.Method]; allowedMethod {
-				c.Next()
-				return
-			}
+		if scopeAllows(nodeSyncScopeAllow, rel, c.Request.Method) {
+			c.Next()
+			return
+		}
+	case model.ApiScopeNodeAdmin:
+		if scopeAllows(nodeSyncScopeAllow, rel, c.Request.Method) || scopeAllows(nodeAdminScopeAllow, rel, c.Request.Method) {
+			c.Next()
+			return
 		}
 	default:
 		deny()
