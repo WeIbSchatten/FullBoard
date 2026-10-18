@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Button, QRCode, Tag } from 'antd';
+import { Button, QRCode } from 'antd';
 import { CopyOutlined, DownloadOutlined } from '@ant-design/icons';
 
 import SubQrButton from './SubQrButton';
@@ -17,24 +17,28 @@ export default function SubLinksTab({ subUrl, subJsonUrl, subClashUrl, onCopy }:
   const { t } = useTranslation();
   const subLabel = t('pages.settings.subSettings');
   const rows = [
-    { kind: 'SUB', color: 'green', url: subUrl, title: subLabel, downloadable: false },
+    { kind: 'SUB', tone: 'tls', url: subUrl, title: subLabel, downloadable: false },
     {
       kind: 'JSON',
-      color: 'purple',
+      tone: 'pq',
       url: subJsonUrl,
       title: `${subLabel} JSON`,
       downloadable: true,
     },
-    { kind: 'CLASH', color: 'gold', url: subClashUrl, title: 'Clash / Mihomo', downloadable: true },
+    {
+      kind: 'CLASH',
+      tone: 'cipher',
+      url: subClashUrl,
+      title: 'Clash / Mihomo',
+      downloadable: true,
+    },
   ].filter((row) => row.url);
 
   return (
     <div className="sub-rows">
       {rows.map((row) => (
         <div key={row.kind} className="sub-row">
-          <Tag color={row.color} className="sub-row-tag">
-            {row.kind}
-          </Tag>
+          <span className={`fb-link-tag fb-link-tag--${row.tone} sub-row-tag`}>{row.kind}</span>
           <div className="sub-row-main">
             <a href={row.url} target="_blank" rel="noopener noreferrer" className="sub-row-title">
               {row.title}

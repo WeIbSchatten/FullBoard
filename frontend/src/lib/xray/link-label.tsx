@@ -1,8 +1,11 @@
-import { Tag } from 'antd';
-import { Base64 } from '@/utils';
+import { useTranslation } from 'react-i18next';
+import { Tooltip } from 'antd';
 
-/* Shared parsing + rendering for the "protocol / transport / security"
-   labels shown above share links in the QR modal, the client info modal
+import { Base64 } from '@/utils';
+import './link-tags.css';
+
+/* Shared parsing + rendering for the "protocol / transport / security /
+   encryption" labels shown above share links in the QR modal, the client info modal
    and the subscription page. Keeping it in one place means the colour
    scheme and the email/stats stripping stay identical across all three. */
 
@@ -12,6 +15,10 @@ export interface LinkParts {
   security: string;
   remark: string;
   port: string;
+  encryption: string;
+  flow: string;
+  obfs: string;
+  unencrypted: boolean;
 }
 
 const PROTOCOL_LABELS: Record<string, string> = {
@@ -30,34 +37,31 @@ const PROTOCOL_LABELS: Record<string, string> = {
   tuic: 'TUIC',
 };
 
-const PROTOCOL_COLORS: Record<string, string> = {
-  Vless: 'geekblue',
-  Vmess: 'blue',
-  Trojan: 'volcano',
-  Shadowsocks: 'purple',
-  Hysteria: 'magenta',
-  Hysteria2: 'magenta',
-  WireGuard: 'cyan',
-  MTProto: 'blue',
-  AmneziaWG: 'yellow',
-  TUIC: 'orange',
-  'WEB Proxy': 'processing',
+// Tones map to .fb-link-tag--<tone> in link-tags.css; one hue per protocol.
+const PROTOCOL_TONES: Record<string, string> = {
+  Vless: 'vless',
+  Vmess: 'vmess',
+  Trojan: 'trojan',
+  Shadowsocks: 'shadowsocks',
+  Hysteria: 'hysteria',
+  Hysteria2: 'hysteria',
+  WireGuard: 'wireguard',
+  MTProto: 'telegram',
+  AmneziaWG: 'amneziawg',
+  TUIC: 'tuic',
+  'WEB Proxy': 'telegram',
 };
 
 function isTgWebProxyLink(link: string): boolean {
   return /^(https:\/\/t\.me\/webproxy|tg:\/\/webproxy)\?/i.test(link);
 }
 
-const SECURITY_COLORS: Record<string, string> = {
-  TLS: 'green',
-  XTLS: 'green',
-  REALITY: 'purple',
-  FAKETLS: 'green',
+const SECURITY_TONES: Record<string, string> = {
+  TLS: 'tls',
+  XTLS: 'tls',
+  FAKETLS: 'tls',
+  REALITY: 'reality',
 };
-
-const TRANSPORT_COLOR = 'gold';
-
-const TAG_STYLE = { marginInlineEnd: 0, fontWeight: 600, letterSpacing: '0.3px' };
 
 // Reverse of inbound-link.ts's own toBase64Url — base64url (RFC 4648 §5, no
 // padding) back to the original unicode text, needed to read the remark/
@@ -90,7 +94,17 @@ export function parseLinkParts(link: string): LinkParts | null {
     } catch {
       /* keep empty remark */
     }
-    return { protocol: 'WEB Proxy', network: '', security: '', remark, port: '' };
+    return {
+      protocol: 'WEB Proxy',
+      network: '',
+      security: '',
+      remark,
+      port: '',
+      encryption: '',
+      flow: '',
+      obfs: '',
+      unencrypted: false,
+    };
   }
   const scheme = /^([a-z0-9]+):\/\//i.exec(trimmed)?.[1]?.toLowerCase() ?? '';
   if (!scheme) return null;
@@ -99,6 +113,9 @@ export function parseLinkParts(link: string): LinkParts | null {
   let security = '';
   let remark = '';
   let port = '';
+  let encryption = '';
+  let flow = '';
+  let obfs = '';
   if (scheme === 'vmess') {
     try {
       const json = JSON.parse(Base64.decode(trimmed.slice('vmess://'.length).split('#')[0])) as {
@@ -106,11 +123,13 @@ export function parseLinkParts(link: string): LinkParts | null {
         tls?: string;
         ps?: string;
         port?: string | number;
+        scy?: string;
       };
       network = json.net ?? '';
       security = json.tls ?? '';
       remark = typeof json.ps === 'string' ? json.ps : '';
       port = json.port != null ? String(json.port) : '';
+      encryption = (json.scy ?? '').toUpperCase();
     } catch {
       /* unparseable payload, fall back to protocol only */
     }
@@ -136,6 +155,10 @@ export function parseLinkParts(link: string): LinkParts | null {
       /* tg://proxy links (mtproto) carry the port in a `port` query param, not
          the URL authority, so fall back to it when there is no authority port. */
       port = url.port || (url.searchParams.get('port') ?? '');
+      if (scheme === 'vless') encryption = vlessEncryptionLabel(url.searchParams.get('encryption'));
+      if (url.searchParams.get('flow')?.startsWith('xtls-rprx-vision')) flow = 'VISION';
+      obfs = (url.searchParams.get('obfs') ?? '').toUpperCase();
+      if (scheme === 'ss') encryption = shadowsocksMethodLabel(url);
       const hash = url.hash.replace(/^#/, '');
       try {
         remark = decodeURIComponent(hash);
@@ -158,7 +181,54 @@ export function parseLinkParts(link: string): LinkParts | null {
     security: security.toUpperCase(),
     remark: remark.trim(),
     port,
+    encryption,
+    flow,
+    obfs,
+    unencrypted: isUnencrypted(scheme, security, encryption),
   };
+}
+
+// VLESS encryption is always the mlkem768x25519plus hybrid; only its auth key varies.
+function vlessEncryptionLabel(value: string | null): string {
+  return value && value !== 'none' ? 'ML-KEM-768' : '';
+}
+
+// SIP022 userinfo is percent-encoded "method:key[:key]"; SIP002 is base64url("method:password").
+function shadowsocksMethodLabel(url: URL): string {
+  let raw: string;
+  try {
+    raw = decodeURIComponent(url.username);
+  } catch {
+    raw = url.username;
+  }
+  if (!url.password && !raw.includes(':')) {
+    try {
+      raw = Base64.decode(raw.replace(/-/g, '+').replace(/_/g, '/'));
+    } catch {
+      return '';
+    }
+  }
+  const method = raw.split(':')[0].toLowerCase();
+  const ss2022 = '2022-blake3-';
+  if (method.startsWith(ss2022)) return `SS2022 ${method.slice(ss2022.length).toUpperCase()}`;
+  return method.toUpperCase();
+}
+
+const NULL_CIPHERS = new Set(['', 'NONE', 'ZERO', 'PLAIN']);
+
+// Only these schemes can carry payload in the clear; the rest always encrypt (QUIC, Noise, MTProto).
+function isUnencrypted(scheme: string, security: string, encryption: string): boolean {
+  if (security) return false;
+  switch (scheme) {
+    case 'vless':
+    case 'trojan':
+      return !encryption;
+    case 'vmess':
+    case 'ss':
+      return NULL_CIPHERS.has(encryption);
+    default:
+      return false;
+  }
 }
 
 /* The inbound remark and port joined as they appear after the tags, e.g.
@@ -167,21 +237,53 @@ export function linkMetaText(parts: LinkParts): string {
   return [parts.remark, parts.port].filter(Boolean).join(':');
 }
 
-export function LinkTags({ parts }: { parts: LinkParts }) {
+function LinkTag({ tone, hint, children }: { tone: string; hint: string; children: string }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-      <Tag color={PROTOCOL_COLORS[parts.protocol]} style={TAG_STYLE}>
+    <Tooltip title={hint}>
+      <span className={`fb-link-tag fb-link-tag--${tone}`}>{children}</span>
+    </Tooltip>
+  );
+}
+
+export function LinkTags({ parts }: { parts: LinkParts }) {
+  const { t } = useTranslation();
+  return (
+    <span className="fb-link-tags">
+      <LinkTag tone={PROTOCOL_TONES[parts.protocol] ?? 'neutral'} hint={t('linkTags.protocol')}>
         {parts.protocol}
-      </Tag>
+      </LinkTag>
       {parts.network && (
-        <Tag color={TRANSPORT_COLOR} style={TAG_STYLE}>
+        <LinkTag tone="transport" hint={t('linkTags.transport')}>
           {parts.network}
-        </Tag>
+        </LinkTag>
       )}
       {parts.security && (
-        <Tag color={SECURITY_COLORS[parts.security]} style={TAG_STYLE}>
+        <LinkTag tone={SECURITY_TONES[parts.security] ?? 'tls'} hint={t('linkTags.security')}>
           {parts.security}
-        </Tag>
+        </LinkTag>
+      )}
+      {parts.encryption && !parts.unencrypted && (
+        <LinkTag
+          tone={parts.encryption === 'ML-KEM-768' ? 'pq' : 'cipher'}
+          hint={t('linkTags.encryption')}
+        >
+          {parts.encryption}
+        </LinkTag>
+      )}
+      {parts.flow && (
+        <LinkTag tone="flow" hint={t('linkTags.flow')}>
+          {parts.flow}
+        </LinkTag>
+      )}
+      {parts.obfs && (
+        <LinkTag tone="obfs" hint={t('linkTags.obfs')}>
+          {parts.obfs}
+        </LinkTag>
+      )}
+      {parts.unencrypted && (
+        <LinkTag tone="danger" hint={t('linkTags.noEncryptionHint')}>
+          {t('linkTags.noEncryption')}
+        </LinkTag>
       )}
     </span>
   );

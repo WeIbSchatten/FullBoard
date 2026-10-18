@@ -3081,5 +3081,15 @@
     "palette": "Command palette",
     "search": "Focus the page search",
     "help": "Show this list"
+  },
+  "linkTags": {
+    "protocol": "Protocol",
+    "transport": "Transport",
+    "security": "Channel protection",
+    "encryption": "Encryption",
+    "flow": "Flow",
+    "obfs": "Obfuscation",
+    "noEncryption": "No encryption",
+    "noEncryptionHint": "Traffic of this key is not encrypted; anyone on the path can read it"
   }
 }
