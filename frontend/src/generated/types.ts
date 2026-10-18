@@ -1298,6 +1298,13 @@ export interface SubBalancer {
   updatedAt: number;
 }
 
+export interface TgWebProxyBindManyRequest {
+  dedicated: boolean;
+  emails: string[];
+  nodeId?: number | null;
+  profileName: string;
+}
+
 export interface TgWebProxyBindRequest {
   dedicated: boolean;
   email: string;

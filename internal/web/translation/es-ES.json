@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "¿Detener Xray en este nodo? Sus clientes perderán la conectividad hasta que Xray se inicie de nuevo.",
         "importBackupConfirm": "¿Restaurar la base de datos del nodo desde {name}? Esto reemplaza todos los datos del nodo.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "Perfiles web-proxy de este nodo. Créalos, edítalos y elimínalos aquí, y usa «Añadir a suscripciones» para dar a los clientes de este panel un enlace a través del nodo."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "Secreto",
         "link": "Enlace",
         "showSecret": "Mostrar secreto",
-        "hideSecret": "Ocultar secreto"
+        "hideSecret": "Ocultar secreto",
+        "addToSubs": "Añadir a suscripciones",
+        "addToSubsTitle": "Añadir «{name}» a las suscripciones de clientes",
+        "addToSubsHint": "Cada cliente seleccionado recibe el enlace https://t.me/webproxy de este perfil en su suscripción. Un cliente ya vinculado a otro perfil pasa a este.",
+        "selectClients": "Selecciona clientes"
       },
       "egress": {
         "button": "Comprobar IP de salida",

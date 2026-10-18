@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "Зупинити Xray на цьому вузлі? Його клієнти втратять зв'язок, доки Xray не буде запущено знову.",
         "importBackupConfirm": "Відновити базу даних вузла з {name}? Усі дані вузла буде замінено.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "Профілі web-proxy на цьому вузлі. Створюйте, змінюйте й видаляйте їх тут, а кнопкою «Додати до підписок» видавайте клієнтам цієї панелі посилання через вузол."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "Секрет",
         "link": "Посилання",
         "showSecret": "Показати секрет",
-        "hideSecret": "Сховати секрет"
+        "hideSecret": "Сховати секрет",
+        "addToSubs": "Додати до підписок",
+        "addToSubsTitle": "Додати «{name}» до підписок клієнтів",
+        "addToSubsHint": "Кожен вибраний клієнт отримає посилання https://t.me/webproxy цього профілю у звичайній підписці. Клієнта, прив'язаного до іншого профілю, буде перенесено на цей.",
+        "selectClients": "Виберіть клієнтів"
       },
       "egress": {
         "button": "Перевірити IP виходу",

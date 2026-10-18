@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "停止此節點上的 Xray？在 Xray 重新啟動前，其客戶端將無法連線。",
         "importBackupConfirm": "從 {name} 還原節點資料庫？這將取代該節點的所有資料。",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "此節點上的 web-proxy 設定。可在此建立、編輯與刪除，並用「加入訂閱」為本面板的客戶端提供經由該節點的連結。"
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "密鑰",
         "link": "連結",
         "showSecret": "顯示密鑰",
-        "hideSecret": "隱藏密鑰"
+        "hideSecret": "隱藏密鑰",
+        "addToSubs": "加入訂閱",
+        "addToSubsTitle": "將「{name}」加入客戶端訂閱",
+        "addToSubsHint": "每個選取的客戶端會在訂閱中取得此設定的 https://t.me/webproxy 連結。已綁定其他設定的客戶端會改為此設定。",
+        "selectClients": "選擇客戶端"
       },
       "egress": {
         "button": "檢查出口 IP",
