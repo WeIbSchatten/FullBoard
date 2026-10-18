@@ -268,7 +268,26 @@ cmd_status() {
     done
 }
 
+menu() {
+    echo "3x-ui -> FullBoard"
+    echo "  1) Migrate 3x-ui into FullBoard (backup first)"
+    echo "  2) Roll back to 3x-ui"
+    echo "  3) Show migration backups"
+    echo "  0) Exit"
+    read -r -p "Choose [0-3]: " choice
+    case "$choice" in
+        1) cmd_migrate no ;;
+        2) cmd_rollback "" no ;;
+        3) cmd_status ;;
+        *) exit 0 ;;
+    esac
+}
+
 main() {
+    if [[ $# -eq 0 ]]; then
+        menu
+        return
+    fi
     local cmd="${1:-}" yes=no arg=""
     shift || true
     for a in "$@"; do
