@@ -3081,5 +3081,15 @@
     "palette": "Paleta de comandos",
     "search": "Buscar en la página",
     "help": "Mostrar esta lista"
+  },
+  "linkTags": {
+    "protocol": "Protocolo",
+    "transport": "Transporte",
+    "security": "Protección del canal",
+    "encryption": "Cifrado",
+    "flow": "Flujo",
+    "obfs": "Ofuscación",
+    "noEncryption": "Sin cifrado",
+    "noEncryptionHint": "El tráfico de esta clave no está cifrado; cualquiera en la ruta puede leerlo"
   }
 }

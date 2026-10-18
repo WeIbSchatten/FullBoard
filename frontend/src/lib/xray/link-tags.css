@@ -1,0 +1,86 @@
+/* Share-link labels: each tone sets one hue; text, fill and border are mixed
+   against the theme text colour so the same hue reads in light and dark. */
+.fb-link-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.fb-link-tag {
+  --tag-hue: #8a94a6;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+  color: color-mix(in srgb, var(--tag-hue) 72%, var(--fb-text));
+  background: color-mix(in srgb, var(--tag-hue) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tag-hue) 34%, transparent);
+}
+
+/* protocols */
+.fb-link-tag--vless {
+  --tag-hue: #4f8cff;
+}
+.fb-link-tag--vmess {
+  --tag-hue: #7c6cff;
+}
+.fb-link-tag--trojan {
+  --tag-hue: #f0605d;
+}
+.fb-link-tag--shadowsocks {
+  --tag-hue: #b06cff;
+}
+.fb-link-tag--hysteria {
+  --tag-hue: #ff5fa2;
+}
+.fb-link-tag--tuic {
+  --tag-hue: #ff8a3d;
+}
+.fb-link-tag--wireguard {
+  --tag-hue: #22b8a8;
+}
+.fb-link-tag--amneziawg {
+  --tag-hue: #e0a526;
+}
+.fb-link-tag--telegram {
+  --tag-hue: #2aa7e0;
+}
+
+/* transport, channel protection, encryption, flow, obfuscation */
+.fb-link-tag--transport {
+  --tag-hue: #8a94a6;
+}
+.fb-link-tag--tls {
+  --tag-hue: #22c55e;
+}
+.fb-link-tag--reality {
+  --tag-hue: #06b6d4;
+}
+.fb-link-tag--pq {
+  --tag-hue: #8b5cf6;
+}
+.fb-link-tag--cipher {
+  --tag-hue: #eab308;
+}
+.fb-link-tag--flow {
+  --tag-hue: #84cc16;
+}
+.fb-link-tag--obfs {
+  --tag-hue: #fb7185;
+}
+
+.fb-link-tag--danger {
+  --tag-hue: #ef4444;
+  color: #fff;
+  background: var(--tag-hue);
+  border-color: var(--tag-hue);
+}

@@ -139,9 +139,6 @@ export default function SubPage() {
     <ConfigProvider theme={themeConfig} direction={direction}>
       {messageContextHolder}
       <Layout className={pageClass} dir={direction}>
-        <div className="sub-aurora" aria-hidden="true">
-          <span className="sub-aurora-grid" />
-        </div>
         <Layout.Content className="sub-content">
           <Card className="sub-card">
             <SubHeader

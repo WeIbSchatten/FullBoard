@@ -113,3 +113,75 @@ describe('link-label parseLinkParts', () => {
     expect(deep?.remark).toBe('proxy.example.com');
   });
 });
+
+// The subscription page colours each key by what actually protects it, so the
+// parser must surface the cipher / flow / obfs a link carries and flag links
+// that travel without any encryption layer at all.
+describe('link-label encryption details', () => {
+  it('reads VLESS post-quantum encryption and the Vision flow', () => {
+    const parts = parseLinkParts(
+      'vless://uid@h.example.com:443?type=tcp&security=reality&encryption=mlkem768x25519plus.native.0rtt.AAAA&flow=xtls-rprx-vision#r',
+    );
+    expect(parts?.encryption).toBe('ML-KEM-768');
+    expect(parts?.flow).toBe('VISION');
+    expect(parts?.unencrypted).toBe(false);
+  });
+
+  it('flags plain VLESS without TLS, REALITY or VLESS encryption as unencrypted', () => {
+    const parts = parseLinkParts('vless://uid@h.example.com:80?type=ws&encryption=none#r');
+    expect(parts?.encryption).toBe('');
+    expect(parts?.unencrypted).toBe(true);
+  });
+
+  it('reads the VMess cipher from the base64 body', () => {
+    const body = btoa(
+      JSON.stringify({
+        v: '2',
+        ps: 'vm',
+        port: '8080',
+        net: 'ws',
+        tls: '',
+        scy: 'chacha20-poly1305',
+      }),
+    );
+    const parts = parseLinkParts(`vmess://${body}`);
+    expect(parts?.encryption).toBe('CHACHA20-POLY1305');
+    expect(parts?.unencrypted).toBe(false);
+  });
+
+  it('flags VMess with security none and no TLS as unencrypted', () => {
+    const body = btoa(
+      JSON.stringify({ v: '2', ps: 'vm', port: '80', net: 'tcp', tls: '', scy: 'none' }),
+    );
+    const parts = parseLinkParts(`vmess://${body}`);
+    expect(parts?.encryption).toBe('NONE');
+    expect(parts?.unencrypted).toBe(true);
+  });
+
+  it('reads a Shadowsocks 2022 method from percent-encoded SIP022 userinfo', () => {
+    const parts = parseLinkParts(
+      'ss://2022-blake3-aes-128-gcm:c2VydmVy%3D:Y2xpZW50@h.example.com:9000?type=tcp#ss',
+    );
+    expect(parts?.encryption).toBe('SS2022 AES-128-GCM');
+    expect(parts?.unencrypted).toBe(false);
+  });
+
+  it('reads a classic Shadowsocks method from base64 SIP002 userinfo', () => {
+    const userinfo = btoa('chacha20-ietf-poly1305:secret').replace(/=+$/, '');
+    const parts = parseLinkParts(`ss://${userinfo}@h.example.com:8388#ss`);
+    expect(parts?.encryption).toBe('CHACHA20-IETF-POLY1305');
+  });
+
+  it('reads Hysteria2 salamander obfuscation', () => {
+    const parts = parseLinkParts(
+      'hysteria2://auth@h.example.com:7443?security=tls&obfs=salamander&obfs-password=x#hy',
+    );
+    expect(parts?.obfs).toBe('SALAMANDER');
+    expect(parts?.unencrypted).toBe(false);
+  });
+
+  it('does not flag Trojan over TLS', () => {
+    const parts = parseLinkParts('trojan://pw@h.example.com:443?type=tcp&security=tls#t');
+    expect(parts?.unencrypted).toBe(false);
+  });
+});

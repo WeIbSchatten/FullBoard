@@ -3081,5 +3081,15 @@
     "palette": "Bảng lệnh",
     "search": "Tìm trong trang",
     "help": "Hiện danh sách này"
+  },
+  "linkTags": {
+    "protocol": "Giao thức",
+    "transport": "Truyền tải",
+    "security": "Bảo vệ kênh",
+    "encryption": "Mã hóa",
+    "flow": "Luồng",
+    "obfs": "Làm rối",
+    "noEncryption": "Không mã hóa",
+    "noEncryptionHint": "Lưu lượng của khóa này không được mã hóa; bất kỳ ai trên đường truyền đều có thể đọc"
   }
 }
