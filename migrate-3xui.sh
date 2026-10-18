@@ -142,11 +142,18 @@ cmd_migrate() {
     save_state "$xui3_active" "$xui3_enabled" "$fb_active" "$fb_enabled"
 
     info "Test import while 3x-ui keeps running..."
-    if ! "$fb_bin" import-3xui --src "$xui3_db" --dst "$backup_dir/precheck/fullboard.db"; then
+    if ! "$fb_bin" import-3xui --src "$xui3_db" --dst "$backup_dir/precheck/fullboard.db" | tee "$backup_dir/precheck.log"; then
         rm -rf "$backup_dir"
         die "Test import failed; nothing was stopped or changed."
     fi
     rm -rf "$backup_dir/precheck"
+    if [[ "$assume_yes" != "yes" ]] && grep -q "WARNING" "$backup_dir/precheck.log"; then
+        read -r -p "The test import printed warnings above. Switch to FullBoard anyway? [y/N]: " answer
+        if [[ "$answer" != [yY]* ]]; then
+            rm -rf "$backup_dir"
+            die "Cancelled, nothing changed."
+        fi
+    fi
 
     info "Stopping services..."
     systemctl stop fullboard 2> /dev/null || true
