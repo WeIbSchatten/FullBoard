@@ -1,16 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Menu, Popover, Space } from 'antd';
-import {
-  MoonFilled,
-  MoonOutlined,
-  SunOutlined,
-  TranslationOutlined,
-  WifiOutlined,
-} from '@ant-design/icons';
+import { Button, Grid, Menu, Popover, Space } from 'antd';
+import { TranslationOutlined } from '@ant-design/icons';
 
 import { LanguageManager } from '@/utils';
-import { pauseAnimationsUntilLeave, useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@/hooks/useTheme';
+import BrandMark from '@/components/ui/BrandMark';
+import ThemeSwitch from '@/components/ui/ThemeSwitch';
+import { AppearanceButton } from '@/components/ui/AppearancePanel';
 
 interface SubHeaderProps {
   title: string;
@@ -22,20 +19,8 @@ interface SubHeaderProps {
 
 export default function SubHeader({ title, sId, email, lang, onLangChange }: SubHeaderProps) {
   const { t } = useTranslation();
-  const { isDark, isUltra, toggleTheme, toggleUltra } = useTheme();
-
-  const cycleTheme = () => {
-    pauseAnimationsUntilLeave('sub-theme-cycle');
-    if (!isDark) {
-      toggleTheme();
-      if (isUltra) toggleUltra();
-    } else if (!isUltra) {
-      toggleUltra();
-    } else {
-      toggleUltra();
-      toggleTheme();
-    }
-  };
+  const { isDark } = useTheme();
+  const screens = Grid.useBreakpoint();
 
   const langMenuItems = useMemo(
     () =>
@@ -53,15 +38,10 @@ export default function SubHeader({ title, sId, email, lang, onLangChange }: Sub
     [],
   );
 
-  const themeIcon = !isDark ? <SunOutlined /> : !isUltra ? <MoonOutlined /> : <MoonFilled />;
-  const initial = Array.from(title)[0]?.toUpperCase();
-
   return (
     <header className="sub-header">
       <div className="sub-brand">
-        <span className="sub-brand-mark" aria-hidden="true">
-          {initial ?? <WifiOutlined />}
-        </span>
+        <BrandMark size={40} className="sub-brand-mark" />
         <div className="sub-brand-text">
           <div className="sub-brand-title" dir="auto">
             {title || t('subscription.title')}
@@ -72,16 +52,8 @@ export default function SubHeader({ title, sId, email, lang, onLangChange }: Sub
         </div>
       </div>
       <div className="sub-toolbar">
-        <Button
-          id="sub-theme-cycle"
-          shape="circle"
-          size="large"
-          className="toolbar-btn"
-          aria-label={t('menu.theme')}
-          title={t('menu.theme')}
-          icon={themeIcon}
-          onClick={cycleTheme}
-        />
+        <ThemeSwitch compact={!screens.sm} />
+        <AppearanceButton placement="bottomRight" />
         <Popover
           rootClassName={isDark ? 'dark' : 'light'}
           placement="bottomRight"
@@ -99,8 +71,6 @@ export default function SubHeader({ title, sId, email, lang, onLangChange }: Sub
           }
         >
           <Button
-            shape="circle"
-            size="large"
             className="toolbar-btn"
             aria-label={t('pages.settings.language')}
             icon={<TranslationOutlined />}

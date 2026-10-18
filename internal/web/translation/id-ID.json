@@ -3081,5 +3081,15 @@
     "palette": "Palet perintah",
     "search": "Cari di halaman",
     "help": "Tampilkan daftar ini"
+  },
+  "linkTags": {
+    "protocol": "Protokol",
+    "transport": "Transport",
+    "security": "Perlindungan kanal",
+    "encryption": "Enkripsi",
+    "flow": "Flow",
+    "obfs": "Obfuskasi",
+    "noEncryption": "Tanpa enkripsi",
+    "noEncryptionHint": "Lalu lintas kunci ini tidak dienkripsi; siapa pun di jalur dapat membacanya"
   }
 }

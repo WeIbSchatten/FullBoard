@@ -3081,5 +3081,15 @@
     "palette": "Komut paleti",
     "search": "Sayfada ara",
     "help": "Bu listeyi göster"
+  },
+  "linkTags": {
+    "protocol": "Protokol",
+    "transport": "Taşıma",
+    "security": "Kanal koruması",
+    "encryption": "Şifreleme",
+    "flow": "Akış",
+    "obfs": "Gizleme",
+    "noEncryption": "Şifreleme yok",
+    "noEncryptionHint": "Bu anahtarın trafiği şifrelenmez; yoldaki herkes okuyabilir"
   }
 }

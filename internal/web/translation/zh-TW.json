@@ -3081,5 +3081,15 @@
     "palette": "命令面板",
     "search": "頁面搜尋",
     "help": "顯示此清單"
+  },
+  "linkTags": {
+    "protocol": "協定",
+    "transport": "傳輸",
+    "security": "通道保護",
+    "encryption": "加密",
+    "flow": "流控",
+    "obfs": "混淆",
+    "noEncryption": "未加密",
+    "noEncryptionHint": "此金鑰的流量未加密，路徑上的任何人都能讀取"
   }
 }
