@@ -2806,7 +2806,7 @@
       "status": "✅ ربات در حالت عادی است!",
       "usage": "❗ لطفاً یک متن برای جستجو وارد کنید!",
       "getID": "🆔 شناسه شما: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "برای راه‌اندازی مجدد Xray Core:\r\n<code>/restart</code>\r\n\r\nبرای جستجوی ایمیل مشتری:\r\n<code>/usage [ایمیل]</code>\r\n\r\nبرای جستجوی ورودی‌ها (با آمار مشتری):\r\n<code>/inbound [توضیحات]</code>\r\n\r\nشناسه گفتگوی تلگرام:\r\n<code>/id</code>",
+      "helpAdminCommands": "برای راه‌اندازی مجدد Xray Core:\r\n<code>/restart</code>\r\n\r\nبرای جستجوی ایمیل مشتری:\r\n<code>/usage [ایمیل]</code>\r\n\r\nبرای جستجوی ورودی‌ها (با آمار مشتری):\r\n<code>/inbound [توضیحات]</code>\r\n\r\nشناسه گفتگوی تلگرام:\r\n<code>/id</code>\r\n\r\nوضعیت نودها (مدیر):\r\n<code>/nodes</code>\r\n\r\nوضعیت Telegram WEB Proxy (مدیر):\r\n<code>/webproxy</code>",
       "helpClientCommands": "برای جستجوی آمار، از دستور زیر استفاده کنید:\r\n<code>/usage [ایمیل]</code>\r\n\r\nشناسه گفتگوی تلگرام:\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ عملیات با موفقیت انجام شد!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "جستجوی ورودی‌ها: /inbound نام (مدیر)",
       "restartDesc": "راه‌اندازی مجدد هسته Xray (مدیر)",
       "broadcastDesc": "ارسال پیام به همه کاربران (مدیر)",
-      "clearallDesc": "صفر کردن ترافیک همه کاربران (مدیر)"
+      "clearallDesc": "صفر کردن ترافیک همه کاربران (مدیر)",
+      "nodesDesc": "وضعیت نودها (مدیر)",
+      "webproxyDesc": "وضعیت Telegram WEB Proxy (مدیر)"
     },
     "messages": {
       "cpuThreshold": "بار ‌پردازنده {{ .Percent }}% بیشتر از آستانه است {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "نود {{ .Name }} قطع است",
       "eventNodeUp": "نود {{ .Name }} وصل است",
       "eventLoginFallback": "ورود ناموفق از {{ .Source }}",
-      "memoryThreshold": "مصرف حافظه {{ .Percent }}% از حد آستانه {{ .Threshold }}% فراتر رفته است"
+      "memoryThreshold": "مصرف حافظه {{ .Percent }}% از حد آستانه {{ .Threshold }}% فراتر رفته است",
+      "noNodes": "🖥 هیچ نودی به این پنل متصل نیست.",
+      "nodeDisabled": "غیرفعال",
+      "nodeOffline": "آفلاین",
+      "nodeLastSeen": "آخرین حضور {{ .Time }}",
+      "nodesTitle": "🖥 <b>نودها</b>: {{ .Online }}/{{ .Total }} آنلاین",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "روی این سرور در دسترس نیست.",
+      "webProxyNotInstalled": "نصب یا پیکربندی نشده است. در پنل تنظیم کنید: اتصال‌ها → TG Web Proxy.",
+      "webProxyHost": "میزبان: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}، کاربران: {{ .Clients }}",
+      "webProxySyncError": "❗ آخرین همگام‌سازی اتصال‌ها ناموفق بود: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ بستن کیبورد",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 ایمیل",
       "change_comment": "⚙️💬 نظر",
       "ResetAllTraffics": "بازنشانی همه ترافیک‌ها",
-      "SortedTrafficUsageReport": "گزارش استفاده از ترافیک مرتب‌شده"
+      "SortedTrafficUsageReport": "گزارش استفاده از ترافیک مرتب‌شده",
+      "nodes": "🖥 نودها",
+      "webProxy": "📡 وب‌پراکسی"
     },
     "answers": {
       "broadcastStarted": "🚀 ارسال گروهی آغاز شد.",

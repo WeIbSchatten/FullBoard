@@ -2806,7 +2806,7 @@
       "status": "✅ Бот в порядку!",
       "usage": "❗ Введіть текст для пошуку!",
       "getID": "🆔 Ваш ідентифікатор: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "Для перезапуску Xray Core:\r\n<code>/restart</code>\r\n\r\nДля пошуку електронної пошти клієнта:\r\n<code>/usage [Електронна пошта]</code>\r\n\r\nДля пошуку вхідних (зі статистикою клієнта):\r\n<code>/inbound [Примітка]</code>\r\n\r\nID чату Telegram:\r\n<code>/id</code>",
+      "helpAdminCommands": "Для перезапуску Xray Core:\r\n<code>/restart</code>\r\n\r\nДля пошуку електронної пошти клієнта:\r\n<code>/usage [Електронна пошта]</code>\r\n\r\nДля пошуку вхідних (зі статистикою клієнта):\r\n<code>/inbound [Примітка]</code>\r\n\r\nID чату Telegram:\r\n<code>/id</code>\r\n\r\nСтан вузлів (адмін):\r\n<code>/nodes</code>\r\n\r\nСтан Telegram WEB Proxy (адмін):\r\n<code>/webproxy</code>",
       "helpClientCommands": "Для пошуку статистики використовуйте наступну команду:\r\n<code>/usage [Електронна пошта]</code>\r\n\r\nID чату Telegram:\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ Операція успішна!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "Пошук вхідних: /inbound назва (адмін)",
       "restartDesc": "Перезапустити ядро Xray (адмін)",
       "broadcastDesc": "Масове розсилання всім клієнтам (адмін)",
-      "clearallDesc": "Скинути трафік усіх клієнтів (адмін)"
+      "clearallDesc": "Скинути трафік усіх клієнтів (адмін)",
+      "nodesDesc": "Стан вузлів (адмін)",
+      "webproxyDesc": "Стан Telegram WEB Proxy (адмін)"
     },
     "messages": {
       "cpuThreshold": "Навантаження ЦП  {{ .Percent }}% перевищує порогове значення {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "Вузол {{ .Name }} НЕДОСТУПНИЙ",
       "eventNodeUp": "Вузол {{ .Name }} ДОСТУПНИЙ",
       "eventLoginFallback": "Невдала спроба входу з {{ .Source }}",
-      "memoryThreshold": "Використання пам'яті {{ .Percent }}% перевищує порогове значення {{ .Threshold }}%"
+      "memoryThreshold": "Використання пам'яті {{ .Percent }}% перевищує порогове значення {{ .Threshold }}%",
+      "noNodes": "🖥 До цієї панелі не підключено жодного вузла.",
+      "nodeDisabled": "вимкнено",
+      "nodeOffline": "не в мережі",
+      "nodeLastSeen": "був у мережі {{ .Time }}",
+      "nodesTitle": "🖥 <b>Вузли</b>: у мережі {{ .Online }} з {{ .Total }}",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "Недоступний на цьому сервері.",
+      "webProxyNotInstalled": "Не встановлено або ще не налаштовано. Налаштуйте в панелі: Підключення → TG Web Proxy.",
+      "webProxyHost": "Хост: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}, клієнтів: {{ .Clients }}",
+      "webProxySyncError": "❗ Остання синхронізація прив’язок не вдалася: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ Закрити клавіатуру",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 Email",
       "change_comment": "⚙️💬 Коментар",
       "ResetAllTraffics": "Скинути весь трафік",
-      "SortedTrafficUsageReport": "Відсортований звіт про використання трафіку"
+      "SortedTrafficUsageReport": "Відсортований звіт про використання трафіку",
+      "nodes": "🖥 Вузли",
+      "webProxy": "📡 Web-proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 Розсилку запущено.",

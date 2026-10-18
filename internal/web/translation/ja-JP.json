@@ -2806,7 +2806,7 @@
       "status": "✅ ボットは正常に動作しています！",
       "usage": "❗ 検索するテキストを入力してください！",
       "getID": "🆔 あなたのIDは：<code>{{ .ID }}</code>",
-      "helpAdminCommands": "Xray Coreを再起動するには：\r\n<code>/restart</code>\r\n\r\nクライアントの電子メールを検索するには：\r\n<code>/usage [電子メール]</code>\r\n\r\nインバウンド（クライアントの統計情報を含む）を検索するには：\r\n<code>/inbound [備考]</code>\r\n\r\nTelegramチャットID：\r\n<code>/id</code>",
+      "helpAdminCommands": "Xray Coreを再起動するには：\r\n<code>/restart</code>\r\n\r\nクライアントの電子メールを検索するには：\r\n<code>/usage [電子メール]</code>\r\n\r\nインバウンド（クライアントの統計情報を含む）を検索するには：\r\n<code>/inbound [備考]</code>\r\n\r\nTelegramチャットID：\r\n<code>/id</code>\r\n\r\nノードの状態（管理者）:\r\n<code>/nodes</code>\r\n\r\nTelegram WEB Proxy の状態（管理者）:\r\n<code>/webproxy</code>",
       "helpClientCommands": "統計情報を検索するには、次のコマンドを使用してください：\r\n<code>/usage [電子メール]</code>\r\n\r\nTelegramチャットID：\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ 操作成功！",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "インバウンド検索: /inbound 備考（管理者）",
       "restartDesc": "Xray コアを再起動（管理者）",
       "broadcastDesc": "全クライアントへ一括送信（管理者）",
-      "clearallDesc": "全クライアントのトラフィックをリセット（管理者）"
+      "clearallDesc": "全クライアントのトラフィックをリセット（管理者）",
+      "nodesDesc": "ノードの状態（管理者）",
+      "webproxyDesc": "Telegram WEB Proxy の状態（管理者）"
     },
     "messages": {
       "cpuThreshold": "CPU使用率は{{ .Percent }}%、しきい値{{ .Threshold }}%を超えました",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "ノード {{ .Name }} がダウンしています",
       "eventNodeUp": "ノード {{ .Name }} が復旧しました",
       "eventLoginFallback": "{{ .Source }} からのログインに失敗しました",
-      "memoryThreshold": "メモリ使用率 {{ .Percent }}% がしきい値 {{ .Threshold }}% を超えました"
+      "memoryThreshold": "メモリ使用率 {{ .Percent }}% がしきい値 {{ .Threshold }}% を超えました",
+      "noNodes": "🖥 このパネルに接続されたノードはありません。",
+      "nodeDisabled": "無効",
+      "nodeOffline": "オフライン",
+      "nodeLastSeen": "最終確認 {{ .Time }}",
+      "nodesTitle": "🖥 <b>ノード</b>: {{ .Online }}/{{ .Total }} オンライン",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "このサーバーでは利用できません。",
+      "webProxyNotInstalled": "未インストールまたは未設定です。パネルの「接続 → TG Web Proxy」で設定してください。",
+      "webProxyHost": "ホスト: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}、クライアント: {{ .Clients }}",
+      "webProxySyncError": "❗ 最後のバインド同期に失敗しました: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ キーボードを閉じる",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 メール",
       "change_comment": "⚙️💬 コメント",
       "ResetAllTraffics": "すべてのトラフィックをリセット",
-      "SortedTrafficUsageReport": "ソートされたトラフィック使用レポート"
+      "SortedTrafficUsageReport": "ソートされたトラフィック使用レポート",
+      "nodes": "🖥 ノード",
+      "webProxy": "📡 Web proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 一括送信を開始しました。",
