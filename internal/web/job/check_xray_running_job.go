@@ -1,11 +1,11 @@
-// Package job provides background job implementations for the FullBoard web panel,
+// Package job provides background job implementations for the We1ssBoard web panel,
 // including traffic monitoring, system checks, and periodic maintenance tasks.
 package job
 
 import (
-	"github.com/WeIbSchatten/FullBoard/v3/internal/eventbus"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/eventbus"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // EventBus is set from web layer to publish events.

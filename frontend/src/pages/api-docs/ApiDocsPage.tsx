@@ -88,7 +88,7 @@ export default function ApiDocsPage() {
             items={[
               {
                 key: 'panel-api',
-                label: 'FullBoard Panel API',
+                label: 'We1ssBoard Panel API',
                 children: (
                   <div className="docs-wrapper" role="region" aria-label={t('menu.apiDocs')}>
                     <SwaggerUI

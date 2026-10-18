@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // TestDedupeInboundSettingsClients_CollapsesDuplicateEmails covers the #5770
@@ -15,7 +15,7 @@ import (
 func TestDedupeInboundSettingsClients_CollapsesDuplicateEmails(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	if err := InitDB(filepath.Join(dbDir, "fullboard.db")); err != nil {
+	if err := InitDB(filepath.Join(dbDir, "we1ssboard.db")); err != nil {
 		t.Fatalf("InitDB failed: %v", err)
 	}
 	t.Cleanup(func() { _ = CloseDB() })

@@ -90,10 +90,10 @@ fi
 if [[ "${running_in_docker}" == "true" ]]; then
     xui_folder="${XUI_MAIN_FOLDER:=/app}"
 else
-    xui_folder="${XUI_MAIN_FOLDER:=/usr/local/fullboard}"
+    xui_folder="${XUI_MAIN_FOLDER:=/usr/local/we1ssboard}"
 fi
 xui_service="${XUI_SERVICE:=/etc/systemd/system}"
-log_folder="${XUI_LOG_FOLDER:=/var/log/fullboard}"
+log_folder="${XUI_LOG_FOLDER:=/var/log/we1ssboard}"
 mkdir -p "${log_folder}"
 iplimit_log_path="${log_folder}/3xipl.log"
 iplimit_banned_log_path="${log_folder}/3xipl-banned.log"
@@ -129,7 +129,7 @@ before_show_menu() {
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -140,7 +140,7 @@ install() {
 }
 
 update() {
-    confirm "This function will update all fullboard components to the latest version, and the data will not be lost. Do you want to continue?" "y"
+    confirm "This function will update all we1ssboard components to the latest version, and the data will not be lost. Do you want to continue?" "y"
     if [[ $? != 0 ]]; then
         LOGE "Cancelled"
         if [[ $# == 0 ]]; then
@@ -148,7 +148,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/update.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/update.sh)
     if [[ $? == 0 ]]; then
         LOGI "Update is complete, Panel has automatically restarted "
         before_show_menu
@@ -156,7 +156,7 @@ update() {
 }
 
 update_dev() {
-    confirm "This will update fullboard to the latest DEV commit (the rolling 'dev-latest' build, not a stable release). Your data is preserved. Continue?" "y"
+    confirm "This will update we1ssboard to the latest DEV commit (the rolling 'dev-latest' build, not a stable release). Your data is preserved. Continue?" "y"
     if [[ $? != 0 ]]; then
         LOGE "Cancelled"
         if [[ $# == 0 ]]; then
@@ -166,7 +166,7 @@ update_dev() {
     fi
     # XUI_UPDATE_TAG tells update.sh to install the dev-latest pre-release
     # instead of the latest stable tag.
-    XUI_UPDATE_TAG="dev-latest" bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/update.sh)
+    XUI_UPDATE_TAG="dev-latest" bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/update.sh)
     if [[ $? == 0 ]]; then
         LOGI "Dev update is complete, Panel has automatically restarted "
         before_show_menu
@@ -176,11 +176,11 @@ update_dev() {
 replace_xui_script() {
     local url="$1"
     local use_if_modified_since="$2"
-    local temp_file="/usr/bin/fullboard-temp.$$"
+    local temp_file="/usr/bin/we1ssboard-temp.$$"
 
     rm -f "$temp_file"
     if [[ "$use_if_modified_since" == "true" ]]; then
-        curl -fLRo "$temp_file" -z /usr/bin/fullboard "$url"
+        curl -fLRo "$temp_file" -z /usr/bin/we1ssboard "$url"
     else
         curl -fLRo "$temp_file" "$url"
     fi
@@ -191,20 +191,20 @@ replace_xui_script() {
 
     if [[ ! -s "$temp_file" ]]; then
         rm -f "$temp_file"
-        # -z above means "not modified since /usr/bin/fullboard" rather than a
+        # -z above means "not modified since /usr/bin/we1ssboard" rather than a
         # real failure, so an empty download here is success, not an error.
         [[ "$use_if_modified_since" == "true" ]] && return 0
         return 1
     fi
 
-    mv -f "$temp_file" /usr/bin/fullboard
+    mv -f "$temp_file" /usr/bin/we1ssboard
     if [[ $? != 0 ]]; then
         rm -f "$temp_file"
         return 1
     fi
     # The move already landed the new script; a transient chmod failure here
     # shouldn't make callers think the whole replace failed.
-    chmod +x /usr/bin/fullboard
+    chmod +x /usr/bin/we1ssboard
     return 0
 }
 
@@ -212,12 +212,12 @@ replace_xui_script() {
 # tag; fall back to main only when no script is published for the version.
 installed_script_url() {
     local ver
-    ver=$("${xui_folder}/fullboard" -v 2> /dev/null | tr -d '[:space:]')
-    if [[ "$ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && curl -fsIL -o /dev/null "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/v${ver}/fullboard.sh"; then
-        echo "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/v${ver}/fullboard.sh"
+    ver=$("${xui_folder}/we1ssboard" -v 2> /dev/null | tr -d '[:space:]')
+    if [[ "$ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && curl -fsIL -o /dev/null "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/v${ver}/we1ssboard.sh"; then
+        echo "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/v${ver}/we1ssboard.sh"
     else
-        echo -e "${yellow}No fullboard.sh published for the installed version (${ver:-unknown}), using main${plain}" >&2
-        echo "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/fullboard.sh"
+        echo -e "${yellow}No we1ssboard.sh published for the installed version (${ver:-unknown}), using main${plain}" >&2
+        echo "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/we1ssboard.sh"
     fi
 }
 
@@ -233,7 +233,7 @@ update_menu() {
     fi
 
     if replace_xui_script "$(installed_script_url)" "false"; then
-        chmod +x ${xui_folder}/fullboard.sh
+        chmod +x ${xui_folder}/we1ssboard.sh
         echo -e "${green}Update successful. The panel has automatically restarted.${plain}"
         exit 0
     else
@@ -254,7 +254,7 @@ legacy_version() {
     # main's update.sh keeps the settings and installs that release's binary and
     # scripts; an old tag's install.sh would re-run first-install setup.
     echo "Installing panel version $tag_version..."
-    XUI_UPDATE_TAG="v$tag_version" bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/update.sh)
+    XUI_UPDATE_TAG="v$tag_version" bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/update.sh)
 }
 
 # Function to handle the deletion of the script file
@@ -266,13 +266,13 @@ delete_script() {
 xui_env_file_path() {
     case "${release}" in
         ubuntu | debian | armbian)
-            echo "/etc/default/fullboard"
+            echo "/etc/default/we1ssboard"
             ;;
         arch | manjaro | parch | alpine)
-            echo "/etc/conf.d/fullboard"
+            echo "/etc/conf.d/we1ssboard"
             ;;
         *)
-            echo "/etc/sysconfig/fullboard"
+            echo "/etc/sysconfig/we1ssboard"
             ;;
     esac
 }
@@ -287,19 +287,19 @@ uninstall() {
     fi
 
     if [[ $release == "alpine" ]]; then
-        rc-service fullboard stop
-        rc-update del fullboard
-        rm /etc/init.d/fullboard -f
+        rc-service we1ssboard stop
+        rc-update del we1ssboard
+        rm /etc/init.d/we1ssboard -f
     else
-        systemctl stop fullboard
-        systemctl disable fullboard
-        rm ${xui_service}/fullboard.service -f
+        systemctl stop we1ssboard
+        systemctl disable we1ssboard
+        rm ${xui_service}/we1ssboard.service -f
         # The sandbox drop-in generated by install.sh/update.sh lives beside the
-        # unit; leaving it behind would keep an empty fullboard.service.d around and
+        # unit; leaving it behind would keep an empty we1ssboard.service.d around and
         # silently re-apply on a later install of another unit of the same name.
         # Local drop-ins the operator added go with it, which is what an
         # uninstall is expected to do.
-        rm -rf -- "${xui_service}/fullboard.service.d"
+        rm -rf -- "${xui_service}/we1ssboard.service.d"
         systemctl daemon-reload
         systemctl reset-failed
     fi
@@ -311,9 +311,13 @@ uninstall() {
         panel_used_postgres="true"
     fi
 
-    rm /etc/fullboard/ -rf
+    rm /etc/we1ssboard/ -rf
     rm ${xui_folder}/ -rf
     rm -f "$db_env_file"
+    # Symlinks update.sh left at the pre-1.7.0 FullBoard paths.
+    for legacy_path in /etc/fullboard /usr/local/fullboard /var/log/fullboard /usr/bin/fullboard; do
+        [[ -L "$legacy_path" ]] && rm -f "$legacy_path"
+    done
 
     if [[ "$panel_used_postgres" == "true" ]] && postgresql_installed; then
         purge_postgresql
@@ -322,7 +326,7 @@ uninstall() {
     echo ""
     echo -e "Uninstalled Successfully.\n"
     echo "If you need to install this panel again, you can use below command:"
-    echo -e "${green}bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh)${plain}"
+    echo -e "${green}bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/install.sh)${plain}"
     echo ""
     # Trap the SIGTERM signal
     trap delete_script SIGTERM
@@ -345,15 +349,15 @@ reset_user() {
 
     read -rp "Do you want to disable currently configured two-factor authentication? (y/n): " twoFactorConfirm
     if [[ $twoFactorConfirm != "y" && $twoFactorConfirm != "Y" ]]; then
-        ${xui_folder}/fullboard setting -username "${config_account}" -password "${config_password}" > /dev/null 2>&1
+        ${xui_folder}/we1ssboard setting -username "${config_account}" -password "${config_password}" > /dev/null 2>&1
     else
-        ${xui_folder}/fullboard setting -username "${config_account}" -password "${config_password}" -resetTwoFactor=true > /dev/null 2>&1
+        ${xui_folder}/we1ssboard setting -username "${config_account}" -password "${config_password}" -resetTwoFactor=true > /dev/null 2>&1
         echo -e "Two factor authentication has been disabled."
     fi
 
     echo -e "Panel login username has been reset to: ${green} ${config_account} ${plain}"
     echo -e "Panel login password has been reset to: ${green} ${config_password} ${plain}"
-    echo -e "${green} Please use the new login username and password to access the FullBoard panel. Also remember them! ${plain}"
+    echo -e "${green} Please use the new login username and password to access the We1ssBoard panel. Also remember them! ${plain}"
     confirm_restart
 }
 
@@ -376,7 +380,7 @@ reset_webbasepath() {
     config_webBasePath=$(gen_random_string 18)
 
     # Apply the new web base path setting
-    ${xui_folder}/fullboard setting -webBasePath "${config_webBasePath}" > /dev/null 2>&1
+    ${xui_folder}/we1ssboard setting -webBasePath "${config_webBasePath}" > /dev/null 2>&1
 
     echo -e "Web base path has been reset to: ${green}${config_webBasePath}${plain}"
     echo -e "${green}Please use the new web base path to access the panel.${plain}"
@@ -391,13 +395,13 @@ reset_config() {
         fi
         return 0
     fi
-    ${xui_folder}/fullboard setting -reset
+    ${xui_folder}/we1ssboard setting -reset
     echo -e "All panel settings have been reset to default."
     restart
 }
 
 check_config() {
-    local info=$(${xui_folder}/fullboard setting -show true)
+    local info=$(${xui_folder}/we1ssboard setting -show true)
     if [[ $? != 0 ]]; then
         LOGE "get current settings error, please check logs"
         show_menu
@@ -414,12 +418,12 @@ check_config() {
         dsn_safe="$(echo "$dsn" | sed -E 's|(://[^:/@]+:)[^@]+@|\1****@|')"
         echo -e "${green}Database: PostgreSQL — ${dsn_safe}${plain}"
     else
-        echo -e "${green}Database: SQLite (/etc/fullboard/fullboard.db)${plain}"
+        echo -e "${green}Database: SQLite (/etc/we1ssboard/we1ssboard.db)${plain}"
     fi
 
     local existing_webBasePath=$(echo "$info" | grep -Eo 'webBasePath: .+' | awk '{print $2}')
     local existing_port=$(echo "$info" | grep -Eo 'port: .+' | awk '{print $2}')
-    local existing_cert=$(${xui_folder}/fullboard setting -getCert true | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
+    local existing_cert=$(${xui_folder}/we1ssboard setting -getCert true | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
     local URL_lists=(
         "https://api4.ipify.org"
         "https://ipv4.icanhazip.com"
@@ -503,7 +507,7 @@ set_port() {
         LOGD "Cancelled"
         before_show_menu
     else
-        ${xui_folder}/fullboard setting -port ${port}
+        ${xui_folder}/we1ssboard setting -port ${port}
         echo -e "The port is set, Please restart the panel now, and use the new port ${green}${port}${plain} to access web panel"
         confirm_restart
     fi
@@ -525,14 +529,14 @@ start() {
             return 0
         fi
         if [[ $release == "alpine" ]]; then
-            rc-service fullboard start
+            rc-service we1ssboard start
         else
-            systemctl start fullboard
+            systemctl start we1ssboard
         fi
         sleep 2
         check_status
         if [[ $? == 0 ]]; then
-            LOGI "fullboard Started Successfully"
+            LOGI "we1ssboard Started Successfully"
         else
             LOGE "panel Failed to start, Probably because it takes longer than two seconds to start, Please check the log information later"
         fi
@@ -559,14 +563,14 @@ stop() {
             return 0
         fi
         if [[ $release == "alpine" ]]; then
-            rc-service fullboard stop
+            rc-service we1ssboard stop
         else
-            systemctl stop fullboard
+            systemctl stop we1ssboard
         fi
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "fullboard and xray stopped successfully"
+            LOGI "we1ssboard and xray stopped successfully"
         else
             LOGE "Panel stop failed, Probably because the stop time exceeds two seconds, Please check the log information later"
         fi
@@ -589,7 +593,7 @@ restart() {
         sleep 2
         check_status
         if [[ $? == 0 ]]; then
-            LOGI "fullboard and xray Restarted successfully"
+            LOGI "we1ssboard and xray Restarted successfully"
         else
             LOGE "Panel restart failed, Please check the log information later"
         fi
@@ -599,14 +603,14 @@ restart() {
         return 0
     fi
     if [[ $release == "alpine" ]]; then
-        rc-service fullboard restart
+        rc-service we1ssboard restart
     else
-        systemctl restart fullboard
+        systemctl restart we1ssboard
     fi
     sleep 2
     check_status
     if [[ $? == 0 ]]; then
-        LOGI "fullboard and xray Restarted successfully"
+        LOGI "we1ssboard and xray Restarted successfully"
     else
         LOGE "Panel restart failed, Probably because it takes longer than two seconds to start, Please check the log information later"
     fi
@@ -630,9 +634,9 @@ restart_xray() {
         return 0
     fi
     if [[ $release == "alpine" ]]; then
-        rc-service fullboard reload
+        rc-service we1ssboard reload
     else
-        systemctl reload fullboard
+        systemctl reload we1ssboard
     fi
     LOGI "xray-core Restart signal sent successfully, Please check the log information to confirm whether xray restarted successfully"
     sleep 2
@@ -651,9 +655,9 @@ status() {
         return 0
     fi
     if [[ $release == "alpine" ]]; then
-        rc-service fullboard status
+        rc-service we1ssboard status
     else
-        systemctl status fullboard -l
+        systemctl status we1ssboard -l
     fi
     if [[ $# == 0 ]]; then
         before_show_menu
@@ -670,14 +674,14 @@ enable() {
         return 0
     fi
     if [[ $release == "alpine" ]]; then
-        rc-update add fullboard default
+        rc-update add we1ssboard default
     else
-        systemctl enable fullboard
+        systemctl enable we1ssboard
     fi
     if [[ $? == 0 ]]; then
-        LOGI "fullboard Set to boot automatically on startup successfully"
+        LOGI "we1ssboard Set to boot automatically on startup successfully"
     else
-        LOGE "fullboard Failed to set Autostart"
+        LOGE "we1ssboard Failed to set Autostart"
     fi
 
     if [[ $# == 0 ]]; then
@@ -695,14 +699,14 @@ disable() {
         return 0
     fi
     if [[ $release == "alpine" ]]; then
-        rc-update del fullboard
+        rc-update del we1ssboard
     else
-        systemctl disable fullboard
+        systemctl disable we1ssboard
     fi
     if [[ $? == 0 ]]; then
-        LOGI "fullboard Autostart Cancelled successfully"
+        LOGI "we1ssboard Autostart Cancelled successfully"
     else
-        LOGE "fullboard Failed to cancel autostart"
+        LOGE "we1ssboard Failed to cancel autostart"
     fi
 
     if [[ $# == 0 ]]; then
@@ -721,7 +725,7 @@ show_log() {
                 show_menu
                 ;;
             1)
-                grep -F 'fullboard[' /var/log/messages
+                grep -F 'we1ssboard[' /var/log/messages
                 if [[ $# == 0 ]]; then
                     before_show_menu
                 fi
@@ -742,7 +746,7 @@ show_log() {
                 show_menu
                 ;;
             1)
-                journalctl -u fullboard -e --no-pager -f -p debug
+                journalctl -u we1ssboard -e --no-pager -f -p debug
                 if [[ $# == 0 ]]; then
                     before_show_menu
                 fi
@@ -792,14 +796,14 @@ disable_bbr() {
         before_show_menu
     fi
 
-    if [ -f "/etc/sysctl.d/99-bbr-fullboard.conf" ]; then
-        old_settings=$(head -1 /etc/sysctl.d/99-bbr-fullboard.conf | tr -d '#')
+    if [ -f "/etc/sysctl.d/99-bbr-we1ssboard.conf" ]; then
+        old_settings=$(head -1 /etc/sysctl.d/99-bbr-we1ssboard.conf | tr -d '#')
         # sysctl -w already restores the live values, so no `sysctl --system`
         # afterwards — it would re-apply every sysctl file on the host and
         # surface unrelated errors from the distro's own defaults (see issue #5160)
         sysctl -w net.core.default_qdisc="${old_settings%:*}"
         sysctl -w net.ipv4.tcp_congestion_control="${old_settings#*:}"
-        rm /etc/sysctl.d/99-bbr-fullboard.conf
+        rm /etc/sysctl.d/99-bbr-we1ssboard.conf
     else
         # Replace BBR with CUBIC configurations
         if [ -f "/etc/sysctl.conf" ]; then
@@ -828,7 +832,7 @@ enable_bbr() {
             echo "#$(sysctl -n net.core.default_qdisc):$(sysctl -n net.ipv4.tcp_congestion_control)"
             echo "net.core.default_qdisc = fq"
             echo "net.ipv4.tcp_congestion_control = bbr"
-        } > "/etc/sysctl.d/99-bbr-fullboard.conf"
+        } > "/etc/sysctl.d/99-bbr-we1ssboard.conf"
         if [ -f "/etc/sysctl.conf" ]; then
             # Backup old settings from sysctl.conf, if any
             sed -i 's/^net.core.default_qdisc/# &/' /etc/sysctl.conf
@@ -837,7 +841,7 @@ enable_bbr() {
         # Apply only our config file; `sysctl --system` would re-apply every
         # sysctl file on the host and surface unrelated errors from the distro's
         # own defaults (see issue #5160)
-        sysctl -p /etc/sysctl.d/99-bbr-fullboard.conf
+        sysctl -p /etc/sysctl.d/99-bbr-we1ssboard.conf
     else
         sed -i '/net.core.default_qdisc/d' /etc/sysctl.conf
         sed -i '/net.ipv4.tcp_congestion_control/d' /etc/sysctl.conf
@@ -866,7 +870,7 @@ update_shell() {
 }
 
 xui_pid() {
-    ps -ef 2> /dev/null | grep -F "${xui_folder}/fullboard" | grep -v grep | awk 'NR==1 {print $1}'
+    ps -ef 2> /dev/null | grep -F "${xui_folder}/we1ssboard" | grep -v grep | awk 'NR==1 {print $1}'
 }
 
 signal_xui() {
@@ -881,7 +885,7 @@ signal_xui() {
 # 0: running, 1: not running, 2: not installed
 check_status() {
     if [[ "${running_in_docker}" == "true" ]]; then
-        if [[ ! -x "${xui_folder}/fullboard" ]]; then
+        if [[ ! -x "${xui_folder}/we1ssboard" ]]; then
             return 2
         fi
         if [[ -n "$(xui_pid)" ]]; then
@@ -891,19 +895,19 @@ check_status() {
         fi
     fi
     if [[ $release == "alpine" ]]; then
-        if [[ ! -f /etc/init.d/fullboard ]]; then
+        if [[ ! -f /etc/init.d/we1ssboard ]]; then
             return 2
         fi
-        if [[ $(rc-service fullboard status | grep -F 'status: started' -c) == 1 ]]; then
+        if [[ $(rc-service we1ssboard status | grep -F 'status: started' -c) == 1 ]]; then
             return 0
         else
             return 1
         fi
     else
-        if [[ ! -f ${xui_service}/fullboard.service ]]; then
+        if [[ ! -f ${xui_service}/we1ssboard.service ]]; then
             return 2
         fi
-        temp=$(systemctl show --property=SubState fullboard)
+        temp=$(systemctl show --property=SubState we1ssboard)
         temp=${temp#SubState=}
         if [[ "${temp}" == "running" ]]; then
             return 0
@@ -915,13 +919,13 @@ check_status() {
 
 check_enabled() {
     if [[ $release == "alpine" ]]; then
-        if [[ $(rc-update show | grep -F 'fullboard' | grep default -c) == 1 ]]; then
+        if [[ $(rc-update show | grep -F 'we1ssboard' | grep default -c) == 1 ]]; then
             return 0
         else
             return 1
         fi
     else
-        temp=$(systemctl is-enabled fullboard)
+        temp=$(systemctl is-enabled we1ssboard)
         if [[ "${temp}" == "enabled" ]]; then
             return 0
         else
@@ -1406,9 +1410,9 @@ ssl_cert_issue_main() {
 
                     # If the panel currently serves this domain's cert, clear the stored paths
                     # so it stops loading the now-deleted files, then restart.
-                    local existing_cert=$(${xui_folder}/fullboard setting -getCert true | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
+                    local existing_cert=$(${xui_folder}/we1ssboard setting -getCert true | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
                     if [[ "${existing_cert}" == "/root/cert/${domain}/"* ]]; then
-                        ${xui_folder}/fullboard cert -reset
+                        ${xui_folder}/we1ssboard cert -reset
                         LOGI "Cleared panel certificate paths referencing ${domain}; restarting panel."
                         restart
                     fi
@@ -1455,7 +1459,7 @@ ssl_cert_issue_main() {
             fi
             # The panel's configured certificate may live outside /root/cert
             # (e.g. certbot under /etc/letsencrypt) — show it too (#5070).
-            local panel_cert=$(${xui_folder}/fullboard setting -getCert true | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
+            local panel_cert=$(${xui_folder}/we1ssboard setting -getCert true | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
             if [[ -n "${panel_cert}" && "${panel_cert}" != /root/cert/* ]]; then
                 echo -e "Panel certificate (custom path): ${panel_cert}"
                 if [[ -f "${panel_cert}" ]] && command -v openssl > /dev/null 2>&1; then
@@ -1474,7 +1478,7 @@ ssl_cert_issue_main() {
                 read -rp "Certificate file path (fullchain): " webCertFile
                 read -rp "Private key file path: " webKeyFile
                 if [[ -f "${webCertFile}" && -f "${webKeyFile}" ]]; then
-                    ${xui_folder}/fullboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
+                    ${xui_folder}/we1ssboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
                     echo "Panel certificate paths set:"
                     echo "  - Certificate File: $webCertFile"
                     echo "  - Private Key File: $webKeyFile"
@@ -1498,7 +1502,7 @@ ssl_cert_issue_main() {
                     local webKeyFile="/root/cert/${domain}/privkey.pem"
 
                     if [[ -f "${webCertFile}" && -f "${webKeyFile}" ]]; then
-                        ${xui_folder}/fullboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
+                        ${xui_folder}/we1ssboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
                         echo "Panel paths set for domain: $domain"
                         echo "  - Certificate File: $webCertFile"
                         echo "  - Private Key File: $webKeyFile"
@@ -1509,7 +1513,7 @@ ssl_cert_issue_main() {
                             ~/.acme.sh/acme.sh --installcert --force -d "${domain}" \
                                 --key-file "${webKeyFile}" \
                                 --fullchain-file "${webCertFile}" \
-                                --reloadcmd "fullboard restart" 2>&1 || true
+                                --reloadcmd "we1ssboard restart" 2>&1 || true
                             echo "Registered acme.sh auto-renewal hook for ${domain}."
                         fi
                         restart
@@ -1545,8 +1549,8 @@ ssl_cert_issue_for_ip() {
     LOGI "Starting automatic SSL certificate generation for server IP..."
     LOGI "Using Let's Encrypt shortlived profile (~6 days validity, auto-renews)"
 
-    local existing_webBasePath=$(${xui_folder}/fullboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
-    local existing_port=$(${xui_folder}/fullboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
+    local existing_webBasePath=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
+    local existing_port=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
 
     # Get server IP
     local URL_lists=(
@@ -1680,7 +1684,7 @@ ssl_cert_issue_for_ip() {
     done
 
     # Reload command - restarts panel after renewal
-    local reloadCmd="systemctl restart fullboard 2>/dev/null || rc-service fullboard restart 2>/dev/null"
+    local reloadCmd="systemctl restart we1ssboard 2>/dev/null || rc-service we1ssboard restart 2>/dev/null"
 
     # issue the certificate for IP with shortlived profile
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --force
@@ -1737,7 +1741,7 @@ ssl_cert_issue_for_ip() {
     read -rp "Would you like to set this certificate for the panel? (y/n): " setPanel
     if [[ "$setPanel" == "y" || "$setPanel" == "Y" ]]; then
         if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
-            ${xui_folder}/fullboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
+            ${xui_folder}/we1ssboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
             LOGI "Panel paths set for IP: $server_ip"
             LOGI "  - Certificate File: $webCertFile"
             LOGI "  - Private Key File: $webKeyFile"
@@ -1757,8 +1761,8 @@ ssl_cert_issue_for_ip() {
 }
 
 ssl_cert_issue() {
-    local existing_webBasePath=$(${xui_folder}/fullboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
-    local existing_port=$(${xui_folder}/fullboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
+    local existing_webBasePath=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
+    local existing_port=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
     # check for acme.sh first
     if ! command -v ~/.acme.sh/acme.sh &> /dev/null; then
         echo "acme.sh could not be found. we will install it"
@@ -1887,24 +1891,24 @@ ssl_cert_issue() {
         LOGI "Using existing certificate, installing certificates..."
     fi
 
-    reloadCmd="fullboard restart"
+    reloadCmd="we1ssboard restart"
 
-    LOGI "Default --reloadcmd for ACME is: ${yellow}fullboard restart"
+    LOGI "Default --reloadcmd for ACME is: ${yellow}we1ssboard restart"
     LOGI "This command will run on every certificate issue and renew."
     read -rp "Would you like to modify --reloadcmd for ACME? (y/n): " setReloadcmd
     if [[ "$setReloadcmd" == "y" || "$setReloadcmd" == "Y" ]]; then
-        echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; fullboard restart"
+        echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; we1ssboard restart"
         echo -e "${green}\t2.${plain} Input your own command"
         echo -e "${green}\t0.${plain} Keep default reloadcmd"
         read -rp "Choose an option: " choice
         case "$choice" in
             1)
-                LOGI "Reloadcmd is: systemctl reload nginx ; fullboard restart"
-                reloadCmd="systemctl reload nginx ; fullboard restart"
+                LOGI "Reloadcmd is: systemctl reload nginx ; we1ssboard restart"
+                reloadCmd="systemctl reload nginx ; we1ssboard restart"
                 ;;
             2)
-                LOGD "It's recommended to put fullboard restart at the end, so it won't raise an error if other services fails"
-                read -rp "Please enter your reloadcmd (example: systemctl reload nginx ; fullboard restart): " reloadCmd
+                LOGD "It's recommended to put we1ssboard restart at the end, so it won't raise an error if other services fails"
+                read -rp "Please enter your reloadcmd (example: systemctl reload nginx ; we1ssboard restart): " reloadCmd
                 LOGI "Your reloadcmd is: ${reloadCmd}"
                 ;;
             *)
@@ -1958,7 +1962,7 @@ ssl_cert_issue() {
         local webKeyFile="/root/cert/${domain}/privkey.pem"
 
         if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
-            ${xui_folder}/fullboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
+            ${xui_folder}/we1ssboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
             LOGI "Panel paths set for domain: $domain"
             LOGI "  - Certificate File: $webCertFile"
             LOGI "  - Private Key File: $webKeyFile"
@@ -1973,8 +1977,8 @@ ssl_cert_issue() {
 }
 
 ssl_cert_issue_CF() {
-    local existing_webBasePath=$(${xui_folder}/fullboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
-    local existing_port=$(${xui_folder}/fullboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
+    local existing_webBasePath=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
+    local existing_port=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
     LOGI "****** Instructions for Use ******"
     LOGI "Follow the steps below to complete the process:"
     LOGI "1. A Cloudflare API Token (recommended, scoped to Zone:DNS:Edit) or the Global API Key + registered email."
@@ -2052,24 +2056,24 @@ ssl_cert_issue_CF() {
             exit 1
         fi
 
-        reloadCmd="fullboard restart"
+        reloadCmd="we1ssboard restart"
 
-        LOGI "Default --reloadcmd for ACME is: ${yellow}fullboard restart"
+        LOGI "Default --reloadcmd for ACME is: ${yellow}we1ssboard restart"
         LOGI "This command will run on every certificate issue and renew."
         read -rp "Would you like to modify --reloadcmd for ACME? (y/n): " setReloadcmd
         if [[ "$setReloadcmd" == "y" || "$setReloadcmd" == "Y" ]]; then
-            echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; fullboard restart"
+            echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; we1ssboard restart"
             echo -e "${green}\t2.${plain} Input your own command"
             echo -e "${green}\t0.${plain} Keep default reloadcmd"
             read -rp "Choose an option: " choice
             case "$choice" in
                 1)
-                    LOGI "Reloadcmd is: systemctl reload nginx ; fullboard restart"
-                    reloadCmd="systemctl reload nginx ; fullboard restart"
+                    LOGI "Reloadcmd is: systemctl reload nginx ; we1ssboard restart"
+                    reloadCmd="systemctl reload nginx ; we1ssboard restart"
                     ;;
                 2)
-                    LOGD "It's recommended to put fullboard restart at the end, so it won't raise an error if other services fails"
-                    read -rp "Please enter your reloadcmd (example: systemctl reload nginx ; fullboard restart): " reloadCmd
+                    LOGD "It's recommended to put we1ssboard restart at the end, so it won't raise an error if other services fails"
+                    read -rp "Please enter your reloadcmd (example: systemctl reload nginx ; we1ssboard restart): " reloadCmd
                     LOGI "Your reloadcmd is: ${reloadCmd}"
                     ;;
                 *)
@@ -2107,7 +2111,7 @@ ssl_cert_issue_CF() {
             local webKeyFile="${certPath}/privkey.pem"
 
             if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
-                ${xui_folder}/fullboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
+                ${xui_folder}/we1ssboard cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
                 LOGI "Panel paths set for domain: $CF_Domain"
                 LOGI "  - Certificate File: $webCertFile"
                 LOGI "  - Private Key File: $webKeyFile"
@@ -2403,7 +2407,7 @@ setup_fail2ban_iplimit() {
 
 # install_iplimit is the interactive (menu) entry point: it runs the shared
 # setup and then returns to the menu. The non-interactive installer path uses
-# setup_fail2ban_iplimit directly via `fullboard setup-fail2ban`.
+# setup_fail2ban_iplimit directly via `we1ssboard setup-fail2ban`.
 install_iplimit() {
     setup_fail2ban_iplimit
     before_show_menu
@@ -2559,7 +2563,7 @@ EOF
     ssh_ports=$(grep -oP '^[[:space:]]*Port[[:space:]]+\K[0-9]+' /etc/ssh/sshd_config 2>/dev/null | paste -sd, -)
     [[ -z "${ssh_ports}" ]] && ssh_ports="22"
     local panel_port
-    panel_port=$(${xui_folder}/fullboard setting -show true 2>/dev/null | grep -Eo 'port: .+' | awk '{print $2}')
+    panel_port=$(${xui_folder}/we1ssboard setting -show true 2>/dev/null | grep -Eo 'port: .+' | awk '{print $2}')
     local exempt_ports="${ssh_ports}"
     [[ -n "${panel_port}" ]] && exempt_ports="${exempt_ports},${panel_port}"
 
@@ -2642,11 +2646,11 @@ SSH_port_forwarding() {
         done
     fi
 
-    local existing_webBasePath=$(${xui_folder}/fullboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
-    local existing_port=$(${xui_folder}/fullboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
-    local existing_listenIP=$(${xui_folder}/fullboard setting -getListen true | grep -Eo 'listenIP: .+' | awk '{print $2}')
-    local existing_cert=$(${xui_folder}/fullboard setting -getCert true | grep -Eo 'cert: .+' | awk '{print $2}')
-    local existing_key=$(${xui_folder}/fullboard setting -getCert true | grep -Eo 'key: .+' | awk '{print $2}')
+    local existing_webBasePath=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}')
+    local existing_port=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
+    local existing_listenIP=$(${xui_folder}/we1ssboard setting -getListen true | grep -Eo 'listenIP: .+' | awk '{print $2}')
+    local existing_cert=$(${xui_folder}/we1ssboard setting -getCert true | grep -Eo 'cert: .+' | awk '{print $2}')
+    local existing_key=$(${xui_folder}/we1ssboard setting -getCert true | grep -Eo 'key: .+' | awk '{print $2}')
 
     local config_listenIP=""
     local listen_choice=""
@@ -2687,7 +2691,7 @@ SSH_port_forwarding() {
                 config_listenIP="127.0.0.1"
                 [[ "$listen_choice" == "2" ]] && read -rp "Enter custom IP to listen on: " config_listenIP
 
-                ${xui_folder}/fullboard setting -listenIP "${config_listenIP}" > /dev/null 2>&1
+                ${xui_folder}/we1ssboard setting -listenIP "${config_listenIP}" > /dev/null 2>&1
                 echo -e "${green}listen IP has been set to ${config_listenIP}.${plain}"
                 echo -e "\n${green}SSH Port Forwarding Configuration:${plain}"
                 echo -e "Standard SSH command:"
@@ -2703,7 +2707,7 @@ SSH_port_forwarding() {
             fi
             ;;
         2)
-            ${xui_folder}/fullboard setting -listenIP 0.0.0.0 > /dev/null 2>&1
+            ${xui_folder}/we1ssboard setting -listenIP 0.0.0.0 > /dev/null 2>&1
             echo -e "${green}Listen IP has been cleared.${plain}"
             restart
             ;;
@@ -2913,7 +2917,7 @@ pg_ensure_hba_password_auth() {
     local tmp
     tmp=$(mktemp) || return 1
     {
-        echo "# Added by FullBoard: allow password logins for the panel database."
+        echo "# Added by We1ssBoard: allow password logins for the panel database."
         echo "host    ${pg_db}    all    127.0.0.1/32    md5"
         echo "host    ${pg_db}    all    ::1/128         md5"
         cat "${hba_file}"
@@ -3129,7 +3133,7 @@ pg_client_major() {
 # major version is at least $1 (e.g. 17); with no argument any installed version
 # is accepted. Falls back to the official PostgreSQL package repository when the
 # distribution one is too old. Restoring a panel backup made by a newer pg_dump
-# needs this:   fullboard pgclient <major>
+# needs this:   we1ssboard pgclient <major>
 pg_upgrade_client() {
     local want="$1" have
     if [[ -n "$want" && ! "$want" =~ ^[0-9]+$ ]]; then
@@ -3253,8 +3257,8 @@ pg_install_server_action() {
 
 # Copies the current SQLite data into PostgreSQL, then switches the panel over.
 migrate_to_postgres() {
-    if [[ ! -x "${xui_folder}/fullboard" ]]; then
-        LOGE "fullboard is not installed."
+    if [[ ! -x "${xui_folder}/we1ssboard" ]]; then
+        LOGE "we1ssboard is not installed."
         return 1
     fi
     echo ""
@@ -3299,7 +3303,7 @@ migrate_to_postgres() {
 
     echo ""
     LOGI "Migrating data into PostgreSQL..."
-    if ! ${xui_folder}/fullboard migrate-db --dsn "$dsn"; then
+    if ! ${xui_folder}/we1ssboard migrate-db --dsn "$dsn"; then
         LOGE "Migration failed. The panel was NOT switched to PostgreSQL."
         start 0 > /dev/null 2>&1
         return 1
@@ -3383,30 +3387,30 @@ postgresql_menu() {
 }
 
 # Convert between the panel's SQLite database and a portable .dump (SQL text)
-# file using the bundled fullboard binary. With no arguments it dumps the installed
+# file using the bundled we1ssboard binary. With no arguments it dumps the installed
 # panel database; an optional second argument overrides the output path.
-#   fullboard migrateDB [file.db|file.dump] [output]
+#   we1ssboard migrateDB [file.db|file.dump] [output]
 migrate_db() {
     local input="$1" output="$2"
-    local default_db="/etc/fullboard/fullboard.db"
-    local bin="${xui_folder}/fullboard"
+    local default_db="/etc/we1ssboard/we1ssboard.db"
+    local bin="${xui_folder}/we1ssboard"
 
     [[ -z "$input" ]] && input="$default_db"
 
     if [[ ! -x "$bin" ]]; then
-        LOGE "fullboard binary not found at ${bin}. Is the panel installed?"
+        LOGE "we1ssboard binary not found at ${bin}. Is the panel installed?"
         return 1
     fi
 
     if ! "$bin" migrate-db -h 2>&1 | grep -q -- '-dump'; then
-        LOGE "This fullboard build does not support .db <-> .dump conversion yet."
-        LOGE "Update the panel first (fullboard update) to a version with 'migrate-db --dump/--restore'."
+        LOGE "This we1ssboard build does not support .db <-> .dump conversion yet."
+        LOGE "Update the panel first (we1ssboard update) to a version with 'migrate-db --dump/--restore'."
         return 1
     fi
 
     if [[ ! -f "$input" ]]; then
         LOGE "Input file not found: ${input}"
-        echo -e "Usage: ${green}fullboard migrateDB [file.db|file.dump] [output]${plain}"
+        echo -e "Usage: ${green}we1ssboard migrateDB [file.db|file.dump] [output]${plain}"
         return 1
     fi
 
@@ -3443,8 +3447,8 @@ migrate_db() {
     else
         [[ -z "$output" ]] && output="${input%.*}.db"
         if [[ "$output" == "$default_db" ]] && check_status > /dev/null 2>&1; then
-            LOGE "Refusing to restore into the live database (${default_db}) while fullboard is running."
-            LOGE "Stop the panel first (fullboard stop) or choose a different output path."
+            LOGE "Refusing to restore into the live database (${default_db}) while we1ssboard is running."
+            LOGE "Stop the panel first (we1ssboard stop) or choose a different output path."
             return 1
         fi
         if [[ -f "$output" ]]; then
@@ -3466,7 +3470,7 @@ migrate_db() {
 # Interactive wrapper around migrate_db for the menu: prompts for the paths and
 # lets migrate_db auto-detect the direction.
 migrate_db_prompt() {
-    local default_db="/etc/fullboard/fullboard.db"
+    local default_db="/etc/we1ssboard/we1ssboard.db"
     local input output
     echo -e "Convert between a SQLite ${green}.db${plain} and a portable ${green}.dump${plain} (direction auto-detected)."
     read -rp "Input file [${default_db}]: " input
@@ -3477,34 +3481,34 @@ migrate_db_prompt() {
 
 show_usage() {
     echo -e "┌────────────────────────────────────────────────────────────────┐
-│  ${blue}fullboard control menu usages (subcommands):${plain}                       │
+│  ${blue}we1ssboard control menu usages (subcommands):${plain}                       │
 │                                                                │
-│  ${blue}fullboard${plain}                       - Admin Management Script          │
-│  ${blue}fullboard start${plain}                 - Start                            │
-│  ${blue}fullboard stop${plain}                  - Stop                             │
-│  ${blue}fullboard restart${plain}               - Restart                          │
-|  ${blue}fullboard restart-xray${plain}          - Restart Xray                     │
-│  ${blue}fullboard status${plain}                - Current Status                   │
-│  ${blue}fullboard settings${plain}              - Current Settings                 │
-│  ${blue}fullboard enable${plain}                - Enable Autostart on OS Startup   │
-│  ${blue}fullboard disable${plain}               - Disable Autostart on OS Startup  │
-│  ${blue}fullboard log${plain}                   - Check logs                       │
-│  ${blue}fullboard banlog${plain}                - Check Fail2ban ban logs          │
-│  ${blue}fullboard update${plain}                - Update                           │
-│  ${blue}fullboard update-dev${plain}            - Update to Dev channel (latest)   │
-│  ${blue}fullboard update-all-geofiles${plain}   - Update all geo files             │
-│  ${blue}fullboard migrateDB [file]${plain}      - Convert .db <-> .dump (SQLite)   │
-│  ${blue}fullboard pgclient [ver]${plain}        - Upgrade pg_dump/pg_restore tools │
-│  ${blue}fullboard legacy${plain}                - Legacy version                   │
-│  ${blue}fullboard install${plain}               - Install                          │
-│  ${blue}fullboard uninstall${plain}             - Uninstall                        │
+│  ${blue}we1ssboard${plain}                       - Admin Management Script          │
+│  ${blue}we1ssboard start${plain}                 - Start                            │
+│  ${blue}we1ssboard stop${plain}                  - Stop                             │
+│  ${blue}we1ssboard restart${plain}               - Restart                          │
+|  ${blue}we1ssboard restart-xray${plain}          - Restart Xray                     │
+│  ${blue}we1ssboard status${plain}                - Current Status                   │
+│  ${blue}we1ssboard settings${plain}              - Current Settings                 │
+│  ${blue}we1ssboard enable${plain}                - Enable Autostart on OS Startup   │
+│  ${blue}we1ssboard disable${plain}               - Disable Autostart on OS Startup  │
+│  ${blue}we1ssboard log${plain}                   - Check logs                       │
+│  ${blue}we1ssboard banlog${plain}                - Check Fail2ban ban logs          │
+│  ${blue}we1ssboard update${plain}                - Update                           │
+│  ${blue}we1ssboard update-dev${plain}            - Update to Dev channel (latest)   │
+│  ${blue}we1ssboard update-all-geofiles${plain}   - Update all geo files             │
+│  ${blue}we1ssboard migrateDB [file]${plain}      - Convert .db <-> .dump (SQLite)   │
+│  ${blue}we1ssboard pgclient [ver]${plain}        - Upgrade pg_dump/pg_restore tools │
+│  ${blue}we1ssboard legacy${plain}                - Legacy version                   │
+│  ${blue}we1ssboard install${plain}               - Install                          │
+│  ${blue}we1ssboard uninstall${plain}             - Uninstall                        │
 └────────────────────────────────────────────────────────────────┘"
 }
 
 show_menu() {
     echo -e "
 ╔────────────────────────────────────────────────╗
-│  ${green}FullBoard Panel Management Script${plain}                │
+│  ${green}We1ssBoard Panel Management Script${plain}                │
 │  ${green}0.${plain} Exit Script                               │
 │────────────────────────────────────────────────│
 │  ${green}1.${plain} Install                                   │

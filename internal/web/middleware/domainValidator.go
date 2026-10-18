@@ -1,4 +1,4 @@
-// Package middleware provides HTTP middleware functions for the FullBoard web panel,
+// Package middleware provides HTTP middleware functions for the We1ssBoard web panel,
 // including domain validation utilities.
 package middleware
 

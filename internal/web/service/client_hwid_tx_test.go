@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 
 	"gorm.io/gorm"
 )
@@ -189,7 +189,7 @@ func TestSetClientLimitHwidIsSerializedWithSyncInbound(t *testing.T) {
 func BenchmarkSetClientLimitHwidSerialized(b *testing.B) {
 	dbDir := b.TempDir()
 	b.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(b, filepath.Join(dbDir, "fullboard.db"))
+	dbtest.InitDB(b, filepath.Join(dbDir, "we1ssboard.db"))
 	StartTrafficWriter()
 	b.Cleanup(StopTrafficWriter)
 	db := database.GetDB()

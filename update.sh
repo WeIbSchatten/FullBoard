@@ -6,7 +6,12 @@ blue='\033[0;34m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-xui_folder="${XUI_MAIN_FOLDER:=/usr/local/fullboard}"
+xui_folder="${XUI_MAIN_FOLDER:=/usr/local/we1ssboard}"
+# A FullBoard (pre-1.7.0) panel hands its own folder to this script; the install moves beside it.
+if [[ "${xui_folder##*/}" == "fullboard" ]]; then
+    xui_folder="${xui_folder%/*}/we1ssboard"
+    XUI_MAIN_FOLDER="${xui_folder}"
+fi
 xui_service="${XUI_SERVICE:=/etc/systemd/system}"
 
 # Don't edit this config
@@ -39,7 +44,7 @@ _fail() {
 # calls that don't go through _fail.
 xui_update_run_id="${XUI_UPDATE_RUN_ID:-0}"
 [[ "${xui_update_run_id}" =~ ^[0-9]+$ ]] || xui_update_run_id="0"
-xui_update_status_file="${XUI_UPDATE_STATUS_FILE:-/etc/fullboard/update-status.json}"
+xui_update_status_file="${XUI_UPDATE_STATUS_FILE:-/etc/we1ssboard/update-status.json}"
 
 _write_update_status() {
     local state="$1"
@@ -111,13 +116,13 @@ gen_random_string() {
 xui_env_file_path() {
     case "${release}" in
         ubuntu | debian | armbian)
-            echo "/etc/default/fullboard"
+            echo "/etc/default/we1ssboard"
             ;;
         arch | manjaro | parch | alpine)
-            echo "/etc/conf.d/fullboard"
+            echo "/etc/conf.d/we1ssboard"
             ;;
         *)
-            echo "/etc/sysconfig/fullboard"
+            echo "/etc/sysconfig/we1ssboard"
             ;;
     esac
 }
@@ -167,14 +172,14 @@ install_base() {
 config_after_update() {
     local panel_needs_restart=0
 
-    echo -e "${yellow}fullboard settings:${plain}"
-    ${xui_folder}/fullboard setting -show true
-    ${xui_folder}/fullboard migrate
+    echo -e "${yellow}we1ssboard settings:${plain}"
+    ${xui_folder}/we1ssboard setting -show true
+    ${xui_folder}/we1ssboard migrate
 
     # Properly detect empty cert by checking if cert: line exists and has content after it
-    local existing_cert=$(${xui_folder}/fullboard setting -getCert true 2> /dev/null | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
-    local existing_port=$(${xui_folder}/fullboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
-    local existing_webBasePath=$(${xui_folder}/fullboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}' | sed 's#^/##')
+    local existing_cert=$(${xui_folder}/we1ssboard setting -getCert true 2> /dev/null | grep 'cert:' | awk -F': ' '{print $2}' | tr -d '[:space:]')
+    local existing_port=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'port: .+' | awk '{print $2}')
+    local existing_webBasePath=$(${xui_folder}/we1ssboard setting -show true | grep -Eo 'webBasePath: .+' | awk '{print $2}' | sed 's#^/##')
 
     # Get server IP
     local URL_lists=(
@@ -206,14 +211,14 @@ config_after_update() {
     if [[ ${#existing_webBasePath} -lt 4 ]]; then
         echo -e "${yellow}WebBasePath is missing or too short. Generating a new one...${plain}"
         local config_webBasePath=$(gen_random_string 18)
-        ${xui_folder}/fullboard setting -webBasePath "${config_webBasePath}"
+        ${xui_folder}/we1ssboard setting -webBasePath "${config_webBasePath}"
         existing_webBasePath="${config_webBasePath}"
         panel_needs_restart=1
         echo -e "${green}New WebBasePath: ${config_webBasePath}${plain}"
     fi
 
     # An update only updates the panel: TLS stays exactly as configured. Set it up
-    # explicitly from the fullboard menu (SSL Certificate Management).
+    # explicitly from the we1ssboard menu (SSL Certificate Management).
     local access_scheme="http" access_host="${server_ip}"
     if [[ -n "$existing_cert" ]]; then
         access_scheme="https"
@@ -227,25 +232,27 @@ config_after_update() {
     echo -e "${green}═══════════════════════════════════════════${plain}"
     if [[ -z "$existing_cert" ]]; then
         echo -e "${yellow}No SSL certificate is configured; the panel is served over HTTP.${plain}"
-        echo -e "${yellow}Run 'fullboard' and choose SSL Certificate Management to set one up.${plain}"
+        echo -e "${yellow}Run 'we1ssboard' and choose SSL Certificate Management to set one up.${plain}"
     fi
 
     if [[ "$panel_needs_restart" -eq 1 ]]; then
         echo -e "${yellow}Restarting panel to apply the new web base path...${plain}"
-        systemctl restart fullboard 2> /dev/null || rc-service fullboard restart 2> /dev/null
+        systemctl restart we1ssboard 2> /dev/null || rc-service we1ssboard restart 2> /dev/null
     fi
 }
 
 # 1.4.4/1.4.5 applied an aggressive TCP profile on every install/update (BBR,
 # 32 MiB buffers, notsent_lowat, fq forced onto live NICs). On some hosts it
 # lowered throughput and raised latency, so tuning is now opt-in
-# (XUI_NET_TUNING=true or the `fullboard` BBR menu) and the old profile is undone.
-FULLBOARD_NET_CONF="/etc/sysctl.d/99-fullboard-network.conf"
+# (XUI_NET_TUNING=true or the `we1ssboard` BBR menu) and the old profile is undone.
+WE1SSBOARD_NET_CONF="/etc/sysctl.d/99-we1ssboard-network.conf"
+# The same profile under its pre-1.7.0 (FullBoard) name; reverted the same way.
+LEGACY_NET_CONF="/etc/sysctl.d/99-fullboard-network.conf"
 
 revert_network_tuning() {
     local iface
-    [[ -f "$FULLBOARD_NET_CONF" ]] || return 0
-    rm -f "$FULLBOARD_NET_CONF"
+    [[ -f "$WE1SSBOARD_NET_CONF" || -f "$LEGACY_NET_CONF" ]] || return 0
+    rm -f "$WE1SSBOARD_NET_CONF" "$LEGACY_NET_CONF"
     command -v sysctl > /dev/null 2>&1 || return 0
     # Kernel defaults for every key the old profile set; distro files re-apply on top.
     sysctl -e -w net.ipv4.tcp_congestion_control=cubic \
@@ -265,7 +272,7 @@ revert_network_tuning() {
                 tc qdisc del dev "$iface" root > /dev/null 2>&1
         done
     fi
-    echo -e "${yellow}Removed the FullBoard 1.4.4 network profile and restored kernel TCP defaults.${plain}"
+    echo -e "${yellow}Removed the 1.4.4 network profile and restored kernel TCP defaults.${plain}"
 }
 
 setup_network_tuning() {
@@ -278,19 +285,19 @@ setup_network_tuning() {
         echo -e "${yellow}Kernel has no BBR (container or old kernel); network tuning skipped.${plain}"
         return 0
     fi
-    # Only BBR + fq: the same pair as the `fullboard` menu, nothing that changes buffering.
-    cat > "$FULLBOARD_NET_CONF" << 'SYSCTL'
-# Written by FullBoard because XUI_NET_TUNING=true; remove the variable to undo on next update.
+    # Only BBR + fq: the same pair as the `we1ssboard` menu, nothing that changes buffering.
+    cat > "$WE1SSBOARD_NET_CONF" << 'SYSCTL'
+# Written by We1ssBoard because XUI_NET_TUNING=true; remove the variable to undo on next update.
 net.core.default_qdisc = fq
 net.ipv4.tcp_congestion_control = bbr
 SYSCTL
-    chmod 644 "$FULLBOARD_NET_CONF"
-    sysctl -e -p "$FULLBOARD_NET_CONF" > /dev/null 2>&1 || true
+    chmod 644 "$WE1SSBOARD_NET_CONF"
+    sysctl -e -p "$WE1SSBOARD_NET_CONF" > /dev/null 2>&1 || true
     echo -e "${green}Network tuning: $(sysctl -n net.ipv4.tcp_congestion_control 2> /dev/null) + $(sysctl -n net.core.default_qdisc 2> /dev/null)${plain}"
 }
 
 # setup_fail2ban auto-installs and configures fail2ban for the IP Limit feature
-# by invoking the freshly downloaded fullboard CLI. IP Limit is load-bearing on
+# by invoking the freshly downloaded we1ssboard CLI. IP Limit is load-bearing on
 # fail2ban (without it the panel disables the limitIp field and zeroes existing
 # limits), so updating an older install should make it work without a manual
 # trip through the IP Limit menu. Non-fatal: a fail2ban failure must never abort
@@ -302,23 +309,23 @@ setup_fail2ban() {
         return 0
     fi
 
-    if [[ ! -x /usr/bin/fullboard ]]; then
-        echo -e "${yellow}fullboard CLI not found; skipping Fail2ban auto-setup.${plain}"
+    if [[ ! -x /usr/bin/we1ssboard ]]; then
+        echo -e "${yellow}we1ssboard CLI not found; skipping Fail2ban auto-setup.${plain}"
         return 0
     fi
 
     # Scripts older than v3.4.0 have no setup-fail2ban and exit 0 from the
     # usage banner, which would read as success here.
-    if ! grep -q '"setup-fail2ban")' /usr/bin/fullboard; then
-        echo -e "${yellow}This fullboard.sh predates 'fullboard setup-fail2ban'; skipping Fail2ban auto-setup.${plain}"
+    if ! grep -q '"setup-fail2ban")' /usr/bin/we1ssboard; then
+        echo -e "${yellow}This we1ssboard.sh predates 'we1ssboard setup-fail2ban'; skipping Fail2ban auto-setup.${plain}"
         return 0
     fi
 
     echo -e "${green}Setting up Fail2ban for the IP Limit feature...${plain}"
-    if /usr/bin/fullboard setup-fail2ban; then
+    if /usr/bin/we1ssboard setup-fail2ban; then
         echo -e "${green}Fail2ban setup complete.${plain}"
     else
-        echo -e "${yellow}Fail2ban setup did not finish; IP Limit stays disabled until you run 'fullboard' and open the IP Limit menu. Continuing.${plain}"
+        echo -e "${yellow}Fail2ban setup did not finish; IP Limit stays disabled until you run 'we1ssboard' and open the IP Limit menu. Continuing.${plain}"
     fi
     return 0
 }
@@ -328,17 +335,17 @@ setup_fail2ban() {
 # transient systemd-run unit; when systemd-run is unavailable it starts this
 # script as a plain child instead, and that child inherits the sandbox and then
 # cannot write anything this update needs. Say so once, up front, instead of
-# dying partway through with "Failed to download fullboard".
+# dying partway through with "Failed to download we1ssboard".
 require_writable_update_paths() {
     local dir probe
     for dir in "${xui_folder%/*}" "/usr/bin"; do
         [[ -n "$dir" && -d "$dir" ]] || continue
-        probe="${dir}/.fullboard-write-test.$$"
+        probe="${dir}/.we1ssboard-write-test.$$"
         # A real write test rather than [[ -w ]]: this runs as root, where a
         # permission bit means little and the test only reflects the file mode
         # and the mount flags, not an immutable attribute or a full filesystem.
         if ! : > "$probe" 2> /dev/null; then
-            _fail "ERROR: ${dir} is not writable for this process (read-only mount, attribute or full filesystem). The panel's fallback updater cannot run inside the hardened systemd sandbox; update from the panel UI (which uses systemd-run) or run 'fullboard update' in a shell."
+            _fail "ERROR: ${dir} is not writable for this process (read-only mount, attribute or full filesystem). The panel's fallback updater cannot run inside the hardened systemd sandbox; update from the panel UI (which uses systemd-run) or run 'we1ssboard update' in a shell."
         fi
         rm -f "$probe"
     done
@@ -380,7 +387,7 @@ _xui_warn_unsupported_hardening() {
         fi
     done
     [[ -n "$missing" ]] || return 0
-    echo -e "${yellow}Note: systemd ${version} ignores part of the hardening in fullboard.service; the panel still starts.${plain}"
+    echo -e "${yellow}Note: systemd ${version} ignores part of the hardening in we1ssboard.service; the panel still starts.${plain}"
     echo "      Not applied, needs a newer systemd: ${missing}."
     if [[ "$version" -lt 231 ]]; then
         echo "      The panel's folders stay writable through ReadWriteDirectories=, the alias this script installs."
@@ -425,8 +432,8 @@ _xui_service_write_paths_dropin() {
     # file to the panel through EnvironmentFile=, so these are the folders it
     # will actually use.
     main_folder="${XUI_MAIN_FOLDER:-${xui_folder}}"
-    db_folder="${XUI_DB_FOLDER:-/etc/fullboard}"
-    log_folder="${XUI_LOG_FOLDER:-/var/log/fullboard}"
+    db_folder="${XUI_DB_FOLDER:-/etc/we1ssboard}"
+    log_folder="${XUI_LOG_FOLDER:-/var/log/we1ssboard}"
     # An empty XUI_BIN_FOLDER resolves to "bin" relative to the panel's working
     # directory, which the unit sets to the main folder.
     bin_folder="${XUI_BIN_FOLDER:-bin}"
@@ -468,7 +475,7 @@ _xui_service_write_paths_dropin() {
     line="${line# }"
     [[ -n "$line" ]] || return 1
 
-    dropin_dir="${xui_service}/fullboard.service.d"
+    dropin_dir="${xui_service}/we1ssboard.service.d"
     dropin="${dropin_dir}/10-xui-sandbox.conf"
     temp_file="${dropin}.tmp.$$"
 
@@ -478,7 +485,7 @@ _xui_service_write_paths_dropin() {
 # are lost, and the list only reflects the XUI_* variables read from
 # ${env_file} at that moment. Re-run install/update after moving a store.
 # It lists the folders the panel writes to. Put local additions in their own
-# drop-in, for example 20-fullboard-local.conf, which nothing here touches.
+# drop-in, for example 20-we1ssboard-local.conf, which nothing here touches.
 [Service]
 ReadWritePaths=${line}
 ReadWriteDirectories=${line}
@@ -486,7 +493,7 @@ EOF
     if [[ "$(_xui_systemd_major_version)" -ge 239 ]]; then
         cat >> "$temp_file" << 'EOF'
 # @system-service needs systemd >= 239; on older versions the unknown group
-# would leave the panel with a filter it cannot start under (fullboard.service.*).
+# would leave the panel with a filter it cannot start under (we1ssboard.service.*).
 SystemCallFilter=@system-service
 SystemCallErrorNumber=EPERM
 EOF
@@ -503,16 +510,16 @@ EOF
     return 0
 }
 
-# Lands a systemd unit file at ${xui_service}/fullboard.service via a temp file +
+# Lands a systemd unit file at ${xui_service}/we1ssboard.service via a temp file +
 # atomic mv, so a failed cp/curl or an interrupted mv never leaves a
 # truncated unit file at the live path -- systemd would then fail to parse
 # it on the next daemon-reload/start. Same pattern already used for
-# /usr/bin/fullboard elsewhere in this script. source_is_url picks cp (from a
+# /usr/bin/we1ssboard elsewhere in this script. source_is_url picks cp (from a
 # file already extracted from the release tarball) vs curl (GitHub fallback).
 _install_xui_service_unit() {
     local source="$1"
     local source_is_url="$2"
-    local dest="${xui_service}/fullboard.service"
+    local dest="${xui_service}/we1ssboard.service"
     local temp_file="${dest}.tmp.$$"
 
     rm -f "$temp_file"
@@ -535,14 +542,14 @@ _install_xui_service_unit() {
         return 1
     fi
     if ! _xui_service_write_paths_dropin; then
-        echo -e "${yellow}Warning: could not refresh ${xui_service}/fullboard.service.d/10-xui-sandbox.conf.${plain}"
-        echo -e "${yellow}If XUI_DB_FOLDER or XUI_LOG_FOLDER points outside /etc/fullboard and /var/log/fullboard, the panel may not be able to write to it under ProtectSystem=full.${plain}"
+        echo -e "${yellow}Warning: could not refresh ${xui_service}/we1ssboard.service.d/10-xui-sandbox.conf.${plain}"
+        echo -e "${yellow}If XUI_DB_FOLDER or XUI_LOG_FOLDER points outside /etc/we1ssboard and /var/log/we1ssboard, the panel may not be able to write to it under ProtectSystem=full.${plain}"
     fi
     _xui_warn_unsupported_hardening
     return 0
 }
 
-# Older tags predate some of these files (fullboard.rc arrived in v2.8.4). Serving
+# Older tags predate some of these files (we1ssboard.rc arrived in v2.8.4). Serving
 # main's copy against an old binary is the mismatch this pinning exists to
 # prevent, so probe before the old install is removed and refuse the tag.
 require_repo_files() {
@@ -550,40 +557,94 @@ require_repo_files() {
     shift
     [[ "${ref}" == "main" ]] && return 0
     for name in "$@"; do
-        status=$(${curl_bin} -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${ref}/${name}")
+        status=$(${curl_bin} -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${ref}/${name}")
         if [[ "${status}" != "200" ]]; then
             _fail "ERROR: ${name} is not available for ${ref} (HTTP ${status}). Update to a release that ships it, or to 'dev-latest'. The current installation is untouched."
         fi
     done
 }
 
+_move_legacy_path() {
+    local old="$1" new="$2"
+    [[ -e "$old" && ! -L "$old" ]] || return 0
+    if [[ -e "$new" ]]; then
+        echo -e "${yellow}Both ${old} and ${new} exist; leaving ${old} in place.${plain}"
+        return 0
+    fi
+    mv "$old" "$new" || _fail "ERROR: could not move ${old} to ${new}; the FullBoard installation is still in place."
+    ln -s "$new" "$old"
+}
+
+# Before 1.7.0 the panel was called FullBoard. Its install is moved to the new
+# names once; the old paths stay as symlinks so absolute paths stored in the
+# database (certificates, templates) and the old `fullboard` command keep working.
+migrate_legacy_install() {
+    local legacy_folder="${xui_folder%/*}/fullboard" dir db_file
+    [[ -d "$legacy_folder" && ! -L "$legacy_folder" && ! -e "$xui_folder" ]] || return 0
+    echo -e "${green}Moving the FullBoard installation to We1ssBoard...${plain}"
+    if [[ $release == "alpine" ]]; then
+        rc-service fullboard stop > /dev/null 2>&1
+        rc-update del fullboard > /dev/null 2>&1
+        [[ -f /etc/init.d/fullboard ]] && mv -f /etc/init.d/fullboard /etc/init.d/we1ssboard
+    else
+        systemctl stop fullboard > /dev/null 2>&1
+        systemctl disable fullboard > /dev/null 2>&1
+        # The flow below expects an installed unit and replaces it with the new one.
+        [[ -f "${xui_service}/fullboard.service" ]] && mv -f "${xui_service}/fullboard.service" "${xui_service}/we1ssboard.service"
+        rm -rf "${xui_service}/fullboard.service.d"
+        systemctl daemon-reload > /dev/null 2>&1
+    fi
+    _move_legacy_path /etc/fullboard /etc/we1ssboard
+    for db_file in /etc/we1ssboard/fullboard.db /etc/we1ssboard/fullboard.db-wal /etc/we1ssboard/fullboard.db-shm; do
+        [[ -f "$db_file" ]] && mv -f "$db_file" "${db_file/fullboard.db/we1ssboard.db}"
+    done
+    _move_legacy_path /var/log/fullboard /var/log/we1ssboard
+    for dir in /etc/default /etc/conf.d /etc/sysconfig; do
+        [[ -f "${dir}/fullboard" && ! -e "${dir}/we1ssboard" ]] || continue
+        mv -f "${dir}/fullboard" "${dir}/we1ssboard"
+        sed -i -e 's#/etc/fullboard#/etc/we1ssboard#g' -e 's#/var/log/fullboard#/var/log/we1ssboard#g' \
+            -e 's#/usr/local/fullboard#/usr/local/we1ssboard#g' "${dir}/we1ssboard"
+    done
+    [[ -f "${legacy_folder}/fullboard" ]] && mv -f "${legacy_folder}/fullboard" "${legacy_folder}/we1ssboard"
+    rm -f "${legacy_folder}/fullboard.sh" "${legacy_folder}"/fullboard.service*
+    _move_legacy_path "$legacy_folder" "$xui_folder"
+    [[ -e /usr/bin/fullboard && ! -L /usr/bin/fullboard ]] && rm -f /usr/bin/fullboard
+    legacy_install_migrated=1
+}
+
 update_x-ui() {
-    cd ${xui_folder%/fullboard}/
+    cd ${xui_folder%/we1ssboard}/
 
     load_xui_env
 
-    if [ -f "${xui_folder}/fullboard" ]; then
-        current_xui_version=$(${xui_folder}/fullboard -v)
-        echo -e "${green}Current fullboard version: ${current_xui_version}${plain}"
+    local current_binary="${xui_folder}/we1ssboard"
+    [[ -f "${current_binary}" ]] || current_binary="${xui_folder%/*}/fullboard/fullboard"
+    if [ -f "${current_binary}" ]; then
+        current_xui_version=$("${current_binary}" -v)
+        echo -e "${green}Current we1ssboard version: ${current_xui_version}${plain}"
     else
-        _fail "ERROR: Current fullboard version: unknown"
+        _fail "ERROR: Current we1ssboard version: unknown"
     fi
 
-    echo -e "${green}Downloading new fullboard version...${plain}"
+    echo -e "${green}Downloading new we1ssboard version...${plain}"
 
     # XUI_UPDATE_TAG lets the panel target a specific release tag (e.g. the
     # rolling dev-latest pre-release). Empty keeps the default latest-stable flow.
     if [[ -n "${XUI_UPDATE_TAG}" ]]; then
         tag_version="${XUI_UPDATE_TAG}"
         echo -e "${green}Using update tag: ${tag_version}${plain}"
+        if [[ "${tag_version}" =~ ^v?[0-9]+.[0-9]+.[0-9]+$ && "$(printf "%s
+" "1.7.0" "${tag_version#v}" | sort -V | head -n1)" != "1.7.0" ]]; then
+            _fail "ERROR: ${tag_version} predates the We1ssBoard name (1.7.0) and cannot be installed over it. The current installation is untouched."
+        fi
     else
-        tag_version=$(${curl_bin} -Ls "https://api.github.com/repos/WeIbSchatten/FullBoard/releases/latest" 2> /dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_version=$(${curl_bin} -Ls "https://api.github.com/repos/WeIbSchatten/We1ssBoard/releases/latest" 2> /dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
-            _fail "ERROR: Failed to fetch fullboard version, it may be due to GitHub API restrictions, please try it later"
+            _fail "ERROR: Failed to fetch we1ssboard version, it may be due to GitHub API restrictions, please try it later"
         fi
     fi
-    echo -e "Got fullboard latest version: ${tag_version}, beginning the installation..."
-    # fullboard.sh, fullboard.rc and the unit files must come from the same release as
+    echo -e "Got we1ssboard latest version: ${tag_version}, beginning the installation..."
+    # we1ssboard.sh, we1ssboard.rc and the unit files must come from the same release as
     # the binary; only the rolling dev build tracks main.
     script_ref="${tag_version}"
     if [[ "${tag_version}" == "dev-latest" ]]; then
@@ -591,23 +652,23 @@ update_x-ui() {
     fi
     # The unit files are only fetched when the release tarball lacks them, so
     # they are checked at that point instead of here.
-    local required_files=("fullboard.sh")
-    [[ $release == "alpine" ]] && required_files+=("fullboard.rc")
+    local required_files=("we1ssboard.sh")
+    [[ $release == "alpine" ]] && required_files+=("we1ssboard.rc")
     require_repo_files "${script_ref}" "${required_files[@]}"
-    ${curl_bin} -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/WeIbSchatten/FullBoard/releases/download/${tag_version}/fullboard-linux-$(arch).tar.gz 2> /dev/null
+    ${curl_bin} -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/WeIbSchatten/We1ssBoard/releases/download/${tag_version}/we1ssboard-linux-$(arch).tar.gz 2> /dev/null
     if [[ $? -ne 0 ]]; then
-        _fail "ERROR: Failed to download fullboard, please be sure that your server can access GitHub"
+        _fail "ERROR: Failed to download we1ssboard, please be sure that your server can access GitHub"
     fi
     if [[ ! -s ${xui_folder}-linux-$(arch).tar.gz ]]; then
         rm ${xui_folder}-linux-$(arch).tar.gz -f > /dev/null 2>&1
-        _fail "ERROR: Downloaded fullboard release archive is empty, please be sure that your server can access GitHub"
+        _fail "ERROR: Downloaded we1ssboard release archive is empty, please be sure that your server can access GitHub"
     fi
     # Releases publish <asset>.sha256 next to each archive. A mismatch or a
     # failed sidecar download aborts the update; only a 404 (releases
     # predating the sidecar) is tolerated with a warning.
     archive="${xui_folder}-linux-$(arch).tar.gz"
     rm -f "${archive}.sha256"
-    sidecar_code=$(${curl_bin} -sL --retry 3 --retry-delay 3 --connect-timeout 15 --max-time 60 -o "${archive}.sha256" -w '%{http_code}' "https://github.com/WeIbSchatten/FullBoard/releases/download/${tag_version}/fullboard-linux-$(arch).tar.gz.sha256" 2> /dev/null)
+    sidecar_code=$(${curl_bin} -sL --retry 3 --retry-delay 3 --connect-timeout 15 --max-time 60 -o "${archive}.sha256" -w '%{http_code}' "https://github.com/WeIbSchatten/We1ssBoard/releases/download/${tag_version}/we1ssboard-linux-$(arch).tar.gz.sha256" 2> /dev/null)
     if [[ "${sidecar_code}" == "200" ]]; then
         expected_sha256=$(awk 'NR == 1 {print $1}' "${archive}.sha256")
         actual_sha256=$(sha256sum "${archive}" | awk '{print $1}')
@@ -622,47 +683,50 @@ update_x-ui() {
         echo -e "${yellow}No checksum published for this release, skipping verification${plain}"
     else
         rm -f "${archive}.sha256" "${archive}"
-        _fail "ERROR: Failed to download the checksum for fullboard-linux-$(arch).tar.gz (HTTP ${sidecar_code})"
+        _fail "ERROR: Failed to download the checksum for we1ssboard-linux-$(arch).tar.gz (HTTP ${sidecar_code})"
     fi
 
+    migrate_legacy_install
+    load_xui_env
+
     if [[ -e ${xui_folder}/ ]]; then
-        echo -e "${green}Stopping fullboard...${plain}"
+        echo -e "${green}Stopping we1ssboard...${plain}"
         if [[ $release == "alpine" ]]; then
-            if [ -f "/etc/init.d/fullboard" ]; then
-                rc-service fullboard stop > /dev/null 2>&1
-                rc-update del fullboard > /dev/null 2>&1
+            if [ -f "/etc/init.d/we1ssboard" ]; then
+                rc-service we1ssboard stop > /dev/null 2>&1
+                rc-update del we1ssboard > /dev/null 2>&1
                 echo -e "${green}Removing old service unit version...${plain}"
-                rm -f /etc/init.d/fullboard > /dev/null 2>&1
+                rm -f /etc/init.d/we1ssboard > /dev/null 2>&1
             else
-                rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
-                _fail "ERROR: fullboard service unit not installed."
+                rm we1ssboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+                _fail "ERROR: we1ssboard service unit not installed."
             fi
         else
-            if [ -f "${xui_service}/fullboard.service" ]; then
-                systemctl stop fullboard > /dev/null 2>&1
-                systemctl disable fullboard > /dev/null 2>&1
+            if [ -f "${xui_service}/we1ssboard.service" ]; then
+                systemctl stop we1ssboard > /dev/null 2>&1
+                systemctl disable we1ssboard > /dev/null 2>&1
                 echo -e "${green}Removing old systemd unit version...${plain}"
-                rm ${xui_service}/fullboard.service -f > /dev/null 2>&1
+                rm ${xui_service}/we1ssboard.service -f > /dev/null 2>&1
                 systemctl daemon-reload > /dev/null 2>&1
             else
-                rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
-                _fail "ERROR: fullboard systemd unit not installed."
+                rm we1ssboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+                _fail "ERROR: we1ssboard systemd unit not installed."
             fi
         fi
-        # Kill any leftover mtg (MTProto) sidecars. fullboard runs them outside its own
+        # Kill any leftover mtg (MTProto) sidecars. we1ssboard runs them outside its own
         # lifecycle, so on Linux a stale one can survive the stop and keep holding
         # an inbound port with an outdated secret, silently breaking new clients.
         # The new panel respawns a clean mtg per inbound on next start.
         pkill -f 'mtg-linux-[^ ]* run ' > /dev/null 2>&1 || true
         pkill -f 'tuic-server.*-c .*bin/tuic/tuic_[0-9]+\.json' > /dev/null 2>&1 || true
-        echo -e "${green}Removing old fullboard version...${plain}"
+        echo -e "${green}Removing old we1ssboard version...${plain}"
         rm ${xui_folder} -f > /dev/null 2>&1
-        rm ${xui_folder}/fullboard.service -f > /dev/null 2>&1
-        rm ${xui_folder}/fullboard.service.debian -f > /dev/null 2>&1
-        rm ${xui_folder}/fullboard.service.arch -f > /dev/null 2>&1
-        rm ${xui_folder}/fullboard.service.rhel -f > /dev/null 2>&1
-        rm ${xui_folder}/fullboard -f > /dev/null 2>&1
-        rm ${xui_folder}/fullboard.sh -f > /dev/null 2>&1
+        rm ${xui_folder}/we1ssboard.service -f > /dev/null 2>&1
+        rm ${xui_folder}/we1ssboard.service.debian -f > /dev/null 2>&1
+        rm ${xui_folder}/we1ssboard.service.arch -f > /dev/null 2>&1
+        rm ${xui_folder}/we1ssboard.service.rhel -f > /dev/null 2>&1
+        rm ${xui_folder}/we1ssboard -f > /dev/null 2>&1
+        rm ${xui_folder}/we1ssboard.sh -f > /dev/null 2>&1
         echo -e "${green}Removing old mtg version...${plain}"
         rm ${xui_folder}/bin/mtg-linux-$(arch) -f > /dev/null 2>&1
         echo -e "${green}Removing old xray version...${plain}"
@@ -673,22 +737,22 @@ update_x-ui() {
         rm ${xui_folder}/bin/tuic-server -f > /dev/null 2>&1
         rm ${xui_folder}/bin/tuic -rf > /dev/null 2>&1
     else
-        rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
-        _fail "ERROR: fullboard not installed."
+        rm we1ssboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+        _fail "ERROR: we1ssboard not installed."
     fi
 
-    echo -e "${green}Installing new fullboard version...${plain}"
-    tar zxvf fullboard-linux-$(arch).tar.gz > /dev/null 2>&1
+    echo -e "${green}Installing new we1ssboard version...${plain}"
+    tar zxvf we1ssboard-linux-$(arch).tar.gz > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
-        rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
-        _fail "ERROR: Failed to extract the fullboard release archive -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
+        rm we1ssboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+        _fail "ERROR: Failed to extract the we1ssboard release archive -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
     fi
-    rm fullboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
-    cd fullboard > /dev/null 2>&1
-    if [[ $? -ne 0 || ! -s fullboard ]]; then
-        _fail "ERROR: Extracted fullboard archive is missing the fullboard binary -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
+    rm we1ssboard-linux-$(arch).tar.gz -f > /dev/null 2>&1
+    cd we1ssboard > /dev/null 2>&1
+    if [[ $? -ne 0 || ! -s we1ssboard ]]; then
+        _fail "ERROR: Extracted we1ssboard archive is missing the we1ssboard binary -- the previous installation has already been removed, so the panel will not start until this is fixed; try running the update again"
     fi
-    chmod +x fullboard > /dev/null 2>&1
+    chmod +x we1ssboard > /dev/null 2>&1
 
     # Check the system's architecture and rename the file accordingly.
     # The panel binary maps GOARCH=arm to "arm32" (internal/xray/process.go),
@@ -702,34 +766,37 @@ update_x-ui() {
         fi
     fi
 
-    chmod +x fullboard bin/xray-linux-$(arch) > /dev/null 2>&1
+    chmod +x we1ssboard bin/xray-linux-$(arch) > /dev/null 2>&1
     if [[ -f bin/mtg-linux-arm ]]; then
         chmod +x bin/mtg-linux-arm > /dev/null 2>&1
     elif [[ -f bin/mtg-linux-$(arch) ]]; then
         chmod +x bin/mtg-linux-$(arch) > /dev/null 2>&1
     fi
 
-    echo -e "${green}Downloading and installing fullboard.sh script...${plain}"
-    local xui_script_temp="/usr/bin/fullboard-temp.$$"
+    echo -e "${green}Downloading and installing we1ssboard.sh script...${plain}"
+    local xui_script_temp="/usr/bin/we1ssboard-temp.$$"
     rm -f "${xui_script_temp}"
-    ${curl_bin} -fLRo "${xui_script_temp}" "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.sh" > /dev/null 2>&1
+    ${curl_bin} -fLRo "${xui_script_temp}" "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.sh" > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         rm -f "${xui_script_temp}"
-        _fail "ERROR: Failed to download fullboard.sh script, please be sure that your server can access GitHub"
+        _fail "ERROR: Failed to download we1ssboard.sh script, please be sure that your server can access GitHub"
     fi
     if [[ ! -s "${xui_script_temp}" ]]; then
         rm -f "${xui_script_temp}"
-        _fail "ERROR: Downloaded fullboard.sh script is empty, please be sure that your server can access GitHub"
+        _fail "ERROR: Downloaded we1ssboard.sh script is empty, please be sure that your server can access GitHub"
     fi
-    mv -f "${xui_script_temp}" /usr/bin/fullboard
+    mv -f "${xui_script_temp}" /usr/bin/we1ssboard
     if [[ $? -ne 0 ]]; then
         rm -f "${xui_script_temp}"
-        _fail "ERROR: Failed to install fullboard.sh script"
+        _fail "ERROR: Failed to install we1ssboard.sh script"
     fi
 
-    chmod +x ${xui_folder}/fullboard.sh > /dev/null 2>&1
-    chmod +x /usr/bin/fullboard > /dev/null 2>&1
-    mkdir -p /var/log/fullboard > /dev/null 2>&1
+    chmod +x ${xui_folder}/we1ssboard.sh > /dev/null 2>&1
+    chmod +x /usr/bin/we1ssboard > /dev/null 2>&1
+    if [[ "${legacy_install_migrated:-0}" == "1" && ! -e /usr/bin/fullboard ]]; then
+        ln -s /usr/bin/we1ssboard /usr/bin/fullboard
+    fi
+    mkdir -p /var/log/we1ssboard > /dev/null 2>&1
 
     echo -e "${green}Changing owner...${plain}"
     chown -R root:root ${xui_folder} > /dev/null 2>&1
@@ -742,60 +809,60 @@ update_x-ui() {
     # Finish the schema/data migrations before the service starts, so the service and
     # config_after_update's CLI calls never run them on the same database at once (#6728).
     echo -e "${green}Migrating database...${plain}"
-    "${xui_folder}/fullboard" migrate
+    "${xui_folder}/we1ssboard" migrate
 
     if [[ $release == "alpine" ]]; then
-        echo -e "${green}Downloading and installing startup unit fullboard.rc...${plain}"
-        xui_rc_temp="/etc/init.d/fullboard.tmp.$$"
+        echo -e "${green}Downloading and installing startup unit we1ssboard.rc...${plain}"
+        xui_rc_temp="/etc/init.d/we1ssboard.tmp.$$"
         rm -f "${xui_rc_temp}"
-        ${curl_bin} -fLRo "${xui_rc_temp}" "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.rc" > /dev/null 2>&1
+        ${curl_bin} -fLRo "${xui_rc_temp}" "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.rc" > /dev/null 2>&1
         if [[ $? -ne 0 ]]; then
             rm -f "${xui_rc_temp}"
-            _fail "ERROR: Failed to download startup unit fullboard.rc, please be sure that your server can access GitHub"
+            _fail "ERROR: Failed to download startup unit we1ssboard.rc, please be sure that your server can access GitHub"
         fi
         if [[ ! -s "${xui_rc_temp}" ]]; then
             rm -f "${xui_rc_temp}"
-            _fail "ERROR: Downloaded startup unit fullboard.rc is empty, please be sure that your server can access GitHub"
+            _fail "ERROR: Downloaded startup unit we1ssboard.rc is empty, please be sure that your server can access GitHub"
         fi
-        mv -f "${xui_rc_temp}" /etc/init.d/fullboard
+        mv -f "${xui_rc_temp}" /etc/init.d/we1ssboard
         if [[ $? -ne 0 ]]; then
             rm -f "${xui_rc_temp}"
-            _fail "ERROR: Failed to install startup unit fullboard.rc"
+            _fail "ERROR: Failed to install startup unit we1ssboard.rc"
         fi
-        chmod +x /etc/init.d/fullboard > /dev/null 2>&1
-        chown root:root /etc/init.d/fullboard > /dev/null 2>&1
-        rc-update add fullboard > /dev/null 2>&1
-        rc-service fullboard start > /dev/null 2>&1
+        chmod +x /etc/init.d/we1ssboard > /dev/null 2>&1
+        chown root:root /etc/init.d/we1ssboard > /dev/null 2>&1
+        rc-update add we1ssboard > /dev/null 2>&1
+        rc-service we1ssboard start > /dev/null 2>&1
     else
-        if [ -f "fullboard.service" ]; then
+        if [ -f "we1ssboard.service" ]; then
             echo -e "${green}Installing systemd unit...${plain}"
-            if ! _install_xui_service_unit "fullboard.service" "false"; then
-                echo -e "${red}Failed to copy fullboard.service${plain}"
+            if ! _install_xui_service_unit "we1ssboard.service" "false"; then
+                echo -e "${red}Failed to copy we1ssboard.service${plain}"
                 exit 1
             fi
         else
             service_installed=false
             case "${release}" in
                 ubuntu | debian | armbian)
-                    if [ -f "fullboard.service.debian" ]; then
+                    if [ -f "we1ssboard.service.debian" ]; then
                         echo -e "${green}Installing debian-like systemd unit...${plain}"
-                        if _install_xui_service_unit "fullboard.service.debian" "false"; then
+                        if _install_xui_service_unit "we1ssboard.service.debian" "false"; then
                             service_installed=true
                         fi
                     fi
                     ;;
                 arch | manjaro | parch)
-                    if [ -f "fullboard.service.arch" ]; then
+                    if [ -f "we1ssboard.service.arch" ]; then
                         echo -e "${green}Installing arch-like systemd unit...${plain}"
-                        if _install_xui_service_unit "fullboard.service.arch" "false"; then
+                        if _install_xui_service_unit "we1ssboard.service.arch" "false"; then
                             service_installed=true
                         fi
                     fi
                     ;;
                 *)
-                    if [ -f "fullboard.service.rhel" ]; then
+                    if [ -f "we1ssboard.service.rhel" ]; then
                         echo -e "${green}Installing rhel-like systemd unit...${plain}"
-                        if _install_xui_service_unit "fullboard.service.rhel" "false"; then
+                        if _install_xui_service_unit "we1ssboard.service.rhel" "false"; then
                             service_installed=true
                         fi
                     fi
@@ -807,27 +874,27 @@ update_x-ui() {
                 echo -e "${yellow}Service files not found in tar.gz, downloading from GitHub...${plain}"
                 case "${release}" in
                     ubuntu | debian | armbian)
-                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.service.debian"
+                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.service.debian"
                         ;;
                     arch | manjaro | parch)
-                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.service.arch"
+                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.service.arch"
                         ;;
                     *)
-                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/FullBoard/${script_ref}/fullboard.service.rhel"
+                        service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.service.rhel"
                         ;;
                 esac
 
                 if ! _install_xui_service_unit "$service_unit_url" "true"; then
-                    echo -e "${red}Failed to install fullboard.service from GitHub (${script_ref}) -- the release tarball did not ship one either${plain}"
+                    echo -e "${red}Failed to install we1ssboard.service from GitHub (${script_ref}) -- the release tarball did not ship one either${plain}"
                     exit 1
                 fi
             fi
         fi
-        chown root:root ${xui_service}/fullboard.service > /dev/null 2>&1
-        chmod 644 ${xui_service}/fullboard.service > /dev/null 2>&1
+        chown root:root ${xui_service}/we1ssboard.service > /dev/null 2>&1
+        chmod 644 ${xui_service}/we1ssboard.service > /dev/null 2>&1
         systemctl daemon-reload > /dev/null 2>&1
-        systemctl enable fullboard > /dev/null 2>&1
-        systemctl start fullboard > /dev/null 2>&1
+        systemctl enable we1ssboard > /dev/null 2>&1
+        systemctl start we1ssboard > /dev/null 2>&1
     fi
 
     config_after_update
@@ -840,25 +907,25 @@ update_x-ui() {
     # Undo the 1.4.4 TCP profile; BBR + fq only with XUI_NET_TUNING=true. Never fatal.
     setup_network_tuning
 
-    echo -e "${green}fullboard ${tag_version}${plain} updating finished, it is running now..."
+    echo -e "${green}we1ssboard ${tag_version}${plain} updating finished, it is running now..."
     echo -e ""
     echo -e "┌───────────────────────────────────────────────────────┐
-│  ${blue}fullboard control menu usages (subcommands):${plain}              │
+│  ${blue}we1ssboard control menu usages (subcommands):${plain}              │
 │                                                       │
-│  ${blue}fullboard${plain}              - Admin Management Script          │
-│  ${blue}fullboard start${plain}        - Start                            │
-│  ${blue}fullboard stop${plain}         - Stop                             │
-│  ${blue}fullboard restart${plain}      - Restart                          │
-│  ${blue}fullboard status${plain}       - Current Status                   │
-│  ${blue}fullboard settings${plain}     - Current Settings                 │
-│  ${blue}fullboard enable${plain}       - Enable Autostart on OS Startup   │
-│  ${blue}fullboard disable${plain}      - Disable Autostart on OS Startup  │
-│  ${blue}fullboard log${plain}          - Check logs                       │
-│  ${blue}fullboard banlog${plain}       - Check Fail2ban ban logs          │
-│  ${blue}fullboard update${plain}       - Update                           │
-│  ${blue}fullboard legacy${plain}       - Legacy version                   │
-│  ${blue}fullboard install${plain}      - Install                          │
-│  ${blue}fullboard uninstall${plain}    - Uninstall                        │
+│  ${blue}we1ssboard${plain}              - Admin Management Script          │
+│  ${blue}we1ssboard start${plain}        - Start                            │
+│  ${blue}we1ssboard stop${plain}         - Stop                             │
+│  ${blue}we1ssboard restart${plain}      - Restart                          │
+│  ${blue}we1ssboard status${plain}       - Current Status                   │
+│  ${blue}we1ssboard settings${plain}     - Current Settings                 │
+│  ${blue}we1ssboard enable${plain}       - Enable Autostart on OS Startup   │
+│  ${blue}we1ssboard disable${plain}      - Disable Autostart on OS Startup  │
+│  ${blue}we1ssboard log${plain}          - Check logs                       │
+│  ${blue}we1ssboard banlog${plain}       - Check Fail2ban ban logs          │
+│  ${blue}we1ssboard update${plain}       - Update                           │
+│  ${blue}we1ssboard legacy${plain}       - Legacy version                   │
+│  ${blue}we1ssboard install${plain}      - Install                          │
+│  ${blue}we1ssboard uninstall${plain}    - Uninstall                        │
 └───────────────────────────────────────────────────────┘"
 }
 

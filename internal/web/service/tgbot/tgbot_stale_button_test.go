@@ -8,8 +8,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 
 	"github.com/mymmrac/telego"
 )
@@ -58,7 +58,7 @@ func swapTestBot(t *testing.T, url string) {
 
 func newStaleButtonTgbot(t *testing.T) *Tgbot {
 	t.Helper()
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	return &Tgbot{}
 }
 

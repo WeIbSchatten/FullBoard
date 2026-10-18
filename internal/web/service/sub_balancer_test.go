@@ -8,9 +8,9 @@ import (
 
 	"github.com/op/go-logging"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	xuilogger "github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	xuilogger "github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 var subBalancerLoggerOnce sync.Once
@@ -20,7 +20,7 @@ func setupSubBalancerDB(t *testing.T) {
 	subBalancerLoggerOnce.Do(func() { xuilogger.InitLogger(logging.ERROR) })
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "we1ssboard.db"))
 }
 
 func TestSubBalancerServiceCRUD(t *testing.T) {

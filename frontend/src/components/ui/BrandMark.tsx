@@ -3,7 +3,9 @@ interface BrandMarkProps {
   className?: string;
 }
 
-// Monochrome tile: the accent square with three "board" rails in the on-accent colour.
+const W_POINTS = '8.6,10 12.3,22 16,13.4 19.7,22 23.4,10';
+
+// The "white shadow" mark: an on-accent W over its own faded offset copy.
 export default function BrandMark({ size = 32, className }: BrandMarkProps) {
   return (
     <svg
@@ -15,10 +17,16 @@ export default function BrandMark({ size = 32, className }: BrandMarkProps) {
       focusable="false"
     >
       <rect width="32" height="32" rx="9" fill="var(--fb-accent)" />
-      <rect x="8" y="8.5" width="16" height="3.4" rx="1.7" fill="var(--fb-on-accent)" />
-      <rect x="8" y="14.3" width="11.5" height="3.4" rx="1.7" fill="var(--fb-on-accent)" />
-      <rect x="8" y="20.1" width="7" height="3.4" rx="1.7" fill="var(--fb-on-accent)" />
-      <circle cx="22" cy="21.8" r="2.3" fill="var(--fb-on-accent)" />
+      <g
+        fill="none"
+        stroke="var(--fb-on-accent)"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points={W_POINTS} transform="translate(1.7 1.7)" strokeOpacity="0.35" />
+        <polyline points={W_POINTS} />
+      </g>
     </svg>
   );
 }

@@ -3,7 +3,7 @@ package xray
 import (
 	"bytes"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
 )
 
 // InboundConfig represents an Xray inbound configuration.

@@ -1,4 +1,4 @@
-// Package version compares FullBoard release versions ("v3.8.0" or "3.8.0").
+// Package version compares We1ssBoard release versions ("v3.8.0" or "3.8.0").
 package version
 
 import (

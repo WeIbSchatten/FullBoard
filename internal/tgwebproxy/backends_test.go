@@ -188,11 +188,11 @@ func TestReconcileBackendsAdoptsPerPortUnitsFromOlderReleases(t *testing.T) {
 		joined := strings.Join(args, " ")
 		switch {
 		case name == "systemctl" && strings.HasPrefix(joined, "list-units"):
-			return []byte("fullboard-mtproxy-2399.service loaded active running x\nfullboard-mtproxy-2400.service loaded active running x\n"), nil
-		case name == "systemctl" && strings.HasPrefix(joined, "show fullboard-mtproxy-2399"):
-			return []byte("ActiveState=active\nDescription=FullBoard MTProxy backend 127.0.0.1:2399 stats=4000 fp=old\n"), nil
-		case name == "systemctl" && strings.HasPrefix(joined, "show fullboard-mtproxy-2400"):
-			return []byte("ActiveState=active\nDescription=FullBoard MTProxy backend 127.0.0.1:2400 stats=4001 fp=old\n"), nil
+			return []byte("we1ssboard-mtproxy-2399.service loaded active running x\nwe1ssboard-mtproxy-2400.service loaded active running x\n"), nil
+		case name == "systemctl" && strings.HasPrefix(joined, "show we1ssboard-mtproxy-2399"):
+			return []byte("ActiveState=active\nDescription=We1ssBoard MTProxy backend 127.0.0.1:2399 stats=4000 fp=old\n"), nil
+		case name == "systemctl" && strings.HasPrefix(joined, "show we1ssboard-mtproxy-2400"):
+			return []byte("ActiveState=active\nDescription=We1ssBoard MTProxy backend 127.0.0.1:2400 stats=4001 fp=old\n"), nil
 		}
 		return nil, nil
 	}}
@@ -211,9 +211,51 @@ func TestReconcileBackendsAdoptsPerPortUnitsFromOlderReleases(t *testing.T) {
 	}
 	var stoppedOld bool
 	for _, c := range runner.calls {
-		stoppedOld = stoppedOld || (c.name == "systemctl" && strings.Join(c.args, " ") == "stop fullboard-mtproxy-2400.service")
+		stoppedOld = stoppedOld || (c.name == "systemctl" && strings.Join(c.args, " ") == "stop we1ssboard-mtproxy-2400.service")
 	}
 	if !stoppedOld {
 		t.Fatal("the per-port unit for 2400 was left running next to the shared process")
+	}
+}
+
+// Backends started before the 1.7.0 rename keep their old unit name and nft
+// table; left alone they hold the ports the renamed units need.
+func TestReconcileBackendsReplacesUnitsFromBeforeTheRename(t *testing.T) {
+	second := RelayProfile{Name: "second", Secret: "ffeeddccbbaa99887766554433221100", Backend: "127.0.0.1:2399"}
+	m := seedManager(t, validProfile(), second)
+	runner := &fakeRunner{respond: func(name string, args []string) ([]byte, error) {
+		joined := strings.Join(args, " ")
+		switch {
+		case name == "systemctl" && strings.HasPrefix(joined, "list-units"):
+			return []byte("fullboard-mtproxy-2399.service loaded active running x\n"), nil
+		case name == "systemctl" && strings.HasPrefix(joined, "show fullboard-mtproxy-2399"):
+			return []byte("ActiveState=active\nDescription=FullBoard MTProxy backend ports=2399 stats=4000 fp=old\n"), nil
+		}
+		return nil, nil
+	}}
+	m.run = runner.run
+	useFakeMTProxy(t, m)
+	portBusy = func(int) bool { return true }
+
+	st := m.ReconcileBackends(context.Background())
+	for _, row := range st.Managed {
+		if row.External {
+			t.Fatalf("a pre-rename unit was treated as a hand-run backend: %+v", st.Managed)
+		}
+	}
+	var stoppedLegacy, droppedLegacyTable bool
+	for _, c := range runner.calls {
+		joined := strings.Join(c.args, " ")
+		stoppedLegacy = stoppedLegacy || (c.name == "systemctl" && joined == "stop fullboard-mtproxy-2399.service")
+		droppedLegacyTable = droppedLegacyTable || (c.name == "nft" && joined == "delete table inet fullboard_mtproxy")
+	}
+	if !stoppedLegacy {
+		t.Fatal("the pre-rename unit was left running")
+	}
+	if !droppedLegacyTable {
+		t.Fatal("the pre-rename nft table was left in place")
+	}
+	if got := startedSecrets(runner.calls); len(got["2399"]) != 1 {
+		t.Fatalf("started = %v, want a renamed MTProxy on 2399", got)
 	}
 }

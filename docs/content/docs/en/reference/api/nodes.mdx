@@ -1,6 +1,6 @@
 ---
 title: Nodes
-description: Manage remote FullBoard panels acting as nodes for a central panel.
+description: Manage remote We1ssBoard panels acting as nodes for a central panel.
   All endpoints under /panel/api/nodes.
 full: true
 _openapi:
@@ -28,26 +28,26 @@ _openapi:
         the rotated certificate before its next request.
       url: '#validate-the-stored-master-mtls-client-credential-and-invalidate-cached-transports-each-transport-closes-its-old-idle-pool-and-rebuilds-with-the-rotated-certificate-before-its-next-request'
     - depth: 2
-      title: Read the remote FullBoard panel's live server status (CPU, memory, disk,
+      title: Read the remote We1ssBoard panel's live server status (CPU, memory, disk,
         Xray state and version), proxied verbatim from the node.
-      url: '#read-the-remote-fullboard-panels-live-server-status-cpu-memory-disk-xray-state-and-version-proxied-verbatim-from-the-node'
+      url: '#read-the-remote-we1ssboard-panels-live-server-status-cpu-memory-disk-xray-state-and-version-proxied-verbatim-from-the-node'
     - depth: 2
-      title: Read the remote FullBoard panel's settings in their redacted view
+      title: Read the remote We1ssBoard panel's settings in their redacted view
         (secrets blank, has* flags set). Requires an admin-scope API token on
         the node.
-      url: '#read-the-remote-fullboard-panels-settings-in-their-redacted-view-secrets-blank-has-flags-set-requires-an-admin-scope-api-token-on-the-node'
+      url: '#read-the-remote-we1ssboard-panels-settings-in-their-redacted-view-secrets-blank-has-flags-set-requires-an-admin-scope-api-token-on-the-node'
     - depth: 2
-      title: Save a full settings object on the remote FullBoard panel. Send the
+      title: Save a full settings object on the remote We1ssBoard panel. Send the
         object read from GET first; blank secrets keep their stored value.
         Requires an admin-scope API token on the node.
-      url: '#save-a-full-settings-object-on-the-remote-fullboard-panel-send-the-object-read-from-get-first-blank-secrets-keep-their-stored-value-requires-an-admin-scope-api-token-on-the-node'
+      url: '#save-a-full-settings-object-on-the-remote-we1ssboard-panel-send-the-object-read-from-get-first-blank-secrets-keep-their-stored-value-requires-an-admin-scope-api-token-on-the-node'
     - depth: 2
-      title: Restart the Xray core on the remote FullBoard panel.
-      url: '#restart-the-xray-core-on-the-remote-fullboard-panel'
+      title: Restart the Xray core on the remote We1ssBoard panel.
+      url: '#restart-the-xray-core-on-the-remote-we1ssboard-panel'
     - depth: 2
-      title: Restart the remote FullBoard panel process. Requires an admin-scope API
+      title: Restart the remote We1ssBoard panel process. Requires an admin-scope API
         token on the node.
-      url: '#restart-the-remote-fullboard-panel-process-requires-an-admin-scope-api-token-on-the-node'
+      url: '#restart-the-remote-we1ssboard-panel-process-requires-an-admin-scope-api-token-on-the-node'
     - depth: 2
       title: Read the remote panel's Xray template with its inbound tags and outbound
         test URL, proxied verbatim from the node. Requires an admin-scope API
@@ -64,9 +64,9 @@ _openapi:
         an admin-scope API token on the node.
       url: '#tail-the-remote-panels-own-log-or-its-xray-access-log-count-is-1-10000-default-100-level-applies-to-the-panel-stream-only-debug-info-notice-warning-err-filter-applies-to-the-xray-stream-only-requires-an-admin-scope-api-token-on-the-node'
     - depth: 2
-      title: Stop the Xray core on the remote FullBoard panel. Requires an admin-scope
+      title: Stop the Xray core on the remote We1ssBoard panel. Requires an admin-scope
         API token on the node.
-      url: '#stop-the-xray-core-on-the-remote-fullboard-panel-requires-an-admin-scope-api-token-on-the-node'
+      url: '#stop-the-xray-core-on-the-remote-we1ssboard-panel-requires-an-admin-scope-api-token-on-the-node'
     - depth: 2
       title: Switch the remote panel's Xray core to a release version; the node
         validates it against its own release list. Can take a minute. Requires
@@ -202,22 +202,22 @@ _openapi:
           transports. Each transport closes its old idle pool and rebuilds with
           the rotated certificate before its next request.
         id: validate-the-stored-master-mtls-client-credential-and-invalidate-cached-transports-each-transport-closes-its-old-idle-pool-and-rebuilds-with-the-rotated-certificate-before-its-next-request
-      - content: Read the remote FullBoard panel's live server status (CPU, memory,
+      - content: Read the remote We1ssBoard panel's live server status (CPU, memory,
           disk, Xray state and version), proxied verbatim from the node.
-        id: read-the-remote-fullboard-panels-live-server-status-cpu-memory-disk-xray-state-and-version-proxied-verbatim-from-the-node
-      - content: Read the remote FullBoard panel's settings in their redacted view
+        id: read-the-remote-we1ssboard-panels-live-server-status-cpu-memory-disk-xray-state-and-version-proxied-verbatim-from-the-node
+      - content: Read the remote We1ssBoard panel's settings in their redacted view
           (secrets blank, has* flags set). Requires an admin-scope API token on
           the node.
-        id: read-the-remote-fullboard-panels-settings-in-their-redacted-view-secrets-blank-has-flags-set-requires-an-admin-scope-api-token-on-the-node
-      - content: Save a full settings object on the remote FullBoard panel. Send the
+        id: read-the-remote-we1ssboard-panels-settings-in-their-redacted-view-secrets-blank-has-flags-set-requires-an-admin-scope-api-token-on-the-node
+      - content: Save a full settings object on the remote We1ssBoard panel. Send the
           object read from GET first; blank secrets keep their stored value.
           Requires an admin-scope API token on the node.
-        id: save-a-full-settings-object-on-the-remote-fullboard-panel-send-the-object-read-from-get-first-blank-secrets-keep-their-stored-value-requires-an-admin-scope-api-token-on-the-node
-      - content: Restart the Xray core on the remote FullBoard panel.
-        id: restart-the-xray-core-on-the-remote-fullboard-panel
-      - content: Restart the remote FullBoard panel process. Requires an admin-scope API
+        id: save-a-full-settings-object-on-the-remote-we1ssboard-panel-send-the-object-read-from-get-first-blank-secrets-keep-their-stored-value-requires-an-admin-scope-api-token-on-the-node
+      - content: Restart the Xray core on the remote We1ssBoard panel.
+        id: restart-the-xray-core-on-the-remote-we1ssboard-panel
+      - content: Restart the remote We1ssBoard panel process. Requires an admin-scope API
           token on the node.
-        id: restart-the-remote-fullboard-panel-process-requires-an-admin-scope-api-token-on-the-node
+        id: restart-the-remote-we1ssboard-panel-process-requires-an-admin-scope-api-token-on-the-node
       - content: Read the remote panel's Xray template with its inbound tags and
           outbound test URL, proxied verbatim from the node. Requires an
           admin-scope API token on the node.
@@ -230,9 +230,9 @@ _openapi:
           info, notice, warning, err); filter applies to the Xray stream only.
           Requires an admin-scope API token on the node.
         id: tail-the-remote-panels-own-log-or-its-xray-access-log-count-is-1-10000-default-100-level-applies-to-the-panel-stream-only-debug-info-notice-warning-err-filter-applies-to-the-xray-stream-only-requires-an-admin-scope-api-token-on-the-node
-      - content: Stop the Xray core on the remote FullBoard panel. Requires an
+      - content: Stop the Xray core on the remote We1ssBoard panel. Requires an
           admin-scope API token on the node.
-        id: stop-the-xray-core-on-the-remote-fullboard-panel-requires-an-admin-scope-api-token-on-the-node
+        id: stop-the-xray-core-on-the-remote-we1ssboard-panel-requires-an-admin-scope-api-token-on-the-node
       - content: Switch the remote panel's Xray core to a release version; the node
           validates it against its own release list. Can take a minute. Requires
           an admin-scope API token on the node.

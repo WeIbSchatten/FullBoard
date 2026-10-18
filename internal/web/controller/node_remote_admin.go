@@ -5,9 +5,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tgwebproxy"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/middleware"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -135,7 +135,7 @@ func (a *NodeController) remoteBackup(c *gin.Context) {
 		return
 	}
 	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=fullboard-node-%d.db", id))
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=we1ssboard-node-%d.db", id))
 	_, _ = c.Writer.Write(data)
 }
 

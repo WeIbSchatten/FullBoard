@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/global"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/global"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 
 	"github.com/mymmrac/telego"
 )
@@ -34,7 +34,7 @@ func newLinksCallbackTgbot(t *testing.T, email string) (*Tgbot, func(string) int
 	swapTestBot(t, mock.URL)
 	t.Cleanup(mock.Close)
 
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 
 	inbound := &model.Inbound{
 		UserId:   1,

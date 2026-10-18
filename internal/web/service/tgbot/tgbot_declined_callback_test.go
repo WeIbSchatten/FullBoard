@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/global"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/global"
 
 	"github.com/mymmrac/telego"
 )

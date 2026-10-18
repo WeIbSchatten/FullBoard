@@ -1,15 +1,15 @@
 #!/sbin/openrc-run
 
-command="/usr/local/fullboard/fullboard"
+command="/usr/local/we1ssboard/we1ssboard"
 command_background=true
-pidfile="/run/fullboard.pid"
-description="FullBoard Service"
-procname="fullboard"
+pidfile="/run/we1ssboard.pid"
+description="We1ssBoard Service"
+procname="we1ssboard"
 depend() {
     need net
 }
 start_pre(){
-    cd /usr/local/fullboard
+    cd /usr/local/we1ssboard
 }
 reload() {
   ebegin "Reloading ${RC_SVCNAME}"

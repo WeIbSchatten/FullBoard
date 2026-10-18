@@ -73,7 +73,7 @@ export default function LogModal({ open, onClose }: LogModalProps) {
   const parsedLogs = useMemo(() => logs.map(parseLogLine), [logs]);
 
   function download() {
-    FileManager.downloadTextFile(logs.join('\n'), 'fullboard.log');
+    FileManager.downloadTextFile(logs.join('\n'), 'we1ssboard.log');
   }
 
   const titleNode = (

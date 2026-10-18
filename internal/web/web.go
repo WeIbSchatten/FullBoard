@@ -1,4 +1,4 @@
-// Package web provides the main web server implementation for the FullBoard panel,
+// Package web provides the main web server implementation for the We1ssBoard panel,
 // including HTTP/HTTPS serving, routing, templates, and background job scheduling.
 package web
 
@@ -17,28 +17,28 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawgnet"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/eventbus"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/mtproto"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tuic"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/cronspec"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/sys"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/controller"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/job"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/network"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/discord"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/email"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/panel"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/tgbot"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/websocket"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawgnet"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/eventbus"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/mtproto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tuic"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/cronspec"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/sys"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/controller"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/job"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/middleware"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/network"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/discord"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/email"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/panel"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/tgbot"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/websocket"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/sessions"
@@ -112,7 +112,7 @@ func EmbeddedDist() embed.FS {
 	return distFS
 }
 
-// Server represents the main web server for the FullBoard panel with controllers, services, and scheduled jobs.
+// Server represents the main web server for the We1ssBoard panel with controllers, services, and scheduled jobs.
 type Server struct {
 	httpServer *http.Server
 	listener   net.Listener
@@ -215,7 +215,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		sessionOptions.MaxAge = sessionMaxAge * 60 // minutes -> seconds
 	}
 	store.Options(sessionOptions)
-	engine.Use(sessions.Sessions("FullBoard", store))
+	engine.Use(sessions.Sessions("We1ssBoard", store))
 	engine.Use(func(c *gin.Context) {
 		c.Set("base_path", basePath)
 	})
@@ -715,7 +715,7 @@ func (s *Server) start(restartXray bool, startTgBot bool) (err error) {
 		if err := s.tgbotService.TestConnection(); err != nil {
 			return fmt.Errorf("telegram API test failed: %w", err)
 		}
-		s.tgbotService.SendMsgToTgbotAdmins("✅ Test message from FullBoard")
+		s.tgbotService.SendMsgToTgbotAdmins("✅ Test message from We1ssBoard")
 		return nil
 	})
 

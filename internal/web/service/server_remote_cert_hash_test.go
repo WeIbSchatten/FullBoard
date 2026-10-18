@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/netsafe"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/netsafe"
 )
 
 func TestGetRemoteCertHashGuardsPrivateTargets(t *testing.T) {

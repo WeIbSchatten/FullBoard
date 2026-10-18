@@ -8,9 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 const (
@@ -56,7 +56,7 @@ func customCssHeadInjection(basePath, page string) []byte {
 		return nil
 	}
 	href := normalizeWebBasePath(basePath) + relPath + "?v=" + cssVersion(css)
-	return []byte(`<link rel="stylesheet" id="fullboard-custom-css" href="` + htmlpkg.EscapeString(href) + `">`)
+	return []byte(`<link rel="stylesheet" id="we1ssboard-custom-css" href="` + htmlpkg.EscapeString(href) + `">`)
 }
 
 func serveCustomCss(c *gin.Context, page string) {

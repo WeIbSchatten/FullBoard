@@ -3681,7 +3681,7 @@ export const SCHEMAS: Record<string, unknown> = {
     "type": "object"
   },
   "Node": {
-    "description": "Node represents a remote FullBoard panel registered with the central panel.\nThe central panel polls each node's existing /panel/api/server/status\nendpoint over HTTP using the per-node ApiToken to populate the runtime\nstatus fields below.",
+    "description": "Node represents a remote We1ssBoard panel registered with the central panel.\nThe central panel polls each node's existing /panel/api/server/status\nendpoint over HTTP using the per-node ApiToken to populate the runtime\nstatus fields below.",
     "properties": {
       "activeCount": {
         "example": 23,
@@ -4810,7 +4810,7 @@ export const SCHEMAS: Record<string, unknown> = {
         "type": "string"
       },
       "unit": {
-        "example": "fullboard-tproxy-install-1760000000",
+        "example": "we1ssboard-tproxy-install-1760000000",
         "type": "string"
       }
     },
@@ -4966,7 +4966,7 @@ export const SCHEMAS: Record<string, unknown> = {
         "type": "array"
       },
       "unit": {
-        "example": "fullboard-mtproxy-40123",
+        "example": "we1ssboard-mtproxy-40123",
         "type": "string"
       }
     },
@@ -5520,7 +5520,7 @@ export const SCHEMAS: Record<string, unknown> = {
     "type": "object"
   },
   "Setting": {
-    "description": "Setting stores key-value configuration settings for the FullBoard panel.",
+    "description": "Setting stores key-value configuration settings for the We1ssBoard panel.",
     "properties": {
       "id": {
         "type": "integer"
@@ -5856,7 +5856,7 @@ export const SCHEMAS: Record<string, unknown> = {
     "type": "object"
   },
   "User": {
-    "description": "User represents a user account in the FullBoard panel.",
+    "description": "User represents a user account in the We1ssBoard panel.",
     "properties": {
       "id": {
         "type": "integer"

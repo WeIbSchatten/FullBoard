@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // TgWebProxyBackendsJob keeps every relay profile served by an MTProxy.

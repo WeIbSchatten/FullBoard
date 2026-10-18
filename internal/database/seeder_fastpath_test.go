@@ -4,11 +4,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 func TestFreshInstallFastPathMarksResetIpLimitSeeder(t *testing.T) {
-	if err := InitDB(filepath.Join(t.TempDir(), "fullboard.db")); err != nil {
+	if err := InitDB(filepath.Join(t.TempDir(), "we1ssboard.db")); err != nil {
 		t.Fatalf("InitDB: %v", err)
 	}
 	t.Cleanup(func() { _ = CloseDB() })

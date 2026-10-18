@@ -344,7 +344,7 @@ func TestErrors(t *testing.T) {
 		},
 		{
 			name: "non dat extension",
-			call: func() error { _, err := store.Categories("fullboard.db", "", 0, 10); return err },
+			call: func() error { _, err := store.Categories("we1ssboard.db", "", 0, 10); return err },
 			want: ErrInvalidName,
 		},
 		{

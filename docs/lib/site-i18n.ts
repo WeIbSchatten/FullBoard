@@ -6,7 +6,7 @@ import type { Locale } from './i18n';
 // can't live in MDX. English is the source; ru falls back to en.
 //
 // Convention matches the docs: translate prose only — product/protocol names
-// (FullBoard, Xray, VLESS, REALITY, x25519, Docker, REST API, …) stay in Latin.
+// (We1ssBoard, Xray, VLESS, REALITY, x25519, Docker, REST API, …) stay in Latin.
 export interface SiteMessages {
   tagline: string;
   getStarted: string;

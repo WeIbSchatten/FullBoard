@@ -3,7 +3,7 @@ package middleware
 import (
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // The inbound add/update handlers validate the body with this validator, so a protocol

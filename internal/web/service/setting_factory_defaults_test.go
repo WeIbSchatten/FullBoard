@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/reflect_util"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/entity"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/reflect_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/entity"
 )
 
 func allSettingJSONTags(t *testing.T) map[string]bool {

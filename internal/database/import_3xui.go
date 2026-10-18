@@ -12,9 +12,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/crypto"
 )
 
 // Import3xUIResult is what Import3xUI carried over and verified.
@@ -39,7 +39,7 @@ type ImportedFileRef struct {
 // 3x-ui tables whose rows must survive the import unchanged.
 var import3xUITables = []string{"users", "inbounds", "client_traffics", "settings", "inbound_client_ips", "outbound_traffics", "clients", "client_inbounds", "history_of_seeders"}
 
-// Settings FullBoard migrations delete (LegacyProxySettingsCleanup) or rewrite
+// Settings We1ssBoard migrations delete (LegacyProxySettingsCleanup) or rewrite
 // in place (outbound/DNS/freedom fixes on the Xray template).
 var (
 	import3xUIDroppedSettings   = map[string]bool{"panelProxy": true, "tgBotProxy": true}
@@ -50,13 +50,13 @@ type importExpectations struct {
 	ipLimitsReset bool
 }
 
-// Columns FullBoard's own migrations legitimately rewrite on first open; the
+// Columns We1ssBoard's own migrations legitimately rewrite on first open; the
 // clients they hold are verified separately through the clients table.
 var import3xUIRewrittenColumns = map[string]map[string]bool{
 	"inbounds": {"settings": true, "stream_settings": true, "sniffing": true},
 }
 
-// Import3xUI builds a FullBoard SQLite database at dstPath from a 3x-ui x-ui.db
+// Import3xUI builds a We1ssBoard SQLite database at dstPath from a 3x-ui x-ui.db
 // without touching srcPath, and fails unless every source row survives the migration.
 func Import3xUI(srcPath, dstPath string) (*Import3xUIResult, error) {
 	if config.GetDBKind() == "postgres" {
@@ -203,7 +203,7 @@ func readImportTable(conn *sql.DB, table string) (importTable, error) {
 	return t, rows.Err()
 }
 
-// importRowKey keys settings by name: FullBoard may rewrite a row's id, never its key.
+// importRowKey keys settings by name: We1ssBoard may rewrite a row's id, never its key.
 func importRowKey(table string, row map[string]string) string {
 	if table == "settings" {
 		return row["key"]
@@ -458,7 +458,7 @@ func verifyImportedClients(srcClients map[string]*import3xUIClient, expect impor
 				problems = append(problems, fmt.Sprintf("client %s: %s is not any value 3x-ui had", email, f.name))
 			}
 			if len(set) > 1 {
-				warnings = append(warnings, fmt.Sprintf("client %s: inbounds %s carry different %s; FullBoard keeps one for all of them",
+				warnings = append(warnings, fmt.Sprintf("client %s: inbounds %s carry different %s; We1ssBoard keeps one for all of them",
 					email, joinInts(want.InboundIDs), f.name))
 			}
 		}
