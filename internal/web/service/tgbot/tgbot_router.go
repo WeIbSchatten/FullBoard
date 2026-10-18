@@ -293,6 +293,16 @@ func (t *Tgbot) answerCommand(message *telego.Message, chatId int64, isAdmin boo
 		} else {
 			handleUnknownCommand()
 		}
+	case "nodes", "webproxy":
+		onlyMessage = true
+		switch {
+		case !isAdmin:
+			handleUnknownCommand()
+		case command == "nodes":
+			msg += t.nodesReport()
+		default:
+			msg += t.webProxyReport()
+		}
 	case "clearall":
 		onlyMessage = true
 		if isAdmin {
@@ -1080,6 +1090,12 @@ func (t *Tgbot) answerCallback(callbackQuery *telego.CallbackQuery, isAdmin bool
 	case "onlines_refresh":
 		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.answers.successfulOperation"))
 		t.onlineClients(chatId, callbackQuery.Message.GetMessageID())
+	case "nodes":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.nodes"))
+		t.SendMsgToTgbot(chatId, t.nodesReport())
+	case "webproxy":
+		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.webProxy"))
+		t.SendMsgToTgbot(chatId, t.webProxyReport())
 	case "commands":
 		t.sendCallbackAnswerTgBot(callbackQuery.ID, t.I18nBot("tgbot.buttons.commands"))
 		t.SendMsgToTgbot(chatId, t.I18nBot("tgbot.commands.helpAdminCommands"))

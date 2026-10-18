@@ -2806,7 +2806,7 @@
       "status": "✅ Bot está OK!",
       "usage": "❗ Por favor, forneça um texto para pesquisar!",
       "getID": "🆔 Seu ID: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "Para reiniciar o Xray Core:\r\n<code>/restart</code>\r\n\r\nPara pesquisar por um email de cliente:\r\n<code>/usage [Email]</code>\r\n\r\nPara pesquisar por inbounds (com estatísticas do cliente):\r\n<code>/inbound [Remark]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>",
+      "helpAdminCommands": "Para reiniciar o Xray Core:\r\n<code>/restart</code>\r\n\r\nPara pesquisar por um email de cliente:\r\n<code>/usage [Email]</code>\r\n\r\nPara pesquisar por inbounds (com estatísticas do cliente):\r\n<code>/inbound [Remark]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>\r\n\r\nStatus dos nós (admin):\r\n<code>/nodes</code>\r\n\r\nStatus do Telegram WEB Proxy (admin):\r\n<code>/webproxy</code>",
       "helpClientCommands": "Para pesquisar por estatísticas, use o seguinte comando:\r\n\r\n<code>/usage [Email]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ Operação bem-sucedida!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "Buscar entradas: /inbound nome (admin)",
       "restartDesc": "Reiniciar o núcleo Xray (admin)",
       "broadcastDesc": "Enviar uma mensagem para todos os clientes (admin)",
-      "clearallDesc": "Zerar o tráfego de todos os clientes (admin)"
+      "clearallDesc": "Zerar o tráfego de todos os clientes (admin)",
+      "nodesDesc": "Status dos nós (admin)",
+      "webproxyDesc": "Status do Telegram WEB Proxy (admin)"
     },
     "messages": {
       "cpuThreshold": "A carga da CPU {{ .Percent }}% excede o limite de {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "O nó {{ .Name }} está INATIVO",
       "eventNodeUp": "O nó {{ .Name }} está ATIVO",
       "eventLoginFallback": "Falha de login a partir de {{ .Source }}",
-      "memoryThreshold": "Uso de memória {{ .Percent }}% excede o limite de {{ .Threshold }}%"
+      "memoryThreshold": "Uso de memória {{ .Percent }}% excede o limite de {{ .Threshold }}%",
+      "noNodes": "🖥 Nenhum nó está conectado a este painel.",
+      "nodeDisabled": "desativado",
+      "nodeOffline": "offline",
+      "nodeLastSeen": "visto por último {{ .Time }}",
+      "nodesTitle": "🖥 <b>Nós</b>: {{ .Online }}/{{ .Total }} online",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "Indisponível neste servidor.",
+      "webProxyNotInstalled": "Não instalado ou ainda não configurado. Configure no painel: Conexões → TG Web Proxy.",
+      "webProxyHost": "Host: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}, clientes: {{ .Clients }}",
+      "webProxySyncError": "❗ A última sincronização de vínculos falhou: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ Fechar teclado",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 Email",
       "change_comment": "⚙️💬 Comentário",
       "ResetAllTraffics": "Redefinir Todo o Tráfego",
-      "SortedTrafficUsageReport": "Relatório de Uso de Tráfego Ordenado"
+      "SortedTrafficUsageReport": "Relatório de Uso de Tráfego Ordenado",
+      "nodes": "🖥 Nós",
+      "webProxy": "📡 Web proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 Transmissão iniciada.",

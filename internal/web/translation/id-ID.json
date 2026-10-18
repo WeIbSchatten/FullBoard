@@ -2806,7 +2806,7 @@
       "status": "✅ Bot dalam keadaan baik!",
       "usage": "❗ Harap berikan teks untuk mencari!",
       "getID": "🆔 ID Anda: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "Untuk memulai ulang Xray Core:\r\n<code>/restart</code>\r\n\r\nUntuk mencari email klien:\r\n<code>/usage [Email]</code>\r\n\r\nUntuk mencari inbound (dengan statistik klien):\r\n<code>/inbound [Catatan]</code>\r\n\r\nID Obrolan Telegram:\r\n<code>/id</code>",
+      "helpAdminCommands": "Untuk memulai ulang Xray Core:\r\n<code>/restart</code>\r\n\r\nUntuk mencari email klien:\r\n<code>/usage [Email]</code>\r\n\r\nUntuk mencari inbound (dengan statistik klien):\r\n<code>/inbound [Catatan]</code>\r\n\r\nID Obrolan Telegram:\r\n<code>/id</code>\r\n\r\nStatus node (admin):\r\n<code>/nodes</code>\r\n\r\nStatus Telegram WEB Proxy (admin):\r\n<code>/webproxy</code>",
       "helpClientCommands": "Untuk mencari statistik, gunakan perintah berikut:\r\n<code>/usage [Email]</code>\r\n\r\nID Obrolan Telegram:\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ Operasi berhasil!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "Cari inbound: /inbound nama (admin)",
       "restartDesc": "Mulai ulang inti Xray (admin)",
       "broadcastDesc": "Kirim pesan ke semua klien (admin)",
-      "clearallDesc": "Reset trafik semua klien (admin)"
+      "clearallDesc": "Reset trafik semua klien (admin)",
+      "nodesDesc": "Status node (admin)",
+      "webproxyDesc": "Status Telegram WEB Proxy (admin)"
     },
     "messages": {
       "cpuThreshold": "Beban CPU {{ .Percent }}% melebihi batas {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "Node {{ .Name }} MATI",
       "eventNodeUp": "Node {{ .Name }} AKTIF",
       "eventLoginFallback": "Gagal masuk dari {{ .Source }}",
-      "memoryThreshold": "Penggunaan memori {{ .Percent }}% melebihi ambang batas {{ .Threshold }}%"
+      "memoryThreshold": "Penggunaan memori {{ .Percent }}% melebihi ambang batas {{ .Threshold }}%",
+      "noNodes": "🖥 Belum ada node yang terhubung ke panel ini.",
+      "nodeDisabled": "nonaktif",
+      "nodeOffline": "offline",
+      "nodeLastSeen": "terakhir terlihat {{ .Time }}",
+      "nodesTitle": "🖥 <b>Node</b>: {{ .Online }}/{{ .Total }} online",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "Tidak tersedia di server ini.",
+      "webProxyNotInstalled": "Belum terpasang atau belum dikonfigurasi. Atur di panel: Koneksi → TG Web Proxy.",
+      "webProxyHost": "Host: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}, klien: {{ .Clients }}",
+      "webProxySyncError": "❗ Sinkronisasi pengikatan terakhir gagal: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ Tutup Papan Ketik",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 Email",
       "change_comment": "⚙️💬 Komentar",
       "ResetAllTraffics": "Reset Semua Lalu Lintas",
-      "SortedTrafficUsageReport": "Laporan Penggunaan Lalu Lintas yang Terurut"
+      "SortedTrafficUsageReport": "Laporan Penggunaan Lalu Lintas yang Terurut",
+      "nodes": "🖥 Node",
+      "webProxy": "📡 Web proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 Siaran dimulai.",
