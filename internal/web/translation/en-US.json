@@ -1369,7 +1369,11 @@
         "secret": "Secret",
         "link": "Link",
         "showSecret": "Show secret",
-        "hideSecret": "Hide secret"
+        "hideSecret": "Hide secret",
+        "addToSubs": "Add to subscriptions",
+        "addToSubsTitle": "Add \"{name}\" to client subscriptions",
+        "addToSubsHint": "Each selected client gets this profile's https://t.me/webproxy link in its raw subscription. A client already bound elsewhere is moved to this profile.",
+        "selectClients": "Select clients"
       },
       "egress": {
         "button": "Check egress IP",
@@ -1548,7 +1552,7 @@
         "stopXrayConfirm": "Stop Xray on this node? Its clients lose connectivity until Xray is started again.",
         "importBackupConfirm": "Restore the node's database from {name}? This replaces all of the node's data.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "Web-proxy profiles on this node. Create, edit and delete them here, and use \"Add to subscriptions\" to give clients of this panel a link through this node."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",

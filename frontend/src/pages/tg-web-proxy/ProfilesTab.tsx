@@ -9,6 +9,7 @@ import {
   NodeIndexOutlined,
   PlusOutlined,
   ShareAltOutlined,
+  UserAddOutlined,
 } from '@ant-design/icons';
 
 import type {
@@ -21,6 +22,7 @@ import { fetchShare, useTgWebProxyMutations } from '@/api/queries/useTgWebProxy'
 import type { Msg } from '@/utils';
 import { getMessage } from '@/utils/messageBus';
 import { isManagedProfile } from '@/lib/tgWebProxy';
+import BindClientsModal from './BindClientsModal';
 import ClientBindingsCard from './ClientBindingsCard';
 import ProfileEgressCheck from './ProfileEgressCheck';
 import ProfileFormModal from './ProfileFormModal';
@@ -68,6 +70,7 @@ export default function ProfilesTab({
   const [editing, setEditing] = useState<RelayProfile | null>(null);
   const [share, setShare] = useState<RelayShareInfo | null>(null);
   const [routeProfile, setRouteProfile] = useState<RelayProfile | null>(null);
+  const [bindProfile, setBindProfile] = useState<string | null>(null);
   const [revealSecrets, setRevealSecrets] = useState<Record<string, boolean>>({});
   const profiles = snapshot?.profiles ?? [];
 
@@ -161,6 +164,14 @@ export default function ProfilesTab({
           >
             {t('pages.tgWebProxy.share.button')}
           </Button>
+          <Button
+            size="small"
+            icon={<UserAddOutlined />}
+            disabled={isManagedProfile(p.name)}
+            onClick={() => setBindProfile(p.name)}
+          >
+            {t('pages.tgWebProxy.bindings.addToSubs')}
+          </Button>
           <ProfileEgressCheck profile={p} />
           <Button
             size="small"
@@ -245,6 +256,14 @@ export default function ProfilesTab({
           onSave={onSave}
         />
         <ShareModal share={share} onClose={() => setShare(null)} />
+        {bindProfile != null && (
+          <BindClientsModal
+            key={bindProfile}
+            open
+            profileName={bindProfile}
+            onClose={() => setBindProfile(null)}
+          />
+        )}
         <RouteViaOutboundModal
           profile={routeProfile}
           open={!!routeProfile}

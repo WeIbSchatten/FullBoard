@@ -1496,6 +1496,15 @@ export const EXAMPLES: Record<string, unknown> = {
     "strategy": "random",
     "updatedAt": 1710000000000
   },
+  "TgWebProxyBindManyRequest": {
+    "dedicated": true,
+    "emails": [
+      "alice",
+      "bob"
+    ],
+    "nodeId": 2,
+    "profileName": "default"
+  },
   "TgWebProxyBindRequest": {
     "dedicated": false,
     "email": "alice",

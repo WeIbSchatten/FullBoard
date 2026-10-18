@@ -5611,6 +5611,40 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "TgWebProxyBindManyRequest": {
+    "description": "TgWebProxyBindManyRequest adds one relay profile to several clients' subscriptions at once.",
+    "properties": {
+      "dedicated": {
+        "example": true,
+        "type": "boolean"
+      },
+      "emails": {
+        "example": [
+          "alice",
+          "bob"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "nodeId": {
+        "example": 2,
+        "nullable": true,
+        "type": "integer"
+      },
+      "profileName": {
+        "example": "default",
+        "type": "string"
+      }
+    },
+    "required": [
+      "dedicated",
+      "emails",
+      "profileName"
+    ],
+    "type": "object"
+  },
   "TgWebProxyBindRequest": {
     "properties": {
       "dedicated": {

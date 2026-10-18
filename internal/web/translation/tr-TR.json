@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "Bu düğümde Xray durdurulsun mu? Xray yeniden başlatılana kadar istemcileri bağlantısız kalır.",
         "importBackupConfirm": "Düğümün veritabanı {name} dosyasından geri yüklensin mi? Bu işlem düğümün tüm verilerinin yerine geçer.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "Bu düğümdeki web-proxy profilleri. Burada oluşturun, düzenleyin ve silin; \"Aboneliklere ekle\" ile bu panelin istemcilerine düğüm üzerinden bağlantı verin."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "Gizli anahtar",
         "link": "Bağlantı",
         "showSecret": "Gizli anahtarı göster",
-        "hideSecret": "Gizli anahtarı gizle"
+        "hideSecret": "Gizli anahtarı gizle",
+        "addToSubs": "Aboneliklere ekle",
+        "addToSubsTitle": "\"{name}\" profilini istemci aboneliklerine ekle",
+        "addToSubsHint": "Seçilen her istemci bu profilin https://t.me/webproxy bağlantısını aboneliğinde alır. Başka profile bağlı istemci bu profile taşınır.",
+        "selectClients": "İstemcileri seçin"
       },
       "egress": {
         "button": "Çıkış IP'sini kontrol et",

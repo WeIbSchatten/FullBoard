@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "Xray روی این نود متوقف شود؟ تا زمانی که Xray دوباره اجرا نشود، کلاینت‌های آن ارتباطشان قطع می‌ماند.",
         "importBackupConfirm": "پایگاه داده نود از فایل زیر بازیابی شود؟\n{name}\nاین کار همه داده‌های نود را جایگزین می‌کند.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "پروفایل‌های web-proxy این نود. اینجا بسازید، ویرایش و حذف کنید و با «افزودن به اشتراک‌ها» به کاربران این پنل لینکی از طریق نود بدهید."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "سکرت",
         "link": "لینک",
         "showSecret": "نمایش سکرت",
-        "hideSecret": "مخفی کردن سکرت"
+        "hideSecret": "مخفی کردن سکرت",
+        "addToSubs": "افزودن به اشتراک‌ها",
+        "addToSubsTitle": "افزودن «{name}» به اشتراک کاربران",
+        "addToSubsHint": "هر کاربر انتخاب‌شده لینک https://t.me/webproxy این پروفایل را در اشتراک خود می‌گیرد. کاربری که به پروفایل دیگری متصل است به این پروفایل منتقل می‌شود.",
+        "selectClients": "کاربران را انتخاب کنید"
       },
       "egress": {
         "button": "بررسی IP خروجی",

@@ -384,12 +384,27 @@ func (s *NodeService) AddRemoteTgWebProxyProfile(id int, profile tgwebproxy.Rela
 }
 
 func (s *NodeService) UpdateRemoteTgWebProxyProfile(id int, name string, profile tgwebproxy.RelayProfile) (json.RawMessage, error) {
-	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
+	if strings.TrimSpace(profile.Name) != name {
+		if err := ensureTgWebProxyProfileUnbound(&id, name); err != nil {
+			return nil, err
+		}
+	}
+	res, err := withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
 		return r.UpdateTgWebProxyProfile(ctx, name, profile)
 	})
+	if err != nil {
+		return res, err
+	}
+	if cloned, derr := dedicatedBindingsUse(&id, name); derr == nil && cloned {
+		scheduleTgWebProxySync()
+	}
+	return res, nil
 }
 
 func (s *NodeService) DeleteRemoteTgWebProxyProfile(id int, name string) (json.RawMessage, error) {
+	if err := ensureTgWebProxyProfileUnbound(&id, name); err != nil {
+		return nil, err
+	}
 	return withRemoteControl(s, id, func(ctx context.Context, r *runtime.Remote) (json.RawMessage, error) {
 		return r.DeleteTgWebProxyProfile(ctx, name)
 	})

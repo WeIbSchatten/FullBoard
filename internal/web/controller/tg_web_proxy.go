@@ -49,6 +49,7 @@ func (a *TgWebProxyController) initRouter(g *gin.RouterGroup) {
 	g.POST("/publicSite/del/:name", a.deletePublicSiteAsset)
 	g.GET("/bindings", a.listBindings)
 	g.POST("/bindings/bind", a.bindClient)
+	g.POST("/bindings/bindMany", a.bindClients)
 	g.POST("/bindings/unbind", a.unbindClient)
 	g.POST("/syncDedicated", a.syncDedicated)
 }
@@ -78,6 +79,15 @@ func (a *TgWebProxyController) bindClient(c *gin.Context) {
 	}
 	binding, err := a.svc.BindClient(*req)
 	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), binding, err)
+}
+
+func (a *TgWebProxyController) bindClients(c *gin.Context) {
+	req, ok := middleware.BindJSONAndValidate[service.TgWebProxyBindManyRequest](c)
+	if !ok {
+		return
+	}
+	bindings, err := a.svc.BindClients(*req)
+	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), bindings, err)
 }
 
 func (a *TgWebProxyController) unbindClient(c *gin.Context) {

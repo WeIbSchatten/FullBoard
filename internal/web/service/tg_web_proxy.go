@@ -79,7 +79,7 @@ func (s *TgWebProxyService) AddProfile(ctx context.Context, p tgwebproxy.RelayPr
 
 func (s *TgWebProxyService) UpdateProfile(ctx context.Context, name string, p tgwebproxy.RelayProfile) (tgwebproxy.RelayApplyResult, error) {
 	if strings.TrimSpace(p.Name) != name {
-		if err := ensureTgWebProxyProfileUnbound(name); err != nil {
+		if err := ensureTgWebProxyProfileUnbound(nil, name); err != nil {
 			return tgwebproxy.RelayApplyResult{}, err
 		}
 	}
@@ -87,14 +87,14 @@ func (s *TgWebProxyService) UpdateProfile(ctx context.Context, name string, p tg
 	if err != nil {
 		return res, err
 	}
-	if cloned, derr := dedicatedBindingsUse(name); derr == nil && cloned {
+	if cloned, derr := dedicatedBindingsUse(nil, name); derr == nil && cloned {
 		scheduleTgWebProxySync()
 	}
 	return res, nil
 }
 
 func (s *TgWebProxyService) DeleteProfile(ctx context.Context, name string) (tgwebproxy.RelayApplyResult, error) {
-	if err := ensureTgWebProxyProfileUnbound(name); err != nil {
+	if err := ensureTgWebProxyProfileUnbound(nil, name); err != nil {
 		return tgwebproxy.RelayApplyResult{}, err
 	}
 	return tgWebProxy().DeleteProfile(ctx, name)
