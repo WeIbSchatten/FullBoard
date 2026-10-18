@@ -562,6 +562,27 @@ func migrateDb() {
 	fmt.Println("Migration done!")
 }
 
+func import3xUI(src, dst string) error {
+	logger.InitLogger(logging.WARNING)
+	res, err := database.Import3xUI(src, dst)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Imported %s -> %s\n", src, dst)
+	fmt.Printf("  inbounds: %d, clients: %d, settings: %d (all verified)\n", res.Inbounds, res.Clients, res.Settings)
+	if res.IPLimitsReset > 0 {
+		fmt.Printf("  WARNING: fail2ban is not active, so IP limits of %d clients were reset to 0 (as a 3x-ui upgrade would)\n", res.IPLimitsReset)
+	}
+	for _, f := range res.CertFiles {
+		if f.Exists {
+			fmt.Printf("  certificate file: %s\n", f.Path)
+		} else {
+			fmt.Printf("  WARNING: certificate file is missing: %s\n", f.Path)
+		}
+	}
+	return nil
+}
+
 // loadServiceEnvFile loads the systemd EnvironmentFile so CLI subcommands like
 // "fullboard setting" hit the same database backend as the panel. godotenv.Load does
 // not override variables already in the environment, so it is a no-op for the
@@ -592,6 +613,12 @@ func main() {
 	flag.BoolVar(&showVersion, "v", false, "show version")
 
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
+
+	import3xUICmd := flag.NewFlagSet("import-3xui", flag.ExitOnError)
+	var import3xUISrc string
+	var import3xUIDst string
+	import3xUICmd.StringVar(&import3xUISrc, "src", "/etc/x-ui/x-ui.db", "3x-ui SQLite database to import (read-only, never modified)")
+	import3xUICmd.StringVar(&import3xUIDst, "dst", "", "FullBoard SQLite file to create (defaults to the configured fullboard.db; must not exist)")
 
 	migrateDbCmd := flag.NewFlagSet("migrate-db", flag.ExitOnError)
 	var migrateDsn string
@@ -669,6 +696,19 @@ func main() {
 		migrateDb()
 	case "encrypt-tokens":
 		encryptNodeTokens()
+	case "import-3xui":
+		if err := import3xUICmd.Parse(os.Args[2:]); err != nil {
+			fmt.Println(err)
+			return
+		}
+		dst := import3xUIDst
+		if dst == "" {
+			dst = config.GetDBPath()
+		}
+		if err := import3xUI(import3xUISrc, dst); err != nil {
+			fmt.Println("3x-ui import failed:", err)
+			os.Exit(1)
+		}
 	case "migrate-db":
 		if err := migrateDbCmd.Parse(os.Args[2:]); err != nil {
 			fmt.Println(err)
@@ -770,6 +810,7 @@ Commands:
     run            run web panel
     migrate        migrate from other/old fullboard
     migrate-db     SQLite <-> .dump (--dump/--restore) or copy into PostgreSQL (--dsn)
+    import-3xui    build fullboard.db from a 3x-ui x-ui.db and verify nothing was lost
     encrypt-tokens encrypt node bearer tokens with the configured active key
     setting        set settings
 `
