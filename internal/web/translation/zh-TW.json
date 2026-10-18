@@ -2806,7 +2806,7 @@
       "status": "✅ 機器人正常執行！",
       "usage": "❗ 請輸入要搜尋的文字！",
       "getID": "🆔 您的 ID 為：<code>{{ .ID }}</code>",
-      "helpAdminCommands": "要重新啟動 Xray Core：\r\n<code>/restart</code>\r\n\r\n要搜尋客戶電子郵件：\r\n<code>/usage [電子郵件]</code>\r\n\r\n要搜尋入站（帶有客戶統計資料）：\r\n<code>/inbound [備註]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>",
+      "helpAdminCommands": "要重新啟動 Xray Core：\r\n<code>/restart</code>\r\n\r\n要搜尋客戶電子郵件：\r\n<code>/usage [電子郵件]</code>\r\n\r\n要搜尋入站（帶有客戶統計資料）：\r\n<code>/inbound [備註]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>\r\n\r\n節點狀態（管理員）:\r\n<code>/nodes</code>\r\n\r\nTelegram WEB Proxy 狀態（管理員）:\r\n<code>/webproxy</code>",
       "helpClientCommands": "要搜尋統計資料，請使用以下命令：\r\n<code>/usage [電子郵件]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ 操作成功!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "搜尋入站：/inbound 備註（管理員）",
       "restartDesc": "重啟 Xray 核心（管理員）",
       "broadcastDesc": "向所有客戶端群發訊息（管理員）",
-      "clearallDesc": "重置所有客戶端流量（管理員）"
+      "clearallDesc": "重置所有客戶端流量（管理員）",
+      "nodesDesc": "節點狀態（管理員）",
+      "webproxyDesc": "Telegram WEB Proxy 狀態（管理員）"
     },
     "messages": {
       "cpuThreshold": "CPU 使用率為 {{ .Percent }}%，超過閾值 {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "節點 {{ .Name }} 已離線",
       "eventNodeUp": "節點 {{ .Name }} 已上線",
       "eventLoginFallback": "來自 {{ .Source }} 的登入失敗",
-      "memoryThreshold": "記憶體使用率 {{ .Percent }}% 超過閾值 {{ .Threshold }}%"
+      "memoryThreshold": "記憶體使用率 {{ .Percent }}% 超過閾值 {{ .Threshold }}%",
+      "noNodes": "🖥 此面板尚未連接任何節點。",
+      "nodeDisabled": "已停用",
+      "nodeOffline": "離線",
+      "nodeLastSeen": "最後上線 {{ .Time }}",
+      "nodesTitle": "🖥 <b>節點</b>：{{ .Online }}/{{ .Total }} 上線",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "此伺服器無法使用。",
+      "webProxyNotInstalled": "尚未安裝或設定。請在面板中設定：連線 → TG Web Proxy。",
+      "webProxyHost": "主機：<code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}，客戶端：{{ .Clients }}",
+      "webProxySyncError": "❗ 上次綁定同步失敗：<code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ 關閉鍵盤",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 電子郵件",
       "change_comment": "⚙️💬 評論",
       "ResetAllTraffics": "重設所有流量",
-      "SortedTrafficUsageReport": "排序過的流量使用報告"
+      "SortedTrafficUsageReport": "排序過的流量使用報告",
+      "nodes": "🖥 節點",
+      "webProxy": "📡 Web 代理"
     },
     "answers": {
       "broadcastStarted": "🚀 群發已開始。",

@@ -476,3 +476,22 @@ func deleteClientTgWebProxyBindings(tx *gorm.DB, clientIDs []int) (int64, error)
 	res := tx.Where("client_id IN ?", clientIDs).Delete(&model.ClientTgWebProxy{})
 	return res.RowsAffected, res.Error
 }
+
+// LocalBindingCounts counts clients per profile of this panel's own relay.
+func (s *TgWebProxyService) LocalBindingCounts() (map[string]int, error) {
+	var rows []struct {
+		ProfileName string
+		N           int
+	}
+	err := bindingsOnRelay(nil).Select("profile_name, count(*) AS n").Group("profile_name").Scan(&rows).Error
+	out := make(map[string]int, len(rows))
+	for _, r := range rows {
+		out[r.ProfileName] = r.N
+	}
+	return out, err
+}
+
+// SyncError is the last background binding sync failure, "" after a success.
+func (s *TgWebProxyService) SyncError() string {
+	return lastTgWebProxySyncError()
+}

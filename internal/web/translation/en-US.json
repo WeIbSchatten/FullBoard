@@ -2806,7 +2806,7 @@
       "status": "✅ Bot is OK!",
       "usage": "❗ Please provide a text to search!",
       "getID": "🆔 Your ID: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "To restart Xray Core:\r\n<code>/restart</code>\r\n\r\nTo search for a client email:\r\n<code>/usage [Email]</code>\r\n\r\nTo search for inbounds (with client stats):\r\n<code>/inbound [Remark]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>",
+      "helpAdminCommands": "To restart Xray Core:\r\n<code>/restart</code>\r\n\r\nTo search for a client email:\r\n<code>/usage [Email]</code>\r\n\r\nTo search for inbounds (with client stats):\r\n<code>/inbound [Remark]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>\r\n\r\nNode status (admin):\r\n<code>/nodes</code>\r\n\r\nTelegram WEB Proxy status (admin):\r\n<code>/webproxy</code>",
       "helpClientCommands": "To search for statistics, use the following command:\r\n\r\n<code>/usage [Email]</code>\r\n\r\nTelegram Chat ID:\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ Operation successful!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "Search inbounds: /inbound remark (admin)",
       "restartDesc": "Restart Xray core (admin)",
       "broadcastDesc": "Broadcast a message to all clients (admin)",
-      "clearallDesc": "Reset all clients' traffic (admin)"
+      "clearallDesc": "Reset all clients' traffic (admin)",
+      "nodesDesc": "Node status (admin)",
+      "webproxyDesc": "Telegram WEB Proxy status (admin)"
     },
     "messages": {
       "cpuThreshold": "CPU Load {{ .Percent }}% exceeds the threshold of {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "Node {{ .Name }} is DOWN",
       "eventNodeUp": "Node {{ .Name }} is UP",
       "eventLoginFallback": "Login failed from {{ .Source }}",
-      "memoryThreshold": "Memory Load {{ .Percent }}% exceeds the threshold of {{ .Threshold }}%"
+      "memoryThreshold": "Memory Load {{ .Percent }}% exceeds the threshold of {{ .Threshold }}%",
+      "noNodes": "🖥 No nodes are connected to this panel.",
+      "nodeDisabled": "disabled",
+      "nodeOffline": "offline",
+      "nodeLastSeen": "last seen {{ .Time }}",
+      "nodesTitle": "🖥 <b>Nodes</b>: {{ .Online }}/{{ .Total }} online",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "Not available on this server.",
+      "webProxyNotInstalled": "Not installed or not configured yet. Set it up in the panel: Connections → TG Web Proxy.",
+      "webProxyHost": "Host: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}, clients: {{ .Clients }}",
+      "webProxySyncError": "❗ Last binding sync failed: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ Close Keyboard",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 Email",
       "change_comment": "⚙️💬 Comment",
       "ResetAllTraffics": "Reset All Traffic",
-      "SortedTrafficUsageReport": "Sorted Traffic Usage Report"
+      "SortedTrafficUsageReport": "Sorted Traffic Usage Report",
+      "nodes": "🖥 Nodes",
+      "webProxy": "📡 Web proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 Broadcast started.",

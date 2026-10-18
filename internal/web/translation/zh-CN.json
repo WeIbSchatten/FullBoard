@@ -2806,7 +2806,7 @@
       "status": "✅ 机器人正常运行！",
       "usage": "❗ 请输入要搜索的文本！",
       "getID": "🆔 您的 ID 为：<code>{{ .ID }}</code>",
-      "helpAdminCommands": "要重新启动 Xray Core：\r\n<code>/restart</code>\r\n\r\n要搜索客户电子邮件：\r\n<code>/usage [电子邮件]</code>\r\n\r\n要搜索入站（带有客户统计数据）：\r\n<code>/inbound [备注]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>",
+      "helpAdminCommands": "要重新启动 Xray Core：\r\n<code>/restart</code>\r\n\r\n要搜索客户电子邮件：\r\n<code>/usage [电子邮件]</code>\r\n\r\n要搜索入站（带有客户统计数据）：\r\n<code>/inbound [备注]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>\r\n\r\n节点状态（管理员）:\r\n<code>/nodes</code>\r\n\r\nTelegram WEB Proxy 状态（管理员）:\r\n<code>/webproxy</code>",
       "helpClientCommands": "要搜索统计数据，请使用以下命令：\r\n<code>/usage [电子邮件]</code>\r\n\r\nTelegram 聊天 ID：\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ 操作成功!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "搜索入站：/inbound 备注（管理员）",
       "restartDesc": "重启 Xray 内核（管理员）",
       "broadcastDesc": "向所有客户端群发消息（管理员）",
-      "clearallDesc": "重置所有客户端流量（管理员）"
+      "clearallDesc": "重置所有客户端流量（管理员）",
+      "nodesDesc": "节点状态（管理员）",
+      "webproxyDesc": "Telegram WEB Proxy 状态（管理员）"
     },
     "messages": {
       "cpuThreshold": "CPU 使用率为 {{ .Percent }}%，超过阈值 {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "节点 {{ .Name }} 已离线",
       "eventNodeUp": "节点 {{ .Name }} 已上线",
       "eventLoginFallback": "来自 {{ .Source }} 的登录失败",
-      "memoryThreshold": "内存使用率 {{ .Percent }}% 超过阈值 {{ .Threshold }}%"
+      "memoryThreshold": "内存使用率 {{ .Percent }}% 超过阈值 {{ .Threshold }}%",
+      "noNodes": "🖥 此面板尚未连接任何节点。",
+      "nodeDisabled": "已禁用",
+      "nodeOffline": "离线",
+      "nodeLastSeen": "最后在线 {{ .Time }}",
+      "nodesTitle": "🖥 <b>节点</b>：{{ .Online }}/{{ .Total }} 在线",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "此服务器不可用。",
+      "webProxyNotInstalled": "尚未安装或配置。请在面板中设置：连接 → TG Web Proxy。",
+      "webProxyHost": "主机：<code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}，客户端：{{ .Clients }}",
+      "webProxySyncError": "❗ 上次绑定同步失败：<code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ 关闭键盘",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 邮箱",
       "change_comment": "⚙️💬 评论",
       "ResetAllTraffics": "重置所有流量",
-      "SortedTrafficUsageReport": "排序的流量使用报告"
+      "SortedTrafficUsageReport": "排序的流量使用报告",
+      "nodes": "🖥 节点",
+      "webProxy": "📡 Web 代理"
     },
     "answers": {
       "broadcastStarted": "🚀 群发已开始。",
