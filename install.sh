@@ -1797,10 +1797,10 @@ install_x-ui() {
             echo -e "${yellow}Installing the rolling dev build (tag: dev-latest). This is a per-commit pre-release, not a stable version.${plain}"
         else
             tag_version_numeric=${tag_version#v}
-            min_version="2.3.5"
+            min_version="1.0.0"
 
             if [[ "$(printf '%s\n' "$min_version" "$tag_version_numeric" | sort -V | head -n1)" != "$min_version" ]]; then
-                echo -e "${red}Please use a newer version (at least v2.3.5). Exiting installation.${plain}"
+                echo -e "${red}Please use a newer version (at least v1.0.0, the first FullBoard release). Exiting installation.${plain}"
                 exit 1
             fi
         fi

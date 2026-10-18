@@ -3,6 +3,7 @@ package database
 import (
 	"bytes"
 	"database/sql"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -193,5 +194,79 @@ func TestImportChangeExpectedAcceptsOnlyRealPasswordHashing(t *testing.T) {
 				t.Fatalf("importChangeExpected = %v, want %v", got, tc.want)
 			}
 		})
+	}
+}
+
+// addFixtureClient appends a client to one inbound's settings JSON, the way
+// 3x-ui stores the same email separately in every inbound it is attached to.
+func addFixtureClient(t *testing.T, path string, inboundID int, client map[string]any) {
+	t.Helper()
+	conn, err := sql.Open("sqlite3", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+	var raw string
+	if err := conn.QueryRow("SELECT settings FROM inbounds WHERE id = ?", inboundID).Scan(&raw); err != nil {
+		t.Fatal(err)
+	}
+	var settings map[string]any
+	if err := json.Unmarshal([]byte(raw), &settings); err != nil {
+		t.Fatal(err)
+	}
+	settings["clients"] = append(settings["clients"].([]any), client)
+	out, err := json.Marshal(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.Exec("UPDATE inbounds SET settings = ? WHERE id = ?", string(out), inboundID); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// A client on a VLESS and a Trojan inbound has an id in one entry and a password
+// in the other; FullBoard merges them into one record, which is not data loss.
+func TestImport3xUIMergesClientSharedAcrossInbounds(t *testing.T) {
+	t.Setenv("XUI_ENABLE_FAIL2BAN", "false")
+	src := copyImportFixture(t, "x-ui-v2.8.11.db")
+	addFixtureClient(t, src, 1, map[string]any{"id": "44444444-4444-4444-8444-444444444444", "email": "multi", "enable": true, "subId": "submulti"})
+	addFixtureClient(t, src, 3, map[string]any{"password": "pw-multi", "email": "multi", "enable": true, "subId": "submulti"})
+	dst := filepath.Join(t.TempDir(), "fullboard.db")
+
+	res, err := Import3xUI(src, dst)
+	if err != nil {
+		t.Fatalf("Import3xUI: %v", err)
+	}
+	if len(res.Warnings) != 0 {
+		t.Fatalf("Warnings = %q, want none", res.Warnings)
+	}
+	if err := InitDB(dst); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = CloseDB() })
+	var rec model.ClientRecord
+	if err := db.Where("email = ?", "multi").First(&rec).Error; err != nil {
+		t.Fatal(err)
+	}
+	if rec.UUID != "44444444-4444-4444-8444-444444444444" || rec.Password != "pw-multi" {
+		t.Fatalf("multi = uuid %q password %q", rec.UUID, rec.Password)
+	}
+}
+
+// Two inbounds giving one email different UUIDs cannot both survive a single
+// client record, so the import must say which client loses one.
+func TestImport3xUIWarnsWhenInboundsDisagree(t *testing.T) {
+	t.Setenv("XUI_ENABLE_FAIL2BAN", "false")
+	src := copyImportFixture(t, "x-ui-v2.8.11.db")
+	addFixtureClient(t, src, 1, map[string]any{"id": "55555555-5555-4555-8555-555555555555", "email": "split", "enable": true})
+	addFixtureClient(t, src, 2, map[string]any{"id": "66666666-6666-4666-8666-666666666666", "email": "split", "enable": true})
+
+	res, err := Import3xUI(src, filepath.Join(t.TempDir(), "fullboard.db"))
+	if err != nil {
+		t.Fatalf("Import3xUI: %v", err)
+	}
+	want := "client split: inbounds 1, 2 carry different id; FullBoard keeps one for all of them"
+	if len(res.Warnings) != 1 || res.Warnings[0] != want {
+		t.Fatalf("Warnings = %q, want [%q]", res.Warnings, want)
 	}
 }

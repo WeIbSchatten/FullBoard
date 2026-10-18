@@ -243,18 +243,18 @@ update_menu() {
 }
 
 legacy_version() {
-    echo -n "Enter the panel version (like 2.4.0):"
+    echo -n "Enter the panel version (like 1.5.0):"
     read -r tag_version
+    tag_version="${tag_version#v}"
 
-    if [ -z "$tag_version" ]; then
-        echo "Panel version cannot be empty. Exiting."
+    if [[ ! "$tag_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Panel version must look like 1.5.0. Exiting."
         exit 1
     fi
-    # Use the entered panel version in the download link
-    install_command="bash <(curl -Ls "https://raw.githubusercontent.com/WeIbSchatten/FullBoard/v$tag_version/install.sh") v$tag_version"
-
-    echo "Downloading and installing panel version $tag_version..."
-    eval $install_command
+    # main's update.sh keeps the settings and installs that release's binary and
+    # scripts; an old tag's install.sh would re-run first-install setup.
+    echo "Installing panel version $tag_version..."
+    XUI_UPDATE_TAG="v$tag_version" bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/update.sh)
 }
 
 # Function to handle the deletion of the script file
