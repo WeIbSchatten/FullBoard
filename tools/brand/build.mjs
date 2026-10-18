@@ -70,7 +70,23 @@ function logo(tile, markInk, ink) {
 const square = (tile, ink) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">${mark(tile, ink)}</svg>\n`;
 
+// Full-bleed app icon (iOS masks the corners itself) and a bare W for Android adaptive
+// icons, scaled into the 66/108 safe zone.
+const wStrokes = (ink) =>
+  `<g fill="none" stroke="${ink}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">` +
+  `<polyline points="${W_POINTS}" transform="translate(1.7 1.7)" stroke-opacity="0.35"/>` +
+  `<polyline points="${W_POINTS}"/></g>`;
+const appIcon =
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1024" height="1024">` +
+  `<rect width="32" height="32" fill="${INK}"/>` +
+  `<g transform="translate(16 16) scale(1.15) translate(-16 -16)">${wStrokes(PAPER)}</g></svg>\n`;
+const glyph =
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="1024" height="1024">` +
+  `<g transform="translate(54 54) scale(2.6) translate(-16.85 -16.85)">${wStrokes(PAPER)}</g></svg>\n`;
+
 const files = {
+  'we1ssboard-app-icon.svg': appIcon,
+  'we1ssboard-glyph.svg': glyph,
   'we1ssboard-mark.svg': square(INK, PAPER),
   'we1ssboard-mark-inverse.svg': square(PAPER, INK),
   'we1ssboard-logo-light.svg': logo(INK, PAPER, INK),
