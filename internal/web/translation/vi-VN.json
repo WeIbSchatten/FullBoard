@@ -2806,7 +2806,7 @@
       "status": "✅ Bot hoạt động bình thường!",
       "usage": "❗ Vui lòng cung cấp văn bản để tìm kiếm!",
       "getID": "🆔 ID của bạn: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "Để khởi động lại Xray Core:\r\n<code>/restart</code>\r\n\r\nĐể tìm kiếm email của khách hàng:\r\n<code>/usage [Email]</code>\r\n\r\nĐể tìm kiếm các nhập (với số liệu thống kê của khách hàng):\r\n<code>/inbound [Ghi chú]</code>\r\n\r\nID Trò chuyện Telegram:\r\n<code>/id</code>",
+      "helpAdminCommands": "Để khởi động lại Xray Core:\r\n<code>/restart</code>\r\n\r\nĐể tìm kiếm email của khách hàng:\r\n<code>/usage [Email]</code>\r\n\r\nĐể tìm kiếm các nhập (với số liệu thống kê của khách hàng):\r\n<code>/inbound [Ghi chú]</code>\r\n\r\nID Trò chuyện Telegram:\r\n<code>/id</code>\r\n\r\nTrạng thái node (quản trị):\r\n<code>/nodes</code>\r\n\r\nTrạng thái Telegram WEB Proxy (quản trị):\r\n<code>/webproxy</code>",
       "helpClientCommands": "Để tìm kiếm thống kê, sử dụng lệnh sau:\r\n<code>/usage [Email]</code>\r\n\r\nID Trò chuyện Telegram:\r\n<code>/id</code>",
       "restartUsage": "\r\n\r\n<code>/restart</code>",
       "restartSuccess": "✅ Hoạt động thành công!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "Tìm inbound: /inbound tên (quản trị)",
       "restartDesc": "Khởi động lại lõi Xray (quản trị)",
       "broadcastDesc": "Gửi tin nhắn tới tất cả khách hàng (quản trị)",
-      "clearallDesc": "Đặt lại lưu lượng mọi khách hàng (quản trị)"
+      "clearallDesc": "Đặt lại lưu lượng mọi khách hàng (quản trị)",
+      "nodesDesc": "Trạng thái node (quản trị)",
+      "webproxyDesc": "Trạng thái Telegram WEB Proxy (quản trị)"
     },
     "messages": {
       "cpuThreshold": "Sử dụng CPU {{ .Percent }}% vượt quá ngưỡng {{ .Threshold }}%",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "Node {{ .Name }} đã NGỪNG HOẠT ĐỘNG",
       "eventNodeUp": "Node {{ .Name }} đã HOẠT ĐỘNG",
       "eventLoginFallback": "Đăng nhập thất bại từ {{ .Source }}",
-      "memoryThreshold": "Sử dụng bộ nhớ {{ .Percent }}% vượt quá ngưỡng {{ .Threshold }}%"
+      "memoryThreshold": "Sử dụng bộ nhớ {{ .Percent }}% vượt quá ngưỡng {{ .Threshold }}%",
+      "noNodes": "🖥 Chưa có node nào kết nối với panel này.",
+      "nodeDisabled": "đã tắt",
+      "nodeOffline": "ngoại tuyến",
+      "nodeLastSeen": "hoạt động lần cuối {{ .Time }}",
+      "nodesTitle": "🖥 <b>Node</b>: {{ .Online }}/{{ .Total }} trực tuyến",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "Không khả dụng trên máy chủ này.",
+      "webProxyNotInstalled": "Chưa cài đặt hoặc chưa cấu hình. Thiết lập trong panel: Kết nối → TG Web Proxy.",
+      "webProxyHost": "Máy chủ: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}, khách hàng: {{ .Clients }}",
+      "webProxySyncError": "❗ Lần đồng bộ liên kết gần nhất thất bại: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ Đóng Bàn Phím",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 Email",
       "change_comment": "⚙️💬 Bình Luận",
       "ResetAllTraffics": "Đặt lại tất cả lưu lượng",
-      "SortedTrafficUsageReport": "Báo cáo sử dụng lưu lượng đã sắp xếp"
+      "SortedTrafficUsageReport": "Báo cáo sử dụng lưu lượng đã sắp xếp",
+      "nodes": "🖥 Node",
+      "webProxy": "📡 Web proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 Đã bắt đầu phát tin.",

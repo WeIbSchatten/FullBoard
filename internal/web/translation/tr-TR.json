@@ -2806,7 +2806,7 @@
       "status": "✅ Bot çalışıyor!",
       "usage": "❗ Lütfen aramak için bir metin sağlayın!",
       "getID": "🆔 Kimliğiniz: <code>{{ .ID }}</code>",
-      "helpAdminCommands": "Xray Core'u yeniden başlatmak için:\r\n<code>/restart</code>\r\n\r\nBir kullanıcının istatistiklerini aramak için:\r\n<code>/usage [E-posta]</code>\r\n\r\nGelen bağlantılarnı aramak için (kullanıcı istatistikleri ile):\r\n<code>/inbound [Açıklama]</code>\r\n\r\nTelegram Sohbet Kimliği (Chat ID):\r\n<code>/id</code>",
+      "helpAdminCommands": "Xray Core'u yeniden başlatmak için:\r\n<code>/restart</code>\r\n\r\nBir kullanıcının istatistiklerini aramak için:\r\n<code>/usage [E-posta]</code>\r\n\r\nGelen bağlantılarnı aramak için (kullanıcı istatistikleri ile):\r\n<code>/inbound [Açıklama]</code>\r\n\r\nTelegram Sohbet Kimliği (Chat ID):\r\n<code>/id</code>\r\n\r\nDüğüm durumu (yönetici):\r\n<code>/nodes</code>\r\n\r\nTelegram WEB Proxy durumu (yönetici):\r\n<code>/webproxy</code>",
       "helpClientCommands": "İstatistiklerinizi görmek için şu komutu kullanın:\r\n\r\n<code>/usage [E-posta]</code>\r\n\r\nTelegram Sohbet Kimliği:\r\n<code>/id</code>",
       "restartUsage": "<code>/restart</code>",
       "restartSuccess": "✅ İşlem başarılı!",
@@ -2820,7 +2820,9 @@
       "inboundDesc": "Gelenleri ara: /inbound ad (yönetici)",
       "restartDesc": "Xray çekirdeğini yeniden başlat (yönetici)",
       "broadcastDesc": "Tüm istemcilere mesaj gönder (yönetici)",
-      "clearallDesc": "Tüm istemcilerin trafiğini sıfırla (yönetici)"
+      "clearallDesc": "Tüm istemcilerin trafiğini sıfırla (yönetici)",
+      "nodesDesc": "Düğüm durumu (yönetici)",
+      "webproxyDesc": "Telegram WEB Proxy durumu (yönetici)"
     },
     "messages": {
       "cpuThreshold": "CPU Yükü ({{ .Percent }}%), {{ .Threshold }}% eşiğini aşıyor",
@@ -2903,7 +2905,18 @@
       "eventNodeDown": "{{ .Name }} düğümü ÇEVRİMDIŞI",
       "eventNodeUp": "{{ .Name }} düğümü ÇEVRİMİÇİ",
       "eventLoginFallback": "{{ .Source }} adresinden oturum açma başarısız",
-      "memoryThreshold": "Bellek kullanımı {{ .Percent }}% eşiği {{ .Threshold }}% aşıyor"
+      "memoryThreshold": "Bellek kullanımı {{ .Percent }}% eşiği {{ .Threshold }}% aşıyor",
+      "noNodes": "🖥 Bu panele bağlı düğüm yok.",
+      "nodeDisabled": "devre dışı",
+      "nodeOffline": "çevrimdışı",
+      "nodeLastSeen": "son görülme {{ .Time }}",
+      "nodesTitle": "🖥 <b>Düğümler</b>: {{ .Online }}/{{ .Total }} çevrimiçi",
+      "webProxyTitle": "📡 <b>Telegram WEB Proxy</b>",
+      "webProxyUnsupported": "Bu sunucuda kullanılamıyor.",
+      "webProxyNotInstalled": "Kurulu değil veya henüz yapılandırılmadı. Panelden ayarlayın: Bağlantılar → TG Web Proxy.",
+      "webProxyHost": "Sunucu: <code>{{ .Host }}</code>",
+      "webProxyProfile": "• <b>{{ .Name }}</b> — {{ .Mode }}, istemci: {{ .Clients }}",
+      "webProxySyncError": "❗ Son bağlama eşitlemesi başarısız: <code>{{ .Error }}</code>"
     },
     "buttons": {
       "closeKeyboard": "❌ Klavyeyi Kapat",
@@ -2947,7 +2960,9 @@
       "change_email": "⚙️📧 E-posta",
       "change_comment": "⚙️💬 Yorum",
       "ResetAllTraffics": "Tüm Trafikleri Sıfırla",
-      "SortedTrafficUsageReport": "Sıralı Trafik Kullanım Raporu"
+      "SortedTrafficUsageReport": "Sıralı Trafik Kullanım Raporu",
+      "nodes": "🖥 Düğümler",
+      "webProxy": "📡 Web proxy"
     },
     "answers": {
       "broadcastStarted": "🚀 Toplu gönderim başladı.",
