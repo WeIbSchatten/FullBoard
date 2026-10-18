@@ -23,7 +23,7 @@ const SECURITY_SCHEMES = {
     type: 'http',
     scheme: 'bearer',
     description:
-      'API token from Settings → Security → API Token. Send as `Authorization: Bearer <token>`.',
+      'Scoped API token from Settings → Security → API Token. Send as `Authorization: Bearer <token>`.',
   },
   cookieAuth: {
     type: 'apiKey',
@@ -342,7 +342,7 @@ export function buildSpec() {
       title: 'FullBoard Panel API',
       version: PANEL_VERSION,
       description:
-        'Programmatic interface to a FullBoard panel. Authenticate either by logging in (cookie) or with an API token from Settings → Security → API Token (Bearer). All endpoints under /panel/api/* honour both modes — an API token is a full-admin credential, so treat it like the panel password.',
+        'Programmatic interface to a FullBoard panel. Authenticate either by logging in (cookie) or with a scoped API token from Settings → Security → API Token (Bearer). Token access is limited by its admin, monitor, node-sync, or node-admin scope; treat admin tokens like the panel password.',
     },
     servers: [{ url: '/', description: 'Current panel (basePath aware)' }],
     components: {
