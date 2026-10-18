@@ -632,7 +632,7 @@ func seedWireguardPeersToClients() error {
 				var row model.ClientRecord
 				err = tx.Where("email = ?", email).First(&row).Error
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					if err := tx.Create(incoming).Error; err != nil {
+					if err := createClientRecord(tx, incoming); err != nil {
 						return err
 					}
 					row = *incoming
@@ -2999,7 +2999,7 @@ func seedClientsFromInboundJSON() error {
 
 				row, dup := byEmail[email]
 				if !dup {
-					if err := tx.Create(incoming).Error; err != nil {
+					if err := createClientRecord(tx, incoming); err != nil {
 						return err
 					}
 					byEmail[email] = incoming
@@ -3070,6 +3070,20 @@ func hashExistingApiTokens() error {
 		}
 	}
 	return db.Create(&model.HistoryOfSeeders{SeederName: "ApiTokensHash"}).Error
+}
+
+// createClientRecord inserts rec keeping an explicit enable=false, which gorm
+// default:true would otherwise silently flip to true (#6478).
+func createClientRecord(tx *gorm.DB, rec *model.ClientRecord) error {
+	enable := rec.Enable
+	if err := tx.Create(rec).Error; err != nil {
+		return err
+	}
+	if enable {
+		return nil
+	}
+	rec.Enable = false
+	return tx.Model(&model.ClientRecord{}).Where("id = ?", rec.Id).UpdateColumn("enable", false).Error
 }
 
 func isTableEmpty(tableName string) (bool, error) {
