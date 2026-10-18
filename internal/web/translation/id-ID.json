@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "Hentikan Xray di node ini? Kliennya kehilangan konektivitas sampai Xray dimulai lagi.",
         "importBackupConfirm": "Pulihkan basis data node dari {name}? Ini menggantikan semua data node.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "Profil web-proxy di node ini. Buat, ubah, dan hapus di sini, lalu gunakan \"Tambahkan ke langganan\" untuk memberi klien panel ini tautan lewat node."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "Rahasia",
         "link": "Tautan",
         "showSecret": "Tampilkan rahasia",
-        "hideSecret": "Sembunyikan rahasia"
+        "hideSecret": "Sembunyikan rahasia",
+        "addToSubs": "Tambahkan ke langganan",
+        "addToSubsTitle": "Tambahkan \"{name}\" ke langganan klien",
+        "addToSubsHint": "Setiap klien terpilih mendapat tautan https://t.me/webproxy profil ini di langganannya. Klien yang terikat ke profil lain dipindahkan ke profil ini.",
+        "selectClients": "Pilih klien"
       },
       "egress": {
         "button": "Periksa IP keluar",

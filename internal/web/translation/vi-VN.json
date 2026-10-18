@@ -1243,7 +1243,7 @@
         "stopXrayConfirm": "Dừng Xray trên node này? Các client của node sẽ mất kết nối cho đến khi Xray được khởi động lại.",
         "importBackupConfirm": "Khôi phục cơ sở dữ liệu của node từ {name}? Thao tác này thay thế toàn bộ dữ liệu của node.",
         "tgWebProxy": "Telegram WEB Proxy",
-        "tgWebProxyHint": "Base profiles on this node. Bind clients from the Clients page with this node selected and Dedicated enabled."
+        "tgWebProxyHint": "Hồ sơ web-proxy trên node này. Tạo, sửa và xóa tại đây, dùng \"Thêm vào gói đăng ký\" để cấp cho khách hàng của panel liên kết qua node."
       },
       "addFromInvite": "Add from invite",
       "inviteHint": "Paste the fb-enroll-1.… invite generated on the child panel under Settings → Remote management.",
@@ -2709,7 +2709,11 @@
         "secret": "Bí mật",
         "link": "Liên kết",
         "showSecret": "Hiện bí mật",
-        "hideSecret": "Ẩn bí mật"
+        "hideSecret": "Ẩn bí mật",
+        "addToSubs": "Thêm vào gói đăng ký",
+        "addToSubsTitle": "Thêm \"{name}\" vào gói đăng ký của khách hàng",
+        "addToSubsHint": "Mỗi khách hàng được chọn sẽ nhận liên kết https://t.me/webproxy của hồ sơ này trong gói đăng ký. Khách hàng đang gắn với hồ sơ khác sẽ được chuyển sang hồ sơ này.",
+        "selectClients": "Chọn khách hàng"
       },
       "egress": {
         "button": "Kiểm tra IP thoát",

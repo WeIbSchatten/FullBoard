@@ -1390,6 +1390,14 @@ export const SubBalancerSchema = z.object({
 });
 export type SubBalancer = z.infer<typeof SubBalancerSchema>;
 
+export const TgWebProxyBindManyRequestSchema = z.object({
+  dedicated: z.boolean(),
+  emails: z.array(z.string()),
+  nodeId: z.number().int().nullable().optional(),
+  profileName: z.string(),
+});
+export type TgWebProxyBindManyRequest = z.infer<typeof TgWebProxyBindManyRequestSchema>;
+
 export const TgWebProxyBindRequestSchema = z.object({
   dedicated: z.boolean(),
   email: z.string(),
