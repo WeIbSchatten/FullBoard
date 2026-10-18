@@ -15,6 +15,11 @@ for (const px of [16, 24, 32, 64, 192, 512]) {
 }
 jobs.push(['we1ssboard-mark.svg', 256, 256, 'transparent', 'docs/public/favicon.png']);
 jobs.push(['we1ssboard-mark.svg', 512, 512, 'transparent', 'docs/public/icon.png']);
+jobs.push(['we1ssboard-app-icon.svg', 1024, 1024, 'transparent', 'mobile/assets/icon.png']);
+for (const out of ['android-icon-foreground', 'android-icon-monochrome', 'splash-icon']) {
+  jobs.push(['we1ssboard-glyph.svg', 1024, 1024, 'transparent', `mobile/assets/${out}.png`]);
+}
+jobs.push(['we1ssboard-mark.svg', 48, 48, 'transparent', 'mobile/assets/favicon.png']);
 jobs.push(['we1ssboard-logo-light.svg', null, 128, 'transparent', 'media/brand/we1ssboard-logo-light.png']);
 jobs.push(['we1ssboard-logo-dark.svg', null, 128, 'transparent', 'media/brand/we1ssboard-logo-dark.png']);
 
