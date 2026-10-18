@@ -3179,6 +3179,15 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'POST',
+        path: '/panel/api/tgWebProxy/bindings/bindMany',
+        summary:
+          'Bind several clients (by email) to one profile in a single transaction, adding its web-proxy link to their subscriptions. Same rules as /bindings/bind; any unknown email rejects the whole batch.',
+        body: '{\n  "emails": ["alice", "bob"],\n  "profileName": "default",\n  "dedicated": true,\n  "nodeId": 2\n}',
+        responseSchema: 'TgWebProxyBinding',
+        responseSchemaArray: true,
+      },
+      {
+        method: 'POST',
         path: '/panel/api/tgWebProxy/bindings/unbind',
         summary:
           'Remove a client binding (idempotent). A dedicated client profile is removed by the background sync.',

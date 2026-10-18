@@ -8,6 +8,7 @@ import {
   TgWebProxyBindingListSchema,
 } from '@/generated/zod';
 import type {
+  TgWebProxyBindManyRequest,
   TgWebProxyBindRequest,
   TgWebProxyBinding,
   TgWebProxyBindingList,
@@ -82,6 +83,11 @@ export function useTgWebProxyBindingMutations() {
       HttpUtil.post<TgWebProxyBinding>(`${BASE}/bindings/bind`, req, JSON_HEADERS),
     onSuccess,
   });
+  const bindMany = useMutation({
+    mutationFn: (req: TgWebProxyBindManyRequest) =>
+      HttpUtil.post<TgWebProxyBinding[]>(`${BASE}/bindings/bindMany`, req, JSON_HEADERS),
+    onSuccess,
+  });
   const unbind = useMutation({
     mutationFn: (email: string) =>
       HttpUtil.post(`${BASE}/bindings/unbind`, { email }, JSON_HEADERS),
@@ -89,8 +95,9 @@ export function useTgWebProxyBindingMutations() {
   });
   return {
     bindClient: bind.mutateAsync,
+    bindClients: bindMany.mutateAsync,
     unbindClient: unbind.mutateAsync,
-    pending: bind.isPending || unbind.isPending,
+    pending: bind.isPending || bindMany.isPending || unbind.isPending,
   };
 }
 
@@ -177,5 +184,39 @@ export function useTgWebProxyMutations() {
       controlUnit.isPending ||
       install.isPending ||
       update.isPending,
+  };
+}
+
+// Profile CRUD on a node's relay, proxied by the master's node API.
+export function useRemoteTgWebProxyProfileMutations(nodeId: number) {
+  const queryClient = useQueryClient();
+  const base = `/panel/api/nodes/remote/${nodeId}/tgWebProxy`;
+  const onSuccess = (msg: { success?: boolean } | undefined) => {
+    if (msg?.success) void queryClient.invalidateQueries({ queryKey: keys.tgWebProxy.root() });
+  };
+  const add = useMutation({
+    mutationFn: (profile: RelayProfile) =>
+      HttpUtil.post<RelayApplyResult>(`${base}/profiles/add`, profile, JSON_HEADERS),
+    onSuccess,
+  });
+  const update = useMutation({
+    mutationFn: ({ name, profile }: { name: string; profile: RelayProfile }) =>
+      HttpUtil.post<RelayApplyResult>(
+        `${base}/profiles/update/${encodeURIComponent(name)}`,
+        profile,
+        JSON_HEADERS,
+      ),
+    onSuccess,
+  });
+  const remove = useMutation({
+    mutationFn: (name: string) =>
+      HttpUtil.post<RelayApplyResult>(`${base}/profiles/del/${encodeURIComponent(name)}`),
+    onSuccess,
+  });
+  return {
+    addProfile: add.mutateAsync,
+    updateProfile: (name: string, profile: RelayProfile) => update.mutateAsync({ name, profile }),
+    deleteProfile: remove.mutateAsync,
+    pending: add.isPending || update.isPending || remove.isPending,
   };
 }

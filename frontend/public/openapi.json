@@ -5637,6 +5637,40 @@
         ],
         "type": "object"
       },
+      "TgWebProxyBindManyRequest": {
+        "description": "TgWebProxyBindManyRequest adds one relay profile to several clients' subscriptions at once.",
+        "properties": {
+          "dedicated": {
+            "example": true,
+            "type": "boolean"
+          },
+          "emails": {
+            "example": [
+              "alice",
+              "bob"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "nodeId": {
+            "example": 2,
+            "nullable": true,
+            "type": "integer"
+          },
+          "profileName": {
+            "example": "default",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dedicated",
+          "emails",
+          "profileName"
+        ],
+        "type": "object"
+      },
       "TgWebProxyBindRequest": {
         "properties": {
           "dedicated": {
@@ -19396,6 +19430,75 @@
                     "profileName": "default",
                     "secret": "000102030405060708090a0b0c0d0e0f"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/bindings/bindMany": {
+      "post": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "Bind several clients (by email) to one profile in a single transaction, adding its web-proxy link to their subscriptions. Same rules as /bindings/bind; any unknown email rejects the whole batch.",
+        "operationId": "post_panel_api_tgWebProxy_bindings_bindMany",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "emails": [
+                  "alice",
+                  "bob"
+                ],
+                "profileName": "default",
+                "dedicated": true,
+                "nodeId": 2
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TgWebProxyBinding"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": [
+                    {
+                      "clientId": 7,
+                      "dedicated": false,
+                      "effectiveProfile": "default",
+                      "email": "alice",
+                      "link": "https://t.me/webproxy?server=proxy.example.com&secret=000102030405060708090a0b0c0d0e0f",
+                      "nodeId": 2,
+                      "profileName": "default",
+                      "secret": "000102030405060708090a0b0c0d0e0f"
+                    }
+                  ]
                 }
               }
             }
