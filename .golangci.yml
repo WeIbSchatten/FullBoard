@@ -46,7 +46,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/WeIbSchatten/FullBoard
+        - github.com/WeIbSchatten/We1ssBoard
   exclusions:
     paths:
       - frontend

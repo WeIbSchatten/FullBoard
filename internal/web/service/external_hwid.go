@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 const externalSubHwidKey = "externalSubHwid"
@@ -32,7 +32,7 @@ func ExternalSubscriptionHwid() string {
 			return strings.TrimSpace(row.Value)
 		}
 	}
-	hwid := "fullboard-server-" + uuid.NewString()
+	hwid := "we1ssboard-server-" + uuid.NewString()
 	row = model.Setting{Key: externalSubHwidKey, Value: hwid}
 	if err := db.Where(model.Setting{Key: externalSubHwidKey}).FirstOrCreate(&row).Error; err != nil {
 		logger.Warningf("persisting the external subscription hwid failed: %v", err)

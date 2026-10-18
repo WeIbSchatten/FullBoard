@@ -11,10 +11,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 
 	"github.com/mymmrac/telego"
 )
@@ -60,7 +60,7 @@ func seedReportClients(t *testing.T, remark string, emails []string) {
 
 func initReportDB(t *testing.T) *Tgbot {
 	t.Helper()
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 
 	origRunning := isRunning
 	t.Cleanup(func() { isRunning = origRunning })

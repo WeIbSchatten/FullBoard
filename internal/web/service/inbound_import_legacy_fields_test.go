@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // Exports from v2.x store tgId as a string ("" when unset); the stored copies

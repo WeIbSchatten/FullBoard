@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/entity"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/entity"
 )
 
 type sampleBody struct {

@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 // A direct, DNS, loopback or blackhole outbound is not a tunnel, so the probe

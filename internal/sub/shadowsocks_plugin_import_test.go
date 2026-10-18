@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/link"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/link"
 )
 
 // The panel exports shadowsocks tcp/http obfuscation as the SIP002 plugin, so

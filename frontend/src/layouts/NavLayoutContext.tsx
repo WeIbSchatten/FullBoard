@@ -11,7 +11,7 @@ type NavLayoutValue = {
   ready: boolean;
 };
 
-const NAV_POSITION_KEY = 'fullboard-nav-position';
+const NAV_POSITION_KEY = 'we1ssboard-nav-position';
 
 function readCachedNavPosition(): NavPosition | null {
   try {

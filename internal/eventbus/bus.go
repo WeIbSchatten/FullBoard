@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 // DefaultBufferSize is the number of events the bus can hold before Publish starts dropping.

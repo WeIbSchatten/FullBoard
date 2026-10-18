@@ -145,7 +145,7 @@ func (r *Remote) GetBackup(ctx context.Context) ([]byte, error) {
 func (r *Remote) ImportBackup(ctx context.Context, db []byte, keepHostSettings bool) error {
 	var buf bytes.Buffer
 	w := multipart.NewWriter(&buf)
-	part, err := w.CreateFormFile("db", "fullboard.db")
+	part, err := w.CreateFormFile("db", "we1ssboard.db")
 	if err != nil {
 		return err
 	}

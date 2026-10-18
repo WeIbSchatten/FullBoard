@@ -7,8 +7,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 func TestAddTrafficReturnsDeferredCommitFailure(t *testing.T) {

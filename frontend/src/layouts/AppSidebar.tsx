@@ -32,8 +32,8 @@ import ThemeSwitch from '@/components/ui/ThemeSwitch';
 import { AppearanceButton } from '@/components/ui/AppearancePanel';
 import './AppSidebar.css';
 
-const DOCS_URL = 'https://github.com/WeIbSchatten/FullBoard/tree/main/docs';
-const REPO_URL = 'https://github.com/WeIbSchatten/FullBoard';
+const DOCS_URL = 'https://github.com/WeIbSchatten/We1ssBoard/tree/main/docs';
+const REPO_URL = 'https://github.com/WeIbSchatten/We1ssBoard';
 const SIDER_WIDTH = 248;
 const RAIL_WIDTH = 72;
 const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
@@ -164,7 +164,7 @@ export default function AppSidebar() {
       <BrandMark size={32} />
       {!compact && (
         <div className="sider-brand-text">
-          <span className="sider-brand-name">FullBoard</span>
+          <span className="sider-brand-name">We1ssBoard</span>
           <span className="sider-brand-sub">Xray panel</span>
         </div>
       )}

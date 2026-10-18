@@ -1,6 +1,6 @@
 ---
 title: Performance
-description: Get full link speed and low latency out of FullBoard — testing BBR against cubic, choosing a transport, reading CPU load, and a step-by-step speed checklist.
+description: Get full link speed and low latency out of We1ssBoard — testing BBR against cubic, choosing a transport, reading CPU load, and a step-by-step speed checklist.
 icon: Gauge
 ---
 
@@ -11,7 +11,7 @@ top to bottom: each step removes one common cap on speed or latency.
 
 Most distributions boot with `cubic` and the `fq_codel` qdisc. **BBR + fq** often
 helps on long, clean routes, but on paths with policers or traffic shaping it can
-cause more loss, lower throughput and higher latency than `cubic`. FullBoard
+cause more loss, lower throughput and higher latency than `cubic`. We1ssBoard
 therefore leaves the kernel alone by default.
 
 <Callout type="warn">
@@ -30,8 +30,8 @@ modprobe tcp_bbr && sysctl -w net.ipv4.tcp_congestion_control=bbr net.core.defau
 ```
 
 `sysctl -w` lasts until reboot. Keep the winner permanently with **BBR** in the
-`fullboard` menu, or set `XUI_NET_TUNING=true` in `/etc/default/fullboard` and run
-`fullboard update` (it writes only those two keys).
+`we1ssboard` menu, or set `XUI_NET_TUNING=true` in `/etc/default/we1ssboard` and run
+`we1ssboard update` (it writes only those two keys).
 
 Signs of a policed path: many retransmits while downloading
 (`nstat -az TcpRetransSegs` rising quickly, `ss -tin` showing `retrans:`).

@@ -12,17 +12,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/locale"
 )
 
 func TestWarpIntervalReportsClockPersistenceFailure(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "we1ssboard.db"))
 	db := database.GetDB()
 	for _, setting := range []*model.Setting{
 		{Key: "warpUpdateInterval", Value: "0"},

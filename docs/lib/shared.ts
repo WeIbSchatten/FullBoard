@@ -1,29 +1,29 @@
-export const appName = 'FullBoard';
+export const appName = 'We1ssBoard';
 export const appTagline = 'Advanced web panel for managing Xray-core servers';
 
 export const docsRoute = '/docs';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';
 
-// The FullBoard product repository — used for the navbar GitHub link,
+// The We1ssBoard product repository — used for the navbar GitHub link,
 // build-time star/release stats, and install commands.
 export const productRepo = {
   user: 'WeIbSchatten',
-  repo: 'FullBoard',
+  repo: 'We1ssBoard',
   branch: 'main',
 };
 
-// Where these docs live in the FullBoard monorepo — used for "Edit on GitHub" links.
+// Where these docs live in the We1ssBoard monorepo — used for "Edit on GitHub" links.
 export const gitConfig = {
   user: 'WeIbSchatten',
-  repo: 'FullBoard',
+  repo: 'We1ssBoard',
   branch: 'main',
   docsDir: 'docs/content/docs',
 };
 
 export const productRepoUrl = `https://github.com/${productRepo.user}/${productRepo.repo}`;
 
-// AI-generated interactive wiki of the FullBoard codebase.
+// AI-generated interactive wiki of the We1ssBoard codebase.
 export const deepWikiUrl = `https://deepwiki.com/${productRepo.user}/${productRepo.repo}`;
 
 // Telegram community channel (announcements & support).
@@ -35,4 +35,4 @@ export const telegramChannelUrl = `https://t.me/${telegramChannel}`;
 // `??`) so an empty string — e.g. an unset `${{ vars.NEXT_PUBLIC_SITE_URL }}`
 // in CI — also falls back instead of shipping a blank origin.
 export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://weibschatten.github.io/FullBoard';
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://weibschatten.github.io/We1ssBoard';

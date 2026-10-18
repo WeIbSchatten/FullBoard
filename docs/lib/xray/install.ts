@@ -1,4 +1,4 @@
-// Pure builders for FullBoard install commands (script + Docker). No React/DOM.
+// Pure builders for We1ssBoard install commands (script + Docker). No React/DOM.
 
 export type InstallMethod = 'script' | 'docker';
 
@@ -11,8 +11,8 @@ export interface InstallOptions {
   webBasePath: string;
 }
 
-const REPO_RAW = 'https://raw.githubusercontent.com/WeIbSchatten/FullBoard/main/install.sh';
-const IMAGE = 'ghcr.io/weibschatten/fullboard:latest';
+const REPO_RAW = 'https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/install.sh';
+const IMAGE = 'ghcr.io/weibschatten/we1ssboard:latest';
 
 function isLatest(version: string): boolean {
   const v = version.trim().toLowerCase();
@@ -39,11 +39,11 @@ export function buildDockerRun(options: InstallOptions): string {
   if (options.panelPort.trim()) lines.push(`  -e XUI_PORT=${options.panelPort.trim()}`);
   if (options.webBasePath.trim())
     lines.push(`  -e XUI_INIT_WEB_BASE_PATH=${options.webBasePath.trim()}`);
-  lines.push(`  -v $PWD/db/:/etc/fullboard/`);
+  lines.push(`  -v $PWD/db/:/etc/we1ssboard/`);
   lines.push(`  -v $PWD/cert/:/root/cert/`);
   lines.push(`  --network=host`);
   lines.push(`  --restart=unless-stopped`);
-  lines.push(`  --name FullBoard`);
+  lines.push(`  --name We1ssBoard`);
   lines.push(`  ${IMAGE}`);
   return lines.join(' \\\n');
 }
@@ -60,11 +60,11 @@ export function buildDockerCompose(options: InstallOptions): string {
 
   return [
     `services:`,
-    `  FullBoard:`,
+    `  We1ssBoard:`,
     `    image: ${IMAGE}`,
-    `    container_name: FullBoard`,
+    `    container_name: We1ssBoard`,
     `    volumes:`,
-    `      - ./db/:/etc/fullboard/`,
+    `      - ./db/:/etc/we1ssboard/`,
     `      - ./cert/:/root/cert/`,
     `    environment:`,
     ...env,

@@ -69,7 +69,7 @@ func (r RelayInstallRequest) Validate() error {
 
 type RelayJobStatus struct {
 	Kind      string `json:"kind" example:"install"`
-	Unit      string `json:"unit" example:"fullboard-tproxy-install-1760000000"`
+	Unit      string `json:"unit" example:"we1ssboard-tproxy-install-1760000000"`
 	State     string `json:"state" example:"running"`
 	ExitCode  *int   `json:"exitCode"`
 	StartedAt int64  `json:"startedAt" example:"1760000000"`
@@ -139,7 +139,7 @@ func (j *jobRunner) start(ctx context.Context, kind, command, secret string) (Re
 		return RelayJobStatus{}, err
 	}
 	now := time.Now().Unix()
-	unit := fmt.Sprintf("fullboard-tproxy-%s-%d", kind, now)
+	unit := fmt.Sprintf("we1ssboard-tproxy-%s-%d", kind, now)
 	out, err := j.run(ctx, "systemd-run",
 		"--unit", unit,
 		"--collect",

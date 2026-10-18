@@ -12,13 +12,13 @@ import (
 )
 
 // killStrayMtgProcesses terminates orphaned mtg sidecars left over from a
-// previous fullboard run and returns how many were killed.
+// previous we1ssboard run and returns how many were killed.
 //
-// fullboard starts one mtg process per mtproto inbound outside its own lifecycle, and
+// we1ssboard starts one mtg process per mtproto inbound outside its own lifecycle, and
 // on Linux a child is not guaranteed to die with the panel (there is no
 // kill-on-exit, unlike the Windows job object). A survivor keeps holding the
 // inbound port with a now-stale secret, so new clients are silently
-// domain-fronted to the FakeTLS domain instead of proxied to Telegram. fullboard is
+// domain-fronted to the FakeTLS domain instead of proxied to Telegram. we1ssboard is
 // the sole owner of mtg, so any process matching our binary name at startup is
 // an orphan and is safe to kill before we start our own.
 //

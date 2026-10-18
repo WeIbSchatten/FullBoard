@@ -1,6 +1,6 @@
 ---
 title: Security
-description: Harden FullBoard — panel auth and 2FA, Fail2ban IP limits, firewall rules, BBR, and staying current.
+description: Harden We1ssBoard — panel auth and 2FA, Fail2ban IP limits, firewall rules, BBR, and staying current.
 icon: ShieldCheck
 ---
 
@@ -21,15 +21,15 @@ See [First login](/docs/guide/first-login) for the full checklist.
 
 Set an **IP limit** per client (see [Clients](/docs/config/clients)) to cap the
 number of simultaneous source IPs. Enforcement is handled by **Fail2ban**, which
-FullBoard installs and configures for you (enabled by default on script installs, and
+We1ssBoard installs and configures for you (enabled by default on script installs, and
 on Docker via `XUI_ENABLE_FAIL2BAN=true`).
 
-Manage it from the `fullboard` menu (**22 — IP Limit Management**): install/configure,
+Manage it from the `we1ssboard` menu (**22 — IP Limit Management**): install/configure,
 change the ban duration (default **30 minutes**), ban/unban an IP, view ban logs,
 and check status. Under the hood:
 
-- The jail is named **`3x-ipl`**; ban logs live at `/var/log/fullboard/3xipl.log` and
-  `/var/log/fullboard/3xipl-banned.log` (also via `fullboard banlog`).
+- The jail is named **`3x-ipl`**; ban logs live at `/var/log/we1ssboard/3xipl.log` and
+  `/var/log/we1ssboard/3xipl-banned.log` (also via `we1ssboard banlog`).
 - Bans cover all TCP/UDP **except** your SSH and panel ports, so a ban can't lock
   you out of the server or panel.
 
@@ -43,7 +43,7 @@ and check status. Under the hood:
 ## Firewall
 
 Open only the ports you actually use: SSH, the panel port, the subscription
-port, and your inbound ports. The `fullboard` menu (**23 — Firewall Management**) wraps
+port, and your inbound ports. The `we1ssboard` menu (**23 — Firewall Management**) wraps
 `ufw`, or generate rules here:
 
 <FirewallRulesGenerator />
@@ -60,6 +60,6 @@ for how to compare it with the default and enable it.
 
 ## Keep current
 
-Update FullBoard and Xray-core regularly — security fixes land in new releases. Watch
-the [releases page](https://github.com/WeIbSchatten/FullBoard/releases) and see
+Update We1ssBoard and Xray-core regularly — security fixes land in new releases. Watch
+the [releases page](https://github.com/WeIbSchatten/We1ssBoard/releases) and see
 [Update & uninstall](/docs/guide/update-uninstall).

@@ -7,9 +7,9 @@ import (
 
 	corelog "github.com/xtls/xray-core/common/log"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 func TestRewriteFreedomDomainStrategy(t *testing.T) {

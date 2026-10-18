@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
 )
 
 func TestCreateAcrossManyInboundsUsesOneEmailSnapshot(t *testing.T) {

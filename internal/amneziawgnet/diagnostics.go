@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
 )
 
 // ClientDiagnostic is one configured peer's live state, cross-referenced

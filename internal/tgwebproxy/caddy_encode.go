@@ -19,8 +19,8 @@ const DefaultCaddyfile = "/etc/caddy/Caddyfile"
 
 // Marker comments keep the patch idempotent across install/update cycles.
 const (
-	caddyH2WSBegin = "# fullboard-h2-ws-begin"
-	caddyH2WSEnd   = "# fullboard-h2-ws-end"
+	caddyH2WSBegin = "# we1ssboard-h2-ws-begin"
+	caddyH2WSEnd   = "# we1ssboard-h2-ws-end"
 	caddyFileMode  = 0o640
 	caddyGroupName = "caddy"
 )
@@ -28,7 +28,7 @@ const (
 var (
 	encodeLine = regexp.MustCompile(`(?m)^([ \t]*)encode[ \t]+([^\n#]+)`)
 	// Active encode still applies compression; marker-only "disabled" blocks are fine.
-	hasWSSafeEncode = regexp.MustCompile(`(?m)^\s*# fullboard-h2-ws-begin[\s\S]*?# fullboard-h2-ws-end`)
+	hasWSSafeEncode = regexp.MustCompile(`(?m)^\s*# (?:we1ssboard|fullboard)-h2-ws-begin[\s\S]*?# (?:we1ssboard|fullboard)-h2-ws-end`)
 	activeEncode    = regexp.MustCompile(`(?m)^[ \t]*encode[ \t]+`)
 )
 
@@ -148,11 +148,11 @@ func ApplyCaddyEncodeH2WSPatch(path string, validate func(string) error) (change
 		}
 		return false, nil
 	}
-	backup := path + ".fullboard-prev"
+	backup := path + ".we1ssboard-prev"
 	_ = os.WriteFile(backup, raw, caddyFileMode)
 	_ = hardenCaddyfilePerms(backup)
 
-	tmp := path + ".fullboard-tmp"
+	tmp := path + ".we1ssboard-tmp"
 	if err := os.WriteFile(tmp, []byte(next), caddyFileMode); err != nil {
 		return false, wrapCaddyWriteError(err)
 	}
@@ -268,7 +268,7 @@ func wrapCaddyWriteError(err error) error {
 	}
 	msg := strings.ToLower(err.Error())
 	if errors.Is(err, syscall.EROFS) || strings.Contains(msg, "read-only file system") {
-		return fmt.Errorf("%w; add ReadWritePaths=-/etc/caddy to fullboard.service (or a drop-in under fullboard.service.d/) and restart the panel", err)
+		return fmt.Errorf("%w; add ReadWritePaths=-/etc/caddy to we1ssboard.service (or a drop-in under we1ssboard.service.d/) and restart the panel", err)
 	}
 	return err
 }

@@ -5,6 +5,6 @@ build
 db
 cert
 pgdata
-fullboard/
+we1ssboard/
 *.db
 *.dump

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 // The core takes any string as an override and closes every connection routed

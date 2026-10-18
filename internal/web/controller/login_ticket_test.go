@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -84,7 +84,7 @@ func TestIssueLoginTicketHandsAdminASingleUseTicket(t *testing.T) {
 func loginTicketRouter(a *IndexController) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.Use(sessions.Sessions("FullBoard", cookie.NewStore([]byte("01234567890123456789012345678901"))))
+	r.Use(sessions.Sessions("We1ssBoard", cookie.NewStore([]byte("01234567890123456789012345678901"))))
 	r.POST("/login/ticket", a.loginWithTicket)
 	return r
 }

@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/entity"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/entity"
 )
 
 // MaxCustomCssBytes bounds each operator stylesheet; it is re-sent on every page load.

@@ -8,9 +8,9 @@ import (
 	"time"
 	"unicode/utf16"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/eventbus"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/eventbus"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // Subscriber handles event bus messages and forwards them to Discord.
@@ -133,7 +133,7 @@ func (s *Subscriber) FormatEmbed(e eventbus.Event) (Embed, bool) {
 	}
 
 	footer := &EmbedFooter{
-		Text: truncateUnits("FullBoard • "+h, 2048),
+		Text: truncateUnits("We1ssBoard • "+h, 2048),
 	}
 	tr := translator(s.settingService)
 

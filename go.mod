@@ -1,4 +1,4 @@
-module github.com/WeIbSchatten/FullBoard/v3
+module github.com/WeIbSchatten/We1ssBoard/v3
 
 go 1.27.2
 

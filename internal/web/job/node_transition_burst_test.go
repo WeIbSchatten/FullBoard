@@ -12,12 +12,12 @@ import (
 
 	"github.com/op/go-logging"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/eventbus"
-	xuilogger "github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/eventbus"
+	xuilogger "github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
 )
 
 // goingDownNodes seeds n online nodes whose address refuses connections, so the
@@ -25,7 +25,7 @@ import (
 func goingDownNodes(t *testing.T, n int) {
 	t.Helper()
 	xuilogger.InitLogger(logging.ERROR)
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	runtime.SetManager(runtime.NewManager(runtime.LocalDeps{APIPort: func() int { return 0 }, SetNeedRestart: func() {}}))
 	t.Cleanup(func() { runtime.SetManager(nil) })
 	srv := httptest.NewServer(nil)

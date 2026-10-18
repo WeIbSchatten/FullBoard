@@ -17,8 +17,8 @@ import (
 const (
 	profilesFileMode fs.FileMode = 0o400
 	configFileMode   fs.FileMode = 0o640
-	candidateSuffix              = ".fullboard-candidate"
-	backupSuffix                 = ".fullboard-prev"
+	candidateSuffix              = ".we1ssboard-candidate"
+	backupSuffix                 = ".we1ssboard-prev"
 	serviceGroup                 = "tproxy"
 )
 
@@ -223,7 +223,7 @@ func (s *Store) applyLocked(ctx context.Context, cfg RelayConfig, profiles []Rel
 	return commitFile(profilesCandidate, s.paths.ProfilesFile, profilesFileMode)
 }
 
-// wrapConfigWriteError points operators at the fullboard sandbox when /etc is
+// wrapConfigWriteError points operators at the we1ssboard sandbox when /etc is
 // read-only under ProtectSystem=full without ReadWritePaths for tproxy-server.
 func wrapConfigWriteError(err error) error {
 	if err == nil {
@@ -231,10 +231,10 @@ func wrapConfigWriteError(err error) error {
 	}
 	msg := strings.ToLower(err.Error())
 	if errors.Is(err, syscall.EROFS) || strings.Contains(msg, "read-only file system") {
-		return fmt.Errorf("%w; add ReadWritePaths=-/etc/tproxy-server to fullboard.service (or a drop-in under fullboard.service.d/) and restart the panel", err)
+		return fmt.Errorf("%w; add ReadWritePaths=-/etc/tproxy-server to we1ssboard.service (or a drop-in under we1ssboard.service.d/) and restart the panel", err)
 	}
 	if strings.Contains(msg, "operation not permitted") || strings.Contains(msg, "cap_chown") {
-		return fmt.Errorf("%w; add CAP_CHOWN to fullboard.service CapabilityBoundingSet (or a drop-in) and restart the panel", err)
+		return fmt.Errorf("%w; add CAP_CHOWN to we1ssboard.service CapabilityBoundingSet (or a drop-in) and restart the panel", err)
 	}
 	return err
 }
@@ -269,7 +269,7 @@ func ensureRelayDir(dir string) error {
 	return assignServiceGroup(dir)
 }
 
-// commitFile keeps the previous version as *.fullboard-prev and always sets
+// commitFile keeps the previous version as *.we1ssboard-prev and always sets
 // root:tproxy on the candidate before rename (copying a prior root:root owner
 // would leave the relay unable to read config.json).
 func commitFile(candidate, target string, mode fs.FileMode) error {

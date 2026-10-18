@@ -6,13 +6,13 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
-	ldaputil "github.com/WeIbSchatten/FullBoard/v3/internal/util/ldap"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/totp"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/crypto"
+	ldaputil "github.com/WeIbSchatten/We1ssBoard/v3/internal/util/ldap"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/totp"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // UserService provides business logic for user management and authentication.

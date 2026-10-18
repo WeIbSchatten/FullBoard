@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // A node-managed inbound arrives by adoption, so its protocol can be one the

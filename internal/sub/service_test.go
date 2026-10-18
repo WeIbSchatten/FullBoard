@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 func TestSubscriptionExpiryFromClient(t *testing.T) {

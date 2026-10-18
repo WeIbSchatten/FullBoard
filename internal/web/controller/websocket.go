@@ -6,9 +6,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/panel"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/panel"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 
 	"github.com/gin-gonic/gin"
 	ws "github.com/gorilla/websocket"

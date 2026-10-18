@@ -1,15 +1,15 @@
 ---
 title: База данных
-description: Хранилища данных FullBoard — SQLite (по умолчанию) и PostgreSQL — путь к базе данных, пул соединений и миграция с SQLite на PostgreSQL.
+description: Хранилища данных We1ssBoard — SQLite (по умолчанию) и PostgreSQL — путь к базе данных, пул соединений и миграция с SQLite на PostgreSQL.
 icon: Database
 ---
 
-FullBoard хранит всё — входящие подключения, клиентов, настройки — в базе данных.
+We1ssBoard хранит всё — входящие подключения, клиентов, настройки — в базе данных.
 Бэкенд выбирается во время установки; оба являются полноценными.
 
 ## SQLite (по умолчанию)
 
-Один файл по пути `/etc/fullboard/fullboard.db`. Никакой настройки не требуется, идеально
+Один файл по пути `/etc/we1ssboard/we1ssboard.db`. Никакой настройки не требуется, идеально
 подходит для небольших и средних развёртываний. Папку можно изменить с помощью
 [`XUI_DB_FOLDER`](/docs/reference/env-vars#database) (в Windows по умолчанию она
 располагается рядом с бинарным файлом).
@@ -19,9 +19,9 @@ FullBoard хранит всё — входящие подключения, кл�
 Рекомендуется при большом количестве клиентов или конфигурациях с несколькими
 узлами. Инсталлятор может установить PostgreSQL локально за вас либо принять DSN
 к уже существующему серверу. Во время выполнения бэкенд выбирается через
-переменные окружения, которые инсталлятор записывает в `/etc/default/fullboard`:
+переменные окружения, которые инсталлятор записывает в `/etc/default/we1ssboard`:
 
-```bash title="/etc/default/fullboard"
+```bash title="/etc/default/we1ssboard"
 XUI_DB_TYPE=postgres
 XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 ```
@@ -44,13 +44,13 @@ docker compose --profile postgres up -d
 Перенесите существующую установку SQLite на PostgreSQL встроенной командой:
 
 ```bash
-fullboard migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
+we1ssboard migrate-db --dsn "postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable"
 ```
 
-Затем задайте `XUI_DB_TYPE` и `XUI_DB_DSN` в `/etc/default/fullboard` и перезапустите:
+Затем задайте `XUI_DB_TYPE` и `XUI_DB_DSN` в `/etc/default/we1ssboard` и перезапустите:
 
 ```bash
-systemctl restart fullboard
+systemctl restart we1ssboard
 ```
 
 <Callout type="info">

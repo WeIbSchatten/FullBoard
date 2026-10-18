@@ -1,16 +1,16 @@
 import { cn } from '@/lib/cn';
 
-// FullBoard logo (media/brand, built by tools/brand/build.py); theme-aware via
-// `dark:`. Pass a height class (e.g. `h-6`); width follows the 17:4 artwork.
+// We1ssBoard logo (media/brand, built by tools/brand/build.mjs); theme-aware via
+// `dark:`. Pass a height class (e.g. `h-6`); width follows the 5:1 artwork.
 export function Logo({ className }: { className?: string }) {
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logo-light.svg" alt="FullBoard" className={cn('w-auto dark:hidden', className)} />
+      <img src="/logo-light.svg" alt="We1ssBoard" className={cn('w-auto dark:hidden', className)} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/logo-dark.svg"
-        alt="FullBoard"
+        alt="We1ssBoard"
         className={cn('hidden w-auto dark:block', className)}
       />
     </>

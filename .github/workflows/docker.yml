@@ -1,4 +1,4 @@
-name: Release FullBoard for Docker
+name: Release We1ssBoard for Docker
 
 permissions:
   contents: read
@@ -24,7 +24,7 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: |
-            ghcr.io/weibschatten/fullboard
+            ghcr.io/weibschatten/we1ssboard
           tags: |
             type=ref,event=branch
             type=ref,event=tag

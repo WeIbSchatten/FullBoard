@@ -1,8 +1,8 @@
 package job
 
 import (
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/tgbot"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/tgbot"
 )
 
 // LoginStatus represents the status of a login attempt.

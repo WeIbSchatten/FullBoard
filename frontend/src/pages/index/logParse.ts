@@ -6,10 +6,10 @@
 //      "Mon DD HH:MM:SS host ident[pid]: " before the real message, and the
 //    message itself is one of several shapes depending on which subsystem
 //    emitted it:
-//      "INFO - mtproto: ..."                  go-logging (fullboard + xray)
+//      "INFO - mtproto: ..."                  go-logging (we1ssboard + xray)
 //      "2026/06/08 19:22:22 http: ..."        Go std log (net/http, runtime)
 //      "[Mon Jun  8 23:56:52 UTC 2026] ERROR ..."  telego bot
-//      "Stopping fullboard.service - ..."          systemd
+//      "Stopping we1ssboard.service - ..."          systemd
 //
 // parseLogLine normalises all of these into a stamp + level + service + body so
 // the viewer renders a readable line instead of a bare timestamp.
@@ -110,7 +110,7 @@ export function parseLogLine(line: string): ParsedLog {
     service = 'XRAY:';
     body = body.slice('XRAY:'.length).trimStart();
   } else if (body) {
-    service = 'FullBoard:';
+    service = 'We1ssBoard:';
   }
 
   const stamp = [date, time].filter(Boolean).join(' ');

@@ -16,8 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 	yaml "github.com/goccy/go-yaml"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
 )
 
 func mergeRemoteClashRulesYAML(base map[string]any, raw string) error {
@@ -607,7 +607,7 @@ func TestRemoteRoutingHTTPClientRejectsLoopback(t *testing.T) {
 }
 
 func TestRemoteRoutingPersistedLoadRetriesAfterDatabaseBecomesReady(t *testing.T) {
-	dbPath := filepath.Join(t.TempDir(), "fullboard.db")
+	dbPath := filepath.Join(t.TempDir(), "we1ssboard.db")
 	dbtest.InitDB(t, dbPath)
 
 	deeplink, err := normalizeHappRouting([]byte(`{"Name":"persisted-after-ready"}`))

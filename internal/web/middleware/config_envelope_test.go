@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/wirecodec"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wirecodec"
 )
 
 func envelopeTestEngine(t *testing.T, onHandler func()) *gin.Engine {

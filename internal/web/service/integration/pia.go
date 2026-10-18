@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/crypto/nodetoken"
-	piaprotocol "github.com/WeIbSchatten/FullBoard/v3/internal/pia"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/crypto/nodetoken"
+	piaprotocol "github.com/WeIbSchatten/We1ssBoard/v3/internal/pia"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 var piaTokenAAD = []byte("settings/pia_token")

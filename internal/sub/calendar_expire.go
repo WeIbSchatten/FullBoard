@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 func (s *SubService) subscriptionUserinfo(traffic xray.ClientTraffic) string {

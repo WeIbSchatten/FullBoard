@@ -8,10 +8,10 @@ import (
 
 	"github.com/goccy/go-json"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/link"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/link"
 )
 
 // externalLinkEntry is one client × external-link row resolved for a request.

@@ -3,7 +3,7 @@ package sub
 import (
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // Bad observatory settings (malformed JSON, non-URL destination, bad duration)

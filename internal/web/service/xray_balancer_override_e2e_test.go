@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 // Real-core tests: the bugs they pin live in how RoutingService rebuilds

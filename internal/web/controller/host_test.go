@@ -13,11 +13,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/op/go-logging"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	xuilogger "github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/entity"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	xuilogger "github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/entity"
 )
 
 func newHostTestDB(t *testing.T) {
@@ -26,7 +26,7 @@ func newHostTestDB(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "we1ssboard.db"))
 }
 
 type hostEnvelope struct {
@@ -149,7 +149,7 @@ func TestHostController_AuthInherited(t *testing.T) {
 	newHostTestDB(t)
 	engine := gin.New()
 	store := cookie.NewStore([]byte("host-auth-test-secret"))
-	engine.Use(sessions.Sessions("FullBoard", store))
+	engine.Use(sessions.Sessions("We1ssBoard", store))
 
 	a := &APIController{}
 	api := engine.Group("/panel/api")

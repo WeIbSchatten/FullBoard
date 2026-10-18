@@ -12,8 +12,8 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/global"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/global"
 )
 
 /*
@@ -45,7 +45,7 @@ func inContractScope(method, path string) bool {
 
 func registeredContractRoutes(t *testing.T) map[string]bool {
 	t.Helper()
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 
 	previous := global.GetWebServer()
 	s := NewServer()

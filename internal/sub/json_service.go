@@ -12,13 +12,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/maskcompat"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/random"
-	wgutil "github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/maskcompat"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/random"
+	wgutil "github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
 )
 
 //go:embed default.json

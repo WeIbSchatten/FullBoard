@@ -18,17 +18,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tuic"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/maskcompat"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/random"
-	wgutil "github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tuic"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/maskcompat"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/random"
+	wgutil "github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 var salamanderWarningSeen sync.Map

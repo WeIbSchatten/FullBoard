@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 )
 
 const enrollInvitePrefix = "fb-enroll-1."

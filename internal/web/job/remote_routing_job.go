@@ -1,9 +1,9 @@
 package job
 
 import (
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/sub"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/sub"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // RemoteRoutingJob keeps remote Happ and Clash/Mihomo routing URLs warm: all

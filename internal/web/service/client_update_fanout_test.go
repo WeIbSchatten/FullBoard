@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // applyBarrierRuntime holds every armed node push until fanout of them are

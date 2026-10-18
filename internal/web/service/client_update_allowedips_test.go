@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // seedDualProtocolClient creates a WireGuard inbound and an AmneziaWG inbound

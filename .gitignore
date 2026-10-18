@@ -17,14 +17,14 @@ tmp/
 # Ignore build and distribution directories
 backup/
 bin/
-fullboard/
+we1ssboard/
 dist/
 release/
 node_modules/
 
 # Ignore compiled binaries
 main
-FullBoard
+We1ssBoard
 
 # Ignore OS specific files
 .DS_Store
@@ -32,9 +32,9 @@ Thumbs.db
 
 # Ignore Go build files
 *.exe
-fullboard.db
-fullboard.db-shm
-fullboard.db-wal
+we1ssboard.db
+we1ssboard.db-shm
+we1ssboard.db-wal
 system_metrics.gob
 *.dump
 

@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	wgutil "github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	wgutil "github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
 )
 
 func hasDirectOutOutbound(svc *SubJsonService) bool {

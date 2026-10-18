@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
 )
 
 // jsonRoutingSpec is the canonical form of the generic Happ/INCY routing

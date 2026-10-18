@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/crypto"
 )
 
 // TestPanelTLSAcceptsClientWithoutClientCert characterizes the invariant the

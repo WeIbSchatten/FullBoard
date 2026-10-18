@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // restoreVisionFlowForEligibleInbound must re-add Vision to a client whose flow
@@ -17,7 +17,7 @@ import (
 func TestRestoreVisionFlowForEligibleInbound(t *testing.T) {
 	dbDir := t.TempDir()
 	t.Setenv("XUI_DB_FOLDER", dbDir)
-	dbtest.InitDB(t, filepath.Join(dbDir, "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(dbDir, "we1ssboard.db"))
 	db := database.GetDB()
 
 	const vision = "xtls-rprx-vision"

@@ -6,7 +6,7 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
 )
 
 // The panel scheduler runs WithSeconds(), whose parser rejects five-field crontab,

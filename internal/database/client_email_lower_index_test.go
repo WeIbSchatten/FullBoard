@@ -5,13 +5,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // The migration runs on every start, so its guard has to actually match the
 // index it created — otherwise every boot re-issues the CREATE.
 func TestMigrateClientEmailLowerIndexIsIdempotent(t *testing.T) {
-	if err := InitDB(filepath.Join(t.TempDir(), "fullboard.db")); err != nil {
+	if err := InitDB(filepath.Join(t.TempDir(), "we1ssboard.db")); err != nil {
 		t.Fatalf("InitDB: %v", err)
 	}
 	t.Cleanup(func() { _ = CloseDB() })

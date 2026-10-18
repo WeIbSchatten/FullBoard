@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 // NewErrorf creates a new error with formatted message.

@@ -1164,7 +1164,7 @@ export const EXAMPLES: Record<string, unknown> = {
         "profiles": [
           ""
         ],
-        "unit": "fullboard-mtproxy-40123"
+        "unit": "we1ssboard-mtproxy-40123"
       }
     ]
   },
@@ -1229,7 +1229,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "log": "",
     "startedAt": 1760000000,
     "state": "running",
-    "unit": "fullboard-tproxy-install-1760000000"
+    "unit": "we1ssboard-tproxy-install-1760000000"
   },
   "RelayLimits": {
     "carrier_batch_bytes": 2097152,
@@ -1263,7 +1263,7 @@ export const EXAMPLES: Record<string, unknown> = {
     "profiles": [
       ""
     ],
-    "unit": "fullboard-mtproxy-40123"
+    "unit": "we1ssboard-mtproxy-40123"
   },
   "RelayProfile": {
     "backend": "127.0.0.1:2398",
@@ -1363,7 +1363,7 @@ export const EXAMPLES: Record<string, unknown> = {
           "profiles": [
             ""
           ],
-          "unit": "fullboard-mtproxy-40123"
+          "unit": "we1ssboard-mtproxy-40123"
         }
       ]
     },
@@ -1386,7 +1386,7 @@ export const EXAMPLES: Record<string, unknown> = {
       "log": "",
       "startedAt": 1760000000,
       "state": "running",
-      "unit": "fullboard-tproxy-install-1760000000"
+      "unit": "we1ssboard-tproxy-install-1760000000"
     },
     "platform": "linux/amd64",
     "profileCount": 1,

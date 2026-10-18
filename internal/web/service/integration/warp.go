@@ -17,10 +17,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/wireguard"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/wireguard"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 )
 
 // WarpService provides business logic for Cloudflare WARP integration.
@@ -77,7 +77,7 @@ func (s *WarpService) RegWarp(secretKey string, publicKey string) (string, error
 		"key":   publicKey,
 		"tos":   time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
 		"type":  "PC",
-		"model": "fullboard",
+		"model": "we1ssboard",
 		"name":  hostName,
 	})
 	if err != nil {

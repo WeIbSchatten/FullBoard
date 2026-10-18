@@ -27,12 +27,12 @@ COPY --from=frontend /src/internal/web/dist ./internal/web/dist
 
 ENV CGO_ENABLED=1
 ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
-RUN go build -ldflags "-w -s" -o build/fullboard main.go
+RUN go build -ldflags "-w -s" -o build/we1ssboard main.go
 # Windows checkouts may lack the executable bit on *.sh; invoke via sh.
 RUN sh ./DockerInit.sh "$TARGETARCH"
 
 # ========================================================
-# Stage: Final Image of FullBoard
+# Stage: Final Image of We1ssBoard
 # ========================================================
 FROM alpine
 ENV TZ=Asia/Tehran
@@ -48,7 +48,7 @@ RUN apk add --no-cache --update \
 
 COPY --from=builder /app/build/ /app/
 COPY --from=builder /app/DockerEntrypoint.sh /app/
-COPY --from=builder /app/fullboard.sh /usr/bin/fullboard
+COPY --from=builder /app/we1ssboard.sh /usr/bin/we1ssboard
 COPY --from=builder /app/internal/web/translation /app/internal/web/translation
 
 
@@ -61,8 +61,8 @@ RUN rm -f /etc/fail2ban/jail.d/alpine-ssh.conf \
 
 RUN chmod +x \
   /app/DockerEntrypoint.sh \
-  /app/fullboard \
-  /usr/bin/fullboard
+  /app/we1ssboard \
+  /usr/bin/we1ssboard
 
 ENV XUI_IN_DOCKER="true"
 ENV XUI_MAIN_FOLDER="/app"
@@ -70,6 +70,6 @@ ENV XUI_ENABLE_FAIL2BAN="true"
 ENV XUI_DB_TYPE=""
 ENV XUI_DB_DSN=""
 EXPOSE 2053
-VOLUME [ "/etc/fullboard" ]
-CMD [ "./fullboard" ]
+VOLUME [ "/etc/we1ssboard" ]
+CMD [ "./we1ssboard" ]
 ENTRYPOINT [ "/app/DockerEntrypoint.sh" ]

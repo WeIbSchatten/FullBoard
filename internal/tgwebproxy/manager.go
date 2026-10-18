@@ -20,11 +20,12 @@ type Manager struct {
 	// supported is swappable so tests can exercise the systemd paths off Linux.
 	supported func() bool
 
-	mtproxy            MTProxyPaths
-	backendsMu         sync.Mutex
-	backendFirewall    string
-	backendFirewallErr string
-	lastBackends       RelayBackendsStatus
+	mtproxy               MTProxyPaths
+	backendsMu            sync.Mutex
+	backendFirewall       string
+	backendFirewallErr    string
+	legacyFirewallDropped bool
+	lastBackends          RelayBackendsStatus
 }
 
 func NewManager(paths Paths, run commandRunner) *Manager {

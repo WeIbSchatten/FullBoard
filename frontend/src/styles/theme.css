@@ -1,4 +1,4 @@
-/* FullBoard design tokens — DreamCut monochrome.
+/* We1ssBoard design tokens — DreamCut monochrome.
    Every surface, text and accent colour in the panel resolves to one of these;
    antd receives the same values through buildAntdThemeConfig (hooks/useTheme.tsx). */
 
