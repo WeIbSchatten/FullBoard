@@ -190,8 +190,12 @@ func TestCheckAPIAuth_AcceptsVerifiedClientCert(t *testing.T) {
 		}
 		w = httptest.NewRecorder()
 		engine.ServeHTTP(w, legacy)
-		if w.Code != http.StatusOK || w.Body.String() != `{"api_authed":true,"scope":"node-sync"}` {
-			t.Fatalf("mTLS %s response = %d %s, want preserved node-sync scope", legacyScope, w.Code, w.Body.String())
+		want := `{"api_authed":true,"scope":"node-sync"}`
+		if legacyScope == model.ApiScopeAdmin {
+			want = `{"api_authed":true,"scope":"admin"}`
+		}
+		if w.Code != http.StatusOK || w.Body.String() != want {
+			t.Fatalf("mTLS %s response = %d %s, want %s", legacyScope, w.Code, w.Body.String(), want)
 		}
 	}
 

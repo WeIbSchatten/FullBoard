@@ -35,28 +35,32 @@ func NewAPIController(g *gin.RouterGroup) *APIController {
 }
 
 func (a *APIController) checkAPIAuth(c *gin.Context) {
-	// A valid bearer token is checked first so an mTLS master that also sends an
-	// admin or node-admin token keeps that token's scope; the cert alone stays node-sync.
-	if after, ok := strings.CutPrefix(c.GetHeader("Authorization"), "Bearer "); ok {
-		if row, matched := a.apiTokenService.MatchToken(after); matched {
-			if u, err := a.userService.GetFirstUser(); err == nil {
-				session.SetAPIAuthUser(c, u)
-			}
-			c.Set("api_authed", true)
-			c.Set("api_token_scope", row.Scope)
-			c.Next()
-			return
-		}
-	}
-	// A verified client certificate (a completed mTLS handshake) authenticates
-	// the caller; api_authed lets cert-authed mutations past CSRF.
-	if c.Request.TLS != nil && len(c.Request.TLS.VerifiedChains) > 0 {
+	setAuthenticated := func(scope string) {
 		if u, err := a.userService.GetFirstUser(); err == nil {
 			session.SetAPIAuthUser(c, u)
 		}
 		c.Set("api_authed", true)
-		c.Set("api_token_scope", model.ApiScopeNodeSync)
+		c.Set("api_token_scope", scope)
 		c.Next()
+	}
+	matchedScope := ""
+	if after, ok := strings.CutPrefix(c.GetHeader("Authorization"), "Bearer "); ok {
+		if row, matched := a.apiTokenService.MatchToken(after); matched {
+			matchedScope = row.Scope
+		}
+	}
+	// Verified mTLS stays node-sync; only an admin (remote node panel) or
+	// node-admin (panel update) bearer on the same connection widens it.
+	if c.Request.TLS != nil && len(c.Request.TLS.VerifiedChains) > 0 {
+		scope := model.ApiScopeNodeSync
+		if matchedScope == model.ApiScopeAdmin || matchedScope == model.ApiScopeNodeAdmin {
+			scope = matchedScope
+		}
+		setAuthenticated(scope)
+		return
+	}
+	if matchedScope != "" {
+		setAuthenticated(matchedScope)
 		return
 	}
 	if !session.IsLogin(c) {
