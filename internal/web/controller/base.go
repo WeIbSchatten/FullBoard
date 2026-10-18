@@ -1,13 +1,13 @@
-// Package controller provides HTTP request handlers and controllers for the FullBoard web management panel.
+// Package controller provides HTTP request handlers and controllers for the We1ssBoard web management panel.
 // It handles routing, authentication, and API endpoints for managing Xray inbounds, settings, and more.
 package controller
 
 import (
 	"net/http"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 
 	"github.com/gin-gonic/gin"
 )

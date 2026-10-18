@@ -4,13 +4,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 func TestClientReorderPreservesOutsideSortSlots(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	db := database.GetDB()
 	seed := []model.ClientRecord{
 		{Email: "a@x", Enable: true, SortOrder: 10},
@@ -46,7 +46,7 @@ func TestClientReorderPreservesOutsideSortSlots(t *testing.T) {
 }
 
 func TestClientReorderRejectsUnknownID(t *testing.T) {
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	rec := model.ClientRecord{Email: "only@x", Enable: true, SortOrder: 1}
 	if err := database.GetDB().Create(&rec).Error; err != nil {
 		t.Fatal(err)

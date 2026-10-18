@@ -71,7 +71,7 @@ import {
   type ChainRulePosition,
 } from './cross-server-chain';
 
-const defaultOutboundSubscriptionUserAgent = 'fullboard-outbound-sub/1.0';
+const defaultOutboundSubscriptionUserAgent = 'we1ssboard-outbound-sub/1.0';
 
 interface OutboundSub {
   id: number;

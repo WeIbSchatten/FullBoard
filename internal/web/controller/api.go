@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/panel"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/tgbot"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/session"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/middleware"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/panel"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/tgbot"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 
 	"github.com/gin-gonic/gin"
 )
 
-// APIController handles the main API routes for the FullBoard panel, including inbounds and server management.
+// APIController handles the main API routes for the We1ssBoard panel, including inbounds and server management.
 type APIController struct {
 	BaseController
 	inboundController     *InboundController

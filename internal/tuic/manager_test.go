@@ -14,7 +14,7 @@ import (
 
 	"github.com/apernet/quic-go"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 func TestEnsureStartsServerAndReconciles(t *testing.T) {

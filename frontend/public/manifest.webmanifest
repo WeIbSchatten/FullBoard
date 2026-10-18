@@ -1,6 +1,6 @@
 {
-  "name": "FullBoard",
-  "short_name": "FullBoard",
+  "name": "We1ssBoard",
+  "short_name": "We1ssBoard",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -8,32 +8,32 @@
   "theme_color": "#0b0b0c",
   "icons": [
     {
-      "src": "icons/fullboard-16.png",
+      "src": "icons/we1ssboard-16.png",
       "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "icons/fullboard-24.png",
+      "src": "icons/we1ssboard-24.png",
       "sizes": "24x24",
       "type": "image/png"
     },
     {
-      "src": "icons/fullboard-32.png",
+      "src": "icons/we1ssboard-32.png",
       "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "icons/fullboard-64.png",
+      "src": "icons/we1ssboard-64.png",
       "sizes": "64x64",
       "type": "image/png"
     },
     {
-      "src": "icons/fullboard-192.png",
+      "src": "icons/we1ssboard-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icons/fullboard-512.png",
+      "src": "icons/we1ssboard-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

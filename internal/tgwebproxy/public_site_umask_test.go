@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-// fullboard.service runs with UMask=0077; the relay reads the site as the
+// we1ssboard.service runs with UMask=0077; the relay reads the site as the
 // unprivileged tproxy user, so every published path must stay world-readable.
 func withPanelUmask(t *testing.T) {
 	t.Helper()

@@ -11,13 +11,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
 )
 
 func setupSubBalancerRouter(t *testing.T) *gin.Engine {
 	t.Helper()
 	t.Setenv("XUI_DB_FOLDER", t.TempDir())
-	dbtest.InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+	dbtest.InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 	NewSubBalancerController(router.Group("/panel/api"))

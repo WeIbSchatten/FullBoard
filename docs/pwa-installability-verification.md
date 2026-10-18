@@ -25,12 +25,12 @@ The built binary must serve these paths beneath the configured `webBasePath`:
 - `manifest.webmanifest`
 - `pwa-register.js`
 - `service-worker.js`
-- `icons/fullboard-16.png`
-- `icons/fullboard-24.png`
-- `icons/fullboard-32.png`
-- `icons/fullboard-64.png`
-- `icons/fullboard-192.png`
-- `icons/fullboard-512.png`
+- `icons/we1ssboard-16.png`
+- `icons/we1ssboard-24.png`
+- `icons/we1ssboard-32.png`
+- `icons/we1ssboard-64.png`
+- `icons/we1ssboard-192.png`
+- `icons/we1ssboard-512.png`
 
 The login and panel HTML must contain a manifest link and registration script
 whose URLs begin with the same runtime base path. The manifest must contain
@@ -39,19 +39,19 @@ entries.
 
 ## Live rollout checks
 
-Before replacing a server binary, record the current fullboard binary checksum and
-create a timestamped copy of the binary and `/etc/fullboard/fullboard.db`. Restart only
-the `fullboard` service after the candidate is staged. Because fullboard manages Xray as
+Before replacing a server binary, record the current we1ssboard binary checksum and
+create a timestamped copy of the binary and `/etc/we1ssboard/we1ssboard.db`. Restart only
+the `we1ssboard` service after the candidate is staged. Because we1ssboard manages Xray as
 a child process, the restart can briefly interrupt VPN connections.
 
 After the restart, verify:
 
-1. `fullboard` is active and its child Xray process is running.
+1. `we1ssboard` is active and its child Xray process is running.
 2. The existing panel URL serves HTML with the PWA manifest link.
 3. The manifest, registration script, worker, and all six icons return `200`.
 4. Login, authenticated API requests, panel navigation, logout, and the panel
    WebSocket all work.
 5. At least one VPN client can complete a fresh connection cycle.
 
-If any check fails, restore the exact binary backup, restart fullboard once, and
+If any check fails, restore the exact binary backup, restart we1ssboard once, and
 repeat the checks against the original build.

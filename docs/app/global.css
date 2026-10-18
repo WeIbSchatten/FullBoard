@@ -2,7 +2,7 @@
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
-/* FullBoard brand: DreamCut monochrome, the same ink/paper pair as the panel. */
+/* We1ssBoard brand: DreamCut monochrome, the same ink/paper pair as the panel. */
 :root {
   --color-fd-primary: hsl(240, 4%, 7%);
   --color-fd-primary-foreground: hsl(0, 0%, 100%);

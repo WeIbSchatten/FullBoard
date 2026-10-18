@@ -16,11 +16,11 @@ import (
 
 	yaml "github.com/goccy/go-yaml"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/netsafe"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/netsafe"
 )
 
 // Remote sources reuse the existing settings fields (one HTTPS URL = remote,
@@ -267,7 +267,7 @@ func (r *remoteRoutingResolver) fetch(key remoteRoutingKey, previous remoteRouti
 	if err != nil {
 		return remoteRoutingCacheEntry{}, err
 	}
-	req.Header.Set("User-Agent", "fullboard-remote-routing/1.0")
+	req.Header.Set("User-Agent", "we1ssboard-remote-routing/1.0")
 	if hasPrevious {
 		if previous.ETag != "" {
 			req.Header.Set("If-None-Match", previous.ETag)

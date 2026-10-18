@@ -1,4 +1,4 @@
-// Package sub provides subscription server functionality for the FullBoard panel,
+// Package sub provides subscription server functionality for the We1ssBoard panel,
 // including HTTP/HTTPS servers for serving subscription links and JSON configurations.
 package sub
 
@@ -14,12 +14,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/locale"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/middleware"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/network"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/locale"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/middleware"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/network"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
 
 	"github.com/gin-gonic/gin"
 )

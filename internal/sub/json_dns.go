@@ -1,8 +1,8 @@
 package sub
 
 import (
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray/dnsconf"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray/dnsconf"
 )
 
 // The subJsonDns setting holds either a full xray dns block or a bare array of

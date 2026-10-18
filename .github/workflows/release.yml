@@ -1,4 +1,4 @@
-name: Release FullBoard
+name: Release We1ssBoard
 
 on:
   workflow_dispatch:
@@ -16,9 +16,9 @@ on:
       - "**.sh"
       - "frontend/**"
       - "internal/config/version"
-      - "fullboard.service.debian"
-      - "fullboard.service.arch"
-      - "fullboard.service.rhel"
+      - "we1ssboard.service.debian"
+      - "we1ssboard.service.arch"
+      - "we1ssboard.service.rhel"
       - ".github/workflows/release.yml"
 
 jobs:
@@ -85,7 +85,7 @@ jobs:
           npm run build
         working-directory: frontend
 
-      - name: Build FullBoard
+      - name: Build We1ssBoard
         run: |
           CURL_RETRY="--retry 5 --retry-all-errors --retry-delay 3"
           fetch() { wget -q --tries=5 --waitretry=10 --retry-on-http-error=429,500,502,503 "$@"; }
@@ -119,21 +119,21 @@ jobs:
           # stable releases stay unstamped so config.IsDevBuild() returns false.
           LDFLAGS="-w -s -linkmode external -extldflags '-static'"
           if [[ "$GITHUB_REF" != refs/tags/* ]]; then
-            LDFLAGS="$LDFLAGS -X github.com/WeIbSchatten/FullBoard/v3/internal/config.buildCommit=${GITHUB_SHA::8} -X github.com/WeIbSchatten/FullBoard/v3/internal/config.buildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            LDFLAGS="$LDFLAGS -X github.com/WeIbSchatten/We1ssBoard/v3/internal/config.buildCommit=${GITHUB_SHA::8} -X github.com/WeIbSchatten/We1ssBoard/v3/internal/config.buildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           fi
           go build -buildvcs=true -ldflags "$LDFLAGS" -o xui-release -v .
           file xui-release
           ldd xui-release || echo "Static binary confirmed"
 
-          mkdir fullboard
-          cp xui-release fullboard/
-          cp fullboard.service.debian fullboard/
-          cp fullboard.service.arch fullboard/
-          cp fullboard.service.rhel fullboard/
-          cp fullboard.sh fullboard/
-          mv fullboard/xui-release fullboard/fullboard
-          mkdir fullboard/bin
-          cd fullboard/bin
+          mkdir we1ssboard
+          cp xui-release we1ssboard/
+          cp we1ssboard.service.debian we1ssboard/
+          cp we1ssboard.service.arch we1ssboard/
+          cp we1ssboard.service.rhel we1ssboard/
+          cp we1ssboard.sh we1ssboard/
+          mv we1ssboard/xui-release we1ssboard/we1ssboard
+          mkdir we1ssboard/bin
+          cd we1ssboard/bin
 
           # Download dependencies
           Xray_URL="https://github.com/XTLS/Xray-core/releases/download/v26.10.10/"
@@ -196,16 +196,16 @@ jobs:
 
       - name: Package
         run: |
-          tar -zcvf fullboard-linux-${{ matrix.platform }}.tar.gz fullboard
-          sha256sum fullboard-linux-${{ matrix.platform }}.tar.gz > fullboard-linux-${{ matrix.platform }}.tar.gz.sha256
+          tar -zcvf we1ssboard-linux-${{ matrix.platform }}.tar.gz we1ssboard
+          sha256sum we1ssboard-linux-${{ matrix.platform }}.tar.gz > we1ssboard-linux-${{ matrix.platform }}.tar.gz.sha256
 
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: fullboard-linux-${{ matrix.platform }}
+          name: we1ssboard-linux-${{ matrix.platform }}
           path: |
-            ./fullboard-linux-${{ matrix.platform }}.tar.gz
-            ./fullboard-linux-${{ matrix.platform }}.tar.gz.sha256
+            ./we1ssboard-linux-${{ matrix.platform }}.tar.gz
+            ./we1ssboard-linux-${{ matrix.platform }}.tar.gz.sha256
 
   # =================================
   #  Windows Build
@@ -258,7 +258,7 @@ jobs:
             mingw-w64-x86_64-sqlite3
             mingw-w64-x86_64-pkg-config
 
-      - name: Build FullBoard for Windows (CGO)
+      - name: Build We1ssBoard for Windows (CGO)
         shell: msys2 {0}
         run: |
           export PATH="/c/hostedtoolcache/windows/go/$(ls /c/hostedtoolcache/windows/go | sort -V | tail -n1)/x64/bin:$PATH"
@@ -275,7 +275,7 @@ jobs:
           # Stamp the commit into per-commit (dev channel) builds only.
           LDFLAGS="-w -s"
           if [[ "$GITHUB_REF" != refs/tags/* ]]; then
-            LDFLAGS="$LDFLAGS -X github.com/WeIbSchatten/FullBoard/v3/internal/config.buildCommit=${GITHUB_SHA:0:8} -X github.com/WeIbSchatten/FullBoard/v3/internal/config.buildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            LDFLAGS="$LDFLAGS -X github.com/WeIbSchatten/We1ssBoard/v3/internal/config.buildCommit=${GITHUB_SHA:0:8} -X github.com/WeIbSchatten/We1ssBoard/v3/internal/config.buildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           fi
           go build -buildvcs=true -ldflags "$LDFLAGS" -o xui-release.exe -v .
 
@@ -283,10 +283,10 @@ jobs:
         shell: pwsh
         run: |
           $retry = @{ MaximumRetryCount = 5; RetryIntervalSec = 10 }
-          mkdir fullboard
-          Copy-Item xui-release.exe fullboard\fullboard.exe
-          mkdir fullboard\bin
-          cd fullboard\bin
+          mkdir we1ssboard
+          Copy-Item xui-release.exe we1ssboard\we1ssboard.exe
+          mkdir we1ssboard\bin
+          cd we1ssboard\bin
 
           # Download Xray for Windows
           $Xray_URL = "https://github.com/XTLS/Xray-core/releases/download/v26.10.10/"
@@ -321,17 +321,17 @@ jobs:
       - name: Package to Zip
         shell: pwsh
         run: |
-          Compress-Archive -Path .\fullboard -DestinationPath "fullboard-windows-amd64.zip"
-          $hash = (Get-FileHash fullboard-windows-amd64.zip -Algorithm SHA256).Hash.ToLower()
-          [IO.File]::WriteAllText("$PWD\fullboard-windows-amd64.zip.sha256", "$hash  fullboard-windows-amd64.zip`n")
+          Compress-Archive -Path .\we1ssboard -DestinationPath "we1ssboard-windows-amd64.zip"
+          $hash = (Get-FileHash we1ssboard-windows-amd64.zip -Algorithm SHA256).Hash.ToLower()
+          [IO.File]::WriteAllText("$PWD\we1ssboard-windows-amd64.zip.sha256", "$hash  we1ssboard-windows-amd64.zip`n")
 
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: fullboard-windows-amd64
+          name: we1ssboard-windows-amd64
           path: |
-            ./fullboard-windows-amd64.zip
-            ./fullboard-windows-amd64.zip.sha256
+            ./we1ssboard-windows-amd64.zip
+            ./we1ssboard-windows-amd64.zip.sha256
 
   # =================================
   #  Tagged release (all platforms or nothing)

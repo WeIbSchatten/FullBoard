@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tgwebproxy"
 )
 
 // New seeds a relay with hostname and the given profiles (at least one). The

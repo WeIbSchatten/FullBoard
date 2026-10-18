@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 // stubFail2banClient puts a fail2ban-client on PATH whose exit code the test picks.

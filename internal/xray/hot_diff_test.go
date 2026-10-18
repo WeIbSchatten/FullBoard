@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	xuilogger "github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
+	xuilogger "github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
 
 	"github.com/op/go-logging"
 	"github.com/xtls/xray-core/proxy/shadowsocks"
@@ -418,7 +418,7 @@ func TestComputeHotDiff_RealityClientOnlyChangeStaysHot(t *testing.T) {
 // nowhere until the next full restart -- confirmed directly on a real box
 // (iptables TPROXY counters incrementing, but `ss` showing nothing listening
 // on the bridge port; the listener only appeared after `systemctl restart
-// fullboard`). This must force a restart instead of a hot add.
+// we1ssboard`). This must force a restart instead of a hot add.
 func TestComputeHotDiff_NewTproxyInboundNeedsRestart(t *testing.T) {
 	oldCfg := makeHotConfig()
 	newCfg := makeHotConfig()

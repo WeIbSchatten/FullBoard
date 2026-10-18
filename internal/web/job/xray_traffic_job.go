@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/service/outbound"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/websocket"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/service/outbound"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/websocket"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 
 	"github.com/valyala/fasthttp"
 )

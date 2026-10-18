@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/dbtest"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/dbtest"
 )
 
 func TestStageSQLiteUploadRebuildsFromDump(t *testing.T) {
 	dir := t.TempDir()
-	dbPath := filepath.Join(dir, "fullboard.db")
+	dbPath := filepath.Join(dir, "we1ssboard.db")
 	dbtest.InitDB(t, dbPath)
 	dump, err := database.DumpSQLiteToBytes(dbPath)
 	if err != nil {
@@ -28,7 +28,7 @@ func TestStageSQLiteUploadRebuildsFromDump(t *testing.T) {
 	}
 	defer upload.Close()
 
-	staged := filepath.Join(dir, "fullboard.db.temp")
+	staged := filepath.Join(dir, "we1ssboard.db.temp")
 	if err := stageSQLiteUpload(upload, importKindSQLiteDump, staged); err != nil {
 		t.Fatalf("stageSQLiteUpload: %v", err)
 	}

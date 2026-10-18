@@ -18,7 +18,7 @@ import (
 	xraycongestion "github.com/xtls/xray-core/transport/internet/hysteria/congestion"
 	"github.com/xtls/xray-core/transport/internet/hysteria/congestion/bbr"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 // Server is an in-process native Go TUIC v5 server terminating QUIC

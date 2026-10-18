@@ -1,6 +1,6 @@
-# Contributing to fullboard-docs
+# Contributing to we1ssboard-docs
 
-Thanks for helping improve the FullBoard documentation and product site!
+Thanks for helping improve the We1ssBoard documentation and product site!
 
 ## Prerequisites
 

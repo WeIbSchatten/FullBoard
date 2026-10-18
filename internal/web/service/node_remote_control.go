@@ -12,11 +12,11 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tgwebproxy"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/web/runtime"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tgwebproxy"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
 )
 
 const (
@@ -43,7 +43,7 @@ var (
 
 // ErrRemoteAdminScopeRequired explains a node refusing a panel-control call: its
 // API token for this panel is node-sync scoped (or the link is mTLS-only).
-var ErrRemoteAdminScopeRequired = errors.New("the remote FullBoard panel refused this action: give this node an admin-scope API token to manage its settings and restarts")
+var ErrRemoteAdminScopeRequired = errors.New("the remote We1ssBoard panel refused this action: give this node an admin-scope API token to manage its settings and restarts")
 
 func (s *NodeService) remoteForControl(id int) (*runtime.Remote, error) {
 	n, err := s.GetById(id)

@@ -13,13 +13,13 @@ function resolveDBPath() {
     const abs = path.isAbsolute(envFolder)
       ? envFolder
       : path.resolve(import.meta.dirname, '..', envFolder);
-    return path.join(abs, 'fullboard.db');
+    return path.join(abs, 'we1ssboard.db');
   }
-  const repoSubDB = path.resolve(import.meta.dirname, '..', 'fullboard', 'fullboard.db');
+  const repoSubDB = path.resolve(import.meta.dirname, '..', 'we1ssboard', 'we1ssboard.db');
   if (fs.existsSync(repoSubDB)) return repoSubDB;
-  const repoDB = path.resolve(import.meta.dirname, '..', 'fullboard.db');
+  const repoDB = path.resolve(import.meta.dirname, '..', 'we1ssboard.db');
   if (fs.existsSync(repoDB)) return repoDB;
-  return '/etc/fullboard/fullboard.db';
+  return '/etc/we1ssboard/we1ssboard.db';
 }
 
 const PANEL_API_PREFIXES = ['panel/api/', 'panel/csrf-token'];

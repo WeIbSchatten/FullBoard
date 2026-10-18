@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 func TestXrayLifecycleSnapshotDoesNotOverwriteNewerResult(t *testing.T) {

@@ -4,20 +4,20 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 func TestInitDBGivesEachTestItsOwnDatabase(t *testing.T) {
 	t.Run("first test writes", func(t *testing.T) {
-		InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+		InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 		if err := database.GetDB().Create(&model.Setting{Key: "dbtestProbe", Value: "first"}).Error; err != nil {
 			t.Fatalf("write probe: %v", err)
 		}
 	})
 
 	t.Run("next test starts clean", func(t *testing.T) {
-		InitDB(t, filepath.Join(t.TempDir(), "fullboard.db"))
+		InitDB(t, filepath.Join(t.TempDir(), "we1ssboard.db"))
 		var leaked int64
 		if err := database.GetDB().Model(&model.Setting{}).Where("key = ?", "dbtestProbe").Count(&leaked).Error; err != nil {
 			t.Fatalf("count probe: %v", err)

@@ -1,45 +1,45 @@
 <p align="center">
-  <a href="https://weibschatten.github.io/FullBoard">
+  <a href="https://weibschatten.github.io/We1ssBoard">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="public/logo-dark.svg" />
-      <img src="public/logo-light.svg" alt="FullBoard" width="180" />
+      <img src="public/logo-light.svg" alt="We1ssBoard" width="180" />
     </picture>
   </a>
 </p>
 
-<h1 align="center">FullBoard Documentation</h1>
+<h1 align="center">We1ssBoard Documentation</h1>
 
 <p align="center">
   The official documentation and product site for
-  <a href="https://github.com/WeIbSchatten/FullBoard"><b>FullBoard</b></a> —
+  <a href="https://github.com/WeIbSchatten/We1ssBoard"><b>We1ssBoard</b></a> —
   an advanced web panel for managing Xray-core servers.
 </p>
 
 <p align="center">
-  <a href="https://weibschatten.github.io/FullBoard"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-22d3ee?style=flat-square" alt="Live site" /></a>
-  <a href="https://github.com/WeIbSchatten/FullBoard/actions/workflows/docs-ci.yml"><img src="https://github.com/WeIbSchatten/FullBoard/actions/workflows/docs-ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://weibschatten.github.io/We1ssBoard"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-22d3ee?style=flat-square" alt="Live site" /></a>
+  <a href="https://github.com/WeIbSchatten/We1ssBoard/actions/workflows/docs-ci.yml"><img src="https://github.com/WeIbSchatten/We1ssBoard/actions/workflows/docs-ci.yml/badge.svg" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square" alt="License: GPL-3.0" /></a>
   <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js 16" />
   <img src="https://img.shields.io/badge/Fumadocs-16-0ea5e9?style=flat-square" alt="Fumadocs 16" />
 </p>
 
 <p align="center">
-  <a href="https://weibschatten.github.io/FullBoard"><b>Read the docs →</b></a>
+  <a href="https://weibschatten.github.io/We1ssBoard"><b>Read the docs →</b></a>
 </p>
 
 ---
 
 ## Overview
 
-This directory (`docs/` in the [FullBoard](https://github.com/WeIbSchatten/FullBoard) monorepo) contains
-the source for [the FullBoard docs site](https://weibschatten.github.io/FullBoard) — a static-first documentation and
+This directory (`docs/` in the [We1ssBoard](https://github.com/WeIbSchatten/We1ssBoard) monorepo) contains
+the source for [the We1ssBoard docs site](https://weibschatten.github.io/We1ssBoard) — a static-first documentation and
 marketing site built with [Fumadocs](https://fumadocs.dev) on Next.js. It has **no backend,
 no database, and no auth**: every page is prerendered and every tool runs entirely in the
 browser.
 
 ## What's inside
 
-The documentation walks you through FullBoard from first install to day-to-day operation:
+The documentation walks you through We1ssBoard from first install to day-to-day operation:
 
 - **Getting Started** — installation, first login, and updating or uninstalling the panel.
 - **Configuration** — the panel, inbounds, REALITY, transports, clients, subscriptions, and share links.

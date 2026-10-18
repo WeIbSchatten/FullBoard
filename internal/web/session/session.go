@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,7 @@ const (
 	loginUserKey      = "LOGIN_USER"
 	loginEpochKey     = "LOGIN_EPOCH"
 	apiAuthUserKey    = "api_auth_user"
-	sessionCookieName = "FullBoard"
+	sessionCookieName = "We1ssBoard"
 )
 
 func init() {

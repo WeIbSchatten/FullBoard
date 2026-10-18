@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 var errOverrideTargetUnknown = errors.New("override target is not an outbound in the running config")

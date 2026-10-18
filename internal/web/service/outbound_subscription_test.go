@@ -14,9 +14,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/link"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/link"
 )
 
 func TestOutboundSubscriptionCreatePropagatesAllocationDatabaseFailures(t *testing.T) {
@@ -170,7 +170,7 @@ func TestOutboundSubscriptionRefreshKeepsTagsWhenRealityParamsRotate(t *testing.
 	pbk := base64.RawURLEncoding.EncodeToString(bytes.Repeat([]byte{7}, 32))
 	type server struct{ remark, address string }
 	var servers []server
-	// A FullBoard upstream picks sid and sni at random per request, and older releases spx too (#6556).
+	// A We1ssBoard upstream picks sid and sni at random per request, and older releases spx too (#6556).
 	subID := serveOutboundSubscription(t, "sub", func(n int) string {
 		lines := make([]string, 0, len(servers))
 		for _, s := range servers {

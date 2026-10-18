@@ -13,13 +13,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/common"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/link"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/netsafe"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/common"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/link"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/netsafe"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 // filterOutboundsRejectedByCore drops outbounds the vendored xray-core config
@@ -58,7 +58,7 @@ func filterOutboundsRejectedByCore(label string, outbounds []any) ([]any, []stri
 // subscription may aggregate many upstream outbounds into one document.
 const maxOutboundSubscriptionBytes int64 = 8 << 20
 
-const defaultOutboundSubscriptionUserAgent = "fullboard-outbound-sub/1.0"
+const defaultOutboundSubscriptionUserAgent = "we1ssboard-outbound-sub/1.0"
 
 var errOutboundSubscriptionBodyTooLarge = errors.New("outbound subscription response body exceeds size limit")
 
@@ -372,7 +372,7 @@ func (s *OutboundSubscriptionService) fetchAndStore(sub *model.OutboundSubscript
 		userAgent = defaultOutboundSubscriptionUserAgent
 	}
 	req.Header.Set("User-Agent", userAgent)
-	// A FullBoard donor with an HWID limit answers 404 when the header is empty.
+	// A We1ssBoard donor with an HWID limit answers 404 when the header is empty.
 	if hwid := ExternalSubscriptionHwid(); hwid != "" {
 		req.Header.Set("X-HWID", hwid)
 	}

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 // OutboundDesired pairs an instance with inbound-path DeviceOptions; AWG

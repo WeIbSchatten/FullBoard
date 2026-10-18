@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
 
 	"github.com/gin-gonic/gin"
 )

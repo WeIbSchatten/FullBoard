@@ -1,10 +1,10 @@
 ---
-title: Meet FullBoard
+title: Meet We1ssBoard
 description: A web panel for Xray-core — manage inbounds, protocols, clients, and subscriptions from your browser instead of editing JSON by hand.
 icon: Info
 ---
 
-**FullBoard** is a web control panel that sits on top of
+**We1ssBoard** is a web control panel that sits on top of
 [Xray-core](https://github.com/XTLS/Xray-core), the proxy engine that actually
 moves your traffic. Instead of writing and reloading Xray's JSON configuration
 by hand, you manage everything — inbounds, protocols, clients, certificates,
@@ -15,7 +15,7 @@ subscriptions — from a browser dashboard.
 <Mermaid
   chart={`
 flowchart LR
-  Admin["Admin browser"] -->|HTTPS panel| Panel["FullBoard panel"]
+  Admin["Admin browser"] -->|HTTPS panel| Panel["We1ssBoard panel"]
   Panel -->|writes config, reloads| Xray["Xray-core"]
   Panel --- DB[("SQLite or PostgreSQL")]
   Clients["Client apps"] -->|VLESS / VMess / Trojan / ...| Xray
@@ -52,18 +52,18 @@ flowchart LR
 | Database     | SQLite (default) or PostgreSQL               |
 | Proxy engine | Xray-core (bundled and managed by the panel) |
 
-The default SQLite database lives at `/etc/fullboard/fullboard.db`, and the panel listens
+The default SQLite database lives at `/etc/we1ssboard/we1ssboard.db`, and the panel listens
 on port **2053** by default. Both are configurable — see
 [First login](/docs/guide/first-login) and the environment variable reference.
 
 ## Who it's for
 
-FullBoard is aimed at anyone running their own Xray server: from a single personal
+We1ssBoard is aimed at anyone running their own Xray server: from a single personal
 VPS to operators managing many nodes and clients. If you want the power of
 Xray-core without living in JSON config files, this is for you.
 
 <Callout type="info">
-  FullBoard is a web panel for Xray-core with broad protocol support, per-client
+  We1ssBoard is a web panel for Xray-core with broad protocol support, per-client
   traffic accounting, multi-node management, and many quality-of-life features.
 </Callout>
 

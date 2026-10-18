@@ -20,9 +20,12 @@ import (
 // bytes, so a profile backend must accept that plain secret; mtg cannot.
 const (
 	StockBackendPort       = 2398
-	managedBackendUnit     = "fullboard-mtproxy-"
+	managedBackendUnit     = "we1ssboard-mtproxy-"
 	maxSecretsPerMTProxy   = 16
-	managedBackendFirewall = "fullboard_mtproxy"
+	managedBackendFirewall = "we1ssboard_mtproxy"
+	// Names used before the 1.7.0 rename: such units are stopped, the table dropped.
+	legacyBackendUnit     = "fullboard-mtproxy-"
+	legacyBackendFirewall = "fullboard_mtproxy"
 )
 
 // MTProxyPaths locate the official MTProxy the upstream installer builds.
@@ -49,7 +52,7 @@ type RelayBackendsStatus struct {
 type RelayManagedBackend struct {
 	Backend  string   `json:"backend" example:"127.0.0.1:40123"`
 	Profiles []string `json:"profiles"`
-	Unit     string   `json:"unit" example:"fullboard-mtproxy-40123"`
+	Unit     string   `json:"unit" example:"we1ssboard-mtproxy-40123"`
 	Active   bool     `json:"active" example:"true"`
 	External bool     `json:"external" example:"false"`
 }
@@ -212,7 +215,7 @@ func backendFingerprint(paths MTProxyPaths, env mtproxyEnv, inst backendInstance
 }
 
 func backendDescription(inst backendInstance, statsPort int, fingerprint string) string {
-	return fmt.Sprintf("FullBoard MTProxy backend ports=%s stats=%d fp=%s", joinPorts(inst.ports), statsPort, fingerprint)
+	return fmt.Sprintf("We1ssBoard MTProxy backend ports=%s stats=%d fp=%s", joinPorts(inst.ports), statsPort, fingerprint)
 }
 
 func parseBackendDescription(desc string) (ports []int, statsPort int, fingerprint string) {
@@ -290,14 +293,14 @@ func (m *Manager) managedUnitState(ctx context.Context, unit string) unitState {
 func (m *Manager) listManagedUnits(ctx context.Context) []string {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-	out, err := m.run(ctx, "systemctl", "list-units", "--all", "--plain", "--no-legend", "--no-pager", managedBackendUnit+"*")
+	out, err := m.run(ctx, "systemctl", "list-units", "--all", "--plain", "--no-legend", "--no-pager", managedBackendUnit+"*", legacyBackendUnit+"*")
 	if err != nil {
 		return nil
 	}
 	var units []string
 	for _, line := range strings.Split(string(out), "\n") {
 		fields := strings.Fields(line)
-		if len(fields) == 0 || !strings.HasPrefix(fields[0], managedBackendUnit) {
+		if len(fields) == 0 || !(strings.HasPrefix(fields[0], managedBackendUnit) || strings.HasPrefix(fields[0], legacyBackendUnit)) {
 			continue
 		}
 		units = append(units, strings.TrimSuffix(fields[0], ".service"))
@@ -450,6 +453,10 @@ func (m *Manager) startManagedBackend(ctx context.Context, unit string, env mtpr
 func (m *Manager) applyBackendFirewall(ctx context.Context, ports []int) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
+	if !m.legacyFirewallDropped {
+		_, _ = m.run(ctx, "nft", "delete", "table", "inet", legacyBackendFirewall)
+		m.legacyFirewallDropped = true
+	}
 	rules := backendFirewallRules(ports)
 	if rules == m.backendFirewall {
 		if rules == "" {

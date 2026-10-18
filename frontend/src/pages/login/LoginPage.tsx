@@ -171,7 +171,7 @@ export default function LoginPage() {
               <div className="login-card">
                 <div className="brand">
                   <BrandMark size={40} />
-                  <span className="brand-name">FullBoard</span>
+                  <span className="brand-name">We1ssBoard</span>
                 </div>
                 <h2 className="welcome">
                   <b key={headlineIndex}>{headlineWords[headlineIndex]}</b>

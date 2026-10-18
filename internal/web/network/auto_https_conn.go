@@ -1,4 +1,4 @@
-// Package network provides network utilities for the FullBoard web panel,
+// Package network provides network utilities for the We1ssBoard web panel,
 // including automatic HTTP to HTTPS redirection functionality.
 package network
 

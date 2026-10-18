@@ -20,12 +20,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/config"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/crypto"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/maskcompat"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/random"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/crypto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/maskcompat"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/random"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 
 	"github.com/mattn/go-sqlite3"
 	"gorm.io/driver/postgres"
@@ -60,7 +60,7 @@ func Dialect() string {
 const (
 	defaultUsername       = "admin"
 	defaultPassword       = "admin"
-	sqliteBackupDirPrefix = ".fullboard-backup-"
+	sqliteBackupDirPrefix = ".we1ssboard-backup-"
 )
 
 func allModels() []any {

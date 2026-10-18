@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/maskcompat"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/maskcompat"
 )
 
 // Outbound is the minimal shape we emit for each parsed link.
@@ -1090,7 +1090,7 @@ func firstParam(p url.Values, keys ...string) string {
 	return ""
 }
 
-// realityPerRequestParams are picked per request by subscription servers (FullBoard randomizes
+// realityPerRequestParams are picked per request by subscription servers (We1ssBoard randomizes
 // sid/sni, older releases spx too), so they must not split one server into new identities.
 var realityPerRequestParams = map[string]bool{"sid": true, "sni": true, "spx": true}
 

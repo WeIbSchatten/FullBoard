@@ -3,7 +3,7 @@ package runtime
 import (
 	"context"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
 )
 
 type Runtime interface {

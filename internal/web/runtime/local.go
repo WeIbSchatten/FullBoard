@@ -8,12 +8,12 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawg"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/amneziawgnet"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/database/model"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/mtproto"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/tuic"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawg"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/amneziawgnet"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/database/model"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/mtproto"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tuic"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 type LocalDeps struct {

@@ -360,7 +360,7 @@ export default function SubscriptionGeneralTab({
                   <>
                     {t('pages.settings.subThemeDirDesc')}{' '}
                     <a
-                      href="https://github.com/WeIbSchatten/FullBoard/blob/main/docs/custom-subscription-templates.md"
+                      href="https://github.com/WeIbSchatten/We1ssBoard/blob/main/docs/custom-subscription-templates.md"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -371,7 +371,7 @@ export default function SubscriptionGeneralTab({
               >
                 <Input
                   value={allSetting.subThemeDir}
-                  placeholder="/etc/fullboard/sub_templates/my-theme/"
+                  placeholder="/etc/we1ssboard/sub_templates/my-theme/"
                   onChange={(e) => updateSetting({ subThemeDir: e.target.value })}
                 />
               </SettingListItem>

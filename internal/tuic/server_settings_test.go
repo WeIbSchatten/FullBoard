@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/logger"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/logger"
 )
 
 func TestNormalizeCongestionControl(t *testing.T) {
@@ -67,7 +67,7 @@ func TestLogfUsesCommonLoggerAndHonorsThreshold(t *testing.T) {
 				}
 			}
 			if !strings.Contains(logs, "inbound 99001 (log-test)") {
-				t.Fatal("TUIC event was not written through the shared FullBoard logger")
+				t.Fatal("TUIC event was not written through the shared We1ssBoard logger")
 			}
 		})
 	}

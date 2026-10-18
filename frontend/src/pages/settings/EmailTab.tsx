@@ -148,7 +148,7 @@ export default function EmailTab({ allSetting, updateSetting }: EmailTabProps) {
               >
                 <Input
                   value={allSetting.smtpFromName}
-                  placeholder="FullBoard"
+                  placeholder="We1ssBoard"
                   onChange={(e) => updateSetting({ smtpFromName: e.target.value })}
                 />
               </SettingListItem>

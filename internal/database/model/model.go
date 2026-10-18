@@ -1,4 +1,4 @@
-// Package model defines the database models and data structures used by the FullBoard panel.
+// Package model defines the database models and data structures used by the We1ssBoard panel.
 package model
 
 import (
@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/WeIbSchatten/FullBoard/v3/internal/util/json_util"
-	"github.com/WeIbSchatten/FullBoard/v3/internal/xray"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/json_util"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/xray"
 )
 
 // Protocol represents the protocol type for Xray inbounds.
@@ -37,7 +37,7 @@ const (
 	MASQUE      Protocol = "masque"
 )
 
-// User represents a user account in the FullBoard panel.
+// User represents a user account in the We1ssBoard panel.
 type User struct {
 	Id         int    `json:"id" gorm:"primaryKey;autoIncrement"`
 	Username   string `json:"username"`
@@ -815,14 +815,14 @@ func HealMtprotoClientSecrets(settings string) (string, bool) {
 	return string(out), true
 }
 
-// Setting stores key-value configuration settings for the FullBoard panel.
+// Setting stores key-value configuration settings for the We1ssBoard panel.
 type Setting struct {
 	Id    int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
 	Key   string `json:"key" form:"key" gorm:"index:idx_settings_key"`
 	Value string `json:"value" form:"value"`
 }
 
-// Node represents a remote FullBoard panel registered with the central panel.
+// Node represents a remote We1ssBoard panel registered with the central panel.
 // The central panel polls each node's existing /panel/api/server/status
 // endpoint over HTTP using the per-node ApiToken to populate the runtime
 // status fields below.
