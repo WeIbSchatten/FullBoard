@@ -300,7 +300,7 @@ func (m *Manager) listManagedUnits(ctx context.Context) []string {
 	var units []string
 	for _, line := range strings.Split(string(out), "\n") {
 		fields := strings.Fields(line)
-		if len(fields) == 0 || !(strings.HasPrefix(fields[0], managedBackendUnit) || strings.HasPrefix(fields[0], legacyBackendUnit)) {
+		if len(fields) == 0 || (!strings.HasPrefix(fields[0], managedBackendUnit) && !strings.HasPrefix(fields[0], legacyBackendUnit)) {
 			continue
 		}
 		units = append(units, strings.TrimSuffix(fields[0], ".service"))
