@@ -150,7 +150,11 @@
         "mono": "單色",
         "monoHint": "墨與紙，別無他物",
         "pastel": "粉彩",
-        "pastelHint": "檸檬黃、粉、淡紫與藏青"
+        "pastelHint": "檸檬黃、粉、淡紫與藏青",
+        "ocean": "海洋",
+        "oceanHint": "冷灰底色搭配藍色強調色",
+        "emerald": "翡翠",
+        "emeraldHint": "深灰底色搭配綠色強調色"
       },
       "size": "介面大小",
       "sizeAuto": "自動",

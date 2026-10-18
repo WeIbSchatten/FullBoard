@@ -213,3 +213,177 @@ html[data-style='pastel'] .ant-progress-bg,
 html[data-style='pastel'] .ant-progress-bg-outer .ant-progress-bg {
   background: var(--fb-gradient) !important;
 }
+
+/* ---------- Ocean: blue accent ---------- */
+
+html[data-style='ocean'] body.dark,
+html[data-style='ocean'] .dark {
+  --fb-bg: #0a0d14;
+  --fb-bg-glow: rgba(47, 116, 255, 0.08);
+  --fb-sider: #0c1018;
+  --fb-surface: #121722;
+  --fb-surface-2: #19202d;
+  --fb-surface-3: #212a3a;
+  --fb-surface-hover: rgba(47, 116, 255, 0.07);
+  --fb-elevated: #161c28;
+  --fb-border: rgba(148, 180, 255, 0.08);
+  --fb-border-strong: rgba(148, 180, 255, 0.15);
+  --fb-text: #eef2fa;
+  --fb-text-2: #aeb8cc;
+  --fb-text-3: #8591a8;
+  --fb-accent: #2f74ff;
+  --fb-accent-hover: #4b88ff;
+  --fb-on-accent: #ffffff;
+  --fb-accent-soft: rgba(47, 116, 255, 0.16);
+  --fb-accent-soft-2: rgba(47, 116, 255, 0.24);
+  --fb-focus: rgba(47, 116, 255, 0.5);
+  --fb-success: #6fd3a0;
+  --fb-success-bg: rgba(111, 211, 160, 0.12);
+  --fb-warning: #e8bd6a;
+  --fb-warning-bg: rgba(232, 189, 106, 0.12);
+  --fb-error: #f07a7a;
+  --fb-error-bg: rgba(240, 122, 122, 0.12);
+  --fb-info: #7fb0ff;
+  --fb-info-bg: rgba(127, 176, 255, 0.12);
+  --fb-chart-1: #2f74ff;
+  --fb-chart-2: #7fb0ff;
+  --fb-chart-fill: rgba(47, 116, 255, 0.14);
+  --fb-grid: rgba(148, 180, 255, 0.07);
+  --fb-code-bg: #0d111a;
+}
+
+html[data-theme='ultra-dark'][data-style='ocean'] body.dark,
+html[data-theme='ultra-dark'][data-style='ocean'] .dark {
+  --fb-bg: #000000;
+  --fb-sider: #000000;
+  --fb-surface: #080b12;
+  --fb-surface-2: #0e131c;
+  --fb-surface-3: #151b27;
+  --fb-elevated: #0b1018;
+  --fb-border: rgba(148, 180, 255, 0.07);
+  --fb-border-strong: rgba(148, 180, 255, 0.13);
+  --fb-code-bg: #05070c;
+}
+
+html[data-style='ocean'] body.light,
+html[data-style='ocean'] .light {
+  --fb-bg: #f2f5fb;
+  --fb-bg-glow: rgba(31, 95, 214, 0.06);
+  --fb-sider: #f8faff;
+  --fb-surface: #ffffff;
+  --fb-surface-2: #eef2fa;
+  --fb-surface-3: #e3e9f5;
+  --fb-surface-hover: rgba(31, 95, 214, 0.05);
+  --fb-elevated: #ffffff;
+  --fb-border: rgba(20, 40, 90, 0.09);
+  --fb-border-strong: rgba(20, 40, 90, 0.16);
+  --fb-text: #0e1a33;
+  --fb-text-2: #3f4d68;
+  --fb-text-3: #5b6884;
+  --fb-accent: #1f5fd6;
+  --fb-accent-hover: #2c6ff0;
+  --fb-on-accent: #ffffff;
+  --fb-accent-soft: rgba(31, 95, 214, 0.1);
+  --fb-accent-soft-2: rgba(31, 95, 214, 0.16);
+  --fb-focus: rgba(31, 95, 214, 0.35);
+  --fb-info: #1f5fd6;
+  --fb-info-bg: rgba(31, 95, 214, 0.09);
+  --fb-chart-1: #1f5fd6;
+  --fb-chart-2: #5f8fe6;
+  --fb-chart-fill: rgba(31, 95, 214, 0.08);
+  --fb-grid: rgba(20, 40, 90, 0.07);
+  --fb-code-bg: #f5f7fc;
+}
+
+/* ---------- Emerald: green accent ---------- */
+
+html[data-style='emerald'] body.dark,
+html[data-style='emerald'] .dark {
+  --fb-bg: #090c0b;
+  --fb-bg-glow: rgba(52, 211, 153, 0.07);
+  --fb-sider: #0b0f0d;
+  --fb-surface: #121715;
+  --fb-surface-2: #19201d;
+  --fb-surface-3: #212a26;
+  --fb-surface-hover: rgba(52, 211, 153, 0.06);
+  --fb-elevated: #161c19;
+  --fb-border: rgba(160, 255, 210, 0.07);
+  --fb-border-strong: rgba(160, 255, 210, 0.14);
+  --fb-text: #edf5f1;
+  --fb-text-2: #adbdb5;
+  --fb-text-3: #85968e;
+  --fb-accent: #34d399;
+  --fb-accent-hover: #52deab;
+  --fb-on-accent: #04140d;
+  --fb-accent-soft: rgba(52, 211, 153, 0.14);
+  --fb-accent-soft-2: rgba(52, 211, 153, 0.22);
+  --fb-focus: rgba(52, 211, 153, 0.5);
+  --fb-success: #34d399;
+  --fb-success-bg: rgba(52, 211, 153, 0.12);
+  --fb-warning: #e8c06a;
+  --fb-warning-bg: rgba(232, 192, 106, 0.12);
+  --fb-error: #f07a7a;
+  --fb-error-bg: rgba(240, 122, 122, 0.12);
+  --fb-info: #8ab8e0;
+  --fb-info-bg: rgba(138, 184, 224, 0.12);
+  --fb-chart-1: #34d399;
+  --fb-chart-2: #8ab8e0;
+  --fb-chart-fill: rgba(52, 211, 153, 0.12);
+  --fb-grid: rgba(160, 255, 210, 0.06);
+  --fb-code-bg: #0c100e;
+}
+
+html[data-theme='ultra-dark'][data-style='emerald'] body.dark,
+html[data-theme='ultra-dark'][data-style='emerald'] .dark {
+  --fb-bg: #000000;
+  --fb-sider: #000000;
+  --fb-surface: #080b0a;
+  --fb-surface-2: #0e1311;
+  --fb-surface-3: #151b18;
+  --fb-elevated: #0b0f0d;
+  --fb-border: rgba(160, 255, 210, 0.06);
+  --fb-border-strong: rgba(160, 255, 210, 0.12);
+  --fb-code-bg: #050706;
+}
+
+html[data-style='emerald'] body.light,
+html[data-style='emerald'] .light {
+  --fb-bg: #f2f6f4;
+  --fb-bg-glow: rgba(15, 122, 85, 0.06);
+  --fb-sider: #f8fbf9;
+  --fb-surface: #ffffff;
+  --fb-surface-2: #edf3f0;
+  --fb-surface-3: #e2ebe6;
+  --fb-surface-hover: rgba(15, 122, 85, 0.05);
+  --fb-elevated: #ffffff;
+  --fb-border: rgba(10, 60, 40, 0.09);
+  --fb-border-strong: rgba(10, 60, 40, 0.16);
+  --fb-text: #0c1f17;
+  --fb-text-2: #3d5249;
+  --fb-text-3: #586c63;
+  --fb-accent: #0f7a55;
+  --fb-accent-hover: #138c62;
+  --fb-on-accent: #ffffff;
+  --fb-accent-soft: rgba(15, 122, 85, 0.1);
+  --fb-accent-soft-2: rgba(15, 122, 85, 0.16);
+  --fb-focus: rgba(15, 122, 85, 0.35);
+  --fb-info: #2f6690;
+  --fb-info-bg: rgba(47, 102, 144, 0.09);
+  --fb-chart-1: #0f7a55;
+  --fb-chart-2: #4fae8a;
+  --fb-chart-fill: rgba(15, 122, 85, 0.08);
+  --fb-grid: rgba(10, 60, 40, 0.07);
+  --fb-code-bg: #f5f9f7;
+}
+
+/* Colour presets: the selected navigation item carries the accent. */
+html:is([data-style='ocean'], [data-style='emerald']) .sider-nav.ant-menu .ant-menu-item-selected {
+  background: var(--fb-accent-soft-2) !important;
+  color: var(--fb-text) !important;
+}
+html:is([data-style='ocean'], [data-style='emerald'])
+  .sider-nav.ant-menu
+  .ant-menu-item-selected
+  .anticon {
+  color: var(--fb-accent);
+}

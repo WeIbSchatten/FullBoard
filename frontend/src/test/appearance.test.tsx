@@ -46,6 +46,21 @@ describe('appearance presets', () => {
     expect(api().antdThemeConfig.token?.colorPrimary).toBe('#a8a3f6');
   });
 
+  // Colour presets pick their accent per theme: a bright one on dark, a deeper one on paper.
+  it.each([
+    ['ocean', '#2f74ff', '#1f5fd6'],
+    ['emerald', '#34d399', '#0f7a55'],
+  ] as const)('applies the %s preset with its own accent', (preset, darkAccent, lightAccent) => {
+    const api = mount();
+    act(() => api().setStylePreset(preset));
+    expect(document.documentElement.getAttribute('data-style')).toBe(preset);
+    expect(localStorage.getItem('fb-style')).toBe(preset);
+    act(() => api().setMode('dark'));
+    expect(api().antdThemeConfig.token?.colorPrimary).toBe(darkAccent);
+    act(() => api().setMode('light'));
+    expect(api().antdThemeConfig.token?.colorPrimary).toBe(lightAccent);
+  });
+
   it('zooms the document for a fixed interface size and clears it at 100%', () => {
     const api = mount();
     act(() => api().setUiScale('125'));
