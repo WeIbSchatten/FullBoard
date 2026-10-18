@@ -52,6 +52,10 @@ ProtectSystem=full
 # /etc/caddy: stock Caddyfile encode patch for HTTP/2 WebSocket (tg-web-proxy).
 ReadWritePaths=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server -/etc/caddy
 ReadWriteDirectories=-/etc/fullboard -/usr/local/fullboard -/var/log/fullboard -/etc/tproxy-server -/etc/caddy
+# A kernel-TUN WireGuard outbound zeroes net.ipv{4,6}.conf.*.rp_filter as Xray starts
+# (#6796). Reopen only /proc/sys/net: kernel.* (core_pattern among them) stays read-only.
+# No ReadWriteDirectories alias needed: ProtectKernelTunables itself requires systemd 232.
+ReadWritePaths=-/proc/sys/net
 ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectKernelLogs=yes

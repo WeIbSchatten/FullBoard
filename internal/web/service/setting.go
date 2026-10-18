@@ -1686,6 +1686,9 @@ func (s *SettingService) UpdateAllSetting(allSetting *entity.AllSetting, clears 
 	default:
 		return errors.New("navPosition must be side or top")
 	}
+	if err := validateFinalMaskJSONSalamander(allSetting.SubJsonFinalMask); err != nil {
+		return err
+	}
 	if err := allSetting.CheckValid(); err != nil {
 		return err
 	}

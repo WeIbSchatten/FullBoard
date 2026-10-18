@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Empty, Form, Input, Modal, Space, Spin, Switch, message } from 'antd';
+import { Button, Empty, Form, Input, Modal, Select, Space, Spin, Switch, Tag, message } from 'antd';
 import PanelTabs from '@/layouts/PanelTabs';
 import { ApiOutlined, SafetyOutlined, UserOutlined } from '@ant-design/icons';
 import { ClipboardManager, HttpUtil, IntlUtil, RandomUtil } from '@/utils';
@@ -17,12 +17,14 @@ interface ApiMsg<T = unknown> {
   obj?: T;
 }
 
+type ApiTokenScope = 'admin' | 'monitor' | 'node-sync' | 'node-admin';
+
 interface ApiTokenRow {
   id: number;
   name: string;
   enabled: boolean;
   createdAt: number;
-  scope: 'admin' | 'monitor' | 'node-sync';
+  scope: ApiTokenScope;
   expiresAt: number;
 }
 
@@ -77,6 +79,7 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
   const [apiTokensLoading, setApiTokensLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [createName, setCreateName] = useState('');
+  const [createScope, setCreateScope] = useState<ApiTokenScope>('admin');
   const [creating, setCreating] = useState(false);
   const [createdToken, setCreatedToken] = useState<{ name: string; token: string } | null>(null);
 
@@ -158,6 +161,7 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
 
   function openCreateModal() {
     setCreateName('');
+    setCreateScope('admin');
     setCreateOpen(true);
   }
 
@@ -169,9 +173,10 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
     }
     setCreating(true);
     try {
-      const msg = (await HttpUtil.post('/panel/api/setting/apiTokens/create', { name })) as ApiMsg<{
-        token?: string;
-      }>;
+      const msg = (await HttpUtil.post('/panel/api/setting/apiTokens/create', {
+        name,
+        scope: createScope,
+      })) as ApiMsg<{ token?: string }>;
       if (msg?.success) {
         setCreateOpen(false);
         await loadApiTokens();
@@ -217,6 +222,29 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
     if (!ts) return '';
     return IntlUtil.formatDate(apiTokenCreatedAtMilliseconds(ts));
   }
+
+  const scopeMeta: Record<ApiTokenScope, { label: string; description: string; color: string }> = {
+    admin: {
+      label: t('pages.settings.security.apiTokenScopeAdmin'),
+      description: t('pages.settings.security.apiTokenScopeAdminDesc'),
+      color: 'red',
+    },
+    monitor: {
+      label: t('pages.settings.security.apiTokenScopeMonitor'),
+      description: t('pages.settings.security.apiTokenScopeMonitorDesc'),
+      color: 'blue',
+    },
+    'node-sync': {
+      label: t('pages.settings.security.apiTokenScopeNodeSync'),
+      description: t('pages.settings.security.apiTokenScopeNodeSyncDesc'),
+      color: 'gold',
+    },
+    'node-admin': {
+      label: t('pages.settings.security.apiTokenScopeNodeAdmin'),
+      description: t('pages.settings.security.apiTokenScopeNodeAdminDesc'),
+      color: 'purple',
+    },
+  };
 
   function toggleTwoFactor() {
     if (!allSetting.twoFactorEnable) {
@@ -346,7 +374,12 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
                     <div key={row.id} className={`api-token-row${row.enabled ? '' : ' disabled'}`}>
                       <div className="api-token-row-head">
                         <div className="api-token-name-wrap">
-                          <span className="api-token-name">{row.name}</span>
+                          <div className="api-token-name-line">
+                            <span className="api-token-name">{row.name}</span>
+                            <Tag color={scopeMeta[row.scope].color}>
+                              {scopeMeta[row.scope].label}
+                            </Tag>
+                          </div>
                           <span className="api-token-created">
                             {formatTokenDate(row.createdAt)}
                           </span>
@@ -395,6 +428,21 @@ export default function SecurityTab({ allSetting, updateSetting, saveSetting }: 
               }
               onChange={(e) => setCreateName(e.target.value)}
               onPressEnter={confirmCreateToken}
+            />
+          </Form.Item>
+          <Form.Item
+            label={t('pages.settings.security.apiTokenScope')}
+            extra={scopeMeta[createScope].description}
+            required
+          >
+            <Select
+              aria-label={t('pages.settings.security.apiTokenScope')}
+              value={createScope}
+              options={(Object.keys(scopeMeta) as ApiTokenScope[]).map((scope) => ({
+                value: scope,
+                label: scopeMeta[scope].label,
+              }))}
+              onChange={setCreateScope}
             />
           </Form.Item>
         </Form>
