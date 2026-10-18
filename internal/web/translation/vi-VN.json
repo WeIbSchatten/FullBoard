@@ -150,7 +150,11 @@
         "mono": "Đơn sắc",
         "monoHint": "Mực và giấy, không thừa",
         "pastel": "Pastel",
-        "pastelHint": "Vàng chanh, hồng, tím nhạt và xanh navy"
+        "pastelHint": "Vàng chanh, hồng, tím nhạt và xanh navy",
+        "ocean": "Đại dương",
+        "oceanHint": "Điểm nhấn xanh dương trên nền graphite lạnh",
+        "emerald": "Ngọc lục bảo",
+        "emeraldHint": "Điểm nhấn xanh lá trên nền graphite đậm"
       },
       "size": "Kích thước giao diện",
       "sizeAuto": "Tự động",

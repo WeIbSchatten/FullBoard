@@ -150,7 +150,11 @@
         "mono": "Monokrom",
         "monoHint": "Tinta dan kertas, tanpa tambahan",
         "pastel": "Pastel",
-        "pastelHint": "Lemon, merah muda, lila, dan biru tua"
+        "pastelHint": "Lemon, merah muda, lila, dan biru tua",
+        "ocean": "Samudra",
+        "oceanHint": "Aksen biru di atas grafit dingin",
+        "emerald": "Zamrud",
+        "emeraldHint": "Aksen hijau di atas grafit gelap"
       },
       "size": "Ukuran antarmuka",
       "sizeAuto": "Otomatis",
