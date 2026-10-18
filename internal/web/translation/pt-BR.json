@@ -150,7 +150,11 @@
         "mono": "Monocromático",
         "monoHint": "Tinta e papel, nada mais",
         "pastel": "Pastel",
-        "pastelHint": "Limão, rosa, lilás e azul-marinho"
+        "pastelHint": "Limão, rosa, lilás e azul-marinho",
+        "ocean": "Oceano",
+        "oceanHint": "Destaque azul sobre grafite frio",
+        "emerald": "Esmeralda",
+        "emeraldHint": "Destaque verde sobre grafite profundo"
       },
       "size": "Tamanho da interface",
       "sizeAuto": "Auto",

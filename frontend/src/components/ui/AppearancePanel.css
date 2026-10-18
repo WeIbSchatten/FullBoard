@@ -156,3 +156,13 @@
 .appearance-row--compact {
   flex-direction: column;
 }
+
+.appearance-preset--ocean .appearance-preset-art {
+  background: radial-gradient(110% 120% at 0% 0%, #2f74ff 0%, #0a0d14 85%);
+  color: #eef2fa;
+}
+
+.appearance-preset--emerald .appearance-preset-art {
+  background: radial-gradient(110% 120% at 0% 0%, #34d399 0%, #090c0b 85%);
+  color: #edf5f1;
+}

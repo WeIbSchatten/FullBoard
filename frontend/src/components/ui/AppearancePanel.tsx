@@ -22,6 +22,8 @@ export const APPEARANCE_EVENT = 'fb:appearance';
 const PRESET_SWATCHES: Record<StylePreset, string[]> = {
   mono: ['#0a0a0a', '#1b1b1b', '#8f8f8f', '#f5f5f5'],
   pastel: ['#f8ffa1', '#f6d5ee', '#a8a3f6', '#24316b'],
+  ocean: ['#0a0d14', '#19202d', '#7fb0ff', '#2f74ff'],
+  emerald: ['#090c0b', '#19201d', '#8ab8e0', '#34d399'],
 };
 
 function useAutoPercent(): number {
