@@ -127,10 +127,6 @@ func (s *Store) SaveConfig(ctx context.Context, cfg RelayConfig, initial *RelayP
 	return s.applyLocked(ctx, cfg, profiles)
 }
 
-// errProfilesUnchanged lets a mutation decline to write: MutateProfiles then
-// commits nothing and returns it, so the caller can skip the relay restart.
-var errProfilesUnchanged = errors.New("profiles unchanged")
-
 // MutateProfiles applies fn to the current profile list and commits the result.
 func (s *Store) MutateProfiles(ctx context.Context, fn func([]RelayProfile) ([]RelayProfile, error)) error {
 	s.mu.Lock()
