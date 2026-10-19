@@ -6,7 +6,8 @@ import { resolveLanguage, translate, type Lang } from './translate';
 
 export { LANGUAGES, RTL_LANGS, type Lang } from './translate';
 
-const KEY = 'we1ssboard.lang';
+export const LANG_PREF = 'we1ssboard.lang';
+const KEY = LANG_PREF;
 const deviceLang = resolveLanguage(Intl.DateTimeFormat().resolvedOptions().locale);
 
 type T = (key: string, vars?: Record<string, string | number>) => string;

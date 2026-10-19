@@ -3131,6 +3131,22 @@
       "remove": "Hapus dari aplikasi",
       "removeConfirm": "Hapus panel ini dari aplikasi? Panelnya sendiri tidak berubah.",
       "current": "Saat ini"
+    },
+    "alerts": {
+      "title": "Peringatan di ponsel ini",
+      "enable": "Beri tahu saat Xray atau node berhenti",
+      "hint": "Aplikasi memeriksa panel Anda di latar belakang sekitar setiap 15 menit, bahkan saat ditutup.",
+      "xrayDown": "Xray berhenti di {panel}",
+      "xrayUp": "Xray berjalan lagi di {panel}",
+      "nodeDown": "Node {node} offline ({panel})",
+      "nodeUp": "Node {node} kembali online ({panel})",
+      "denied": "Notifikasi aplikasi ini diblokir di pengaturan sistem."
+    },
+    "lock": {
+      "enable": "Buka dengan sidik jari atau wajah",
+      "locked": "We1ssBoard terkunci",
+      "unlock": "Buka kunci",
+      "unavailable": "Perangkat ini belum mengatur buka kunci dengan sidik jari atau wajah."
     }
   }
 }

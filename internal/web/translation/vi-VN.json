@@ -3131,6 +3131,22 @@
       "remove": "Gỡ khỏi ứng dụng",
       "removeConfirm": "Gỡ panel này khỏi ứng dụng? Bản thân panel không thay đổi.",
       "current": "Hiện tại"
+    },
+    "alerts": {
+      "title": "Cảnh báo trên điện thoại",
+      "enable": "Thông báo khi Xray hoặc một node ngừng hoạt động",
+      "hint": "Ứng dụng kiểm tra các panel ở chế độ nền khoảng 15 phút một lần, kể cả khi đã đóng.",
+      "xrayDown": "Xray đã dừng trên {panel}",
+      "xrayUp": "Xray đã chạy lại trên {panel}",
+      "nodeDown": "Node {node} đang ngoại tuyến ({panel})",
+      "nodeUp": "Node {node} đã trực tuyến trở lại ({panel})",
+      "denied": "Thông báo của ứng dụng đang bị chặn trong cài đặt hệ thống."
+    },
+    "lock": {
+      "enable": "Mở khóa bằng vân tay hoặc khuôn mặt",
+      "locked": "We1ssBoard đang bị khóa",
+      "unlock": "Mở khóa",
+      "unavailable": "Thiết bị này chưa cài đặt mở khóa bằng vân tay hoặc khuôn mặt."
     }
   }
 }

@@ -1,5 +1,11 @@
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import { Alert, Pressable, View } from 'react-native';
+import { Alert, Platform, Pressable, View } from 'react-native';
+
+import { LOCK_PREF, biometricsAvailable, setLockEnabled } from '@/components/AppLock';
+import { SwitchRow } from '@/components/form';
+import { MONITOR_PREF, setAlertsEnabled } from '@/monitor';
+import { getPref } from '@/prefs';
 
 import { AppearancePicker, LanguagePicker } from '@/components/Pickers';
 import { Badge, Body, Button, Card, Muted, Screen, Title } from '@/components/ui';
@@ -81,11 +87,49 @@ function PanelsCard() {
   );
 }
 
+function PhoneCard() {
+  const t = useT();
+  const [alerts, setAlerts] = useState(false);
+  const [lock, setLock] = useState(false);
+  const [canLock, setCanLock] = useState(false);
+  const [note, setNote] = useState('');
+  useEffect(() => {
+    void getPref(MONITOR_PREF).then((v) => setAlerts(v === '1'));
+    void getPref(LOCK_PREF).then((v) => setLock(v === '1'));
+    void biometricsAvailable().then(setCanLock);
+  }, []);
+  if (Platform.OS === 'web') return null;
+  return (
+    <Card>
+      <Title>{t('mobile.alerts.title')}</Title>
+      <SwitchRow
+        label={t('mobile.alerts.enable')}
+        value={alerts}
+        onChange={(on) =>
+          void setAlertsEnabled(on).then((r) => {
+            setNote(r === 'denied' ? t('mobile.alerts.denied') : '');
+            if (r === 'ok') setAlerts(on);
+          })
+        }
+      />
+      <Muted>{note || t('mobile.alerts.hint')}</Muted>
+      <SwitchRow
+        label={t('mobile.lock.enable')}
+        value={lock}
+        disabled={!canLock && !lock}
+        onChange={(on) => void setLockEnabled(on).then((ok) => ok && setLock(on))}
+      />
+      {!canLock && <Muted>{t('mobile.lock.unavailable')}</Muted>}
+    </Card>
+  );
+}
+
 export default function More() {
   return (
     <Screen>
       <PanelsCard />
       <PanelSettingsCard />
+      <PhoneCard />
       <LanguagePicker />
       <AppearancePicker />
     </Screen>
