@@ -133,6 +133,12 @@ function NodeScreen() {
           </View>
           <LogsCard id={nodeId} />
           <Button
+            title={t('menu.settings')}
+            onPress={() =>
+              router.push({ pathname: '/settings/[category]', params: { category: 'general', node: String(nodeId) } })
+            }
+          />
+          <Button
             title={t('pages.nodes.editNode')}
             kind="primary"
             onPress={() => router.push({ pathname: '/node/edit', params: { id: String(nodeId) } })}
