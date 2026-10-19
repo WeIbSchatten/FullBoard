@@ -1,4 +1,6 @@
 import type {
+  AllSettingView,
+  ApiTokenView,
   ClientPageResponse,
   HostGroup,
   OutboundTraffics,
@@ -15,7 +17,7 @@ import type {
 
 import { parseTemplateResponse } from '@/lib/xrayConfig';
 
-import { apiRequest, type Session } from './client';
+import { apiEnvelope, apiRequest, type Session } from './client';
 
 // Subset of the panel's /server/status payload the app shows.
 export interface ServerStatus {
@@ -106,6 +108,42 @@ export interface NewClient {
   enable: boolean;
 }
 
+export type ApiTokenScope = 'admin' | 'monitor' | 'node-sync' | 'node-admin';
+
+export interface PanelUpdateInfo {
+  channel: string;
+  currentVersion: string;
+  latestVersion: string;
+  currentCommit?: string;
+  latestCommit?: string;
+  updateAvailable: boolean;
+}
+
+export interface XrayLogEntry {
+  DateTime?: string | number;
+  FromAddress?: string;
+  ToAddress?: string;
+  Inbound?: string;
+  Outbound?: string;
+  Email?: string;
+  Event?: number;
+}
+
+export interface XrayLogQuery {
+  filter: string;
+  showDirect: boolean;
+  showBlocked: boolean;
+  showProxy: boolean;
+}
+
+export interface UserUpdate {
+  oldUsername: string;
+  oldPassword: string;
+  newUsername: string;
+  newPassword: string;
+  twoFactorCode: string;
+}
+
 const enc = encodeURIComponent;
 
 export function panelApi(s: Session) {
@@ -114,7 +152,43 @@ export function panelApi(s: Session) {
   const del = <T>(path: string) => apiRequest<T>(s, 'DELETE', path);
   const form = <T>(path: string, fields: Record<string, string>) =>
     apiRequest<T>(s, 'POST', path, new URLSearchParams(fields));
+  const message = async (path: string, fields?: Record<string, string>) =>
+    (await apiEnvelope<unknown>(s, 'POST', path, fields && new URLSearchParams(fields))).msg;
   return {
+    allSettings: () => post<AllSettingView>('/panel/api/setting/all'),
+    updateSettings: (body: Record<string, unknown>) => post<unknown>('/panel/api/setting/update', body),
+    updateUser: (u: UserUpdate) => form<unknown>('/panel/api/setting/updateUser', { ...u }),
+    apiTokens: () => get<ApiTokenView[] | null>('/panel/api/setting/apiTokens'),
+    createApiToken: (name: string, scope: ApiTokenScope, expiresAt: number) =>
+      form<ApiTokenView>('/panel/api/setting/apiTokens/create', { name, scope, expiresAt: String(expiresAt) }),
+    deleteApiToken: (t: ApiTokenView) =>
+      form<unknown>(`/panel/api/setting/apiTokens/delete/${t.id}`, { expectedScope: t.scope }),
+    setApiTokenEnabled: (t: ApiTokenView, enabled: boolean) =>
+      form<unknown>(`/panel/api/setting/apiTokens/setEnabled/${t.id}`, { enabled: String(enabled), expectedScope: t.scope }),
+    testTelegram: () => message('/panel/api/setting/testTgBot'),
+    testDiscord: () => message('/panel/api/setting/testDiscord'),
+    testSmtp: () => message('/panel/api/setting/testSmtp'),
+    xrayVersions: () => get<string[] | null>('/panel/api/server/getXrayVersion'),
+    installXray: (version: string) => message(`/panel/api/server/installXray/${enc(version)}`),
+    updateGeofile: (fileName: string) =>
+      message(fileName ? `/panel/api/server/updateGeofile/${enc(fileName)}` : '/panel/api/server/updateGeofile'),
+    stopXray: () => post<unknown>('/panel/api/server/stopXrayService'),
+    panelUpdateInfo: () => get<PanelUpdateInfo>('/panel/api/server/getPanelUpdateInfo'),
+    updatePanel: () => post<unknown>('/panel/api/server/updatePanel'),
+    setUpdateChannel: (dev: boolean) => message('/panel/api/server/setUpdateChannel', { dev: String(dev) }),
+    panelLogs: (count: number, level: string, syslog: boolean) =>
+      form<string[] | null>(`/panel/api/server/logs/${count}`, { level, syslog: String(syslog) }),
+    xrayLogs: (count: number, q: XrayLogQuery) =>
+      form<XrayLogEntry[] | null>(`/panel/api/server/xraylogs/${count}`, {
+        filter: q.filter,
+        showDirect: String(q.showDirect),
+        showBlocked: String(q.showBlocked),
+        showProxy: String(q.showProxy),
+      }),
+    remoteSettings: (id: number) => get<Record<string, unknown>>(`/panel/api/nodes/remote/${id}/settings`),
+    updateRemoteSettings: (id: number, body: Record<string, unknown>) =>
+      post<unknown>(`/panel/api/nodes/remote/${id}/settings`, body),
+
     status: () => get<ServerStatus>('/panel/api/server/status'),
     restartXray: () => post<unknown>('/panel/api/server/restartXrayService'),
     subSettings: () => post<SubSettings>('/panel/api/setting/defaultSettings'),
