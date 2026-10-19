@@ -8,6 +8,7 @@ on:
     paths:
       - "mobile/**"
       - ".github/workflows/mobile-release.yml"
+      - ".github/scripts/android-smoke.py"
   push:
     tags:
       - "v*.*.*"

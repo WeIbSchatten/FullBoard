@@ -34,6 +34,16 @@ def nodes():
     return out
 
 
+def screen_size():
+    m = re.search(r"(\d+)x(\d+)", adb("shell", "wm", "size"))
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
+def scroll_down():
+    w, h = screen_size()
+    adb("shell", "input", "swipe", str(w // 2), str(h * 3 // 4), str(w // 2), str(h // 4), "300")
+
+
 def tap(n):
     adb("shell", "input", "tap", str(n["x"]), str(n["y"]))
 
@@ -43,7 +53,7 @@ def find(label, lowest=False):
         hits = [n for n in nodes() if label in (n["text"], n["desc"])]
         if hits:
             return max(hits, key=lambda n: n["y"]) if lowest else hits[0]
-        adb("shell", "input", "swipe", "500", "1500", "500", "600", "300")
+        scroll_down()
         time.sleep(1)
     return None
 
