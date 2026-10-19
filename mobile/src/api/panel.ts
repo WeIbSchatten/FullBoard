@@ -1,5 +1,6 @@
 import type {
   ClientPageResponse,
+  HostGroup,
   OutboundTraffics,
   RelayApplyResult,
   RelayProfile,
@@ -168,6 +169,27 @@ export function panelApi(s: Session) {
       post<unknown>(`/panel/api/inbounds/setEnable/${id}`, { enable }),
 
     nodes: () => get<NodeView[]>('/panel/api/nodes/list'),
+    node: (id: number) => get<NodeView>(`/panel/api/nodes/get/${id}`),
+    addNode: (body: Record<string, unknown>) => post<NodeView>('/panel/api/nodes/add', body),
+    updateNode: (id: number, body: Record<string, unknown>) => post<NodeView>(`/panel/api/nodes/update/${id}`, body),
+    testNode: (body: Record<string, unknown>) => post<unknown>('/panel/api/nodes/test', body),
+    deleteNode: (id: number) => post<unknown>(`/panel/api/nodes/del/${id}`),
+    probeNode: (id: number) => post<unknown>(`/panel/api/nodes/probe/${id}`),
+    enrollNode: (invite: string, name: string) => post<NodeView>('/panel/api/nodes/enrollFromInvite', { invite, name }),
+    remoteStatus: (id: number) => get<ServerStatus>(`/panel/api/nodes/remote/${id}/status`),
+    remoteRestartXray: (id: number) => post<unknown>(`/panel/api/nodes/remote/${id}/restartXray`),
+    remoteRestartPanel: (id: number) => post<unknown>(`/panel/api/nodes/remote/${id}/restartPanel`),
+    remoteStopXray: (id: number) => post<unknown>(`/panel/api/nodes/remote/${id}/stopXray`),
+    remoteLogs: (id: number, source: 'panel' | 'xray', count = 200) =>
+      post<string[] | string | null>(`/panel/api/nodes/remote/${id}/logs`, { source, count }),
+    remoteLoginUrl: (id: number) => post<{ url: string } | string>(`/panel/api/nodes/remote/${id}/loginAs`),
+    hostGroups: () => get<HostGroup[] | null>('/panel/api/hosts/list'),
+    addHostGroup: (body: Record<string, unknown>) => post<unknown>('/panel/api/hosts/add', body),
+    updateHostGroup: (groupId: string, body: Record<string, unknown>) =>
+      post<unknown>(`/panel/api/hosts/update/${enc(groupId)}`, body),
+    deleteHostGroup: (groupId: string) => post<unknown>(`/panel/api/hosts/del/${enc(groupId)}`),
+    setHostGroupEnabled: (groupId: string, enable: boolean) =>
+      post<unknown>(`/panel/api/hosts/setEnable/${enc(groupId)}`, { enable }),
     setNodeEnabled: (id: number, enable: boolean) =>
       post<unknown>(`/panel/api/nodes/setEnable/${id}`, { enable }),
 
