@@ -3,10 +3,12 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AppLock } from '@/components/AppLock';
 import { Loading } from '@/components/ui';
 import { I18nProvider, useT } from '@/i18n';
 import { SessionProvider, useSession } from '@/session';
 import { ThemeProvider, useTheme } from '@/theme';
+import '@/monitor';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 5_000 } },
@@ -64,7 +66,9 @@ export default function RootLayout() {
         <I18nProvider>
           <ThemeProvider>
             <SessionProvider>
-              <Gate />
+              <AppLock>
+                <Gate />
+              </AppLock>
             </SessionProvider>
           </ThemeProvider>
         </I18nProvider>

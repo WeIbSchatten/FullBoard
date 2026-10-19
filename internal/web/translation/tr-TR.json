@@ -3131,6 +3131,22 @@
       "remove": "Uygulamadan kaldır",
       "removeConfirm": "Bu panel uygulamadan kaldırılsın mı? Panelin kendisi değişmez.",
       "current": "Geçerli"
+    },
+    "alerts": {
+      "title": "Bu telefondaki uyarılar",
+      "enable": "Xray veya bir düğüm durduğunda bildir",
+      "hint": "Uygulama, kapalıyken bile panellerinizi arka planda yaklaşık 15 dakikada bir kontrol eder.",
+      "xrayDown": "{panel} üzerinde Xray durdu",
+      "xrayUp": "{panel} üzerinde Xray yeniden çalışıyor",
+      "nodeDown": "{node} düğümü çevrimdışı ({panel})",
+      "nodeUp": "{node} düğümü yeniden çevrimiçi ({panel})",
+      "denied": "Bu uygulamanın bildirimleri sistem ayarlarında engellenmiş."
+    },
+    "lock": {
+      "enable": "Parmak izi veya yüz ile aç",
+      "locked": "We1ssBoard kilitli",
+      "unlock": "Kilidi aç",
+      "unavailable": "Bu cihazda parmak izi veya yüz ile kilit açma ayarlanmamış."
     }
   }
 }

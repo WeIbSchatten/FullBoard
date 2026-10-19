@@ -3131,6 +3131,22 @@
       "remove": "從應用程式移除",
       "removeConfirm": "從應用程式移除此面板？面板本身不會改變。",
       "current": "目前"
+    },
+    "alerts": {
+      "title": "手機提醒",
+      "enable": "Xray 或節點停止時通知我",
+      "hint": "即使應用程式已關閉，也會在背景大約每 15 分鐘檢查一次面板。",
+      "xrayDown": "{panel} 上的 Xray 已停止",
+      "xrayUp": "{panel} 上的 Xray 已恢復運作",
+      "nodeDown": "節點 {node} 離線（{panel}）",
+      "nodeUp": "節點 {node} 已恢復上線（{panel}）",
+      "denied": "系統設定中已封鎖此應用程式的通知。"
+    },
+    "lock": {
+      "enable": "使用指紋或臉部解鎖",
+      "locked": "We1ssBoard 已鎖定",
+      "unlock": "解鎖",
+      "unavailable": "此裝置未設定指紋或臉部解鎖。"
     }
   }
 }

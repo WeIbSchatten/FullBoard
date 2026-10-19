@@ -3131,6 +3131,22 @@
       "remove": "Remover do app",
       "removeConfirm": "Remover este painel do app? O painel em si não muda.",
       "current": "Atual"
+    },
+    "alerts": {
+      "title": "Alertas neste telefone",
+      "enable": "Avisar quando o Xray ou um nó parar",
+      "hint": "O app verifica seus painéis em segundo plano a cada 15 minutos, mesmo fechado.",
+      "xrayDown": "O Xray parou em {panel}",
+      "xrayUp": "O Xray voltou a funcionar em {panel}",
+      "nodeDown": "O nó {node} está offline ({panel})",
+      "nodeUp": "O nó {node} voltou a ficar online ({panel})",
+      "denied": "As notificações deste app estão bloqueadas nas configurações do sistema."
+    },
+    "lock": {
+      "enable": "Desbloquear com digital ou rosto",
+      "locked": "We1ssBoard está bloqueado",
+      "unlock": "Desbloquear",
+      "unavailable": "Este dispositivo não tem desbloqueio por digital ou rosto configurado."
     }
   }
 }
