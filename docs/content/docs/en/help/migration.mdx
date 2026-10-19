@@ -1,52 +1,142 @@
 ---
 title: Migration
-description: Migrate to We1ssBoard from we1ssboard, between servers, or between We1ssBoard versions.
+description: Move to We1ssBoard from 3x-ui or FullBoard, to another server, or from SQLite to PostgreSQL.
 icon: ArrowRightLeft
 ---
 
-## Between servers
+<Callout type="warn">
+  Take a backup before any migration, and keep the old panel available until
+  you have checked the new one with a real client.
+</Callout>
 
-Moving to a new server is a database move:
+## From 3x-ui
+
+We1ssBoard reads a 3x-ui database directly. `we1ssboard import-3xui` copies
+inbounds, clients, their traffic and IP history, panel settings and the admin
+account into a new We1ssBoard database, then checks every row against the source
+and refuses to finish if anything was lost. The 3x-ui database is opened
+read-only and never changed.
+
+<Steps>
+
+<Step>
+### Install We1ssBoard
+
+Install it on the same server as 3x-ui (see [Installation](/docs/guide/installation)),
+then stop both panels so neither writes while you copy:
+
+```bash
+systemctl stop x-ui we1ssboard
+```
+</Step>
+
+<Step>
+### Move the fresh database aside
+
+The import creates the database and will not overwrite one:
+
+```bash
+mv /etc/we1ssboard/we1ssboard.db /etc/we1ssboard/we1ssboard.db.empty
+```
+</Step>
+
+<Step>
+### Import
+
+```bash
+/usr/local/we1ssboard/we1ssboard import-3xui -src /etc/x-ui/x-ui.db
+```
+
+The command prints how many inbounds, clients and settings it verified, and
+lists the certificate files your settings point at. A `WARNING` line means a
+value needs your attention, for example a client whose inbounds disagreed on a
+limit, or a certificate file that is missing on this server.
+</Step>
+
+<Step>
+### Switch over
+
+Disable 3x-ui so it does not grab the same ports, then start We1ssBoard:
+
+```bash
+systemctl disable --now x-ui
+systemctl start we1ssboard
+```
+
+Log in with your **3x-ui** username, password, port and web path: they were
+imported with the settings. Client links and subscription URLs stay the same,
+so clients do not need new configs.
+</Step>
+
+</Steps>
+
+<Callout>
+  IP limits only work with fail2ban. If fail2ban is not running, the import
+  resets them to 0 exactly as a 3x-ui upgrade would, and says so.
+</Callout>
+
+## From FullBoard
+
+FullBoard was renamed to We1ssBoard in 1.7.0. Update as usual (from the panel or
+with `we1ssboard update`): the updater moves everything to the new names and
+leaves compatibility links behind, so nothing has to be done by hand.
+
+| FullBoard | We1ssBoard |
+| --- | --- |
+| `/usr/local/fullboard` | `/usr/local/we1ssboard` |
+| `/etc/fullboard/fullboard.db` | `/etc/we1ssboard/we1ssboard.db` |
+| `fullboard.service` | `we1ssboard.service` |
+| `fullboard` command | `we1ssboard` command |
+| `fullboard-mtproxy-*` units | `we1ssboard-mtproxy-*` units |
+
+If a server was updated while an older update was interrupted, it can end up
+with files in both `/etc/fullboard` and `/etc/we1ssboard`. Updating to 1.7.1 or
+later merges them; the panel log shows `readonly database` until that is done.
+
+## To another server
+
+Moving to a new server is a database move.
 
 <Steps>
 
 <Step>
 ### Back up the old server
 
-Copy the database (default `/etc/we1ssboard/we1ssboard.db`) and your certificates. See
-[Backup & restore](/docs/operations/backup-restore).
+Download a backup from **Overview → Backup & Restore** (or from the mobile app,
+**Settings → Xray Updates → Back Up**), or copy `/etc/we1ssboard/we1ssboard.db`
+and your certificates. See [Backup & restore](/docs/operations/backup-restore).
 </Step>
 
 <Step>
-### Install We1ssBoard on the new server
+### Install and restore
 
-Use the same install method and a compatible version. See
-[Installation](/docs/guide/installation).
+Install the same or a newer We1ssBoard version on the new server, then restore
+the backup from **Backup & Restore → Restore**. Turn on **Keep this machine's
+settings** to keep the new server's ports, web path and certificates.
 </Step>
 
 <Step>
-### Restore the database
+### Update addresses
 
-Stop the panel, put the database in place, restore certificates, and start the
-panel. Update any IP/domain-specific settings.
+Point your domain at the new server, or update the address in hosts and
+subscription settings if clients connect by IP.
 </Step>
 
 </Steps>
 
+## From SQLite to PostgreSQL
+
+```bash
+/usr/local/we1ssboard/we1ssboard migrate-db -dsn "postgres://user:pass@host:5432/we1ssboard?sslmode=disable"
+```
+
+Then set `XUI_DB_TYPE=postgres` and `XUI_DB_DSN` in the service environment and
+restart the panel. See [Environment variables](/docs/reference/env-vars).
+
 ## Between We1ssBoard versions
 
-Within the same backend, upgrading is usually just re-running the installer or
-pulling a new image — the panel migrates its own database. Across **major**
-versions, read the [release notes](https://github.com/WeIbSchatten/We1ssBoard/releases)
-first and take a backup.
-
-## From we1ssboard
-
-Importing an older we1ssboard panel's database directly into We1ssBoard is **not
-supported** — the schemas differ. Install We1ssBoard fresh and recreate
-inbounds/clients, exporting share links from the old panel as you go.
-
-<Callout type="warn">
-  Always take a backup before any migration, and keep the old server running
-  until you've verified the new one.
-</Callout>
+Updating migrates the database by itself. Read the
+[release notes](https://github.com/WeIbSchatten/We1ssBoard/releases) before a
+major version and take a backup. A panel update installs the Xray version it
+ships with, unless you pinned another one (see
+[REALITY](/docs/config/reality#client-compatibility)).

@@ -92,6 +92,12 @@ For scripts and quick actions, `we1ssboard` also takes a subcommand directly:
 Updating preserves your database and settings. Take a
 [backup](/docs/operations/backup-restore) before a major-version jump.
 
+An update installs the Xray-core version that ships with the release. If you
+picked another version in **Overview → Xray Updates**, it is pinned and the panel
+reinstalls it right after the update; **Use the bundled version** removes the
+pin. See [REALITY client compatibility](/docs/config/reality#client-compatibility)
+for why you might want an older core.
+
 <Callout type="info">
   Docker users update differently — pull the new image and recreate the
   container (`docker compose pull && docker compose up -d`) rather than using the

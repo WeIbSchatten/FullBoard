@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { docsUrl } from './docsUrl';
 import { Drawer, Layout, Menu, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import {
@@ -32,7 +33,6 @@ import ThemeSwitch from '@/components/ui/ThemeSwitch';
 import { AppearanceButton } from '@/components/ui/AppearancePanel';
 import './AppSidebar.css';
 
-const DOCS_URL = 'https://github.com/WeIbSchatten/We1ssBoard/tree/main/docs';
 const REPO_URL = 'https://github.com/WeIbSchatten/We1ssBoard';
 const SIDER_WIDTH = 248;
 const RAIL_WIDTH = 72;
@@ -66,7 +66,7 @@ function saveCollapsed(collapsed: boolean) {
 }
 
 export default function AppSidebar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { allSetting } = useAllSettings();
@@ -141,7 +141,12 @@ export default function AppSidebar() {
   const footerLinks = (compact: boolean) => (
     <div className={`sider-links${compact ? ' sider-links--compact' : ''}`}>
       <Tooltip title={compact ? t('menu.docs') : undefined} placement="right">
-        <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="sider-link">
+        <a
+          href={docsUrl(i18n.language)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="sider-link"
+        >
           <ReadOutlined />
           {!compact && <span>{t('menu.docs')}</span>}
         </a>
