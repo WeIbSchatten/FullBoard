@@ -332,7 +332,9 @@
       "accessBlocked": "BLOCKED",
       "accessProxy": "PROXY",
       "importKeepHostSettings": "このマシンの設定を保持する",
-      "importKeepHostSettingsDesc": "アップロードしたファイルの値ではなく、このパネルのリッスンアドレス、ポート、ベースパス、証明書、ノード ID を保持します。"
+      "importKeepHostSettingsDesc": "アップロードしたファイルの値ではなく、このパネルのリッスンアドレス、ポート、ベースパス、証明書、ノード ID を保持します。",
+      "xrayPinned": "{version} を固定中：パネル更新のたびに戻されます",
+      "xrayUnpin": "同梱バージョンを使う"
     },
     "inbounds": {
       "totalDownUp": "総アップロード / ダウンロード",

@@ -109,9 +109,14 @@ _openapi:
         inbound or routing changes.
       url: '#reload-xray-with-the-current-config-typically-required-after-structural-inbound-or-routing-changes'
     - depth: 2
-      title: Download and install the specified Xray version. Pass "latest" for the
-        newest release.
-      url: '#download-and-install-the-specified-xray-version-pass-latest-for-the-newest-release'
+      title: 'Download and install the specified Xray version. Pass "latest" for the
+        newest release. A specific version is pinned: the panel reinstalls it on
+        start after a panel update replaced it with the bundled core.'
+      url: '#download-and-install-the-specified-xray-version-pass-latest-for-the-newest-release-a-specific-version-is-pinned-the-panel-reinstalls-it-on-start-after-a-panel-update-replaced-it-with-the-bundled-core'
+    - depth: 2
+      title: Forget the pinned Xray version so the next panel update keeps its bundled
+        core. The running core is not changed.
+      url: '#forget-the-pinned-xray-version-so-the-next-panel-update-keeps-its-bundled-core-the-running-core-is-not-changed'
     - depth: 2
       title: Self-update the panel to the latest version. The server restarts on
         success. Bearer-token callers need admin or node-admin scope.
@@ -259,9 +264,13 @@ _openapi:
       - content: Reload Xray with the current config. Typically required after
           structural inbound or routing changes.
         id: reload-xray-with-the-current-config-typically-required-after-structural-inbound-or-routing-changes
-      - content: Download and install the specified Xray version. Pass "latest" for the
-          newest release.
-        id: download-and-install-the-specified-xray-version-pass-latest-for-the-newest-release
+      - content: 'Download and install the specified Xray version. Pass "latest" for the
+          newest release. A specific version is pinned: the panel reinstalls it
+          on start after a panel update replaced it with the bundled core.'
+        id: download-and-install-the-specified-xray-version-pass-latest-for-the-newest-release-a-specific-version-is-pinned-the-panel-reinstalls-it-on-start-after-a-panel-update-replaced-it-with-the-bundled-core
+      - content: Forget the pinned Xray version so the next panel update keeps its
+          bundled core. The running core is not changed.
+        id: forget-the-pinned-xray-version-so-the-next-panel-update-keeps-its-bundled-core-the-running-core-is-not-changed
       - content: Self-update the panel to the latest version. The server restarts on
           success. Bearer-token callers need admin or node-admin scope.
         id: self-update-the-panel-to-the-latest-version-the-server-restarts-on-success-bearer-token-callers-need-admin-or-node-admin-scope
@@ -325,7 +334,7 @@ export default function Layout(props) {
   return (
     <>
       {props.children}
-      <OpenAPIPage document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/openapi.json","method":"get"},{"path":"/panel/api/server/status","method":"get"},{"path":"/panel/api/server/fail2banStatus","method":"get"},{"path":"/panel/api/server/cpuHistory/{bucket}","method":"get"},{"path":"/panel/api/server/history/{metric}/{bucket}","method":"get"},{"path":"/panel/api/server/xrayMetricsState","method":"get"},{"path":"/panel/api/server/xrayMetricsHistory/{metric}/{bucket}","method":"get"},{"path":"/panel/api/server/xrayObservatory","method":"get"},{"path":"/panel/api/server/xrayObservatoryHistory/{tag}/{bucket}","method":"get"},{"path":"/panel/api/server/getXrayVersion","method":"get"},{"path":"/panel/api/server/getPanelUpdateInfo","method":"get"},{"path":"/panel/api/server/getUpdateStatus","method":"get"},{"path":"/panel/api/server/getConfigJson","method":"get"},{"path":"/panel/api/server/getDb","method":"get"},{"path":"/panel/api/server/getMigration","method":"get"},{"path":"/panel/api/server/getNewUUID","method":"get"},{"path":"/panel/api/server/getWebCertFiles","method":"get"},{"path":"/panel/api/server/descendants","method":"get"},{"path":"/panel/api/server/getNewX25519Cert","method":"get"},{"path":"/panel/api/server/getNewmldsa65","method":"get"},{"path":"/panel/api/server/getNewmlkem768","method":"get"},{"path":"/panel/api/server/getNewVlessEnc","method":"get"},{"path":"/panel/api/server/stopXrayService","method":"post"},{"path":"/panel/api/server/restartXrayService","method":"post"},{"path":"/panel/api/server/installXray/{version}","method":"post"},{"path":"/panel/api/server/updatePanel","method":"post"},{"path":"/panel/api/server/setUpdateChannel","method":"post"},{"path":"/panel/api/server/updateGeofile","method":"post"},{"path":"/panel/api/server/updateGeofile/{fileName}","method":"post"},{"path":"/panel/api/server/logs/{count}","method":"post"},{"path":"/panel/api/server/xraylogs/{count}","method":"post"},{"path":"/panel/api/server/amneziawglogs/{count}","method":"post"},{"path":"/panel/api/server/importDB","method":"post"},{"path":"/panel/api/server/getNewEchCert","method":"post"},{"path":"/panel/api/server/getCertHash","method":"post"},{"path":"/panel/api/server/getRemoteCertHash","method":"post"},{"path":"/panel/api/server/scanRealityTarget","method":"post"},{"path":"/panel/api/server/scanRealityTargets","method":"post"},{"path":"/panel/api/server/clientIps","method":"get"},{"path":"/panel/api/server/clientIps","method":"post"}]} showTitle />
+      <OpenAPIPage document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/openapi.json","method":"get"},{"path":"/panel/api/server/status","method":"get"},{"path":"/panel/api/server/fail2banStatus","method":"get"},{"path":"/panel/api/server/cpuHistory/{bucket}","method":"get"},{"path":"/panel/api/server/history/{metric}/{bucket}","method":"get"},{"path":"/panel/api/server/xrayMetricsState","method":"get"},{"path":"/panel/api/server/xrayMetricsHistory/{metric}/{bucket}","method":"get"},{"path":"/panel/api/server/xrayObservatory","method":"get"},{"path":"/panel/api/server/xrayObservatoryHistory/{tag}/{bucket}","method":"get"},{"path":"/panel/api/server/getXrayVersion","method":"get"},{"path":"/panel/api/server/getPanelUpdateInfo","method":"get"},{"path":"/panel/api/server/getUpdateStatus","method":"get"},{"path":"/panel/api/server/getConfigJson","method":"get"},{"path":"/panel/api/server/getDb","method":"get"},{"path":"/panel/api/server/getMigration","method":"get"},{"path":"/panel/api/server/getNewUUID","method":"get"},{"path":"/panel/api/server/getWebCertFiles","method":"get"},{"path":"/panel/api/server/descendants","method":"get"},{"path":"/panel/api/server/getNewX25519Cert","method":"get"},{"path":"/panel/api/server/getNewmldsa65","method":"get"},{"path":"/panel/api/server/getNewmlkem768","method":"get"},{"path":"/panel/api/server/getNewVlessEnc","method":"get"},{"path":"/panel/api/server/stopXrayService","method":"post"},{"path":"/panel/api/server/restartXrayService","method":"post"},{"path":"/panel/api/server/installXray/{version}","method":"post"},{"path":"/panel/api/server/unpinXray","method":"post"},{"path":"/panel/api/server/updatePanel","method":"post"},{"path":"/panel/api/server/setUpdateChannel","method":"post"},{"path":"/panel/api/server/updateGeofile","method":"post"},{"path":"/panel/api/server/updateGeofile/{fileName}","method":"post"},{"path":"/panel/api/server/logs/{count}","method":"post"},{"path":"/panel/api/server/xraylogs/{count}","method":"post"},{"path":"/panel/api/server/amneziawglogs/{count}","method":"post"},{"path":"/panel/api/server/importDB","method":"post"},{"path":"/panel/api/server/getNewEchCert","method":"post"},{"path":"/panel/api/server/getCertHash","method":"post"},{"path":"/panel/api/server/getRemoteCertHash","method":"post"},{"path":"/panel/api/server/scanRealityTarget","method":"post"},{"path":"/panel/api/server/scanRealityTargets","method":"post"},{"path":"/panel/api/server/clientIps","method":"get"},{"path":"/panel/api/server/clientIps","method":"post"}]} showTitle />
     </>
   );
 }

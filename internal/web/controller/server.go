@@ -70,6 +70,7 @@ func (a *ServerController) initRouter(g *gin.RouterGroup) {
 	g.POST("/stopXrayService", a.stopXrayService)
 	g.POST("/restartXrayService", a.restartXrayService)
 	g.POST("/installXray/:version", a.installXray)
+	g.POST("/unpinXray", a.unpinXray)
 	g.POST("/updatePanel", a.updatePanel)
 	g.POST("/setUpdateChannel", a.setUpdateChannel)
 	g.POST("/updateGeofile", a.updateGeofile)
@@ -207,8 +208,13 @@ func (a *ServerController) getPanelUpdateInfo(c *gin.Context) {
 // installXray installs or updates Xray to the specified version.
 func (a *ServerController) installXray(c *gin.Context) {
 	version := c.Param("version")
-	err := a.serverService.UpdateXray(version)
+	err := a.serverService.InstallPinnedXray(version)
 	jsonMsg(c, I18nWeb(c, "pages.index.xraySwitchVersionPopover"), err)
+}
+
+// unpinXray lets panel updates install their bundled Xray again.
+func (a *ServerController) unpinXray(c *gin.Context) {
+	jsonMsg(c, I18nWeb(c, "pages.settings.toasts.modifySettings"), a.settingService.SetXrayPinnedVersion(""))
 }
 
 // updatePanel starts a panel self-update. With no "dev" form value it follows
