@@ -41,3 +41,8 @@ export function formatUptime(seconds: number): string {
   const m = Math.floor((seconds % 3600) / 60);
   return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
+
+// Panel timestamps arrive in seconds or milliseconds depending on the table.
+export function toMillis(ts: number): number {
+  return ts < 100_000_000_000 ? ts * 1000 : ts;
+}
