@@ -151,7 +151,7 @@ func TestWrapConfigWriteErrorHintsSandbox(t *testing.T) {
 		t.Fatalf("wrapped error must still match EROFS, got %v", err)
 	}
 	plain := errors.New("permission denied")
-	if wrapConfigWriteError(plain) != plain {
+	if wrapConfigWriteError(plain) != plain { //nolint:errorlint // pass-through means the identical error value
 		t.Fatal("non-EROFS errors must pass through unchanged")
 	}
 }
