@@ -137,6 +137,12 @@ export function panelApi(s: Session) {
       post<unknown>('/panel/api/clients/add', { client, inboundIds }),
 
     inbounds: () => get<Inbound[]>('/panel/api/inbounds/list/slim'),
+    inbound: (id: number) => get<Inbound>(`/panel/api/inbounds/get/${id}`),
+    addInbound: (body: Record<string, unknown>) => post<Inbound>('/panel/api/inbounds/add', body),
+    updateInbound: (id: number, body: Record<string, unknown>) => post<Inbound>(`/panel/api/inbounds/update/${id}`, body),
+    deleteInbound: (id: number) => post<unknown>(`/panel/api/inbounds/del/${id}`),
+    resetInboundTraffic: (id: number) => post<unknown>(`/panel/api/inbounds/${id}/resetTraffic`),
+    x25519: () => get<{ privateKey: string; publicKey: string }>('/panel/api/server/getNewX25519Cert'),
     setInboundEnabled: (id: number, enable: boolean) =>
       post<unknown>(`/panel/api/inbounds/setEnable/${id}`, { enable }),
 
