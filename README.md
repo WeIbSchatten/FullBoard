@@ -195,7 +195,7 @@ To move existing data, run `we1ssboard migrate-db --dsn "<dsn>"`. Then set the t
 | `XUI_PORT` | Override the panel port | — |
 | `XUI_ENABLE_FAIL2BAN` | Fail2ban-based IP limits | `true` |
 | `XUI_NET_TUNING` | `true` writes BBR + fq on install/update | `false` |
-| `XUI_UDP_BUFFERS` | `false` skips the 8 MiB UDP buffers for QUIC on install/update | `true` |
+| `XUI_QUIC_TUNING` | `false` skips UDP buffers + BBR for QUIC (`99-quic.conf`) on install/update | `true` |
 | `XUI_LOG_LEVEL` | `debug`, `info`, `warning`, `error` | `info` |
 | `XUI_TUNNEL_HEALTH_MONITOR` | Probe a URL and restart Xray after repeated failures | `false` |
 | `NODE_TOKEN_ENCRYPTION` | Node API tokens at rest: `off`, `migration`, `required` | `off` |

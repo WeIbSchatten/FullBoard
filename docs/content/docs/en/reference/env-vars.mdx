@@ -32,7 +32,7 @@ The default SQLite database path is `/etc/we1ssboard/we1ssboard.db`. See
 | `XUI_INIT_WEB_BASE_PATH` | `/`     | Initial web base path on **first** launch (e.g. `/panel`).               |
 | `XUI_ENABLE_FAIL2BAN`    | `true`  | Enable Fail2ban-based IP-limit enforcement.                              |
 | `XUI_NET_TUNING`         | `false` | Set `true` to write BBR + fq (`99-we1ssboard-network.conf`) on install/update. |
-| `XUI_UDP_BUFFERS`        | `true`  | Write 8 MiB UDP buffers for QUIC (`99-we1ssboard-udp.conf`) on install/update; `false` removes them. |
+| `XUI_QUIC_TUNING`        | `true`  | Write UDP buffers (4/16 MiB) + BBR for QUIC (`99-quic.conf`) on install/update and restart the panel; `false` removes the file. |
 | `XUI_SKIP_HSTS`          | `false` | Skip the HSTS header — set `true` when TLS is terminated by a reverse proxy. |
 
 ## Node token encryption

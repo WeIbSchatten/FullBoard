@@ -11,8 +11,8 @@ top to bottom: each step removes one common cap on speed or latency.
 
 Most distributions boot with `cubic` and the `fq_codel` qdisc. **BBR + fq** often
 helps on long, clean routes, but on paths with policers or traffic shaping it can
-cause more loss, lower throughput and higher latency than `cubic`. We1ssBoard
-therefore leaves the kernel alone by default.
+cause more loss, lower throughput and higher latency than `cubic`. Install and update
+enable BBR together with the QUIC buffers below; set `XUI_QUIC_TUNING=false` to keep `cubic`.
 
 <Callout type="warn">
   1.4.4 and 1.4.5 applied a larger profile automatically (BBR, 32 MiB buffers, `tcp_notsent_lowat`,
@@ -38,16 +38,17 @@ Signs of a policed path: many retransmits while downloading
 
 ### UDP buffers for QUIC (Hysteria, TUIC)
 
-QUIC needs larger UDP socket buffers than the kernel default (208 KiB). With
-salamander obfs Xray wraps the socket, so the QUIC stack cannot enlarge its own
-buffer and falls back to `net.core.rmem_default`; the kernel then drops packets and
-`nstat -az UdpRcvbufErrors` keeps growing. Install and update therefore write
-`/etc/sysctl.d/99-we1ssboard-udp.conf`: default 8 MiB and max 16 MiB for
-`net.core.{r,w}mem_{default,max}`, keeping any value the host already sets higher.
-This changes UDP buffering only, not TCP. To opt out, set `XUI_UDP_BUFFERS=false` in
-`/etc/default/we1ssboard` and run `we1ssboard update` (the file is removed; the
-kernel defaults return after a reboot). In Docker these keys belong to the host:
-set them there.
+Xray opens Hysteria and TUIC sockets without asking for a buffer size, so they get
+`net.core.rmem_default` (208 KiB). Bursts overflow it, the kernel drops packets and
+`nstat -az UdpRcvbufErrors` keeps growing (games show it as lag). Install and update
+therefore write `/etc/sysctl.d/99-quic.conf`: `net.core.{r,w}mem_default` 4 MiB,
+`net.core.{r,w}mem_max` 16 MiB (a higher value already on the host is kept) and
+`tcp_congestion_control = bbr` when the kernel has BBR, then restart the panel so
+Xray reopens its sockets. Check with `ss -uamp` (`rb4194304` on the Hysteria port).
+To opt out, set `XUI_QUIC_TUNING=false` in `/etc/default/we1ssboard` and run
+`we1ssboard update` (the file is removed; kernel defaults return after a reboot).
+Turning BBR off in the menu alone is undone by the next update. In Docker these keys
+belong to the host: set them there.
 
 ## 2. Pick a fast transport
 

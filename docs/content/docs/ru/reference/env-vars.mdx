@@ -33,7 +33,7 @@ We1ssBoard читает свою конфигурацию во время вып
 | `XUI_INIT_WEB_BASE_PATH` | `/`     | Начальный базовый веб-путь при **первом** запуске (например, `/panel`).               |
 | `XUI_ENABLE_FAIL2BAN`    | `true`  | Включить ограничение по IP на основе Fail2ban.                              |
 | `XUI_NET_TUNING`         | `false` | `true` — записать BBR + fq (`99-we1ssboard-network.conf`) при установке/обновлении. |
-| `XUI_UDP_BUFFERS`        | `true`  | Записать UDP-буферы 8 МиБ для QUIC (`99-we1ssboard-udp.conf`) при установке/обновлении; `false` удаляет их. |
+| `XUI_QUIC_TUNING`        | `true`  | Записать UDP-буферы (4/16 МиБ) и BBR для QUIC (`99-quic.conf`) при установке/обновлении и перезапустить панель; `false` удаляет файл. |
 | `XUI_SKIP_HSTS`          | `false` | Не отправлять заголовок HSTS — установите `true`, когда TLS терминируется обратным прокси. |
 
 ## Шифрование токенов узлов
