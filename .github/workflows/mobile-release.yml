@@ -94,16 +94,33 @@ jobs:
           done
           echo "release $TAG did not appear within an hour"; exit 1
 
-  # Installs the built APK on an emulator and fails if the app does not stay
-  # up; a release APK that crashes on launch is otherwise only found by users.
+  # Installs the built APK on an emulator, signs in to a real panel and opens
+  # every tab; a release APK that crashes is otherwise only found by users.
   smoke:
     needs: android
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
+
       - uses: actions/download-artifact@v7
         with:
           name: we1ssboard-android
           path: apk
+
+      - name: Start a panel for the app to sign in to
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo "$GITHUB_REPOSITORY" --pattern "we1ssboard-linux-amd64.tar.gz" --dir "$RUNNER_TEMP"
+          tar -xzf "$RUNNER_TEMP/we1ssboard-linux-amd64.tar.gz" -C "$RUNNER_TEMP"
+          panel="$RUNNER_TEMP/we1ssboard"
+          mkdir -p "$panel/db"
+          export XUI_DB_FOLDER="$panel/db" XUI_LOG_FOLDER="$panel/db" XUI_BIN_FOLDER="$panel/bin"
+          token="$("$panel/we1ssboard" setting -getApiToken | sed -n "s/^apiToken: //p")"
+          [[ -n "$token" ]] || { echo "no API token"; exit 1; }
+          nohup "$panel/we1ssboard" run > "$RUNNER_TEMP/panel.log" 2>&1 &
+          for _ in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:2053/ && break; sleep 2; done
+          echo "PANEL_TOKEN=$token" >> "$GITHUB_ENV"
 
       - name: Enable KVM
         run: |
@@ -111,8 +128,10 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Launch on an emulator
+      - name: Sign in and open every screen on an emulator
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          PANEL_URL: http://10.0.2.2:2053
         with:
           api-level: 34
           target: google_apis
@@ -120,18 +139,10 @@ jobs:
           disable-animations: true
           script: |
             adb install -r apk/*.apk
-            adb logcat -c
-            adb shell monkey -p com.we1bschatten.we1ssboard -c android.intent.category.LAUNCHER 1
-            sleep 40
-            adb logcat -d > logcat.txt
-            adb exec-out screencap -p > screen.png
-            if grep -E "FATAL EXCEPTION|ReactNativeJS.*(Error|Invariant)" logcat.txt; then grep -A40 -E "FATAL EXCEPTION|ReactNativeJS" logcat.txt | head -120; exit 1; fi
-            adb shell pidof com.we1bschatten.we1ssboard || { echo "app is not running"; tail -200 logcat.txt; exit 1; }
+            python3 .github/scripts/android-smoke.py
 
       - if: always()
         uses: actions/upload-artifact@v7
         with:
           name: we1ssboard-android-smoke
-          path: |
-            logcat.txt
-            screen.png
+          path: smoke/
