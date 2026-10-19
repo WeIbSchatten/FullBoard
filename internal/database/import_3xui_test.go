@@ -270,3 +270,42 @@ func TestImport3xUIWarnsWhenInboundsDisagree(t *testing.T) {
 		t.Fatalf("Warnings = %q, want [%q]", res.Warnings, want)
 	}
 }
+
+// 3x-ui v3 serves Xray from its clients table, so a table password that the
+// inbound JSON never caught up with is the live one and must carry over.
+func TestImport3xUIKeepsClientsTableValueOverStaleJSON(t *testing.T) {
+	t.Setenv("XUI_ENABLE_FAIL2BAN", "false")
+	src := copyImportFixture(t, "x-ui-v3.10.2.db")
+	conn, err := sql.Open("sqlite3", src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.Exec("UPDATE clients SET password = 'live-pass', auth = 'live-auth' WHERE email = 'dave'"); err != nil {
+		t.Fatal(err)
+	}
+	conn.Close()
+	dst := filepath.Join(t.TempDir(), "we1ssboard.db")
+
+	res, err := Import3xUI(src, dst)
+	if err != nil {
+		t.Fatalf("Import3xUI: %v", err)
+	}
+	want := []string{
+		"client dave: 3x-ui's clients table and inbound settings carry different auth; We1ssBoard keeps the table value 3x-ui served",
+		"client dave: 3x-ui's clients table and inbound settings carry different password; We1ssBoard keeps the table value 3x-ui served",
+	}
+	if strings.Join(res.Warnings, "\n") != strings.Join(want, "\n") {
+		t.Fatalf("Warnings = %q, want %q", res.Warnings, want)
+	}
+	if err := InitDB(dst); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = CloseDB() })
+	var rec model.ClientRecord
+	if err := db.Where("email = ?", "dave").First(&rec).Error; err != nil {
+		t.Fatal(err)
+	}
+	if rec.Password != "live-pass" || rec.Auth != "live-auth" {
+		t.Fatalf("dave = password %q auth %q", rec.Password, rec.Auth)
+	}
+}
