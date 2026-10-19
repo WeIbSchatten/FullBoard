@@ -5782,6 +5782,67 @@
         ],
         "type": "object"
       },
+      "TgWebProxyRelaySummary": {
+        "description": "TgWebProxyRelaySummary is one relay host for the dashboard: this panel's own\n(NodeID 0) or a node's, reached through remote control.",
+        "properties": {
+          "backendsActive": {
+            "example": 1,
+            "type": "integer"
+          },
+          "backendsTotal": {
+            "example": 1,
+            "type": "integer"
+          },
+          "clients": {
+            "example": 12,
+            "type": "integer"
+          },
+          "error": {
+            "type": "string"
+          },
+          "hostname": {
+            "example": "proxy.example.com",
+            "type": "string"
+          },
+          "installed": {
+            "example": true,
+            "type": "boolean"
+          },
+          "name": {
+            "example": "eu-1",
+            "type": "string"
+          },
+          "nodeId": {
+            "example": 1,
+            "type": "integer"
+          },
+          "profiles": {
+            "example": 5,
+            "type": "integer"
+          },
+          "ready": {
+            "example": true,
+            "type": "boolean"
+          },
+          "running": {
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "backendsActive",
+          "backendsTotal",
+          "clients",
+          "hostname",
+          "installed",
+          "name",
+          "nodeId",
+          "profiles",
+          "ready",
+          "running"
+        ],
+        "type": "object"
+      },
       "TgWebProxySyncDedicatedRequest": {
         "properties": {
           "specs": {
@@ -18288,6 +18349,59 @@
                     ],
                     "usesWebSocket": false
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/tgWebProxy/overview": {
+      "get": {
+        "tags": [
+          "Telegram WEB Proxy"
+        ],
+        "summary": "One summary per relay host this panel uses: its own relay (nodeId 0) and each node relay reached through remote control, with running/ready state, profile and bound-client counts. Unreachable nodes are listed only when clients are bound to them.",
+        "operationId": "get_panel_api_tgWebProxy_overview",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TgWebProxyRelaySummary"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": [
+                    {
+                      "backendsActive": 1,
+                      "backendsTotal": 1,
+                      "clients": 12,
+                      "error": "",
+                      "hostname": "proxy.example.com",
+                      "installed": true,
+                      "name": "eu-1",
+                      "nodeId": 1,
+                      "profiles": 5,
+                      "ready": true,
+                      "running": true
+                    }
+                  ]
                 }
               }
             }

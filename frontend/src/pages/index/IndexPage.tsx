@@ -22,6 +22,7 @@ import VitalTile from './VitalTile';
 import ThroughputCard from './ThroughputCard';
 import ConnectionsCard from './ConnectionsCard';
 import SystemStrip from './SystemStrip';
+import TgWebProxyCard from './TgWebProxyCard';
 import { mean, peak, useOverviewHistory } from './useOverviewHistory';
 import type { PanelUpdateInfo } from './PanelUpdateModal';
 const JsonEditor = lazy(() => import('@/components/form/JsonEditor'));
@@ -106,7 +107,9 @@ export default function IndexPage() {
   }, [refresh]);
 
   async function handleChannelChange(dev: boolean) {
-    const res = await HttpUtil.post('/panel/api/server/setUpdateChannel', { dev });
+    const res = await HttpUtil.post('/panel/api/server/setUpdateChannel', {
+      dev,
+    });
     if (!res?.success) return;
     setDevChannelEnable(dev);
     const msg = await HttpUtil.get<PanelUpdateInfo>('/panel/api/server/getPanelUpdateInfo');
@@ -154,7 +157,10 @@ export default function IndexPage() {
       };
     const warm = items.filter((i) => i.value >= USAGE_WARN_PERCENT);
     if (warm.length)
-      return { text: t('pages.index.healthWarm', { list: list(warm) }), level: 'warn' as const };
+      return {
+        text: t('pages.index.healthWarm', { list: list(warm) }),
+        level: 'warn' as const,
+      };
     return null;
   }, [status, t]);
 
@@ -278,6 +284,8 @@ export default function IndexPage() {
                   />
                 </div>
 
+                <TgWebProxyCard />
+
                 <SystemStrip
                   status={status}
                   showIp={showIp}
@@ -337,7 +345,10 @@ export default function IndexPage() {
             width={isMobile ? '100%' : 900}
             style={
               isMobile
-                ? { top: 20, maxWidth: 'calc(100vw / var(--fb-zoom, 1) - 16px)' }
+                ? {
+                    top: 20,
+                    maxWidth: 'calc(100vw / var(--fb-zoom, 1) - 16px)',
+                  }
                 : { top: 20 }
             }
             onCancel={() => setConfigTextOpen(false)}

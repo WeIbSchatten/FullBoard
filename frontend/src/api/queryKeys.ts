@@ -12,6 +12,7 @@ export const keys = {
   tgWebProxy: {
     root: () => ['tgWebProxy'] as const,
     status: () => ['tgWebProxy', 'status'] as const,
+    overview: () => ['tgWebProxy', 'overview'] as const,
     config: () => ['tgWebProxy', 'config'] as const,
     publicSite: () => ['tgWebProxy', 'publicSite'] as const,
     bindings: () => ['tgWebProxy', 'bindings'] as const,

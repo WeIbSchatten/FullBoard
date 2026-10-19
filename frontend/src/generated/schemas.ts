@@ -5756,6 +5756,67 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "TgWebProxyRelaySummary": {
+    "description": "TgWebProxyRelaySummary is one relay host for the dashboard: this panel's own\n(NodeID 0) or a node's, reached through remote control.",
+    "properties": {
+      "backendsActive": {
+        "example": 1,
+        "type": "integer"
+      },
+      "backendsTotal": {
+        "example": 1,
+        "type": "integer"
+      },
+      "clients": {
+        "example": 12,
+        "type": "integer"
+      },
+      "error": {
+        "type": "string"
+      },
+      "hostname": {
+        "example": "proxy.example.com",
+        "type": "string"
+      },
+      "installed": {
+        "example": true,
+        "type": "boolean"
+      },
+      "name": {
+        "example": "eu-1",
+        "type": "string"
+      },
+      "nodeId": {
+        "example": 1,
+        "type": "integer"
+      },
+      "profiles": {
+        "example": 5,
+        "type": "integer"
+      },
+      "ready": {
+        "example": true,
+        "type": "boolean"
+      },
+      "running": {
+        "example": true,
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "backendsActive",
+      "backendsTotal",
+      "clients",
+      "hostname",
+      "installed",
+      "name",
+      "nodeId",
+      "profiles",
+      "ready",
+      "running"
+    ],
+    "type": "object"
+  },
   "TgWebProxySyncDedicatedRequest": {
     "properties": {
       "specs": {

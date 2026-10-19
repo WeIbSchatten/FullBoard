@@ -1430,6 +1430,21 @@ export const TgWebProxyConfigRequestSchema = z.object({
 });
 export type TgWebProxyConfigRequest = z.infer<typeof TgWebProxyConfigRequestSchema>;
 
+export const TgWebProxyRelaySummarySchema = z.object({
+  backendsActive: z.number().int(),
+  backendsTotal: z.number().int(),
+  clients: z.number().int(),
+  error: z.string().optional(),
+  hostname: z.string(),
+  installed: z.boolean(),
+  name: z.string(),
+  nodeId: z.number().int(),
+  profiles: z.number().int(),
+  ready: z.boolean(),
+  running: z.boolean(),
+});
+export type TgWebProxyRelaySummary = z.infer<typeof TgWebProxyRelaySummarySchema>;
+
 export const TgWebProxySyncDedicatedRequestSchema = z.object({
   specs: z.array(z.lazy(() => DedicatedSpecSchema)),
 });

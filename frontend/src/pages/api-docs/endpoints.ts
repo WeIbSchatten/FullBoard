@@ -2994,6 +2994,14 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'GET',
+        path: '/panel/api/tgWebProxy/overview',
+        summary:
+          'One summary per relay host this panel uses: its own relay (nodeId 0) and each node relay reached through remote control, with running/ready state, profile and bound-client counts. Unreachable nodes are listed only when clients are bound to them.',
+        responseSchema: 'TgWebProxyRelaySummary',
+        responseSchemaArray: true,
+      },
+      {
+        method: 'GET',
         path: '/panel/api/tgWebProxy/config',
         summary:
           'Current config.json and profiles.json. On a host without config.json the defaults written by the upstream installer are returned with configExists=false.',

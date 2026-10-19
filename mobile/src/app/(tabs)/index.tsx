@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Alert } from 'react-native';
+import { Alert, View } from 'react-native';
 
-import { Badge, Button, Card, ErrorCard, Meter, Row, Screen, Title } from '@/components/ui';
+import { Badge, Button, Card, ErrorCard, Meter, Muted, Row, Screen, Title } from '@/components/ui';
 import { formatBytes, formatUptime } from '@/lib/format';
 import { useT } from '@/i18n';
 import { useApi, useSession } from '@/session';
@@ -13,6 +13,43 @@ const XRAY_STATE_KEYS: Record<string, string> = {
   stop: 'pages.index.xrayStatusStop',
   error: 'pages.index.xrayStatusError',
 };
+
+function WebProxyCard() {
+  const api = useApi();
+  const t = useT();
+  const relays = useQuery({ queryKey: ['webProxyOverview'], queryFn: api.webProxyOverview, refetchInterval: 30_000 });
+  if (!relays.data?.length) return null;
+  return (
+    <Card>
+      <Title>{t('menu.tgWebProxy')}</Title>
+      {relays.data.map((r) => (
+        <View key={r.nodeId} style={{ gap: 2 }}>
+          <Row
+            label={r.nodeId === 0 ? t('pages.tgWebProxy.bindings.local') : r.name}
+            value={
+              <Badge
+                text={
+                  !r.running
+                    ? t(r.installed ? 'pages.tgWebProxy.backends.stopped' : 'pages.tgWebProxy.unreachable')
+                    : r.ready
+                      ? t('pages.tgWebProxy.backends.running')
+                      : t('pages.tgWebProxy.notReady')
+                }
+                tone={!r.running ? 'error' : r.ready && !r.error ? 'success' : 'warning'}
+              />
+            }
+          />
+          <Muted>
+            {[r.hostname, `${t('pages.tgWebProxy.profileCount')}: ${r.profiles}`, `${t('clients')}: ${r.clients}`]
+              .filter(Boolean)
+              .join(' · ')}
+          </Muted>
+          {!!r.error && <Muted numberOfLines={3}>{r.error}</Muted>}
+        </View>
+      ))}
+    </Card>
+  );
+}
 
 export default function Overview() {
   const api = useApi();
@@ -66,6 +103,7 @@ export default function Overview() {
             />
             <Row label={t('pages.index.connectionCount')} value={`TCP ${s.tcpCount} · UDP ${s.udpCount}`} />
           </Card>
+          <WebProxyCard />
         </>
       )}
       <Button
