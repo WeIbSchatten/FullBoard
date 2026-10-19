@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/WeIbSchatten/We1ssBoard/v3/internal/tgwebproxy"
@@ -59,8 +60,17 @@ func (a *TgWebProxyController) syncDedicated(c *gin.Context) {
 	if !ok {
 		return
 	}
-	res, err := a.svc.SyncDedicatedProfiles(c.Request.Context(), req.Specs)
+	res, err := a.svc.SyncDedicatedProfiles(c.Request.Context(), remoteDedicatedOwner(c), req.Specs)
 	jsonMsgObj(c, I18nWeb(c, "pages.tgWebProxy.toasts.saved"), res, err)
+}
+
+// remoteDedicatedOwner scopes a master's sync to its API token, so this host's own
+// bindings job and each master only ever touch their own dedicated profiles.
+func remoteDedicatedOwner(c *gin.Context) string {
+	if id, ok := c.Get(apiTokenIDKey); ok {
+		return fmt.Sprintf("remote:%v", id)
+	}
+	return "remote:session"
 }
 
 func (a *TgWebProxyController) listBindings(c *gin.Context) {

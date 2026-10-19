@@ -180,7 +180,7 @@ func (s *TgWebProxyService) syncBindingsLocked(ctx context.Context) (tgwebproxy.
 		remoteByNode[*r.NodeId] = append(remoteByNode[*r.NodeId], r)
 	}
 
-	res, err := tgWebProxy().SyncDedicatedProfiles(ctx, dedicatedSpecs(localRows))
+	res, err := tgWebProxy().SyncDedicatedProfiles(ctx, tgwebproxy.LocalDedicatedOwner, dedicatedSpecs(localRows))
 	if err != nil {
 		return res, err
 	}

@@ -34,6 +34,9 @@ func NewAPIController(g *gin.RouterGroup) *APIController {
 	return a
 }
 
+// apiTokenIDKey carries the matched bearer token id, e.g. to tell masters apart.
+const apiTokenIDKey = "api_token_id"
+
 func (a *APIController) checkAPIAuth(c *gin.Context) {
 	setAuthenticated := func(scope string) {
 		if u, err := a.userService.GetFirstUser(); err == nil {
@@ -47,6 +50,7 @@ func (a *APIController) checkAPIAuth(c *gin.Context) {
 	if after, ok := strings.CutPrefix(c.GetHeader("Authorization"), "Bearer "); ok {
 		if row, matched := a.apiTokenService.MatchToken(after); matched {
 			matchedScope = row.Scope
+			c.Set(apiTokenIDKey, row.Id)
 		}
 	}
 	// Verified mTLS stays node-sync; only an admin (remote node panel) or
