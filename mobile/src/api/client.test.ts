@@ -59,3 +59,12 @@ describe('apiRequest', () => {
     });
   });
 });
+
+it('sends form bodies url-encoded, as the panel expects for xray/update', async () => {
+  const fetchImpl = jest.fn(async () => new Response(JSON.stringify({ success: true }), { status: 200 }));
+  const session = { baseUrl: 'https://panel.example.com/abc', token: 'tok' };
+  await apiRequest(session, 'POST', '/panel/api/xray/update', new URLSearchParams({ xraySetting: '{"a":1}' }), fetchImpl);
+  const [, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+  expect((init.headers as Record<string, string>)['Content-Type']).toBe('application/x-www-form-urlencoded');
+  expect(init.body).toBe('xraySetting=%7B%22a%22%3A1%7D');
+});

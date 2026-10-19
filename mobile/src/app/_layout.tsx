@@ -35,6 +35,8 @@ function Gate() {
           <Stack.Screen name="client/edit/[email]" options={{ title: '' }} />
           <Stack.Screen name="inbound/[id]" options={{ title: '' }} />
           <Stack.Screen name="inbound/edit" options={{ title: '' }} />
+          <Stack.Screen name="xray/item" options={{ title: '' }} />
+          <Stack.Screen name="webproxy/profile" options={{ title: '' }} />
           <Stack.Screen name="groups" options={{ title: t('menu.groups') }} />
           <Stack.Screen name="panel/add" options={{ title: t('mobile.panels.add'), presentation: 'modal' }} />
         </Stack.Protected>
