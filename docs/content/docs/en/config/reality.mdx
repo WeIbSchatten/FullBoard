@@ -137,6 +137,35 @@ vless://<uuid>@<server>:443?security=reality&pbk=<public-key>&sid=<short-id>&sni
 
 </Callout>
 
+## Client compatibility
+
+Since **Xray-core v26.9.8**, a REALITY server only accepts clients whose TLS
+ClientHello offers an `X25519MLKEM768` key share. Any other client is silently
+sent to the target site, so the connection just fails and the Xray log stays
+empty. These results come from a v26.10.17 server:
+
+| Client fingerprint | Xray-core 26.x client | Older client (e.g. 25.x) |
+| --- | --- | --- |
+| `chrome` | works | works |
+| `firefox`, `safari` | works | fails |
+| `randomized` | sometimes | sometimes |
+| `ios`, `edge`, `android`, `random`, `qq`, `360` | fails | fails |
+
+Clients known to lack the key share include Hiddify 4.1.x (sing-box core), older
+v2rayNG and NekoBox builds, and Clash/Mihomo profiles passed through a
+subscription converter, which drops `support-x25519mlkem768`.
+
+What to do:
+
+1. Use fingerprint `chrome` and give Clash/Mihomo clients the panel's own Clash
+   subscription instead of a converted one.
+2. Ask users to update their client app.
+3. If some clients cannot update, run **Xray-core v26.7.28** on the server: open
+   **Overview → Xray Updates** and pick it. Choosing a version **pins** it, and the
+   panel puts it back after every panel update; **Use the bundled version**
+   removes the pin. On 26.7.x an empty **Min Client Ver** means a built-in minimum
+   of `26.3.27`, so set it to `1.0.0` for clients such as Hiddify.
+
 ## Generate a config
 
 Use the generator below to create a fresh X25519 keypair, UUID, and short ID,
