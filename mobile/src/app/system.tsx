@@ -25,10 +25,19 @@ function XrayCard() {
   const qc = useQueryClient();
   const status = useQuery({ queryKey: ['status'], queryFn: api.status });
   const versions = useQuery({ queryKey: ['xrayVersions'], queryFn: api.xrayVersions });
+  const defaults = useQuery({ queryKey: ['defaultSettings'], queryFn: api.subSettings });
+  const pinned = defaults.data?.xrayPinnedVersion ?? '';
+  const unpin = useMutation({
+    mutationFn: api.unpinXray,
+    onSettled: () => qc.invalidateQueries({ queryKey: ['defaultSettings'] }),
+  });
   const [version, setVersion] = useState('');
   const act = useMutation({
     mutationFn: (fn: () => Promise<unknown>) => fn(),
-    onSettled: () => qc.invalidateQueries({ queryKey: ['status'] }),
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ['status'] });
+      void qc.invalidateQueries({ queryKey: ['defaultSettings'] });
+    },
   });
   const xray = status.data?.xray;
   return (
@@ -51,6 +60,12 @@ function XrayCard() {
       </View>
       <Title>{t('pages.index.xraySwitch')}</Title>
       <Muted>{t('pages.index.xraySwitchClickDesk')}</Muted>
+      {!!pinned && (
+        <>
+          <Muted>{t('pages.index.xrayPinned', { version: pinned })}</Muted>
+          <Button title={t('pages.index.xrayUnpin')} busy={unpin.isPending} onPress={() => unpin.mutate()} />
+        </>
+      )}
       {versions.error && <ErrorCard error={versions.error} />}
       <Chips options={(versions.data ?? []).map((v) => ({ value: v, label: v }))} value={version} onChange={setVersion} />
       <Button

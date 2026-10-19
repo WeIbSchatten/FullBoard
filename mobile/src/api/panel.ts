@@ -39,6 +39,7 @@ export interface ServerStatus {
 
 // Subscription base URLs the panel computes for the requesting host.
 export interface SubSettings {
+  xrayPinnedVersion?: string;
   subEnable: boolean;
   subURI: string;
   subJsonEnable: boolean;
@@ -170,6 +171,7 @@ export function panelApi(s: Session) {
     testDiscord: () => message('/panel/api/setting/testDiscord'),
     testSmtp: () => message('/panel/api/setting/testSmtp'),
     xrayVersions: () => get<string[] | null>('/panel/api/server/getXrayVersion'),
+    unpinXray: () => message('/panel/api/server/unpinXray'),
     installXray: (version: string) => message(`/panel/api/server/installXray/${enc(version)}`),
     updateGeofile: (fileName: string) =>
       message(fileName ? `/panel/api/server/updateGeofile/${enc(fileName)}` : '/panel/api/server/updateGeofile'),

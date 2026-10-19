@@ -325,6 +325,9 @@ func (s *Server) startTask(restartXray bool, loc *time.Location) {
 			logger.Warning("start xray failed:", err)
 		}
 	}
+	// A panel update ships its bundled Xray; put back the version the operator pinned.
+	go (&service.ServerService{}).RestorePinnedXray()
+
 	// Check whether xray is running every second
 	_, _ = s.cron.AddJob(cadenceXrayRunning, job.NewCheckXrayRunningJob())
 

@@ -208,6 +208,7 @@ var defaultValueMap = map[string]string{
 	"customCssBundle":             `{"active":"default","presets":[]}`,
 	"navPosition":                 "side",
 	"devChannelEnable":            "false",
+	"xrayPinnedVersion":           "",
 
 	// LDAP defaults
 	"ldapEnable":             "false",
@@ -1980,6 +1981,12 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 		}
 		result[key] = value
 	}
+
+	pin, err := s.GetXrayPinnedVersion()
+	if err != nil {
+		return "", err
+	}
+	result["xrayPinnedVersion"] = pin
 
 	subEnable := result["subEnable"].(bool)
 	subJsonEnable := false

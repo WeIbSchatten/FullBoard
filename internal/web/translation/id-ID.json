@@ -332,7 +332,9 @@
       "accessBlocked": "BLOCKED",
       "accessProxy": "PROXY",
       "importKeepHostSettings": "Pertahankan pengaturan mesin ini",
-      "importKeepHostSettingsDesc": "Mempertahankan alamat dengar, port, path dasar, sertifikat, dan identitas node panel ini alih-alih mengambilnya dari berkas yang diunggah."
+      "importKeepHostSettingsDesc": "Mempertahankan alamat dengar, port, path dasar, sertifikat, dan identitas node panel ini alih-alih mengambilnya dari berkas yang diunggah.",
+      "xrayPinned": "Disematkan {version}: dipasang kembali setelah setiap pembaruan panel",
+      "xrayUnpin": "Gunakan versi bawaan"
     },
     "inbounds": {
       "totalDownUp": "Total Terkirim/Diterima",
