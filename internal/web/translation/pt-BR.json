@@ -332,7 +332,9 @@
       "accessBlocked": "BLOCKED",
       "accessProxy": "PROXY",
       "importKeepHostSettings": "Manter as configurações desta máquina",
-      "importKeepHostSettingsDesc": "Mantém os endereços de escuta, as portas, o caminho base, os certificados e a identidade de nó deste painel em vez de obtê-los do arquivo enviado."
+      "importKeepHostSettingsDesc": "Mantém os endereços de escuta, as portas, o caminho base, os certificados e a identidade de nó deste painel em vez de obtê-los do arquivo enviado.",
+      "xrayPinned": "Fixada {version}: é restaurada após cada atualização do painel",
+      "xrayUnpin": "Usar a versão incluída"
     },
     "inbounds": {
       "totalDownUp": "Total Enviado/Recebido",

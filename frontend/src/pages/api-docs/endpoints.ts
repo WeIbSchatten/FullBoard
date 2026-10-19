@@ -669,7 +669,7 @@ export const sections: readonly Section[] = [
         method: 'POST',
         path: '/panel/api/server/installXray/:version',
         summary:
-          'Download and install the specified Xray version. Pass "latest" for the newest release.',
+          'Download and install the specified Xray version. Pass "latest" for the newest release. A specific version is pinned: the panel reinstalls it on start after a panel update replaced it with the bundled core.',
         params: [
           {
             name: 'version',
@@ -678,6 +678,13 @@ export const sections: readonly Section[] = [
             desc: 'Xray tag (e.g. v25.10.31) or "latest".',
           },
         ],
+      },
+      {
+        method: 'POST',
+        path: '/panel/api/server/unpinXray',
+        summary:
+          'Forget the pinned Xray version so the next panel update keeps its bundled core. The running core is not changed.',
+        response: '{\n  "success": true\n}',
       },
       {
         method: 'POST',
