@@ -36,11 +36,22 @@ export default function VersionModal({ open, status, onClose, onBusy }: VersionM
   const [activeKey, setActiveKey] = useState<string | string[]>('1');
   const [versions, setVersions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pinned, setPinned] = useState('');
 
   const fetchVersions = useCallback(async () => {
     try {
-      const msg = await HttpUtil.get<string[]>('/panel/api/server/getXrayVersion');
+      const [msg, defaults] = await Promise.all([
+        HttpUtil.get<string[]>('/panel/api/server/getXrayVersion'),
+        HttpUtil.post<{ xrayPinnedVersion?: string }>(
+          '/panel/api/setting/defaultSettings',
+          undefined,
+          {
+            silent: true,
+          },
+        ),
+      ]);
       if (msg?.success) setVersions(msg.obj || []);
+      if (defaults?.success) setPinned(defaults.obj?.xrayPinnedVersion ?? '');
     } finally {
       setLoading(false);
     }
@@ -72,6 +83,11 @@ export default function VersionModal({ open, status, onClose, onBusy }: VersionM
         }
       },
     });
+  }
+
+  async function unpinXray() {
+    const msg = await HttpUtil.post('/panel/api/server/unpinXray');
+    if (msg?.success) setPinned('');
   }
 
   function updateGeofile(fileName: string) {
@@ -120,6 +136,19 @@ export default function VersionModal({ open, status, onClose, onBusy }: VersionM
                     title={t('pages.index.xraySwitchClickDesk')}
                     showIcon
                   />
+                  {pinned && (
+                    <Alert
+                      type="info"
+                      className="mb-12"
+                      title={t('pages.index.xrayPinned', { version: pinned })}
+                      action={
+                        <Button size="small" onClick={() => void unpinXray()}>
+                          {t('pages.index.xrayUnpin')}
+                        </Button>
+                      }
+                      showIcon
+                    />
+                  )}
                   <div className="version-list">
                     {versions.map((version, index) => (
                       <div key={version} className="version-list-item">

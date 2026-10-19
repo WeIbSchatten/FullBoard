@@ -332,7 +332,9 @@
       "accessBlocked": "BLOCKED",
       "accessProxy": "PROXY",
       "importKeepHostSettings": "保留本机设置",
-      "importKeepHostSettingsDesc": "保留本面板的监听地址、端口、基础路径、证书和节点身份，而不是使用上传文件中的值。"
+      "importKeepHostSettingsDesc": "保留本面板的监听地址、端口、基础路径、证书和节点身份，而不是使用上传文件中的值。",
+      "xrayPinned": "已固定 {version}：每次面板更新后都会恢复",
+      "xrayUnpin": "使用面板自带版本"
     },
     "inbounds": {
       "totalDownUp": "总上传 / 下载",

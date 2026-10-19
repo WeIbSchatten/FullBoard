@@ -8446,7 +8446,7 @@
         "tags": [
           "Server"
         ],
-        "summary": "Download and install the specified Xray version. Pass \"latest\" for the newest release.",
+        "summary": "Download and install the specified Xray version. Pass \"latest\" for the newest release. A specific version is pinned: the panel reinstalls it on start after a panel update replaced it with the bundled core.",
         "operationId": "post_panel_api_server_installXray_version",
         "parameters": [
           {
@@ -8475,6 +8475,39 @@
                     },
                     "obj": {}
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/panel/api/server/unpinXray": {
+      "post": {
+        "tags": [
+          "Server"
+        ],
+        "summary": "Forget the pinned Xray version so the next panel update keeps its bundled core. The running core is not changed.",
+        "operationId": "post_panel_api_server_unpinXray",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {}
+                  }
+                },
+                "example": {
+                  "success": true
                 }
               }
             }
