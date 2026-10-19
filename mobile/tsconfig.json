@@ -8,10 +8,14 @@
       ],
       "@panel/types": [
         "../frontend/src/generated/types.ts"
+      ],
+      "@panel/palettes": [
+        "../frontend/src/theme/palettes.ts"
       ]
     },
     "types": [
-      "jest"
+      "jest",
+      "node"
     ]
   },
   "include": [

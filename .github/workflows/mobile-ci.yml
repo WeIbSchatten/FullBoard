@@ -6,11 +6,15 @@ on:
     paths:
       - 'mobile/**'
       - 'frontend/src/generated/types.ts'
+      - 'frontend/src/theme/**'
+      - 'internal/web/translation/**'
       - '.github/workflows/mobile-ci.yml'
   pull_request:
     paths:
       - 'mobile/**'
       - 'frontend/src/generated/types.ts'
+      - 'frontend/src/theme/**'
+      - 'internal/web/translation/**'
       - '.github/workflows/mobile-ci.yml'
 
 permissions:

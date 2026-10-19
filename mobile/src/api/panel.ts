@@ -35,6 +35,13 @@ export interface SubSettings {
   subJsonURI: string;
 }
 
+// /clients/get wraps the record together with what it is attached to.
+export interface ClientDetail {
+  client: Pick<ClientRecord, 'email' | 'subId' | 'enable' | 'totalGB' | 'expiryTime'> & Partial<ClientRecord>;
+  inboundIds: number[];
+  externalLinks: unknown[];
+}
+
 export interface BulkResult {
   changed: number;
   skipped?: { email: string; reason: string }[];
@@ -64,7 +71,7 @@ export function panelApi(s: Session) {
       get<ClientPageResponse>(
         `/panel/api/clients/list/paged?page=${page}&pageSize=50&search=${enc(search)}`,
       ),
-    client: (email: string) => get<ClientRecord>(`/panel/api/clients/get/${enc(email)}`),
+    client: (email: string) => get<ClientDetail>(`/panel/api/clients/get/${enc(email)}`),
     clientLinks: (email: string) => get<string[]>(`/panel/api/clients/links/${enc(email)}`),
     setClientsEnabled: (emails: string[], enable: boolean) =>
       post<BulkResult>(`/panel/api/clients/${enable ? 'bulkEnable' : 'bulkDisable'}`, { emails }),

@@ -3114,5 +3114,23 @@
     "obfs": "Làm rối",
     "noEncryption": "Không mã hóa",
     "noEncryptionHint": "Lưu lượng của khóa này không được mã hóa; bất kỳ ai trên đường truyền đều có thể đọc"
+  },
+  "mobile": {
+    "login": {
+      "title": "Kết nối tới panel",
+      "address": "Địa chỉ panel",
+      "addressHint": "Địa chỉ bạn mở trên trình duyệt, kèm đường dẫn bí mật, ví dụ panel.example.com:2053/abc",
+      "token": "Mã API",
+      "tokenHint": "Tạo mã có quyền admin trong panel: Cài đặt → Bảo mật → Mã API.",
+      "connect": "Kết nối",
+      "name": "Tên trong ứng dụng (tùy chọn)"
+    },
+    "panels": {
+      "title": "Panel",
+      "add": "Thêm panel",
+      "remove": "Gỡ khỏi ứng dụng",
+      "removeConfirm": "Gỡ panel này khỏi ứng dụng? Bản thân panel không thay đổi.",
+      "current": "Hiện tại"
+    }
   }
 }

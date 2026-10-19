@@ -3114,5 +3114,23 @@
     "obfs": "Obfuskasi",
     "noEncryption": "Tanpa enkripsi",
     "noEncryptionHint": "Lalu lintas kunci ini tidak dienkripsi; siapa pun di jalur dapat membacanya"
+  },
+  "mobile": {
+    "login": {
+      "title": "Hubungkan ke panel Anda",
+      "address": "Alamat panel",
+      "addressHint": "Alamat yang Anda buka di browser, beserta jalur rahasia, mis. panel.example.com:2053/abc",
+      "token": "Token API",
+      "tokenHint": "Buat token dengan cakupan admin di panel: Pengaturan → Keamanan → Token API.",
+      "connect": "Hubungkan",
+      "name": "Nama di aplikasi (opsional)"
+    },
+    "panels": {
+      "title": "Panel",
+      "add": "Tambah panel",
+      "remove": "Hapus dari aplikasi",
+      "removeConfirm": "Hapus panel ini dari aplikasi? Panelnya sendiri tidak berubah.",
+      "current": "Saat ini"
+    }
   }
 }
