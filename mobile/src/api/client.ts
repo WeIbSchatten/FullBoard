@@ -30,7 +30,7 @@ export function normalizeBaseUrl(input: string): string {
 
 export async function apiRequest<T>(
   session: Session,
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'DELETE',
   path: string,
   body?: unknown,
   fetchImpl: FetchImpl = fetch,

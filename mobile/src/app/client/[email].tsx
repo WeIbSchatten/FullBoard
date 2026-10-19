@@ -4,6 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Alert, Pressable, Switch, Text, View } from 'react-native';
 
+import { HwidCard, IpLogCard } from '@/components/ClientExtras';
 import { QrCode } from '@/components/QrCode';
 import { Badge, Body, Button, Card, ErrorCard, Loading, Muted, Row, Screen, Title } from '@/components/ui';
 import { clientView } from '@/lib/clientView';
@@ -53,7 +54,8 @@ function ClientScreen() {
   const client = useQuery({ queryKey: ['client', email], queryFn: () => api.client(email) });
   const links = useQuery({ queryKey: ['client', email, 'links'], queryFn: () => api.clientLinks(email) });
   const sub = useQuery({ queryKey: ['subSettings'], queryFn: api.subSettings, staleTime: 300_000 });
-  const page = useQuery({ queryKey: ['clients', email], queryFn: () => api.clients(1, email) });
+  const page = useQuery({ queryKey: ['clients', email], queryFn: () => api.clients(1, { search: email }) });
+  const onlines = useQuery({ queryKey: ['onlines'], queryFn: api.onlines, refetchInterval: 15_000 });
 
   const refresh = () => {
     void qc.invalidateQueries({ queryKey: ['clients'] });
@@ -112,6 +114,17 @@ function ClientScreen() {
               value={`${formatBytes(usage.used)} / ${usage.total ? formatBytes(usage.total) : t('unlimited')}`}
             />
             <Row label={t('pages.clients.expiryTime')} value={expiryLabel(t, c.expiryTime)} />
+            <Row
+              label={t('pages.clients.online')}
+              value={
+                onlines.data?.includes(email) ? (
+                  <Badge text={t('online')} tone="success" />
+                ) : (
+                  <Badge text={t('offline')} tone="muted" />
+                )
+              }
+            />
+            {!!c.group && <Row label={t('pages.clients.group')} value={c.group} />}
             {!!c.comment && <Body>{c.comment}</Body>}
           </Card>
           {!!view.subUrl && (
@@ -129,6 +142,13 @@ function ClientScreen() {
               ))}
             </Card>
           )}
+          <IpLogCard email={email} />
+          <HwidCard email={email} />
+          <Button
+            title={t('edit')}
+            kind="primary"
+            onPress={() => router.push({ pathname: '/client/edit/[email]', params: { email } })}
+          />
           <Button
             title={t('pages.groups.resetTraffic')}
             busy={reset.isPending}
