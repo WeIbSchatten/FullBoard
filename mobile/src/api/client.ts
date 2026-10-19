@@ -28,6 +28,11 @@ export function normalizeBaseUrl(input: string): string {
   return url;
 }
 
+export interface ApiEnvelope<T> {
+  msg: string;
+  obj: T;
+}
+
 export async function apiRequest<T>(
   session: Session,
   method: 'GET' | 'POST' | 'DELETE',
@@ -35,6 +40,17 @@ export async function apiRequest<T>(
   body?: unknown,
   fetchImpl: FetchImpl = fetch,
 ): Promise<T> {
+  return (await apiEnvelope<T>(session, method, path, body, fetchImpl)).obj;
+}
+
+// Like apiRequest, but keeps the panel's success message (test sends, version installs).
+export async function apiEnvelope<T>(
+  session: Session,
+  method: 'GET' | 'POST' | 'DELETE',
+  path: string,
+  body?: unknown,
+  fetchImpl: FetchImpl = fetch,
+): Promise<ApiEnvelope<T>> {
   const headers: Record<string, string> = {
     Accept: 'application/json',
     Authorization: `Bearer ${session.token}`,
@@ -58,5 +74,5 @@ export async function apiRequest<T>(
 
   const msg = (await res.json()) as { success?: boolean; msg?: string; obj?: T };
   if (!msg.success) throw new ApiError(msg.msg || 'The panel refused the request', 'panel');
-  return msg.obj as T;
+  return { msg: msg.msg ?? '', obj: msg.obj as T };
 }
