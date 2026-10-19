@@ -56,7 +56,7 @@ func startedSecrets(calls []recordedCall) map[string][]string {
 func TestReconcileBackendsServesSecondAndDedicatedProfiles(t *testing.T) {
 	second := RelayProfile{Name: "second", Secret: "ffeeddccbbaa99887766554433221100", Backend: "127.0.0.1:2399", CarrierMode: "websocket"}
 	m := seedManager(t, validProfile(), second)
-	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{Email: "a@x", Base: "default"}, {Email: "b@x", Base: "second"}}); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{{Email: "a@x", Base: "default"}, {Email: "b@x", Base: "second"}}); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
 	a, _ := profileByName(t, m, DedicatedProfileName("a@x"))
@@ -137,12 +137,12 @@ func TestReconcileBackendsLeavesMatchingInstanceRunning(t *testing.T) {
 func TestSuspendedDedicatedProfileKeepsSecretButLosesItsBackend(t *testing.T) {
 	m := seedManager(t, validProfile())
 	specs := []DedicatedSpec{{Email: "a@x", Base: "default"}, {Email: "b@x", Base: "default"}}
-	if _, err := m.SyncDedicatedProfiles(context.Background(), specs); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, specs); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
 	before, _ := profileByName(t, m, DedicatedProfileName("a@x"))
 	specs[0].Suspended = true
-	if _, err := m.SyncDedicatedProfiles(context.Background(), specs); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, specs); err != nil {
 		t.Fatalf("suspend: %v", err)
 	}
 	runner := &fakeRunner{}
@@ -155,7 +155,7 @@ func TestSuspendedDedicatedProfileKeepsSecretButLosesItsBackend(t *testing.T) {
 		}
 	}
 	specs[0].Suspended = false
-	if _, err := m.SyncDedicatedProfiles(context.Background(), specs); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, specs); err != nil {
 		t.Fatalf("resume: %v", err)
 	}
 	after, _ := profileByName(t, m, DedicatedProfileName("a@x"))

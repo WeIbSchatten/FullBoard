@@ -150,8 +150,8 @@ type TgWebProxySyncDedicatedRequest struct {
 
 // SyncDedicatedProfiles applies a dedicated-spec list to the local relay
 // (used by a master that manages this node's tg-web-proxy remotely).
-func (s *TgWebProxyService) SyncDedicatedProfiles(ctx context.Context, specs []tgwebproxy.DedicatedSpec) (tgwebproxy.RelayApplyResult, error) {
-	return tgWebProxy().SyncDedicatedProfiles(ctx, specs)
+func (s *TgWebProxyService) SyncDedicatedProfiles(ctx context.Context, owner string, specs []tgwebproxy.DedicatedSpec) (tgwebproxy.RelayApplyResult, error) {
+	return tgWebProxy().SyncDedicatedProfiles(ctx, owner, specs)
 }
 
 // MaintainBackends re-checks dedicated bindings (a client may have been
