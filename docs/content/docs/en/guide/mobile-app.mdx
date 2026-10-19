@@ -1,0 +1,62 @@
+---
+title: Mobile app
+description: Manage one or several We1ssBoard panels from an Android phone.
+icon: Smartphone
+---
+
+The We1ssBoard app is a native Android app that talks to the panel's API. It
+covers what the web panel does: clients, inbounds, outbounds, routing, DNS,
+TG Web Proxy, nodes and hosts, every settings section, API tokens, logs, Xray
+and panel updates, and database backups. It speaks all panel languages.
+
+## Install
+
+1. Open the [latest release](https://github.com/WeIbSchatten/We1ssBoard/releases/latest)
+   on the phone and download `we1ssboard-android-<version>.apk`.
+2. Open the file and allow installing apps from this source when Android asks.
+3. Each release ships a new APK signed with the same key, so installing it over
+   the old one keeps your panels and settings.
+
+## Connect a panel
+
+<Steps>
+
+<Step>
+### Create an API token
+
+In the web panel open **Settings → Authentication → API Token** and create a token
+with the **Administrator** scope. Copy it: it is shown only once. A
+**Monitoring** token gives a read-only app.
+</Step>
+
+<Step>
+### Add the panel in the app
+
+Enter the address you open in the browser, including the secret path, for
+example `panel.example.com:2053/abc`, then paste the token. The panel needs a
+valid HTTPS certificate; a plain `http://` address also works on a trusted
+network.
+</Step>
+
+</Steps>
+
+Add more panels under **Settings → Panels** and switch between them there.
+
+## Phone alerts
+
+**Settings → Alerts on this phone** makes the app check every saved panel in the
+background about every 15 minutes, even when the app is closed. It notifies you
+when Xray stops or comes back and when a node goes offline or returns. Android
+decides the exact moment, so an alert can come a few minutes late. No push
+server is involved: the phone asks the panels itself.
+
+## App lock
+
+**Unlock with fingerprint or face** asks for the fingerprint, face or device PIN
+when the app starts and after it has been in the background for 30 seconds.
+
+<Callout>
+  The app keeps API tokens in the phone's encrypted storage. Removing a panel
+  from the app forgets its token but does not change the panel; revoke the token
+  in the web panel if the phone is lost.
+</Callout>
