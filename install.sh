@@ -1466,41 +1466,48 @@ SYSCTL
     echo -e "${green}Network tuning: $(sysctl -n net.ipv4.tcp_congestion_control 2> /dev/null) + $(sysctl -n net.core.default_qdisc 2> /dev/null)${plain}"
 }
 
-# QUIC (Hysteria, TUIC) drops packets with the kernel's 208 KiB UDP buffers. quic-go cannot
-# raise SO_RCVBUF on a socket Xray wraps (salamander obfs), so rmem_default must be large too.
-# Values already set higher on the host are kept; XUI_UDP_BUFFERS=false removes the file.
-WE1SSBOARD_UDP_CONF="/etc/sysctl.d/99-we1ssboard-udp.conf"
-UDP_BUFFER_DEFAULT=8388608
-UDP_BUFFER_MAX=16777216
+# Xray opens Hysteria/TUIC UDP sockets without SO_RCVBUF, so they get rmem_default (208 KiB)
+# and the kernel drops bursts (UdpRcvbufErrors). Values the host already sets higher are kept;
+# XUI_QUIC_TUNING=false removes the file. Sockets take the size at creation, hence the restart.
+WE1SSBOARD_QUIC_CONF="/etc/sysctl.d/99-quic.conf"
+QUIC_BUFFER_DEFAULT=4194304
+QUIC_BUFFER_MAX=16777216
 
-setup_udp_buffers() {
+setup_quic_tuning() {
     local key current target applied conf=""
-    if [[ "${XUI_UDP_BUFFERS:-true}" != "true" ]]; then
-        rm -f "$WE1SSBOARD_UDP_CONF"
+    if [[ "${XUI_QUIC_TUNING:-true}" != "true" ]]; then
+        rm -f "$WE1SSBOARD_QUIC_CONF"
         return 0
     fi
     command -v sysctl > /dev/null 2>&1 || return 0
     [[ -d /etc/sysctl.d ]] || return 0
-    for key in rmem_default wmem_default rmem_max wmem_max; do
-        target=$UDP_BUFFER_MAX
-        [[ "$key" == *_default ]] && target=$UDP_BUFFER_DEFAULT
+    for key in rmem_max wmem_max rmem_default wmem_default; do
+        target=$QUIC_BUFFER_MAX
+        [[ "$key" == *_default ]] && target=$QUIC_BUFFER_DEFAULT
         current=$(sysctl -n "net.core.$key" 2> /dev/null)
         [[ "$current" =~ ^[0-9]+$ ]] && ((current > target)) && target=$current
         conf+="net.core.$key = $target"$'\n'
     done
-    {
-        echo "# Written by We1ssBoard for QUIC (Hysteria, TUIC); set XUI_UDP_BUFFERS=false to remove on next update."
-        printf '%s' "$conf"
-    } > "$WE1SSBOARD_UDP_CONF"
-    chmod 644 "$WE1SSBOARD_UDP_CONF"
-    sysctl -e -p "$WE1SSBOARD_UDP_CONF" > /dev/null 2>&1 || true
-    applied=$(sysctl -n net.core.rmem_default 2> /dev/null)
-    if [[ ! "$applied" =~ ^[0-9]+$ ]] || ((applied < UDP_BUFFER_DEFAULT)); then
-        rm -f "$WE1SSBOARD_UDP_CONF"
-        echo -e "${yellow}Kernel refused larger UDP buffers (container?); UDP buffer setup skipped.${plain}"
+    modprobe tcp_bbr > /dev/null 2>&1 || true
+    if grep -qw bbr /proc/sys/net/ipv4/tcp_available_congestion_control 2> /dev/null; then
+        conf+="net.ipv4.tcp_congestion_control = bbr"$'\n'
+    fi
+    conf="# Written by We1ssBoard for QUIC (Hysteria, TUIC); XUI_QUIC_TUNING=false removes it on next update."$'\n'"$conf"
+    if [[ -f "$WE1SSBOARD_QUIC_CONF" && "$(cat "$WE1SSBOARD_QUIC_CONF")"$'\n' == "$conf" ]]; then
+        sysctl -e -p "$WE1SSBOARD_QUIC_CONF" > /dev/null 2>&1 || true
         return 0
     fi
-    echo -e "${green}UDP buffers: default $(sysctl -n net.core.rmem_default) / max $(sysctl -n net.core.rmem_max) bytes${plain}"
+    printf '%s' "$conf" > "$WE1SSBOARD_QUIC_CONF"
+    chmod 644 "$WE1SSBOARD_QUIC_CONF"
+    sysctl -e -p "$WE1SSBOARD_QUIC_CONF" > /dev/null 2>&1 || true
+    applied=$(sysctl -n net.core.rmem_default 2> /dev/null)
+    if [[ ! "$applied" =~ ^[0-9]+$ ]] || ((applied < QUIC_BUFFER_DEFAULT)); then
+        rm -f "$WE1SSBOARD_QUIC_CONF"
+        echo -e "${yellow}Kernel refused larger UDP buffers (container?); QUIC tuning skipped.${plain}"
+        return 0
+    fi
+    echo -e "${green}QUIC tuning: UDP buffers $(sysctl -n net.core.rmem_default)/$(sysctl -n net.core.rmem_max) bytes, $(sysctl -n net.ipv4.tcp_congestion_control 2> /dev/null); restarting we1ssboard${plain}"
+    systemctl restart we1ssboard > /dev/null 2>&1 || rc-service we1ssboard restart > /dev/null 2>&1 || true
 }
 
 # setup_fail2ban auto-installs and configures fail2ban for the IP Limit feature
@@ -2134,8 +2141,8 @@ install_x-ui() {
     # Undo the 1.4.4 TCP profile; BBR + fq only with XUI_NET_TUNING=true. Never fatal.
     setup_network_tuning
 
-    # Large UDP buffers for QUIC inbounds, persisted across reboots. Never fatal.
-    setup_udp_buffers
+    # Large UDP buffers (+ BBR when available) for QUIC inbounds, persisted. Never fatal.
+    setup_quic_tuning
 
     echo -e "${green}we1ssboard ${tag_version}${plain} installation finished, it is running now..."
     echo -e ""
