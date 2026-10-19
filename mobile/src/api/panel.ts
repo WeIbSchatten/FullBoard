@@ -1,5 +1,9 @@
 import type {
   ClientPageResponse,
+  OutboundTraffics,
+  RelayApplyResult,
+  RelayProfile,
+  RelayShareInfo,
   ClientRecord,
   Inbound,
   NodeView,
@@ -7,6 +11,8 @@ import type {
   RelayStatus,
   TgWebProxyBindingList,
 } from '@panel/types';
+
+import { parseTemplateResponse } from '@/lib/xrayConfig';
 
 import { apiRequest, type Session } from './client';
 
@@ -45,6 +51,19 @@ export interface ClientDetail {
 export interface BulkResult {
   changed: number;
   skipped?: { email: string; reason: string }[];
+}
+
+export interface OutboundTestResult {
+  tag?: string;
+  success: boolean;
+  delay: number;
+  error?: string;
+}
+
+export interface RouteTestResult {
+  matched: boolean;
+  outboundTag: string;
+  groupTags?: string[];
 }
 
 export interface ClientGroup {
@@ -92,6 +111,8 @@ export function panelApi(s: Session) {
   const get = <T>(path: string) => apiRequest<T>(s, 'GET', path);
   const post = <T>(path: string, body?: unknown) => apiRequest<T>(s, 'POST', path, body);
   const del = <T>(path: string) => apiRequest<T>(s, 'DELETE', path);
+  const form = <T>(path: string, fields: Record<string, string>) =>
+    apiRequest<T>(s, 'POST', path, new URLSearchParams(fields));
   return {
     status: () => get<ServerStatus>('/panel/api/server/status'),
     restartXray: () => post<unknown>('/panel/api/server/restartXrayService'),
@@ -150,6 +171,29 @@ export function panelApi(s: Session) {
     setNodeEnabled: (id: number, enable: boolean) =>
       post<unknown>(`/panel/api/nodes/setEnable/${id}`, { enable }),
 
+    xrayTemplate: async () => parseTemplateResponse(await post<unknown>('/panel/api/xray/')),
+    saveXrayTemplate: (xraySetting: string, outboundTestUrl: string) =>
+      form<unknown>('/panel/api/xray/update', { xraySetting, outboundTestUrl }),
+    xrayResult: () => get<string>('/panel/api/xray/getXrayResult'),
+    outboundsTraffic: () => get<OutboundTraffics[] | null>('/panel/api/xray/getOutboundsTraffic'),
+    resetOutboundsTraffic: (tag: string) => form<unknown>('/panel/api/xray/resetOutboundsTraffic', { tag }),
+    testOutbound: (outbound: unknown, allOutbounds: unknown[]) =>
+      form<OutboundTestResult>('/panel/api/xray/testOutbound', {
+        outbound: JSON.stringify(outbound),
+        allOutbounds: JSON.stringify(allOutbounds),
+        mode: 'tcp',
+      }),
+    routeTest: (q: { domain?: string; ip?: string; port?: string; network?: string }) =>
+      form<RouteTestResult>('/panel/api/xray/routeTest', Object.fromEntries(Object.entries(q).filter(([, v]) => v)) as Record<string, string>),
+    webProxyAddProfile: (p: RelayProfile) => post<RelayApplyResult>('/panel/api/tgWebProxy/profiles/add', p),
+    webProxyUpdateProfile: (name: string, p: RelayProfile) =>
+      post<RelayApplyResult>(`/panel/api/tgWebProxy/profiles/update/${enc(name)}`, p),
+    webProxyDeleteProfile: (name: string) => post<RelayApplyResult>(`/panel/api/tgWebProxy/profiles/del/${enc(name)}`),
+    webProxyShare: (name: string) => get<RelayShareInfo>(`/panel/api/tgWebProxy/share/${enc(name)}`),
+    webProxyBindMany: (emails: string[], profileName: string, dedicated: boolean) =>
+      post<unknown>('/panel/api/tgWebProxy/bindings/bindMany', { emails, profileName, dedicated }),
+    webProxyUnbind: (email: string) => post<unknown>('/panel/api/tgWebProxy/bindings/unbind', { email }),
+    webProxyUnit: (unit: string, action: string) => post<unknown>(`/panel/api/tgWebProxy/service/${enc(unit)}/${action}`),
     webProxyStatus: () => get<RelayStatus>('/panel/api/tgWebProxy/status'),
     webProxyConfig: () => get<RelaySnapshot>('/panel/api/tgWebProxy/config'),
     webProxyBindings: () => get<TgWebProxyBindingList>('/panel/api/tgWebProxy/bindings'),

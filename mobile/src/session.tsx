@@ -15,6 +15,7 @@ import {
   type PanelsState,
 } from '@/panels';
 import { getPref, setPref } from '@/prefs';
+import { xrayDraft } from '@/xrayDraft';
 
 const KEY = 'we1ssboard.panels';
 const LEGACY_KEY = 'we1ssboard.session';
@@ -48,7 +49,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // Each panel has its own data, so a switch must not show the previous one's cache.
   const commit = useCallback(
     async (next: PanelsState) => {
-      if (next.activeId !== state.activeId) queryClient.clear();
+      if (next.activeId !== state.activeId) {
+        queryClient.clear();
+        xrayDraft.discard();
+      }
       setState(next);
       await setPref(KEY, JSON.stringify(next));
       await setPref(LEGACY_KEY, null);
