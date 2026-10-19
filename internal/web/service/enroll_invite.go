@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
@@ -197,7 +198,7 @@ func (s *NodeService) EnrollFromInvite(req EnrollFromInviteRequest) (*NodeView, 
 		return nil, err
 	}
 	body, _ := json.Marshal(map[string]string{"code": payload.Code})
-	httpReq, err := http.NewRequest(http.MethodPost, consumeURL, strings.NewReader(string(body)))
+	httpReq, err := http.NewRequestWithContext(context.Background(), http.MethodPost, consumeURL, strings.NewReader(string(body)))
 	if err != nil {
 		return nil, err
 	}

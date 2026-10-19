@@ -357,7 +357,7 @@ func TestRemoteDedicatedSyncAndSubscriptionShareHost(t *testing.T) {
 		}
 		info, err := tgwebproxy.BuildShareInfo(euHost, "", p)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		writeRelayOK(w, info)
