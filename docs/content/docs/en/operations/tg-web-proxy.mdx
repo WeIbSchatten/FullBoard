@@ -139,6 +139,31 @@ link.
 Older releases created `fb-tgwp:<email>` mtg inbounds for dedicated secrets; they
 never worked with the relay and are removed by the next sync.
 
+## Relay on a node
+
+The relay does not have to run on the panel that sells the subscriptions. A
+common setup is a relay on an EU node while clients live on a master panel in
+another country. Install the relay on the node, manage its profiles from the
+master under **Nodes & hosts → node → Telegram WEB Proxy**, and bind master
+clients to a node profile with **Add to subscriptions**.
+
+Both panels then keep dedicated `fb:` profiles in the node's `profiles.json`:
+the node for its own clients, the master for the clients it binds there. Each
+profile records its owner in `dedicated-owners.json` beside `profiles.json`,
+and each panel only creates, changes or removes its own profiles. The relay
+restarts only when one of them really changes. Profiles created before 1.8.1 are
+claimed by whichever panel still binds them, keeping their secrets, so client
+links do not change; profiles nobody claims are removed after 15 minutes.
+
+## Status on the dashboard
+
+The **Overview** page (and the overview screen of the mobile app) shows a
+**Telegram WEB Proxy** card as soon as this panel runs a relay or binds clients
+to one on a node. Each row is one relay host: this panel and every node with a
+relay. It shows whether the relay is running and ready, its profiles, bound
+clients and MTProxy backends, and the error when something is wrong. A node the
+panel cannot reach is listed only when clients are bound to it.
+
 ## Route backend via outbound
 
 Same layout as [WEB Panel Proxy](https://gitlab.com/POLESNIESOVETI12/web-panel-proxy)
