@@ -1333,6 +1333,20 @@ export interface TgWebProxyConfigRequest {
   initialProfile?: RelayProfile | null;
 }
 
+export interface TgWebProxyRelaySummary {
+  backendsActive: number;
+  backendsTotal: number;
+  clients: number;
+  error?: string;
+  hostname: string;
+  installed: boolean;
+  name: string;
+  nodeId: number;
+  profiles: number;
+  ready: boolean;
+  running: boolean;
+}
+
 export interface TgWebProxySyncDedicatedRequest {
   specs: DedicatedSpec[];
 }
