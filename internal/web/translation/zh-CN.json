@@ -3114,5 +3114,23 @@
     "obfs": "混淆",
     "noEncryption": "未加密",
     "noEncryptionHint": "此密钥的流量未加密，路径上的任何人都能读取"
+  },
+  "mobile": {
+    "login": {
+      "title": "连接到你的面板",
+      "address": "面板地址",
+      "addressHint": "在浏览器中打开的地址（含秘密路径），例如 panel.example.com:2053/abc",
+      "token": "API 令牌",
+      "tokenHint": "在面板中创建 admin 权限的令牌：设置 → 安全 → API 令牌。",
+      "connect": "连接",
+      "name": "应用内名称（可选）"
+    },
+    "panels": {
+      "title": "面板",
+      "add": "添加面板",
+      "remove": "从应用中移除",
+      "removeConfirm": "从应用中移除此面板？面板本身不会改变。",
+      "current": "当前"
+    }
   }
 }

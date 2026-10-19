@@ -3,11 +3,12 @@ import { Switch, View } from 'react-native';
 
 import { Body, Card, ErrorCard, Muted, Screen } from '@/components/ui';
 import { formatBytes } from '@/lib/format';
-import { fill, t } from '@/i18n';
+import { useT } from '@/i18n';
 import { useApi } from '@/session';
 
 export default function Inbounds() {
   const api = useApi();
+  const t = useT();
   const qc = useQueryClient();
   const inbounds = useQuery({ queryKey: ['inbounds'], queryFn: api.inbounds });
   const toggle = useMutation({
@@ -19,14 +20,14 @@ export default function Inbounds() {
     <Screen refreshing={inbounds.isRefetching} onRefresh={() => void inbounds.refetch()}>
       {inbounds.error && <ErrorCard error={inbounds.error} onRetry={() => void inbounds.refetch()} />}
       {toggle.error && <ErrorCard error={toggle.error} />}
-      {inbounds.data?.length === 0 && <Muted>{t.inbounds.empty}</Muted>}
+      {inbounds.data?.length === 0 && <Muted>{t('noData')}</Muted>}
       {inbounds.data?.map((ib) => (
         <Card key={ib.id}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <View style={{ flex: 1 }}>
               <Body>{ib.remark || ib.tag}</Body>
               <Muted>
-                {ib.protocol} · {ib.port} · {fill(t.inbounds.clients, { n: ib.clientStats?.length ?? 0 })}
+                {ib.protocol} · {ib.port} · {t('clients')}: {ib.clientStats?.length ?? 0}
               </Muted>
               <Muted>
                 ↑ {formatBytes(ib.up)} ↓ {formatBytes(ib.down)}

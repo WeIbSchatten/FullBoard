@@ -3114,5 +3114,23 @@
     "obfs": "混淆",
     "noEncryption": "未加密",
     "noEncryptionHint": "此金鑰的流量未加密，路徑上的任何人都能讀取"
+  },
+  "mobile": {
+    "login": {
+      "title": "連線到你的面板",
+      "address": "面板位址",
+      "addressHint": "在瀏覽器中開啟的位址（含秘密路徑），例如 panel.example.com:2053/abc",
+      "token": "API 權杖",
+      "tokenHint": "在面板中建立 admin 權限的權杖：設定 → 安全 → API 權杖。",
+      "connect": "連線",
+      "name": "應用程式內名稱（選填）"
+    },
+    "panels": {
+      "title": "面板",
+      "add": "新增面板",
+      "remove": "從應用程式移除",
+      "removeConfirm": "從應用程式移除此面板？面板本身不會改變。",
+      "current": "目前"
+    }
   }
 }

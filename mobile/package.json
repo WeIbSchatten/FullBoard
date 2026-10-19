@@ -42,6 +42,11 @@
   },
   "private": true,
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@panel/palettes$": "<rootDir>/../frontend/src/theme/palettes.ts",
+      "^@panel/types$": "<rootDir>/../frontend/src/generated/types.ts"
+    }
   }
 }

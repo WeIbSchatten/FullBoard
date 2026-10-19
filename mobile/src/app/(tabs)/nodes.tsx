@@ -2,11 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Switch, View } from 'react-native';
 
 import { Badge, Body, Card, ErrorCard, Muted, Screen } from '@/components/ui';
-import { t } from '@/i18n';
+import { useT } from '@/i18n';
 import { useApi } from '@/session';
 
 export default function Nodes() {
   const api = useApi();
+  const t = useT();
   const qc = useQueryClient();
   const nodes = useQuery({ queryKey: ['nodes'], queryFn: api.nodes, refetchInterval: 15_000 });
   const toggle = useMutation({
@@ -18,7 +19,7 @@ export default function Nodes() {
     <Screen refreshing={nodes.isRefetching} onRefresh={() => void nodes.refetch()}>
       {nodes.error && <ErrorCard error={nodes.error} onRetry={() => void nodes.refetch()} />}
       {toggle.error && <ErrorCard error={toggle.error} />}
-      {nodes.data?.length === 0 && <Muted>{t.nodes.empty}</Muted>}
+      {nodes.data?.length === 0 && <Muted>{t('noData')}</Muted>}
       {nodes.data?.map((n) => {
         const online = n.enable && n.status === 'online';
         return (
@@ -31,7 +32,7 @@ export default function Nodes() {
                 </Muted>
               </View>
               <Badge
-                text={!n.enable ? t.nodes.disabled : online ? t.nodes.online : t.nodes.offline}
+                text={!n.enable ? t('disabled') : online ? t('pages.nodes.statusValues.online') : t('pages.nodes.statusValues.offline')}
                 tone={!n.enable ? 'muted' : online ? 'success' : 'error'}
               />
               <Switch

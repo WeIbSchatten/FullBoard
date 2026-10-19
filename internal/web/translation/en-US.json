@@ -3114,5 +3114,23 @@
     "obfs": "Obfuscation",
     "noEncryption": "No encryption",
     "noEncryptionHint": "Traffic of this key is not encrypted; anyone on the path can read it"
+  },
+  "mobile": {
+    "login": {
+      "title": "Connect to your panel",
+      "address": "Panel address",
+      "addressHint": "The address you open in the browser, with the secret path, e.g. panel.example.com:2053/abc",
+      "token": "API token",
+      "tokenHint": "Create a token with the admin scope in the panel: Settings → Security → API tokens.",
+      "connect": "Connect",
+      "name": "Name in the app (optional)"
+    },
+    "panels": {
+      "title": "Panels",
+      "add": "Add panel",
+      "remove": "Remove from app",
+      "removeConfirm": "Remove this panel from the app? The panel itself is not changed.",
+      "current": "Current"
+    }
   }
 }

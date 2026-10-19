@@ -5,7 +5,7 @@ import { Switch, Text, TextInput, View } from 'react-native';
 
 import { Button, Card, ErrorCard, Muted, Screen, Title } from '@/components/ui';
 import { buildNewClient, randomEmail, type NewClientForm } from '@/lib/newClient';
-import { t } from '@/i18n';
+import { useT } from '@/i18n';
 import { RequireSession, useApi } from '@/session';
 import { usePalette } from '@/theme';
 
@@ -15,6 +15,7 @@ const NO_CLIENTS = new Set(['tunnel', 'dokodemo-door', 'mixed', 'http', 'socks']
 function NewClientScreen() {
   const api = useApi();
   const p = usePalette();
+  const t = useT();
   const router = useRouter();
   const qc = useQueryClient();
   const inbounds = useQuery({ queryKey: ['inbounds'], queryFn: api.inbounds });
@@ -60,14 +61,14 @@ function NewClientScreen() {
   return (
     <Screen>
       <Card>
-        {field('email', t.client.email)}
-        {field('totalGB', t.client.totalGB, true)}
-        {field('days', t.client.days, true)}
-        {field('limitIp', t.client.limitIp, true)}
-        {field('comment', t.client.comment)}
+        {field('email', t('pages.clients.email'))}
+        {field('totalGB', t('pages.clients.totalGB'), true)}
+        {field('days', t('pages.clients.expireDays'), true)}
+        {field('limitIp', t('pages.clients.limitIp'), true)}
+        {field('comment', t('comment'))}
       </Card>
       <Card>
-        <Title>{t.client.inbounds}</Title>
+        <Title>{t('menu.inbounds')}</Title>
         {inbounds.error && <ErrorCard error={inbounds.error} />}
         {eligible.map((ib) => (
           <View key={ib.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -88,7 +89,7 @@ function NewClientScreen() {
       </Card>
       {create.error && <ErrorCard error={create.error} />}
       <Button
-        title={t.client.create}
+        title={t('create')}
         kind="primary"
         busy={create.isPending}
         disabled={selected.length === 0}

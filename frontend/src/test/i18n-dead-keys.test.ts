@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 /*
  * Guards the 13-locale translation set two ways: every key in en-US must be
- * referenced somewhere in the frontend or Go sources (dead keys accumulate
+ * referenced somewhere in the frontend, Go or mobile sources (dead keys accumulate
  * silently — this test deleted over two hundred of them when it was
  * introduced), and every locale must carry exactly the en-US key set
  * (missing keys fall back to en-US at runtime, so nothing else fails the
@@ -59,6 +59,7 @@ describe('i18n keys', () => {
   const sources: string[] = [];
   collectSources(join(repoRoot, 'frontend', 'src'), ['.ts', '.tsx'], sources);
   collectSources(join(repoRoot, 'internal'), ['.go'], sources);
+  collectSources(join(repoRoot, 'mobile', 'src'), ['.ts', '.tsx'], sources);
   const blob = sources.join('\n');
 
   const tokens = new Set(blob.match(/[A-Za-z][A-Za-z0-9_.]*/g) ?? []);
@@ -73,7 +74,7 @@ describe('i18n keys', () => {
     prefixes.push(match[1]);
   }
 
-  it('every en-US key is referenced by the frontend or Go sources', () => {
+  it('every en-US key is referenced by the frontend, Go or mobile sources', () => {
     const dead = enKeys.filter(
       (key) => !tokens.has(key) && !prefixes.some((p) => key.startsWith(p)),
     );
