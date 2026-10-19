@@ -66,7 +66,7 @@ func TestSyncDedicatedCreatesOwnSecretAndKeepsItAcrossSyncs(t *testing.T) {
 	m := seedManager(t, base)
 	specs := []DedicatedSpec{{Email: "a@x", Base: "default"}, {Email: "b@x", Base: "default"}}
 
-	if _, err := m.SyncDedicatedProfiles(context.Background(), specs); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, specs); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
 	a, okA := profileByName(t, m, DedicatedProfileName("a@x"))
@@ -88,7 +88,7 @@ func TestSyncDedicatedCreatesOwnSecretAndKeepsItAcrossSyncs(t *testing.T) {
 		t.Fatalf("dedicated backends a=%s b=%s, want one shared managed port other than the base %s", a.Backend, b.Backend, base.Backend)
 	}
 
-	if _, err := m.SyncDedicatedProfiles(context.Background(), specs); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, specs); err != nil {
 		t.Fatalf("second sync: %v", err)
 	}
 	again, _ := profileByName(t, m, DedicatedProfileName("a@x"))
@@ -99,10 +99,10 @@ func TestSyncDedicatedCreatesOwnSecretAndKeepsItAcrossSyncs(t *testing.T) {
 
 func TestSyncDedicatedRemovesUnboundAndLeavesUserProfiles(t *testing.T) {
 	m := seedManager(t, validProfile(), RelayProfile{Name: "shared", Secret: "ffffffffffffffffffffffffffffffff", Backend: "127.0.0.1:2398"})
-	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{Email: "a@x", Base: "default"}}); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{{Email: "a@x", Base: "default"}}); err != nil {
 		t.Fatalf("sync: %v", err)
 	}
-	if _, err := m.SyncDedicatedProfiles(context.Background(), nil); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, nil); err != nil {
 		t.Fatalf("sync after unbind: %v", err)
 	}
 	if _, ok := profileByName(t, m, DedicatedProfileName("a@x")); ok {
@@ -117,7 +117,7 @@ func TestSyncDedicatedRemovesUnboundAndLeavesUserProfiles(t *testing.T) {
 
 func TestSyncDedicatedIsNoOpWithoutRelayConfigWhenNothingDesired(t *testing.T) {
 	m, _ := newTestManager(t, &fakeRunner{})
-	res, err := m.SyncDedicatedProfiles(context.Background(), nil)
+	res, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, nil)
 	if err != nil || res.Restarted {
 		t.Fatalf("sync on a host without a relay = %+v, %v; want a silent no-op", res, err)
 	}
@@ -125,7 +125,7 @@ func TestSyncDedicatedIsNoOpWithoutRelayConfigWhenNothingDesired(t *testing.T) {
 
 func TestSyncDedicatedNeedsRelayConfigWhenSomethingDesired(t *testing.T) {
 	m, _ := newTestManager(t, &fakeRunner{})
-	_, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{Email: "a@x", Base: "default"}})
+	_, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{{Email: "a@x", Base: "default"}})
 	if err == nil || !strings.Contains(err.Error(), "config.json does not exist") {
 		t.Fatalf("error = %v, want the missing-config refusal", err)
 	}
@@ -135,7 +135,7 @@ func TestSyncDedicatedHonoursSecretAndBackendOverrides(t *testing.T) {
 	m := seedManager(t, validProfile())
 	const secret = "aabbccddeeff00112233445566778899"
 	const backend = "127.0.0.1:46111"
-	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{{
 		Email: "a@x", Base: "default", Secret: secret, Backend: backend,
 	}}); err != nil {
 		t.Fatalf("sync: %v", err)
@@ -147,7 +147,7 @@ func TestSyncDedicatedHonoursSecretAndBackendOverrides(t *testing.T) {
 	if got.Secret != secret || got.Backend != backend {
 		t.Fatalf("profile = %+v, want secret=%s backend=%s", got, secret, backend)
 	}
-	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{{
 		Email: "a@x", Base: "default", Secret: secret, Backend: backend,
 	}}); err != nil {
 		t.Fatalf("second sync: %v", err)
@@ -160,7 +160,7 @@ func TestSyncDedicatedHonoursSecretAndBackendOverrides(t *testing.T) {
 
 func TestSyncDedicatedReportsMissingBaseButAppliesTheRest(t *testing.T) {
 	m := seedManager(t, validProfile())
-	_, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{
+	_, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{
 		{Email: "a@x", Base: "default"},
 		{Email: "b@x", Base: "gone"},
 	})
@@ -177,7 +177,7 @@ func TestSyncDedicatedReportsMissingBaseButAppliesTheRest(t *testing.T) {
 
 func TestManagedProfilesAreProtectedFromManualEdits(t *testing.T) {
 	m := seedManager(t, validProfile())
-	if _, err := m.SyncDedicatedProfiles(context.Background(), []DedicatedSpec{{Email: "a@x", Base: "default"}}); err != nil {
+	if _, err := m.SyncDedicatedProfiles(context.Background(), LocalDedicatedOwner, []DedicatedSpec{{Email: "a@x", Base: "default"}}); err != nil {
 		t.Fatal(err)
 	}
 	managed := DedicatedProfileName("a@x")

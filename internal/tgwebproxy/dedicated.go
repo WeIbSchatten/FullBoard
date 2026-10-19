@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 )
 
 // DedicatedPrefix marks profiles owned by client bindings; a sync deletes any
@@ -58,27 +59,59 @@ func newProfileSecret() (string, error) {
 // matching MTProto backend before writing profiles.json.
 func NewProfileSecret() (string, error) { return newProfileSecret() }
 
-// syncDedicated returns the desired profile list, whether it differs from list,
-// and the specs whose base profile no longer exists.
-func syncDedicated(list []RelayProfile, specs []DedicatedSpec) ([]RelayProfile, bool, []DedicatedSpec, error) {
+// syncDedicated returns owner's desired profile list, whether it differs from
+// list, and why any spec was skipped; profiles of other owners are left alone.
+func syncDedicated(list []RelayProfile, specs []DedicatedSpec, owner string, own *dedicatedOwners, now time.Time) ([]RelayProfile, bool, []string, error) {
+	own.Seen[owner] = now.Unix()
 	byName := make(map[string]RelayProfile, len(list))
 	for _, p := range list {
 		byName[p.Name] = p
 	}
-	wanted := make(map[string]struct{}, len(specs))
-	for _, spec := range specs {
-		wanted[DedicatedProfileName(spec.Email)] = struct{}{}
+	stale := func(o string) bool {
+		return o != LocalDedicatedOwner && now.Sub(time.Unix(own.Seen[o], 0)) > dedicatedOwnerGrace
 	}
-	pool := newDedicatedPool(list, wanted)
-	derived := make(map[string]RelayProfile, len(specs))
-	var missing []DedicatedSpec
+	var problems []string
+	accepted := make([]DedicatedSpec, 0, len(specs))
+	keep := map[string]struct{}{}
 	for _, spec := range specs {
 		name := DedicatedProfileName(spec.Email)
-		base, ok := byName[spec.Base]
-		if !ok || IsManagedProfileName(spec.Base) {
-			missing = append(missing, spec)
+		if o := own.Owners[name]; o != "" && o != owner && !stale(o) {
+			problems = append(problems, fmt.Sprintf("%s (managed by %s)", spec.Email, o))
 			continue
 		}
+		if base, ok := byName[spec.Base]; !ok || IsManagedProfileName(base.Name) {
+			problems = append(problems, fmt.Sprintf("%s (base profile %q not found)", spec.Email, spec.Base))
+			continue
+		}
+		accepted = append(accepted, spec)
+		keep[name] = struct{}{}
+	}
+	keepUnlessMine := func(p RelayProfile) bool {
+		o := own.Owners[p.Name]
+		if o != "" {
+			return o != owner
+		}
+		if owner != LocalDedicatedOwner {
+			return true
+		}
+		since, seen := own.Orphans[p.Name]
+		if !seen {
+			own.Orphans[p.Name] = now.Unix()
+			return true
+		}
+		return now.Sub(time.Unix(since, 0)) <= dedicatedOwnerGrace
+	}
+	for _, p := range list {
+		if _, wanted := keep[p.Name]; !wanted && IsManagedProfileName(p.Name) && keepUnlessMine(p) {
+			keep[p.Name] = struct{}{}
+		}
+	}
+
+	pool := newDedicatedPool(list, keep)
+	derived := make(map[string]RelayProfile, len(accepted))
+	for _, spec := range accepted {
+		name := DedicatedProfileName(spec.Email)
+		base := byName[spec.Base]
 		next := RelayProfile{Name: name, Backend: spec.Backend, CarrierMode: base.CarrierMode}
 		if spec.Suspended {
 			next.Backend = SuspendedBackend
@@ -109,6 +142,7 @@ func syncDedicated(list []RelayProfile, specs []DedicatedSpec) ([]RelayProfile, 
 			}
 		}
 		derived[name] = next
+		own.Owners[name] = owner
 	}
 
 	out := make([]RelayProfile, 0, len(list)+len(derived))
@@ -122,17 +156,36 @@ func syncDedicated(list []RelayProfile, specs []DedicatedSpec) ([]RelayProfile, 
 			delete(derived, p.Name)
 			continue
 		}
-		if _, stillWanted := wanted[p.Name]; stillWanted {
+		if _, kept := keep[p.Name]; kept {
 			out = append(out, p)
 		}
 	}
-	for _, spec := range specs {
+	for _, spec := range accepted {
 		if next, ok := derived[DedicatedProfileName(spec.Email)]; ok {
 			out = append(out, next)
 			delete(derived, next.Name)
 		}
 	}
-	return out, !reflect.DeepEqual(normalizedAll(out), normalizedAll(list)), missing, nil
+	pruneDedicatedOwners(own, out)
+	return out, !reflect.DeepEqual(normalizedAll(out), normalizedAll(list)), problems, nil
+}
+
+// pruneDedicatedOwners forgets owners and orphan clocks of profiles that are gone.
+func pruneDedicatedOwners(own *dedicatedOwners, out []RelayProfile) {
+	present := make(map[string]struct{}, len(out))
+	for _, p := range out {
+		present[p.Name] = struct{}{}
+	}
+	for name := range own.Owners {
+		if _, ok := present[name]; !ok {
+			delete(own.Owners, name)
+		}
+	}
+	for name := range own.Orphans {
+		if _, ok := present[name]; !ok || own.Owners[name] != "" {
+			delete(own.Orphans, name)
+		}
+	}
 }
 
 // normalizedAll canonicalises a copy so a sync compares what would be written.
@@ -144,9 +197,9 @@ func normalizedAll(list []RelayProfile) []RelayProfile {
 	return out
 }
 
-// SyncDedicatedProfiles makes the managed (prefixed) profiles match specs and
-// restarts the relay only when profiles.json actually changed.
-func (m *Manager) SyncDedicatedProfiles(ctx context.Context, specs []DedicatedSpec) (RelayApplyResult, error) {
+// SyncDedicatedProfiles makes owner's managed (prefixed) profiles match specs,
+// leaving other owners' alone, and restarts the relay only on a real change.
+func (m *Manager) SyncDedicatedProfiles(ctx context.Context, owner string, specs []DedicatedSpec) (RelayApplyResult, error) {
 	snap, err := m.store.Load()
 	if err != nil {
 		return RelayApplyResult{}, err
@@ -154,32 +207,21 @@ func (m *Manager) SyncDedicatedProfiles(ctx context.Context, specs []DedicatedSp
 	if !snap.ConfigExists && len(specs) == 0 {
 		return RelayApplyResult{}, nil
 	}
-	var changed bool
-	var missing []DedicatedSpec
-	err = m.store.MutateProfiles(ctx, func(list []RelayProfile) ([]RelayProfile, error) {
-		next, diff, miss, serr := syncDedicated(list, specs)
-		if serr != nil {
-			return nil, serr
-		}
-		changed, missing = diff, miss
-		if !diff {
-			return list, errProfilesUnchanged
-		}
-		return next, nil
+	var problems []string
+	changed, err := m.store.mutateDedicated(ctx, func(list []RelayProfile, own *dedicatedOwners) ([]RelayProfile, bool, error) {
+		next, diff, skipped, serr := syncDedicated(list, specs, owner, own, dedicatedNow())
+		problems = skipped
+		return next, diff, serr
 	})
-	if err != nil && !errors.Is(err, errProfilesUnchanged) {
+	if err != nil {
 		return RelayApplyResult{}, err
 	}
 	var res RelayApplyResult
 	if changed {
 		res = m.afterCommit(ctx)
 	}
-	if len(missing) > 0 {
-		parts := make([]string, len(missing))
-		for i, spec := range missing {
-			parts[i] = fmt.Sprintf("%s (base profile %q not found)", spec.Email, spec.Base)
-		}
-		return res, fmt.Errorf("dedicated profiles not created for: %s", strings.Join(parts, ", "))
+	if len(problems) > 0 {
+		return res, fmt.Errorf("dedicated profiles not created for: %s", strings.Join(problems, ", "))
 	}
 	return res, nil
 }
