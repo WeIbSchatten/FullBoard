@@ -3114,5 +3114,23 @@
     "obfs": "Ofuscação",
     "noEncryption": "Sem criptografia",
     "noEncryptionHint": "O tráfego desta chave não é criptografado; qualquer um no caminho pode lê-lo"
+  },
+  "mobile": {
+    "login": {
+      "title": "Conecte-se ao seu painel",
+      "address": "Endereço do painel",
+      "addressHint": "O endereço que você abre no navegador, com o caminho secreto, ex.: panel.example.com:2053/abc",
+      "token": "Token de API",
+      "tokenHint": "Crie um token com escopo admin no painel: Configurações → Segurança → Tokens de API.",
+      "connect": "Conectar",
+      "name": "Nome no app (opcional)"
+    },
+    "panels": {
+      "title": "Painéis",
+      "add": "Adicionar painel",
+      "remove": "Remover do app",
+      "removeConfirm": "Remover este painel do app? O painel em si não muda.",
+      "current": "Atual"
+    }
   }
 }

@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Alert, Pressable, Switch, View } from 'react-native';
+import { Alert, Pressable, Switch, Text, View } from 'react-native';
 
 import { QrCode } from '@/components/QrCode';
-import { Body, Button, Card, ErrorCard, Loading, Muted, Row, Screen, Title } from '@/components/ui';
-import { formatBytes, quotaUsage } from '@/lib/format';
-import { expiryLabel } from '@/lib/labels';
-import { t } from '@/i18n';
+import { Badge, Body, Button, Card, ErrorCard, Loading, Muted, Row, Screen, Title } from '@/components/ui';
+import { clientView } from '@/lib/clientView';
+import { formatBytes } from '@/lib/format';
+import { CLIENT_STATE_TONE, clientStateLabel, expiryLabel } from '@/lib/labels';
+import { useT } from '@/i18n';
 import { RequireSession, useApi } from '@/session';
+import { usePalette } from '@/theme';
 
 function LinkRow({ value }: { value: string }) {
+  const t = useT();
   const [qr, setQr] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
@@ -20,7 +23,7 @@ function LinkRow({ value }: { value: string }) {
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <View style={{ flex: 1 }}>
           <Button
-            title={copied ? t.client.copied : t.client.copy}
+            title={copied ? t('copied') : t('copy')}
             onPress={() => {
               void Clipboard.setStringAsync(value);
               setCopied(true);
@@ -28,7 +31,7 @@ function LinkRow({ value }: { value: string }) {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <Button title={t.client.showQr} onPress={() => setQr((v) => !v)} />
+          <Button title={t('qrCode')} onPress={() => setQr((v) => !v)} />
         </View>
       </View>
       {qr && (
@@ -43,6 +46,8 @@ function LinkRow({ value }: { value: string }) {
 function ClientScreen() {
   const { email } = useLocalSearchParams<{ email: string }>();
   const api = useApi();
+  const t = useT();
+  const p = usePalette();
   const router = useRouter();
   const qc = useQueryClient();
   const client = useQuery({ queryKey: ['client', email], queryFn: () => api.client(email) });
@@ -68,71 +73,80 @@ function ClientScreen() {
   });
 
   if (client.isLoading) return <Loading />;
-  const c = client.data;
   const slim = page.data?.items.find((i) => i.email === email);
-  const usage = quotaUsage(c?.totalGB ?? 0, slim?.traffic);
-  const subUrl = c?.subId && sub.data?.subEnable && sub.data.subURI ? sub.data.subURI + c.subId : '';
-  const jsonUrl =
-    c?.subId && sub.data?.subJsonEnable && sub.data.subJsonURI ? sub.data.subJsonURI + c.subId : '';
+  const view = client.data ? clientView(client.data, slim?.traffic, sub.data) : null;
+  const c = view?.client;
   const error = client.error ?? toggle.error ?? reset.error ?? remove.error;
+  // While the toggle is in flight, show where it is going rather than the stale value.
+  const enabled = toggle.isPending && toggle.variables !== undefined ? toggle.variables : !!c?.enable;
+  const usage = view?.usage;
 
   return (
     <Screen refreshing={client.isRefetching} onRefresh={refresh}>
       <Stack.Screen options={{ title: email }} />
       {error && <ErrorCard error={error} />}
-      {c && (
+      {c && view && usage && (
         <>
           <Card>
             <Row
-              label={t.client.enabled}
-              value={
-                <Switch
-                  value={c.enable}
-                  disabled={toggle.isPending}
-                  onValueChange={(v) => toggle.mutate(v)}
-                />
-              }
+              label={t('subscription.status')}
+              value={<Badge text={clientStateLabel(t, view.state)} tone={CLIENT_STATE_TONE[view.state]} />}
             />
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: p.text2 }}>{t('pages.clients.enabled')}</Text>
+                <Text style={{ color: enabled ? p.success : p.text3, fontWeight: '600' }}>
+                  {enabled ? t('enabled') : t('disabled')}
+                </Text>
+              </View>
+              <Switch
+                value={enabled}
+                disabled={toggle.isPending}
+                onValueChange={(v) => toggle.mutate(v)}
+                trackColor={{ false: p.surface2, true: p.success }}
+                thumbColor={enabled ? p.onAccent : p.text3}
+              />
+            </View>
             <Row
-              label={t.client.traffic}
-              value={`${formatBytes(usage.used)} / ${usage.total ? formatBytes(usage.total) : t.clients.unlimited}`}
+              label={t('pages.clients.traffic')}
+              value={`${formatBytes(usage.used)} / ${usage.total ? formatBytes(usage.total) : t('unlimited')}`}
             />
-            <Row label={t.client.expiry} value={expiryLabel(c.expiryTime)} />
+            <Row label={t('pages.clients.expiryTime')} value={expiryLabel(t, c.expiryTime)} />
             {!!c.comment && <Body>{c.comment}</Body>}
           </Card>
-          {!!subUrl && (
+          {!!view.subUrl && (
             <Card>
-              <Title>{t.client.subscription}</Title>
-              <LinkRow value={subUrl} />
-              {!!jsonUrl && <LinkRow value={jsonUrl} />}
+              <Title>{t('subscription.tabLinks')}</Title>
+              <LinkRow value={view.subUrl} />
+              {!!view.jsonUrl && <LinkRow value={view.jsonUrl} />}
             </Card>
           )}
           {!!links.data?.length && (
             <Card>
-              <Title>{t.client.links}</Title>
+              <Title>{t('pages.clients.tabLinks')}</Title>
               {links.data.map((l) => (
                 <LinkRow key={l} value={l} />
               ))}
             </Card>
           )}
           <Button
-            title={t.client.resetTraffic}
+            title={t('pages.groups.resetTraffic')}
             busy={reset.isPending}
             onPress={() =>
-              Alert.alert(t.client.resetTraffic, t.client.resetConfirm, [
-                { text: t.common.cancel, style: 'cancel' },
-                { text: t.common.ok, onPress: () => reset.mutate() },
+              Alert.alert(t('pages.groups.resetTraffic'), t('pages.inbounds.resetTrafficContent'), [
+                { text: t('cancel'), style: 'cancel' },
+                { text: t('sure'), onPress: () => reset.mutate() },
               ])
             }
           />
           <Button
-            title={t.client.delete}
+            title={t('delete')}
             kind="danger"
             busy={remove.isPending}
             onPress={() =>
-              Alert.alert(t.client.delete, t.client.deleteConfirm, [
-                { text: t.common.cancel, style: 'cancel' },
-                { text: t.common.ok, style: 'destructive', onPress: () => remove.mutate() },
+              Alert.alert(t('pages.clients.deleteConfirmTitle', { email }), '', [
+                { text: t('cancel'), style: 'cancel' },
+                { text: t('delete'), style: 'destructive', onPress: () => remove.mutate() },
               ])
             }
           />
