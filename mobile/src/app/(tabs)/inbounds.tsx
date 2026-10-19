@@ -1,51 +1,44 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
-import { Pressable, Switch, View } from 'react-native';
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { Body, Button, Card, ErrorCard, Muted, Screen } from '@/components/ui';
-import { formatBytes } from '@/lib/format';
+import { InboundsSection } from '@/components/connections/InboundsSection';
+import { BalancersSection, DnsSection, OutboundsSection, RoutingSection } from '@/components/connections/Sections';
+import { WebProxySection } from '@/components/connections/WebProxySection';
+import { Chips } from '@/components/Pickers';
+import { Screen } from '@/components/ui';
 import { useT } from '@/i18n';
-import { useApi } from '@/session';
 
-export default function Inbounds() {
-  const api = useApi();
+type Section = 'inbounds' | 'outbounds' | 'routing' | 'balancers' | 'dns' | 'webproxy';
+
+// Mirrors the panel's "Connections" hub: one tab, a chip per section.
+export default function Connections() {
   const t = useT();
   const qc = useQueryClient();
-  const router = useRouter();
-  const inbounds = useQuery({ queryKey: ['inbounds'], queryFn: api.inbounds });
-  const toggle = useMutation({
-    mutationFn: ({ id, enable }: { id: number; enable: boolean }) => api.setInboundEnabled(id, enable),
-    onSettled: () => qc.invalidateQueries({ queryKey: ['inbounds'] }),
-  });
-
+  const [section, setSection] = useState<Section>('inbounds');
+  const [refreshing, setRefreshing] = useState(false);
+  const sections: { value: Section; label: string }[] = [
+    { value: 'inbounds', label: t('menu.inbounds') },
+    { value: 'outbounds', label: t('menu.outbounds') },
+    { value: 'routing', label: t('menu.routing') },
+    { value: 'balancers', label: t('pages.xray.Balancers') },
+    { value: 'dns', label: 'DNS' },
+    { value: 'webproxy', label: t('menu.tgWebProxy') },
+  ];
   return (
-    <Screen refreshing={inbounds.isRefetching} onRefresh={() => void inbounds.refetch()}>
-      {inbounds.error && <ErrorCard error={inbounds.error} onRetry={() => void inbounds.refetch()} />}
-      <Button title={t('pages.inbounds.addInbound')} kind="primary" onPress={() => router.push('/inbound/edit')} />
-      {toggle.error && <ErrorCard error={toggle.error} />}
-      {inbounds.data?.length === 0 && <Muted>{t('noData')}</Muted>}
-      {inbounds.data?.map((ib) => (
-        <Pressable key={ib.id} onPress={() => router.push({ pathname: '/inbound/[id]', params: { id: String(ib.id) } })}>
-        <Card>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <View style={{ flex: 1 }}>
-              <Body>{ib.remark || ib.tag}</Body>
-              <Muted>
-                {ib.protocol} · {ib.port} · {t('clients')}: {ib.clientStats?.length ?? 0}
-              </Muted>
-              <Muted>
-                ↑ {formatBytes(ib.up)} ↓ {formatBytes(ib.down)}
-              </Muted>
-            </View>
-            <Switch
-              value={ib.enable}
-              disabled={toggle.isPending}
-              onValueChange={(enable) => toggle.mutate({ id: ib.id, enable })}
-            />
-          </View>
-        </Card>
-        </Pressable>
-      ))}
+    <Screen
+      refreshing={refreshing}
+      onRefresh={() => {
+        setRefreshing(true);
+        void qc.invalidateQueries().finally(() => setRefreshing(false));
+      }}
+    >
+      <Chips options={sections} value={section} onChange={setSection} />
+      {section === 'inbounds' && <InboundsSection />}
+      {section === 'outbounds' && <OutboundsSection />}
+      {section === 'routing' && <RoutingSection />}
+      {section === 'balancers' && <BalancersSection />}
+      {section === 'dns' && <DnsSection />}
+      {section === 'webproxy' && <WebProxySection />}
     </Screen>
   );
 }
