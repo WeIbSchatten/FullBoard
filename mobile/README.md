@@ -13,9 +13,15 @@ The app talks to the panel API with an **admin API token**, never the panel pass
 2. In the app enter the panel address exactly as in the browser, including the
    secret web base path (for example `panel.example.com:2053/abc`), and the token.
 
-The token is kept in the OS keystore (`expo-secure-store`). The panel must be reachable
-over HTTPS with a certificate the phone trusts; plain HTTP works only on Android debug
-builds.
+The token is kept in the OS keystore (`expo-secure-store`). Prefer HTTPS: over plain
+HTTP (a panel without a certificate, which the Android app allows) the token travels
+unencrypted.
+
+## Install on Android
+
+Every panel release carries `we1ssboard-android-<version>.apk`, built and signed by
+`.github/workflows/mobile-release.yml`. Download it on the phone and install it; later
+releases install over it and keep the sign-in.
 
 ## Develop
 
