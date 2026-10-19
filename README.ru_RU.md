@@ -197,6 +197,7 @@ XUI_DB_DSN=postgres://xui:password@127.0.0.1:5432/xui?sslmode=disable
 | `XUI_PORT` | Переопределение порта панели | — |
 | `XUI_ENABLE_FAIL2BAN` | Лимиты IP через Fail2ban | `true` |
 | `XUI_NET_TUNING` | `true` — записать BBR + fq при установке и обновлении | `false` |
+| `XUI_QUIC_TUNING` | `false` — не задавать UDP-буферы и BBR для QUIC (`99-quic.conf`) при установке и обновлении | `true` |
 | `XUI_LOG_LEVEL` | `debug`, `info`, `warning`, `error` | `info` |
 | `XUI_TUNNEL_HEALTH_MONITOR` | Проверка URL и перезапуск Xray после серии сбоев | `false` |
 | `NODE_TOKEN_ENCRYPTION` | Шифрование токенов узлов: `off`, `migration`, `required` | `off` |
