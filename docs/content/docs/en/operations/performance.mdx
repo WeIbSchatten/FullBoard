@@ -11,8 +11,8 @@ top to bottom: each step removes one common cap on speed or latency.
 
 Most distributions boot with `cubic` and the `fq_codel` qdisc. **BBR + fq** often
 helps on long, clean routes, but on paths with policers or traffic shaping it can
-cause more loss, lower throughput and higher latency than `cubic`. We1ssBoard
-therefore leaves the kernel alone by default.
+cause more loss, lower throughput and higher latency than `cubic`. Install and update
+enable BBR together with the QUIC buffers below; set `XUI_QUIC_TUNING=false` to keep `cubic`.
 
 <Callout type="warn">
   1.4.4 and 1.4.5 applied a larger profile automatically (BBR, 32 MiB buffers, `tcp_notsent_lowat`,
@@ -35,6 +35,20 @@ modprobe tcp_bbr && sysctl -w net.ipv4.tcp_congestion_control=bbr net.core.defau
 
 Signs of a policed path: many retransmits while downloading
 (`nstat -az TcpRetransSegs` rising quickly, `ss -tin` showing `retrans:`).
+
+### UDP buffers for QUIC (Hysteria, TUIC)
+
+Xray opens Hysteria and TUIC sockets without asking for a buffer size, so they get
+`net.core.rmem_default` (208 KiB). Bursts overflow it, the kernel drops packets and
+`nstat -az UdpRcvbufErrors` keeps growing (games show it as lag). Install and update
+therefore write `/etc/sysctl.d/99-quic.conf`: `net.core.{r,w}mem_default` 4 MiB,
+`net.core.{r,w}mem_max` 16 MiB (a higher value already on the host is kept) and
+`tcp_congestion_control = bbr` when the kernel has BBR, then restart the panel so
+Xray reopens its sockets. Check with `ss -uamp` (`rb4194304` on the Hysteria port).
+To opt out, set `XUI_QUIC_TUNING=false` in `/etc/default/we1ssboard` and run
+`we1ssboard update` (the file is removed; kernel defaults return after a reboot).
+Turning BBR off in the menu alone is undone by the next update. In Docker these keys
+belong to the host: set them there.
 
 ## 2. Pick a fast transport
 
