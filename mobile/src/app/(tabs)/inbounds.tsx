@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Switch, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Pressable, Switch, View } from 'react-native';
 
-import { Body, Card, ErrorCard, Muted, Screen } from '@/components/ui';
+import { Body, Button, Card, ErrorCard, Muted, Screen } from '@/components/ui';
 import { formatBytes } from '@/lib/format';
 import { useT } from '@/i18n';
 import { useApi } from '@/session';
@@ -10,6 +11,7 @@ export default function Inbounds() {
   const api = useApi();
   const t = useT();
   const qc = useQueryClient();
+  const router = useRouter();
   const inbounds = useQuery({ queryKey: ['inbounds'], queryFn: api.inbounds });
   const toggle = useMutation({
     mutationFn: ({ id, enable }: { id: number; enable: boolean }) => api.setInboundEnabled(id, enable),
@@ -19,10 +21,12 @@ export default function Inbounds() {
   return (
     <Screen refreshing={inbounds.isRefetching} onRefresh={() => void inbounds.refetch()}>
       {inbounds.error && <ErrorCard error={inbounds.error} onRetry={() => void inbounds.refetch()} />}
+      <Button title={t('pages.inbounds.addInbound')} kind="primary" onPress={() => router.push('/inbound/edit')} />
       {toggle.error && <ErrorCard error={toggle.error} />}
       {inbounds.data?.length === 0 && <Muted>{t('noData')}</Muted>}
       {inbounds.data?.map((ib) => (
-        <Card key={ib.id}>
+        <Pressable key={ib.id} onPress={() => router.push({ pathname: '/inbound/[id]', params: { id: String(ib.id) } })}>
+        <Card>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <View style={{ flex: 1 }}>
               <Body>{ib.remark || ib.tag}</Body>
@@ -40,6 +44,7 @@ export default function Inbounds() {
             />
           </View>
         </Card>
+        </Pressable>
       ))}
     </Screen>
   );
