@@ -36,6 +36,19 @@ modprobe tcp_bbr && sysctl -w net.ipv4.tcp_congestion_control=bbr net.core.defau
 Signs of a policed path: many retransmits while downloading
 (`nstat -az TcpRetransSegs` rising quickly, `ss -tin` showing `retrans:`).
 
+### UDP buffers for QUIC (Hysteria, TUIC)
+
+QUIC needs larger UDP socket buffers than the kernel default (208 KiB). With
+salamander obfs Xray wraps the socket, so the QUIC stack cannot enlarge its own
+buffer and falls back to `net.core.rmem_default`; the kernel then drops packets and
+`nstat -az UdpRcvbufErrors` keeps growing. Install and update therefore write
+`/etc/sysctl.d/99-we1ssboard-udp.conf`: default 8 MiB and max 16 MiB for
+`net.core.{r,w}mem_{default,max}`, keeping any value the host already sets higher.
+This changes UDP buffering only, not TCP. To opt out, set `XUI_UDP_BUFFERS=false` in
+`/etc/default/we1ssboard` and run `we1ssboard update` (the file is removed; the
+kernel defaults return after a reboot). In Docker these keys belong to the host:
+set them there.
+
 ## 2. Pick a fast transport
 
 Encryption and framing cost CPU and round trips. From fastest to slowest for a

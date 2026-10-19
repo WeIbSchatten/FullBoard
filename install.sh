@@ -1466,6 +1466,43 @@ SYSCTL
     echo -e "${green}Network tuning: $(sysctl -n net.ipv4.tcp_congestion_control 2> /dev/null) + $(sysctl -n net.core.default_qdisc 2> /dev/null)${plain}"
 }
 
+# QUIC (Hysteria, TUIC) drops packets with the kernel's 208 KiB UDP buffers. quic-go cannot
+# raise SO_RCVBUF on a socket Xray wraps (salamander obfs), so rmem_default must be large too.
+# Values already set higher on the host are kept; XUI_UDP_BUFFERS=false removes the file.
+WE1SSBOARD_UDP_CONF="/etc/sysctl.d/99-we1ssboard-udp.conf"
+UDP_BUFFER_DEFAULT=8388608
+UDP_BUFFER_MAX=16777216
+
+setup_udp_buffers() {
+    local key current target applied conf=""
+    if [[ "${XUI_UDP_BUFFERS:-true}" != "true" ]]; then
+        rm -f "$WE1SSBOARD_UDP_CONF"
+        return 0
+    fi
+    command -v sysctl > /dev/null 2>&1 || return 0
+    [[ -d /etc/sysctl.d ]] || return 0
+    for key in rmem_default wmem_default rmem_max wmem_max; do
+        target=$UDP_BUFFER_MAX
+        [[ "$key" == *_default ]] && target=$UDP_BUFFER_DEFAULT
+        current=$(sysctl -n "net.core.$key" 2> /dev/null)
+        [[ "$current" =~ ^[0-9]+$ ]] && ((current > target)) && target=$current
+        conf+="net.core.$key = $target"$'\n'
+    done
+    {
+        echo "# Written by We1ssBoard for QUIC (Hysteria, TUIC); set XUI_UDP_BUFFERS=false to remove on next update."
+        printf '%s' "$conf"
+    } > "$WE1SSBOARD_UDP_CONF"
+    chmod 644 "$WE1SSBOARD_UDP_CONF"
+    sysctl -e -p "$WE1SSBOARD_UDP_CONF" > /dev/null 2>&1 || true
+    applied=$(sysctl -n net.core.rmem_default 2> /dev/null)
+    if [[ ! "$applied" =~ ^[0-9]+$ ]] || ((applied < UDP_BUFFER_DEFAULT)); then
+        rm -f "$WE1SSBOARD_UDP_CONF"
+        echo -e "${yellow}Kernel refused larger UDP buffers (container?); UDP buffer setup skipped.${plain}"
+        return 0
+    fi
+    echo -e "${green}UDP buffers: default $(sysctl -n net.core.rmem_default) / max $(sysctl -n net.core.rmem_max) bytes${plain}"
+}
+
 # setup_fail2ban auto-installs and configures fail2ban for the IP Limit feature
 # by invoking the freshly installed we1ssboard CLI. IP Limit is load-bearing on
 # fail2ban (without it the panel disables the limitIp field and zeroes existing
@@ -2096,6 +2133,9 @@ install_x-ui() {
 
     # Undo the 1.4.4 TCP profile; BBR + fq only with XUI_NET_TUNING=true. Never fatal.
     setup_network_tuning
+
+    # Large UDP buffers for QUIC inbounds, persisted across reboots. Never fatal.
+    setup_udp_buffers
 
     echo -e "${green}we1ssboard ${tag_version}${plain} installation finished, it is running now..."
     echo -e ""
