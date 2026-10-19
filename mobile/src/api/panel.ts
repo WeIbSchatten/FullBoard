@@ -47,6 +47,36 @@ export interface BulkResult {
   skipped?: { email: string; reason: string }[];
 }
 
+export interface ClientGroup {
+  name: string;
+  clientCount: number;
+}
+
+export interface ClientIp {
+  ip: string;
+  time: string;
+  node: string;
+}
+
+export interface HwidDevice {
+  id: number;
+  firstSeen: number;
+  lastSeen: number;
+  userAgent: string;
+  deviceOs: string;
+  osVersion: string;
+  deviceModel: string;
+  fingerprint: string;
+}
+
+export type ClientFilter = 'online' | 'active' | 'deactive' | 'depleted' | 'expiring';
+
+export interface ClientQuery {
+  search: string;
+  filters: ClientFilter[];
+  group: string;
+}
+
 export interface NewClient {
   email: string;
   totalGB: number;
@@ -61,16 +91,42 @@ const enc = encodeURIComponent;
 export function panelApi(s: Session) {
   const get = <T>(path: string) => apiRequest<T>(s, 'GET', path);
   const post = <T>(path: string, body?: unknown) => apiRequest<T>(s, 'POST', path, body);
+  const del = <T>(path: string) => apiRequest<T>(s, 'DELETE', path);
   return {
     status: () => get<ServerStatus>('/panel/api/server/status'),
     restartXray: () => post<unknown>('/panel/api/server/restartXrayService'),
     subSettings: () => post<SubSettings>('/panel/api/setting/defaultSettings'),
     restartPanel: () => post<unknown>('/panel/api/setting/restartPanel'),
 
-    clients: (page: number, search: string) =>
-      get<ClientPageResponse>(
-        `/panel/api/clients/list/paged?page=${page}&pageSize=50&search=${enc(search)}`,
-      ),
+    clients: (page: number, q: Partial<ClientQuery> = {}) => {
+      const params = [`page=${page}`, 'pageSize=50', `search=${enc(q.search ?? '')}`];
+      if (q.filters?.length) params.push(`filter=${q.filters.join(',')}`);
+      if (q.group) params.push(`group=${enc(q.group)}`);
+      return get<ClientPageResponse>(`/panel/api/clients/list/paged?${params.join('&')}`);
+    },
+    updateClient: (email: string, client: Record<string, unknown>) =>
+      post<unknown>(`/panel/api/clients/update/${enc(email)}`, client),
+    attachClient: (email: string, inboundIds: number[]) =>
+      post<unknown>(`/panel/api/clients/${enc(email)}/attach`, { inboundIds }),
+    detachClient: (email: string, inboundIds: number[]) =>
+      post<unknown>(`/panel/api/clients/${enc(email)}/detach`, { inboundIds }),
+    clientIps: (email: string) => post<ClientIp[] | null>(`/panel/api/clients/ips/${enc(email)}`),
+    clearClientIps: (email: string) => post<unknown>(`/panel/api/clients/clearIps/${enc(email)}`),
+    clientHwids: (email: string) => post<HwidDevice[] | null>(`/panel/api/clients/hwids/${enc(email)}`),
+    deleteHwid: (email: string, id: number) => del<unknown>(`/panel/api/clients/hwids/${enc(email)}/${id}`),
+    clearHwids: (email: string) => del<unknown>(`/panel/api/clients/hwids/${enc(email)}`),
+    onlines: () => post<string[] | null>('/panel/api/clients/onlines'),
+    bulkDelete: (emails: string[]) => post<unknown>('/panel/api/clients/bulkDel', { emails, keepTraffic: false }),
+    bulkResetTraffic: (emails: string[]) => post<unknown>('/panel/api/clients/bulkResetTraffic', { emails }),
+    groups: () => get<ClientGroup[] | null>('/panel/api/clients/groups'),
+    createGroup: (name: string) => post<unknown>('/panel/api/clients/groups/create', { name }),
+    renameGroup: (oldName: string, newName: string) =>
+      post<unknown>('/panel/api/clients/groups/rename', { oldName, newName }),
+    deleteGroup: (name: string) => post<unknown>('/panel/api/clients/groups/delete', { name }),
+    resetGroupTraffic: (name: string) => post<unknown>('/panel/api/clients/groups/resetTraffic', { name }),
+    addToGroup: (emails: string[], group: string) =>
+      post<unknown>('/panel/api/clients/groups/bulkAdd', { emails, group }),
+    removeFromGroup: (emails: string[]) => post<unknown>('/panel/api/clients/groups/bulkRemove', { emails }),
     client: (email: string) => get<ClientDetail>(`/panel/api/clients/get/${enc(email)}`),
     clientLinks: (email: string) => get<string[]>(`/panel/api/clients/links/${enc(email)}`),
     setClientsEnabled: (emails: string[], enable: boolean) =>
