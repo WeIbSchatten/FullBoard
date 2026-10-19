@@ -17,6 +17,12 @@ _openapi:
         /metrics probe.
       url: '#install-state-systemd-units-tproxy-server-mtproxy-caddy-tproxy-firewall-profilesjson-mode-and-the-admin-healthz-readyz-and-metrics-probe'
     - depth: 2
+      title: 'One summary per relay host this panel uses: its own relay (nodeId 0) and
+        each node relay reached through remote control, with running/ready
+        state, profile and bound-client counts. Unreachable nodes are listed
+        only when clients are bound to them.'
+      url: '#one-summary-per-relay-host-this-panel-uses-its-own-relay-nodeid-0-and-each-node-relay-reached-through-remote-control-with-runningready-state-profile-and-bound-client-counts-unreachable-nodes-are-listed-only-when-clients-are-bound-to-them'
+    - depth: 2
       title: Current config.json and profiles.json. On a host without config.json the
         defaults written by the upstream installer are returned with
         configExists=false.
@@ -71,8 +77,8 @@ _openapi:
       title: State and log tail of the last install/update job.
       url: '#state-and-log-tail-of-the-last-installupdate-job'
     - depth: 2
-      title: 'Panel-managed static site under /srv/tproxy-site:
-        index.html, asset list and whether config public_dir points at it.'
+      title: 'Panel-managed static site under /srv/tproxy-site: index.html, asset list
+        and whether config public_dir points at it.'
       url: '#panel-managed-static-site-under-srvtproxy-site-indexhtml-asset-list-and-whether-config-public_dir-points-at-it'
     - depth: 2
       title: Write index.html and set config public_dir to the managed directory
@@ -102,6 +108,11 @@ _openapi:
         managed MTProto backend is synced to that node.
       url: '#bind-a-client-by-email-to-an-existing-profile-calling-it-again-replaces-the-binding-with-dedicatedtrue-the-client-gets-its-own-fbemail-profile-cloned-from-the-named-one-with-a-fresh-secret-created-by-a-debounced-background-sync-the-link-appears-once-it-ran-optional-nodeid-targets-a-remote-nodes-relay-dedicated-required-the-managed-mtproto-backend-is-synced-to-that-node'
     - depth: 2
+      title: Bind several clients (by email) to one profile in a single transaction,
+        adding its web-proxy link to their subscriptions. Same rules as
+        /bindings/bind; any unknown email rejects the whole batch.
+      url: '#bind-several-clients-by-email-to-one-profile-in-a-single-transaction-adding-its-web-proxy-link-to-their-subscriptions-same-rules-as-bindingsbind-any-unknown-email-rejects-the-whole-batch'
+    - depth: 2
       title: Remove a client binding (idempotent). A dedicated client profile is
         removed by the background sync.
       url: '#remove-a-client-binding-idempotent-a-dedicated-client-profile-is-removed-by-the-background-sync'
@@ -116,6 +127,11 @@ _openapi:
           tproxy-firewall), profiles.json mode and the admin /healthz, /readyz
           and /metrics probe.
         id: install-state-systemd-units-tproxy-server-mtproxy-caddy-tproxy-firewall-profilesjson-mode-and-the-admin-healthz-readyz-and-metrics-probe
+      - content: 'One summary per relay host this panel uses: its own relay (nodeId 0)
+          and each node relay reached through remote control, with running/ready
+          state, profile and bound-client counts. Unreachable nodes are listed
+          only when clients are bound to them.'
+        id: one-summary-per-relay-host-this-panel-uses-its-own-relay-nodeid-0-and-each-node-relay-reached-through-remote-control-with-runningready-state-profile-and-bound-client-counts-unreachable-nodes-are-listed-only-when-clients-are-bound-to-them
       - content: Current config.json and profiles.json. On a host without config.json
           the defaults written by the upstream installer are returned with
           configExists=false.
@@ -157,8 +173,8 @@ _openapi:
         id: download-the-latest-upstream-tree-and-run-deployupdate-relaysh-tests-build-atomic-swap-automatic-rollback
       - content: State and log tail of the last install/update job.
         id: state-and-log-tail-of-the-last-installupdate-job
-      - content: 'Panel-managed static site under /srv/tproxy-site:
-          index.html, asset list and whether config public_dir points at it.'
+      - content: 'Panel-managed static site under /srv/tproxy-site: index.html, asset
+          list and whether config public_dir points at it.'
         id: panel-managed-static-site-under-srvtproxy-site-indexhtml-asset-list-and-whether-config-public_dir-points-at-it
       - content: Write index.html and set config public_dir to the managed directory
           (clears public_upstream).
@@ -181,6 +197,10 @@ _openapi:
           Optional nodeId targets a remote node's relay (dedicated required);
           the managed MTProto backend is synced to that node.
         id: bind-a-client-by-email-to-an-existing-profile-calling-it-again-replaces-the-binding-with-dedicatedtrue-the-client-gets-its-own-fbemail-profile-cloned-from-the-named-one-with-a-fresh-secret-created-by-a-debounced-background-sync-the-link-appears-once-it-ran-optional-nodeid-targets-a-remote-nodes-relay-dedicated-required-the-managed-mtproto-backend-is-synced-to-that-node
+      - content: Bind several clients (by email) to one profile in a single transaction,
+          adding its web-proxy link to their subscriptions. Same rules as
+          /bindings/bind; any unknown email rejects the whole batch.
+        id: bind-several-clients-by-email-to-one-profile-in-a-single-transaction-adding-its-web-proxy-link-to-their-subscriptions-same-rules-as-bindingsbind-any-unknown-email-rejects-the-whole-batch
       - content: Remove a client binding (idempotent). A dedicated client profile is
           removed by the background sync.
         id: remove-a-client-binding-idempotent-a-dedicated-client-profile-is-removed-by-the-background-sync
@@ -198,7 +218,7 @@ export default function Layout(props) {
   return (
     <>
       {props.children}
-      <OpenAPIPage document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/tgWebProxy/status","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"post"},{"path":"/panel/api/tgWebProxy/check","method":"post"},{"path":"/panel/api/tgWebProxy/fixCaddy","method":"post"},{"path":"/panel/api/tgWebProxy/profiles","method":"get"},{"path":"/panel/api/tgWebProxy/profiles/add","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/update/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/share/{name}","method":"get"},{"path":"/panel/api/tgWebProxy/service/{unit}/{action}","method":"post"},{"path":"/panel/api/tgWebProxy/logs/{unit}","method":"get"},{"path":"/panel/api/tgWebProxy/install","method":"post"},{"path":"/panel/api/tgWebProxy/update","method":"post"},{"path":"/panel/api/tgWebProxy/job","method":"get"},{"path":"/panel/api/tgWebProxy/publicSite","method":"get"},{"path":"/panel/api/tgWebProxy/publicSite","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/reset","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/upload","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/bindings","method":"get"},{"path":"/panel/api/tgWebProxy/bindings/bind","method":"post"},{"path":"/panel/api/tgWebProxy/bindings/bindMany","method":"post"},{"path":"/panel/api/tgWebProxy/bindings/unbind","method":"post"},{"path":"/panel/api/tgWebProxy/syncDedicated","method":"post"}]} showTitle />
+      <OpenAPIPage document="./public/openapi.json" webhooks={[]} operations={[{"path":"/panel/api/tgWebProxy/status","method":"get"},{"path":"/panel/api/tgWebProxy/overview","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"get"},{"path":"/panel/api/tgWebProxy/config","method":"post"},{"path":"/panel/api/tgWebProxy/check","method":"post"},{"path":"/panel/api/tgWebProxy/fixCaddy","method":"post"},{"path":"/panel/api/tgWebProxy/profiles","method":"get"},{"path":"/panel/api/tgWebProxy/profiles/add","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/update/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/profiles/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/share/{name}","method":"get"},{"path":"/panel/api/tgWebProxy/service/{unit}/{action}","method":"post"},{"path":"/panel/api/tgWebProxy/logs/{unit}","method":"get"},{"path":"/panel/api/tgWebProxy/install","method":"post"},{"path":"/panel/api/tgWebProxy/update","method":"post"},{"path":"/panel/api/tgWebProxy/job","method":"get"},{"path":"/panel/api/tgWebProxy/publicSite","method":"get"},{"path":"/panel/api/tgWebProxy/publicSite","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/reset","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/upload","method":"post"},{"path":"/panel/api/tgWebProxy/publicSite/del/{name}","method":"post"},{"path":"/panel/api/tgWebProxy/bindings","method":"get"},{"path":"/panel/api/tgWebProxy/bindings/bind","method":"post"},{"path":"/panel/api/tgWebProxy/bindings/bindMany","method":"post"},{"path":"/panel/api/tgWebProxy/bindings/unbind","method":"post"},{"path":"/panel/api/tgWebProxy/syncDedicated","method":"post"}]} showTitle />
     </>
   );
 }

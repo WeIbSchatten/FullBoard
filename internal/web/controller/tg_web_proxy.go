@@ -29,6 +29,7 @@ func NewTgWebProxyController(g *gin.RouterGroup) *TgWebProxyController {
 
 func (a *TgWebProxyController) initRouter(g *gin.RouterGroup) {
 	g.GET("/status", a.status)
+	g.GET("/overview", a.overview)
 	g.GET("/config", a.getConfig)
 	g.POST("/config", a.saveConfig)
 	g.POST("/check", a.check)
@@ -111,6 +112,15 @@ func (a *TgWebProxyController) unbindClient(c *gin.Context) {
 
 func (a *TgWebProxyController) status(c *gin.Context) {
 	jsonObj(c, a.svc.Status(c.Request.Context()), nil)
+}
+
+func (a *TgWebProxyController) overview(c *gin.Context) {
+	list, err := a.svc.Overview()
+	if err != nil {
+		jsonMsg(c, I18nWeb(c, "pages.tgWebProxy.toasts.load"), err)
+		return
+	}
+	jsonObj(c, list, nil)
 }
 
 func (a *TgWebProxyController) getConfig(c *gin.Context) {

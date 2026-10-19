@@ -6,6 +6,7 @@ import {
   RelaySnapshotSchema,
   RelayStatusSchema,
   TgWebProxyBindingListSchema,
+  TgWebProxyRelaySummarySchema,
 } from '@/generated/zod';
 import type {
   TgWebProxyBindManyRequest,
@@ -20,6 +21,7 @@ import type {
   RelayShareInfo,
   RelaySnapshot,
   RelayStatus,
+  TgWebProxyRelaySummary,
 } from '@/generated/types';
 import { HttpUtil } from '@/utils';
 import { parseMsg } from '@/utils/zodValidate';
@@ -51,12 +53,34 @@ export function useTgWebProxyStatus() {
   });
 }
 
+async function fetchOverview(): Promise<TgWebProxyRelaySummary[]> {
+  const msg = await HttpUtil.get(`${BASE}/overview`, undefined, {
+    silent: true,
+  });
+  if (!msg?.success) throw new Error(msg?.msg || 'Failed to fetch tg-web-proxy overview');
+  return parseMsg(msg, TgWebProxyRelaySummarySchema.array(), 'tgWebProxy/overview').obj ?? [];
+}
+
+// One row per relay host (this panel and nodes), for the dashboard.
+export function useTgWebProxyOverview() {
+  return useQuery({
+    queryKey: keys.tgWebProxy.overview(),
+    queryFn: fetchOverview,
+    refetchInterval: 30_000,
+  });
+}
+
 export function useTgWebProxySnapshot() {
-  return useQuery({ queryKey: keys.tgWebProxy.config(), queryFn: fetchSnapshot });
+  return useQuery({
+    queryKey: keys.tgWebProxy.config(),
+    queryFn: fetchSnapshot,
+  });
 }
 
 async function fetchBindings(): Promise<TgWebProxyBindingList> {
-  const msg = await HttpUtil.get(`${BASE}/bindings`, undefined, { silent: true });
+  const msg = await HttpUtil.get(`${BASE}/bindings`, undefined, {
+    silent: true,
+  });
   if (!msg?.success) throw new Error(msg?.msg || 'Failed to fetch tg-web-proxy bindings');
   const validated = parseMsg(msg, TgWebProxyBindingListSchema, 'tgWebProxy/bindings');
   if (!validated.obj) throw new Error('Empty tg-web-proxy bindings');
@@ -64,7 +88,10 @@ async function fetchBindings(): Promise<TgWebProxyBindingList> {
 }
 
 export function useTgWebProxyBindings() {
-  return useQuery({ queryKey: keys.tgWebProxy.bindings(), queryFn: fetchBindings });
+  return useQuery({
+    queryKey: keys.tgWebProxy.bindings(),
+    queryFn: fetchBindings,
+  });
 }
 
 // The relay profile of a dedicated binding is written by a debounced server-side sync.
@@ -124,7 +151,9 @@ export function useTgWebProxyMutations() {
       HttpUtil.post<RelayApplyResult>(`${BASE}/config`, payload, JSON_HEADERS),
     onSuccess,
   });
-  const check = useMutation({ mutationFn: () => HttpUtil.post(`${BASE}/check`) });
+  const check = useMutation({
+    mutationFn: () => HttpUtil.post(`${BASE}/check`),
+  });
   const fixCaddy = useMutation({
     mutationFn: () => HttpUtil.post(`${BASE}/fixCaddy`),
     onSuccess,

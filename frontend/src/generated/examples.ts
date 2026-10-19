@@ -1585,6 +1585,19 @@ export const EXAMPLES: Record<string, unknown> = {
     },
     "initialProfile": null
   },
+  "TgWebProxyRelaySummary": {
+    "backendsActive": 1,
+    "backendsTotal": 1,
+    "clients": 12,
+    "error": "",
+    "hostname": "proxy.example.com",
+    "installed": true,
+    "name": "eu-1",
+    "nodeId": 1,
+    "profiles": 5,
+    "ready": true,
+    "running": true
+  },
   "TgWebProxySyncDedicatedRequest": {
     "specs": [
       {

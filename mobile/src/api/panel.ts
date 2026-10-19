@@ -13,6 +13,7 @@ import type {
   RelaySnapshot,
   RelayStatus,
   TgWebProxyBindingList,
+  TgWebProxyRelaySummary,
 } from '@panel/types';
 
 import { parseTemplateResponse } from '@/lib/xrayConfig';
@@ -290,6 +291,7 @@ export function panelApi(s: Session) {
       post<unknown>('/panel/api/tgWebProxy/bindings/bindMany', { emails, profileName, dedicated }),
     webProxyUnbind: (email: string) => post<unknown>('/panel/api/tgWebProxy/bindings/unbind', { email }),
     webProxyUnit: (unit: string, action: string) => post<unknown>(`/panel/api/tgWebProxy/service/${enc(unit)}/${action}`),
+    webProxyOverview: () => get<TgWebProxyRelaySummary[] | null>('/panel/api/tgWebProxy/overview'),
     webProxyStatus: () => get<RelayStatus>('/panel/api/tgWebProxy/status'),
     webProxyConfig: () => get<RelaySnapshot>('/panel/api/tgWebProxy/config'),
     webProxyBindings: () => get<TgWebProxyBindingList>('/panel/api/tgWebProxy/bindings'),
