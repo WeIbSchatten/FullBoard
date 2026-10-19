@@ -3114,5 +3114,23 @@
     "obfs": "Ofuscación",
     "noEncryption": "Sin cifrado",
     "noEncryptionHint": "El tráfico de esta clave no está cifrado; cualquiera en la ruta puede leerlo"
+  },
+  "mobile": {
+    "login": {
+      "title": "Conéctate a tu panel",
+      "address": "Dirección del panel",
+      "addressHint": "La dirección que abres en el navegador, con la ruta secreta, p. ej. panel.example.com:2053/abc",
+      "token": "Token de API",
+      "tokenHint": "Crea un token con alcance admin en el panel: Ajustes → Seguridad → Tokens de API.",
+      "connect": "Conectar",
+      "name": "Nombre en la app (opcional)"
+    },
+    "panels": {
+      "title": "Paneles",
+      "add": "Añadir panel",
+      "remove": "Quitar de la app",
+      "removeConfirm": "¿Quitar este panel de la app? El panel no cambia.",
+      "current": "Actual"
+    }
   }
 }

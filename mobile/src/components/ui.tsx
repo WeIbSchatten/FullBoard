@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { t } from '@/i18n';
+import { useT } from '@/i18n';
 import { usePalette } from '@/theme';
 
 export function Screen({
@@ -154,11 +154,12 @@ export function Loading() {
 
 export function ErrorCard({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
   const p = usePalette();
+  const t = useT();
   return (
     <Card>
-      <Text style={{ color: p.error, fontWeight: '600' }}>{t.common.error}</Text>
+      <Text style={{ color: p.error, fontWeight: '600' }}>{t('somethingWentWrong')}</Text>
       <Body>{error instanceof Error ? error.message : String(error)}</Body>
-      {onRetry && <Button title={t.common.retry} onPress={onRetry} />}
+      {onRetry && <Button title={t('refresh')} onPress={onRetry} />}
     </Card>
   );
 }

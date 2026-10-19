@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 import type { ColorValue } from 'react-native';
 
-import { t } from '@/i18n';
+import { useT } from '@/i18n';
 import { RequireSession } from '@/session';
 import { usePalette } from '@/theme';
 
@@ -23,6 +23,7 @@ const icon = (name: IconName) => {
 
 export default function TabsLayout() {
   const p = usePalette();
+  const t = useT();
   return (
     <RequireSession>
     <Tabs
@@ -35,11 +36,11 @@ export default function TabsLayout() {
         sceneStyle: { backgroundColor: p.bg },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: t.tabs.overview, tabBarIcon: icon('speedometer-outline') }} />
-      <Tabs.Screen name="clients" options={{ title: t.tabs.clients, tabBarIcon: icon('people-outline') }} />
-      <Tabs.Screen name="inbounds" options={{ title: t.tabs.inbounds, tabBarIcon: icon('git-network-outline') }} />
-      <Tabs.Screen name="nodes" options={{ title: t.tabs.nodes, tabBarIcon: icon('server-outline') }} />
-      <Tabs.Screen name="more" options={{ title: t.tabs.more, tabBarIcon: icon('ellipsis-horizontal') }} />
+      <Tabs.Screen name="index" options={{ title: t('menu.dashboard'), tabBarIcon: icon('speedometer-outline') }} />
+      <Tabs.Screen name="clients" options={{ title: t('menu.clients'), tabBarIcon: icon('people-outline') }} />
+      <Tabs.Screen name="inbounds" options={{ title: t('menu.inbounds'), tabBarIcon: icon('git-network-outline') }} />
+      <Tabs.Screen name="nodes" options={{ title: t('menu.nodes'), tabBarIcon: icon('server-outline') }} />
+      <Tabs.Screen name="more" options={{ title: t('menu.settings'), tabBarIcon: icon('settings-outline') }} />
     </Tabs>
     </RequireSession>
   );

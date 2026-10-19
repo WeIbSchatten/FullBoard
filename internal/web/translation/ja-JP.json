@@ -3114,5 +3114,23 @@
     "obfs": "難読化",
     "noEncryption": "暗号化なし",
     "noEncryptionHint": "このキーの通信は暗号化されず、経路上の誰でも読み取れます"
+  },
+  "mobile": {
+    "login": {
+      "title": "パネルに接続",
+      "address": "パネルのアドレス",
+      "addressHint": "ブラウザで開くアドレス（秘密パスを含む）。例: panel.example.com:2053/abc",
+      "token": "API トークン",
+      "tokenHint": "パネルの「設定 → セキュリティ → API トークン」で admin 権限のトークンを作成してください。",
+      "connect": "接続",
+      "name": "アプリでの名前（任意）"
+    },
+    "panels": {
+      "title": "パネル",
+      "add": "パネルを追加",
+      "remove": "アプリから削除",
+      "removeConfirm": "このパネルをアプリから削除しますか？パネル自体は変更されません。",
+      "current": "現在"
+    }
   }
 }

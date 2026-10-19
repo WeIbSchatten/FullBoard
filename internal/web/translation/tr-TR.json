@@ -3114,5 +3114,23 @@
     "obfs": "Gizleme",
     "noEncryption": "Şifreleme yok",
     "noEncryptionHint": "Bu anahtarın trafiği şifrelenmez; yoldaki herkes okuyabilir"
+  },
+  "mobile": {
+    "login": {
+      "title": "Panelinize bağlanın",
+      "address": "Panel adresi",
+      "addressHint": "Tarayıcıda açtığınız adres, gizli yol dahil, ör. panel.example.com:2053/abc",
+      "token": "API anahtarı",
+      "tokenHint": "Panelde admin kapsamlı bir anahtar oluşturun: Ayarlar → Güvenlik → API anahtarları.",
+      "connect": "Bağlan",
+      "name": "Uygulamadaki ad (isteğe bağlı)"
+    },
+    "panels": {
+      "title": "Paneller",
+      "add": "Panel ekle",
+      "remove": "Uygulamadan kaldır",
+      "removeConfirm": "Bu panel uygulamadan kaldırılsın mı? Panelin kendisi değişmez.",
+      "current": "Geçerli"
+    }
   }
 }
