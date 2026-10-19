@@ -1,4 +1,4 @@
-import { describeExpiry, formatBytes, quotaUsage } from './format';
+import { describeExpiry, formatBytes, quotaUsage, toMillis } from './format';
 
 describe('formatBytes', () => {
   it.each([
@@ -30,5 +30,12 @@ describe('quotaUsage', () => {
   });
   it('treats a missing traffic record as nothing used', () => {
     expect(quotaUsage(100, null)).toEqual({ used: 0, total: 100, ratio: 0 });
+  });
+});
+
+describe('toMillis', () => {
+  it('scales unix seconds and keeps milliseconds', () => {
+    expect(toMillis(1_700_000_000)).toBe(1_700_000_000_000);
+    expect(toMillis(1_700_000_000_123)).toBe(1_700_000_000_123);
   });
 });

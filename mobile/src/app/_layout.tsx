@@ -41,6 +41,11 @@ function Gate() {
           <Stack.Screen name="node/edit" options={{ title: '' }} />
           <Stack.Screen name="node/enroll" options={{ title: '' }} />
           <Stack.Screen name="host/edit" options={{ title: '' }} />
+          <Stack.Screen name="settings/[category]" options={{ title: '' }} />
+          <Stack.Screen name="settings/account" options={{ title: '' }} />
+          <Stack.Screen name="settings/tokens" options={{ title: '' }} />
+          <Stack.Screen name="logs" options={{ title: '' }} />
+          <Stack.Screen name="system" options={{ title: '' }} />
           <Stack.Screen name="groups" options={{ title: t('menu.groups') }} />
           <Stack.Screen name="panel/add" options={{ title: t('mobile.panels.add'), presentation: 'modal' }} />
         </Stack.Protected>
