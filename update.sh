@@ -564,14 +564,63 @@ require_repo_files() {
     done
 }
 
+# Names in both folders, except the transient update-status.json an aborted run
+# writes through the EXIT trap; the merge below would refuse to overwrite them.
+_legacy_conflicts() {
+    local old="$1" new="$2" entry name
+    [[ -d "$old" && ! -L "$old" && -d "$new" ]] || return 0
+    for entry in "$old"/* "$old"/.[!.]*; do
+        [[ -e "$entry" || -L "$entry" ]] || continue
+        name="${entry##*/}"
+        [[ "$name" == "update-status.json" ]] && continue
+        [[ -e "${new}/${name}" ]] && echo "${new}/${name}"
+        [[ "$name" == "fullboard.db" && -e "${new}/we1ssboard.db" ]] && echo "${new}/we1ssboard.db"
+    done
+    return 0
+}
+
+_rename_legacy_db() {
+    local db_file
+    for db_file in /etc/we1ssboard/fullboard.db /etc/we1ssboard/fullboard.db-wal /etc/we1ssboard/fullboard.db-shm; do
+        [[ -f "$db_file" && ! -e "${db_file/fullboard.db/we1ssboard.db}" ]] && mv "$db_file" "${db_file/fullboard.db/we1ssboard.db}"
+    done
+    return 0
+}
+
+# 1.7.0 left /etc/fullboard in place when /etc/we1ssboard already existed; the panel
+# then found its database there, where the sandboxed unit cannot write.
+check_split_legacy_paths() {
+    local conflicts
+    conflicts="$(_legacy_conflicts /etc/fullboard /etc/we1ssboard; _legacy_conflicts /var/log/fullboard /var/log/we1ssboard)"
+    if [[ -n "$conflicts" ]]; then
+        _fail "ERROR: these files exist under both the FullBoard and the We1ssBoard paths: $(echo $conflicts). Move or delete the We1ssBoard copies, then run the update again. The current installation is untouched."
+    fi
+}
+
+merge_split_legacy_paths() {
+    _move_legacy_path /etc/fullboard /etc/we1ssboard
+    _rename_legacy_db
+    _move_legacy_path /var/log/fullboard /var/log/we1ssboard
+}
+
 _move_legacy_path() {
-    local old="$1" new="$2"
+    local old="$1" new="$2" entry
     [[ -e "$old" && ! -L "$old" ]] || return 0
-    if [[ -e "$new" ]]; then
-        echo -e "${yellow}Both ${old} and ${new} exist; leaving ${old} in place.${plain}"
+    if [[ ! -e "$new" ]]; then
+        mv "$old" "$new" || _fail "ERROR: could not move ${old} to ${new}; the FullBoard installation is still in place."
+        ln -s "$new" "$old"
         return 0
     fi
-    mv "$old" "$new" || _fail "ERROR: could not move ${old} to ${new}; the FullBoard installation is still in place."
+    # An earlier, aborted run can leave the new folder behind, so merge into it.
+    for entry in "$old"/* "$old"/.[!.]*; do
+        [[ -e "$entry" || -L "$entry" ]] || continue
+        if [[ -e "${new}/${entry##*/}" ]]; then
+            rm -f "$entry"
+            continue
+        fi
+        mv "$entry" "${new}/" || _fail "ERROR: could not move ${entry} into ${new}."
+    done
+    rmdir "$old" || _fail "ERROR: could not remove the emptied ${old}."
     ln -s "$new" "$old"
 }
 
@@ -579,8 +628,9 @@ _move_legacy_path() {
 # names once; the old paths stay as symlinks so absolute paths stored in the
 # database (certificates, templates) and the old `fullboard` command keep working.
 migrate_legacy_install() {
-    local legacy_folder="${xui_folder%/*}/fullboard" dir db_file
+    local legacy_folder="${xui_folder%/*}/fullboard" dir
     [[ -d "$legacy_folder" && ! -L "$legacy_folder" && ! -e "$xui_folder" ]] || return 0
+    check_split_legacy_paths
     echo -e "${green}Moving the FullBoard installation to We1ssBoard...${plain}"
     if [[ $release == "alpine" ]]; then
         rc-service fullboard stop > /dev/null 2>&1
@@ -594,11 +644,7 @@ migrate_legacy_install() {
         rm -rf "${xui_service}/fullboard.service.d"
         systemctl daemon-reload > /dev/null 2>&1
     fi
-    _move_legacy_path /etc/fullboard /etc/we1ssboard
-    for db_file in /etc/we1ssboard/fullboard.db /etc/we1ssboard/fullboard.db-wal /etc/we1ssboard/fullboard.db-shm; do
-        [[ -f "$db_file" ]] && mv -f "$db_file" "${db_file/fullboard.db/we1ssboard.db}"
-    done
-    _move_legacy_path /var/log/fullboard /var/log/we1ssboard
+    merge_split_legacy_paths
     for dir in /etc/default /etc/conf.d /etc/sysconfig; do
         [[ -f "${dir}/fullboard" && ! -e "${dir}/we1ssboard" ]] || continue
         mv -f "${dir}/fullboard" "${dir}/we1ssboard"
@@ -687,6 +733,7 @@ update_x-ui() {
     fi
 
     migrate_legacy_install
+    check_split_legacy_paths
     load_xui_env
 
     if [[ -e ${xui_folder}/ ]]; then
@@ -808,6 +855,7 @@ update_x-ui() {
 
     # Finish the schema/data migrations before the service starts, so the service and
     # config_after_update's CLI calls never run them on the same database at once (#6728).
+    merge_split_legacy_paths
     echo -e "${green}Migrating database...${plain}"
     "${xui_folder}/we1ssboard" migrate
 
