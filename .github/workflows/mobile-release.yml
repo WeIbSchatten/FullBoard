@@ -1,0 +1,91 @@
+name: Release We1ssBoard Android app
+
+# Builds the signed APK for every panel version tag and attaches it to that
+# release; workflow_dispatch builds one from any branch as a downloadable artifact.
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - run: npm ci
+
+      - name: Stamp the panel version
+        run: |
+          version="$(tr -d '[:space:]' < ../internal/config/version)"
+          IFS=. read -r major minor patch <<< "$version"
+          code=$((major * 10000 + minor * 100 + patch))
+          jq --arg v "$version" --argjson c "$code" \
+            '.expo.version = $v | .expo.android.versionCode = $c' app.json > app.json.tmp
+          mv app.json.tmp app.json
+          echo "APP_VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Generate the native project
+        run: npx expo prebuild --platform android --no-install --clean
+
+      - name: Build release APK
+        working-directory: mobile/android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Sign with the We1ssBoard key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          [[ -n "$KEYSTORE_B64" ]] || { echo "ANDROID_KEYSTORE_B64 secret is missing"; exit 1; }
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner"
+          out="we1ssboard-android-${APP_VERSION}.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk "$out"
+          "$apksigner" sign --ks "$RUNNER_TEMP/release.p12" --ks-type PKCS12 \
+            --ks-pass env:KEYSTORE_PASSWORD "$out"
+          "$apksigner" verify --print-certs "$out" | grep -i "certificate DN"
+          sha256sum "$out" > "$out.sha256"
+          rm -f "$RUNNER_TEMP/release.p12"
+          echo "APK=$out" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: we1ssboard-android
+          path: |
+            mobile/${{ env.APK }}
+            mobile/${{ env.APK }}.sha256
+
+      # release.yml publishes the tag's release once every panel build is done.
+      - name: Attach to the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          for _ in $(seq 1 120); do
+            if gh release view "$TAG" > /dev/null 2>&1; then
+              gh release upload "$TAG" "$APK" "$APK.sha256" --clobber
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "release $TAG did not appear within an hour"; exit 1
