@@ -119,6 +119,7 @@ func run(root, outDir string) error {
 				"TgWebProxyConfigRequest",
 				"TgWebProxyBinding",
 				"TgWebProxyBindingList",
+				"TgWebProxyRelaySummary",
 				"TgWebProxyBindRequest",
 				"TgWebProxyBindManyRequest",
 				"TgWebProxySyncDedicatedRequest",
