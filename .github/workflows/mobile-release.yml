@@ -1,9 +1,13 @@
 name: Release We1ssBoard Android app
 
 # Builds the signed APK for every panel version tag and attaches it to that
-# release; workflow_dispatch builds one from any branch as a downloadable artifact.
+# release; pull requests touching the app build it as a downloadable artifact.
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-release.yml"
   push:
     tags:
       - "v*.*.*"
