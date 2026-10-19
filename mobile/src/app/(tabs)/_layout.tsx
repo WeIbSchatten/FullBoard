@@ -38,7 +38,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: t('menu.dashboard'), tabBarIcon: icon('speedometer-outline') }} />
       <Tabs.Screen name="clients" options={{ title: t('menu.clients'), tabBarIcon: icon('people-outline') }} />
-      <Tabs.Screen name="inbounds" options={{ title: t('menu.inbounds'), tabBarIcon: icon('git-network-outline') }} />
+      <Tabs.Screen name="inbounds" options={{ title: t('menu.connections'), tabBarIcon: icon('git-network-outline') }} />
       <Tabs.Screen name="nodes" options={{ title: t('menu.nodes'), tabBarIcon: icon('server-outline') }} />
       <Tabs.Screen name="more" options={{ title: t('menu.settings'), tabBarIcon: icon('settings-outline') }} />
     </Tabs>

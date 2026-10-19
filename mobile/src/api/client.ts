@@ -39,14 +39,15 @@ export async function apiRequest<T>(
     Accept: 'application/json',
     Authorization: `Bearer ${session.token}`,
   };
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  const form = body instanceof URLSearchParams;
+  if (body !== undefined) headers['Content-Type'] = form ? 'application/x-www-form-urlencoded' : 'application/json';
 
   let res: Response;
   try {
     res = await fetchImpl(session.baseUrl + path, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : form ? body.toString() : JSON.stringify(body),
     });
   } catch (err) {
     throw new ApiError(err instanceof Error ? err.message : String(err), 'network');
