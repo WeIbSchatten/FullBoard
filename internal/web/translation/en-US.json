@@ -3131,6 +3131,22 @@
       "remove": "Remove from app",
       "removeConfirm": "Remove this panel from the app? The panel itself is not changed.",
       "current": "Current"
+    },
+    "alerts": {
+      "title": "Alerts on this phone",
+      "enable": "Notify me when Xray or a node goes down",
+      "hint": "The app checks your panels in the background about every 15 minutes, even when it is closed.",
+      "xrayDown": "Xray stopped on {panel}",
+      "xrayUp": "Xray is running again on {panel}",
+      "nodeDown": "Node {node} is offline ({panel})",
+      "nodeUp": "Node {node} is back online ({panel})",
+      "denied": "Notifications are blocked for this app in the system settings."
+    },
+    "lock": {
+      "enable": "Unlock with fingerprint or face",
+      "locked": "We1ssBoard is locked",
+      "unlock": "Unlock",
+      "unavailable": "No fingerprint or face unlock is set up on this device."
     }
   }
 }

@@ -41,7 +41,15 @@
           }
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-background-task",
+      "expo-notifications",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Unlock We1ssBoard with Face ID."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

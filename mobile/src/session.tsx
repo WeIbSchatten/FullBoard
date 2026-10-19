@@ -7,6 +7,8 @@ import type { Session } from '@/api/client';
 import { panelApi, type PanelApi } from '@/api/panel';
 import {
   EMPTY_PANELS,
+  LEGACY_PANELS_PREF,
+  PANELS_PREF,
   addPanel as addToState,
   newPanelId,
   parseStored,
@@ -17,8 +19,8 @@ import {
 import { getPref, setPref } from '@/prefs';
 import { xrayDraft } from '@/xrayDraft';
 
-const KEY = 'we1ssboard.panels';
-const LEGACY_KEY = 'we1ssboard.session';
+const KEY = PANELS_PREF;
+const LEGACY_KEY = LEGACY_PANELS_PREF;
 
 interface SessionState {
   ready: boolean;

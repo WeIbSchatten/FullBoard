@@ -61,3 +61,6 @@ export function parseStored(raw: string | null, legacy: string | null): PanelsSt
   }
   return EMPTY_PANELS;
 }
+
+export const PANELS_PREF = 'we1ssboard.panels';
+export const LEGACY_PANELS_PREF = 'we1ssboard.session';

@@ -3131,6 +3131,22 @@
       "remove": "Quitar de la app",
       "removeConfirm": "¿Quitar este panel de la app? El panel no cambia.",
       "current": "Actual"
+    },
+    "alerts": {
+      "title": "Alertas en este teléfono",
+      "enable": "Avisarme cuando Xray o un nodo dejen de funcionar",
+      "hint": "La app revisa tus paneles en segundo plano cada 15 minutos aproximadamente, incluso cerrada.",
+      "xrayDown": "Xray se detuvo en {panel}",
+      "xrayUp": "Xray vuelve a funcionar en {panel}",
+      "nodeDown": "El nodo {node} está desconectado ({panel})",
+      "nodeUp": "El nodo {node} vuelve a estar en línea ({panel})",
+      "denied": "Las notificaciones de esta app están bloqueadas en los ajustes del sistema."
+    },
+    "lock": {
+      "enable": "Desbloquear con huella o rostro",
+      "locked": "We1ssBoard está bloqueado",
+      "unlock": "Desbloquear",
+      "unavailable": "Este dispositivo no tiene configurado el desbloqueo con huella o rostro."
     }
   }
 }
