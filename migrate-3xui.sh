@@ -178,8 +178,13 @@ cmd_migrate() {
 
     systemctl disable x-ui 2> /dev/null || true
     systemctl enable we1ssboard 2> /dev/null || true
-    systemctl start we1ssboard
+    # A unit that crash-looped before the migration sits at its start limit and
+    # refuses the start; and a failed start must reach the rollback below, not
+    # end the script under set -e with x-ui already stopped.
+    systemctl reset-failed we1ssboard 2> /dev/null || true
+    systemctl start we1ssboard || true
     if ! wait_active; then
+        journalctl -u we1ssboard -n 30 --no-pager -o cat 2> /dev/null || true
         warn "We1ssBoard did not stay up; restoring 3x-ui."
         restore_from "$backup_dir"
         die "Migration aborted. Check 'journalctl -u we1ssboard' and try again."
