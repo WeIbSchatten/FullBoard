@@ -3,7 +3,8 @@
 .vscode/
 .cursor/
 .specify/
-.claude/
+.claude/*
+!.claude/skills/
 .cache/
 .sync*
 

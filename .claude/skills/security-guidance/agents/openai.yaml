@@ -1,0 +1,3 @@
+interface:
+  display_name: "Security Guidance"
+  short_description: "Audit code against top vulnerability classes and enforce secure-by-default mitigations"
