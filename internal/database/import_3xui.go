@@ -326,7 +326,7 @@ func verifyImport(before importSnapshot, srcClients map[string]*import3xUIClient
 		}
 		problems = append(problems, diffImportTable(table, src, dst, expect)...)
 	}
-	clientProblems, warnings := verifyImportedClients(srcClients, expect)
+	clientProblems, warnings := verifyImportedClients(srcClients, before["clients"], expect)
 	problems = append(problems, clientProblems...)
 	if len(problems) > 0 {
 		sort.Strings(problems)
@@ -405,30 +405,46 @@ func describeImportRow(table string, row map[string]string) string {
 	return "?"
 }
 
-// importClientFields are the per-client values a subscriber depends on.
+// importClientFields are the per-client values a subscriber depends on; col is
+// the matching column of the clients table 3x-ui v3 keeps next to the inbound JSON.
 var importClientFields = []struct {
 	name string
+	col  string
 	get  func(*model.Client) string
 }{
-	{"id", func(c *model.Client) string { return c.ID }},
-	{"password", func(c *model.Client) string { return c.Password }},
-	{"auth", func(c *model.Client) string { return c.Auth }},
-	{"subId", func(c *model.Client) string { return c.SubID }},
-	{"totalGB", func(c *model.Client) string { return fmt.Sprint(c.TotalGB) }},
-	{"expiryTime", func(c *model.Client) string { return fmt.Sprint(c.ExpiryTime) }},
-	{"enable", func(c *model.Client) string { return fmt.Sprint(c.Enable) }},
-	{"limitIp", func(c *model.Client) string { return fmt.Sprint(c.LimitIP) }},
-	{"tgId", func(c *model.Client) string { return fmt.Sprint(c.TgID) }},
-	{"comment", func(c *model.Client) string { return c.Comment }},
-	{"reset", func(c *model.Client) string { return fmt.Sprint(c.Reset) }},
+	{"id", "uuid", func(c *model.Client) string { return c.ID }},
+	{"password", "password", func(c *model.Client) string { return c.Password }},
+	{"auth", "auth", func(c *model.Client) string { return c.Auth }},
+	{"subId", "sub_id", func(c *model.Client) string { return c.SubID }},
+	{"totalGB", "total_gb", func(c *model.Client) string { return fmt.Sprint(c.TotalGB) }},
+	{"expiryTime", "expiry_time", func(c *model.Client) string { return fmt.Sprint(c.ExpiryTime) }},
+	{"enable", "enable", func(c *model.Client) string { return importBool(c.Enable) }},
+	{"limitIp", "limit_ip", func(c *model.Client) string { return fmt.Sprint(c.LimitIP) }},
+	{"tgId", "tg_id", func(c *model.Client) string { return fmt.Sprint(c.TgID) }},
+	{"comment", "comment", func(c *model.Client) string { return c.Comment }},
+	{"reset", "reset", func(c *model.Client) string { return fmt.Sprint(c.Reset) }},
+}
+
+// importBool matches how importValue prints a SQLite boolean column.
+func importBool(b bool) string {
+	if b {
+		return "1"
+	}
+	return "0"
 }
 
 // Empty and zero entries are "not set" on that inbound; the merged record may take the value another inbound sets.
 func importUnset(v string) bool { return v == "" || v == "0" }
 
 // verifyImportedClients requires every merged field to come from one of the
-// email's 3x-ui entries, and warns where those entries disagree.
-func verifyImportedClients(srcClients map[string]*import3xUIClient, expect importExpectations) (problems, warnings []string) {
+// email's 3x-ui entries, and warns where those entries disagree. 3x-ui v3 builds
+// the Xray config from its clients table, so the value that table holds also
+// counts as kept even when the inbound JSON carries a stale one.
+func verifyImportedClients(srcClients map[string]*import3xUIClient, srcTable importTable, expect importExpectations) (problems, warnings []string) {
+	tableRows := map[string]map[string]string{}
+	for _, row := range srcTable.rows {
+		tableRows[strings.TrimSpace(row["email"])] = row
+	}
 	for email, want := range srcClients {
 		var rec model.ClientRecord
 		if err := db.Where("email = ?", email).First(&rec).Error; err != nil {
@@ -453,6 +469,11 @@ func verifyImportedClients(srcClients map[string]*import3xUIClient, expect impor
 			kept := allowed[gotV]
 			if len(set) > 0 {
 				kept = set[gotV]
+			}
+			if tableV, ok := tableRows[email][f.col]; ok && !kept && tableV == gotV {
+				kept = true
+				warnings = append(warnings, fmt.Sprintf("client %s: 3x-ui's clients table and inbound settings carry different %s; We1ssBoard keeps the table value 3x-ui served",
+					email, f.name))
 			}
 			if !kept {
 				problems = append(problems, fmt.Sprintf("client %s: %s is not any value 3x-ui had", email, f.name))
