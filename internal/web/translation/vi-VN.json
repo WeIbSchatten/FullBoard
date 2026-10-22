@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel đã được cập nhật",
       "devChannel": "Kênh phát triển",
       "devChannelWarning": "Bản dev bám theo từng commit trên main và không phải bản ổn định — không có hạ cấp tự động.",
+      "changelog": {
+        "title": "Có gì mới",
+        "current": "Nội dung phiên bản của bạn",
+        "failed": "Không tải được nhật ký thay đổi.",
+        "openFull": "Toàn bộ nhật ký thay đổi",
+        "empty": "Không có mục nào cho các phiên bản này.",
+        "kinds": {
+          "added": "Thêm mới",
+          "changed": "Thay đổi",
+          "fixed": "Sửa lỗi",
+          "removed": "Gỡ bỏ",
+          "breaking": "Không tương thích",
+          "known_issues": "Sự cố đã biết"
+        }
+      },
       "currentCommit": "Commit hiện tại",
       "latestCommit": "Commit mới nhất",
       "updateChannelChanged": "Đã đổi kênh cập nhật",

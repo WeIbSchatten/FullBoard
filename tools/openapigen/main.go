@@ -127,8 +127,15 @@ func run(root, outDir string) error {
 			),
 		},
 		{
-			Path:        resolveRel(root, "internal/web/service/panel"),
-			StructAllow: setOf("ApiTokenView", "PanelUpdateStatus"),
+			Path: resolveRel(root, "internal/web/service/panel"),
+			StructAllow: setOf(
+				"ApiTokenView",
+				"PanelUpdateStatus",
+				"PanelChangelog",
+				"ChangelogRelease",
+				"ChangelogSection",
+				"ChangelogItem",
+			),
 		},
 		{
 			Path:        resolveRel(root, "internal/amneziawg"),

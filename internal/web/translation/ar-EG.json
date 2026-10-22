@@ -200,6 +200,21 @@
       "panelUpToDate": "البانل محدث لآخر إصدار",
       "devChannel": "قناة التطوير",
       "devChannelWarning": "تتابع نسخ التطوير كل كومِت على main وليست إصدارات مستقرة — لا يوجد رجوع تلقائي لإصدار أقدم.",
+      "changelog": {
+        "title": "ما الجديد",
+        "current": "ما في إصدارك",
+        "failed": "تعذر تحميل سجل التغييرات.",
+        "openFull": "سجل التغييرات الكامل",
+        "empty": "لا توجد إدخالات لهذه الإصدارات.",
+        "kinds": {
+          "added": "أضيف",
+          "changed": "تغيّر",
+          "fixed": "أُصلح",
+          "removed": "أزيل",
+          "breaking": "غير متوافق",
+          "known_issues": "مشكلات معروفة"
+        }
+      },
       "currentCommit": "الكومِت الحالي",
       "latestCommit": "أحدث كومِت",
       "updateChannelChanged": "تم تغيير قناة التحديث",

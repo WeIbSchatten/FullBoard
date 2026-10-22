@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel sudah terbaru",
       "devChannel": "Kanal dev",
       "devChannelWarning": "Build dev mengikuti setiap commit di main dan bukan rilis stabil — tidak ada penurunan versi otomatis.",
+      "changelog": {
+        "title": "Yang baru",
+        "current": "Isi versi Anda",
+        "failed": "Gagal memuat catatan perubahan.",
+        "openFull": "Catatan perubahan lengkap",
+        "empty": "Tidak ada catatan untuk versi ini.",
+        "kinds": {
+          "added": "Ditambahkan",
+          "changed": "Diubah",
+          "fixed": "Diperbaiki",
+          "removed": "Dihapus",
+          "breaking": "Tidak kompatibel",
+          "known_issues": "Masalah diketahui"
+        }
+      },
       "currentCommit": "Commit saat ini",
       "latestCommit": "Commit terbaru",
       "updateChannelChanged": "Kanal pembaruan diubah",

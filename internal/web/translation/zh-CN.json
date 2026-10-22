@@ -200,6 +200,21 @@
       "panelUpToDate": "面板已是最新",
       "devChannel": "开发通道",
       "devChannelWarning": "开发版会跟踪 main 的每次提交，并非稳定版本，且无法自动降级。",
+      "changelog": {
+        "title": "更新内容",
+        "current": "当前版本内容",
+        "failed": "无法加载更新日志。",
+        "openFull": "完整更新日志",
+        "empty": "这些版本没有更新日志。",
+        "kinds": {
+          "added": "新增",
+          "changed": "变更",
+          "fixed": "修复",
+          "removed": "移除",
+          "breaking": "不兼容变更",
+          "known_issues": "已知问题"
+        }
+      },
       "currentCommit": "当前提交",
       "latestCommit": "最新提交",
       "updateChannelChanged": "更新通道已切换",

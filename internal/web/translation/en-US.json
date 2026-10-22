@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel is up to date",
       "devChannel": "Dev channel",
       "devChannelWarning": "Dev builds track every commit on main and aren't stable releases — there is no automatic downgrade.",
+      "changelog": {
+        "title": "What's new",
+        "current": "What's in your version",
+        "failed": "Could not load the changelog.",
+        "openFull": "Full changelog",
+        "empty": "No changelog entries for these versions.",
+        "kinds": {
+          "added": "Added",
+          "changed": "Changed",
+          "fixed": "Fixed",
+          "removed": "Removed",
+          "breaking": "Breaking",
+          "known_issues": "Known issues"
+        }
+      },
       "currentCommit": "Current commit",
       "latestCommit": "Latest commit",
       "updateChannelChanged": "Update channel changed",
