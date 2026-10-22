@@ -595,17 +595,6 @@ export function useInbounds() {
     setDbInbounds(next);
   }, []);
 
-  const totals = useMemo(() => {
-    let up = 0;
-    let down = 0;
-    for (const ib of dbInbounds) {
-      const rec = ib as unknown as { up?: number; down?: number };
-      up += rec.up || 0;
-      down += rec.down || 0;
-    }
-    return { up, down };
-  }, [dbInbounds]);
-
   return {
     fetched,
     fetchError,
@@ -614,7 +603,6 @@ export function useInbounds() {
     onlineClients,
     lastOnlineMap,
     inboundSpeed,
-    totals,
     expireDiff,
     trafficDiff,
     subSettings,

@@ -1797,12 +1797,27 @@ verify_release_checksum() {
 # Older tags predate some of these files (we1ssboard.rc arrived in v2.8.4). Serving
 # main's copy against an old binary is the mismatch this pinning exists to
 # prevent, so probe before anything is stopped or removed and refuse the tag.
+# The unit files and the OpenRC script moved to packaging/ after 1.8.4; older tags
+# still serve them from the repository root.
+repo_file_url() {
+    local ref="$1" name="$2" base="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/$1"
+    case "${name}" in
+        we1ssboard.rc | we1ssboard.service.*)
+            if [[ "$(curl -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "${base}/packaging/${name}")" == "200" ]]; then
+                echo "${base}/packaging/${name}"
+                return
+            fi
+            ;;
+    esac
+    echo "${base}/${name}"
+}
+
 require_repo_files() {
     local ref="$1" name status
     shift
     [[ "${ref}" == "main" ]] && return 0
     for name in "$@"; do
-        status=$(curl -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${ref}/${name}")
+        status=$(curl -sIL --retry 3 --connect-timeout 15 -o /dev/null -w '%{http_code}' "$(repo_file_url "${ref}" "${name}")")
         if [[ "${status}" != "200" ]]; then
             echo -e "${red}${name} is not available for ${ref} (HTTP ${status})${plain}"
             echo -e "${red}Install a release that ships it, or 'dev' for the rolling build. Your existing installation has not been touched.${plain}"
@@ -2039,7 +2054,7 @@ install_x-ui() {
     if [[ $release == "alpine" ]]; then
         xui_rc_temp="/etc/init.d/we1ssboard.tmp.$$"
         rm -f "${xui_rc_temp}"
-        curl -fLRo "${xui_rc_temp}" "https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.rc"
+        curl -fLRo "${xui_rc_temp}" "$(repo_file_url "${script_ref}" we1ssboard.rc)"
         if [[ $? -ne 0 ]]; then
             rm -f "${xui_rc_temp}"
             echo -e "${red}Failed to download we1ssboard.rc${plain}"
@@ -2104,13 +2119,13 @@ install_x-ui() {
             echo -e "${yellow}Service files not found in tar.gz, downloading from GitHub...${plain}"
             case "${release}" in
                 ubuntu | debian | armbian)
-                    service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.service.debian"
+                    service_unit_url="$(repo_file_url "${script_ref}" we1ssboard.service.debian)"
                     ;;
                 arch | manjaro | parch)
-                    service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.service.arch"
+                    service_unit_url="$(repo_file_url "${script_ref}" we1ssboard.service.arch)"
                     ;;
                 *)
-                    service_unit_url="https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/${script_ref}/we1ssboard.service.rhel"
+                    service_unit_url="$(repo_file_url "${script_ref}" we1ssboard.service.rhel)"
                     ;;
             esac
 

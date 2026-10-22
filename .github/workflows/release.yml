@@ -16,9 +16,7 @@ on:
       - "**.sh"
       - "frontend/**"
       - "internal/config/version"
-      - "we1ssboard.service.debian"
-      - "we1ssboard.service.arch"
-      - "we1ssboard.service.rhel"
+      - "packaging/**"
       - ".github/workflows/release.yml"
 
 jobs:
@@ -40,6 +38,19 @@ jobs:
             echo "internal/config/version is '$file' but tag is 'v$tag' — merge the version bump into main, then tag that commit" >&2
             exit 1
           fi
+
+      # The release body is the tag's CHANGELOG entry (English, Russian folded below);
+      # checking it here means a tag without an entry publishes nothing.
+      - name: Build release notes from CHANGELOG
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: bash .github/scripts/release-notes.sh "${GITHUB_REF_NAME#v}" notes/release-notes.md
+
+      - name: Keep release notes for the publish job
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-notes
+          path: notes/release-notes.md
 
   build:
     needs: verify-version
@@ -127,9 +138,9 @@ jobs:
 
           mkdir we1ssboard
           cp xui-release we1ssboard/
-          cp we1ssboard.service.debian we1ssboard/
-          cp we1ssboard.service.arch we1ssboard/
-          cp we1ssboard.service.rhel we1ssboard/
+          cp packaging/we1ssboard.service.debian we1ssboard/
+          cp packaging/we1ssboard.service.arch we1ssboard/
+          cp packaging/we1ssboard.service.rhel we1ssboard/
           cp we1ssboard.sh we1ssboard/
           mv we1ssboard/xui-release we1ssboard/we1ssboard
           mkdir we1ssboard/bin
@@ -372,7 +383,9 @@ jobs:
           }
           # A re-run finds the release already there; keep it and replace its files.
           if ! gh release view "$TAG" > /dev/null 2>&1; then
-            retry gh release create "$TAG" --verify-tag --draft --title "$TAG" --notes ""
+            retry gh release create "$TAG" --verify-tag --draft --title "$TAG" --notes-file release-artifacts/release-notes.md
+          else
+            retry gh release edit "$TAG" --notes-file release-artifacts/release-notes.md
           fi
           retry gh release upload "$TAG" release-artifacts/*.tar.gz release-artifacts/*.zip release-artifacts/*.sha256 --clobber
           retry gh release edit "$TAG" --draft=false --prerelease=false --latest

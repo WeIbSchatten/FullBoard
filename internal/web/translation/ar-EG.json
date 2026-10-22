@@ -200,6 +200,21 @@
       "panelUpToDate": "البانل محدث لآخر إصدار",
       "devChannel": "قناة التطوير",
       "devChannelWarning": "تتابع نسخ التطوير كل كومِت على main وليست إصدارات مستقرة — لا يوجد رجوع تلقائي لإصدار أقدم.",
+      "changelog": {
+        "title": "ما الجديد",
+        "current": "ما في إصدارك",
+        "failed": "تعذر تحميل سجل التغييرات.",
+        "openFull": "سجل التغييرات الكامل",
+        "empty": "لا توجد إدخالات لهذه الإصدارات.",
+        "kinds": {
+          "added": "أضيف",
+          "changed": "تغيّر",
+          "fixed": "أُصلح",
+          "removed": "أزيل",
+          "breaking": "غير متوافق",
+          "known_issues": "مشكلات معروفة"
+        }
+      },
       "currentCommit": "الكومِت الحالي",
       "latestCommit": "أحدث كومِت",
       "updateChannelChanged": "تم تغيير قناة التحديث",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "ابحث بالبريد، التعليق، sub ID، UUID، كلمة المرور، auth، Telegram ID…",
       "filterTitle": "تصفية العملاء",
       "clearAllFilters": "مسح الكل",
-      "filters": {
-        "nodes": "النودز",
-        "localPanel": "محلي (هذه اللوحة)"
-      },
       "showingCount": "عرض {shown} من {total}",
       "sortOldest": "الأقدم أولاً",
       "sortNewest": "الأحدث أولاً",
@@ -2715,7 +2726,9 @@
         "addToSubs": "إضافة إلى الاشتراكات",
         "addToSubsTitle": "إضافة \"{name}\" إلى اشتراكات العملاء",
         "addToSubsHint": "يحصل كل عميل محدد على رابط https://t.me/webproxy لهذا الملف في اشتراكه. العميل المرتبط بملف آخر يُنقل إلى هذا الملف.",
-        "selectClients": "اختر العملاء"
+        "selectClients": "اختر العملاء",
+        "selectAll": "تحديد الكل ({count})",
+        "selectAllHint": "يتخطى «تحديد الكل» العملاء الذين لديهم TG Web Proxy بالفعل والعملاء الموجودين فقط على مداخل عقدة متصلة."
       },
       "egress": {
         "button": "تحقق من IP الخروج",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "الأعمدة",
   "tableColumnsShowAll": "إظهار الكل",
+  "tableColumnsNoRoom": "مخفي: لا توجد مساحة كافية. وسّع النافذة لإظهاره.",
   "shortcuts": {
     "title": "اختصارات لوحة المفاتيح",
     "palette": "لوحة الأوامر",

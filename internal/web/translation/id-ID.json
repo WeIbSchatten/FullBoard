@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel sudah terbaru",
       "devChannel": "Kanal dev",
       "devChannelWarning": "Build dev mengikuti setiap commit di main dan bukan rilis stabil — tidak ada penurunan versi otomatis.",
+      "changelog": {
+        "title": "Yang baru",
+        "current": "Isi versi Anda",
+        "failed": "Gagal memuat catatan perubahan.",
+        "openFull": "Catatan perubahan lengkap",
+        "empty": "Tidak ada catatan untuk versi ini.",
+        "kinds": {
+          "added": "Ditambahkan",
+          "changed": "Diubah",
+          "fixed": "Diperbaiki",
+          "removed": "Dihapus",
+          "breaking": "Tidak kompatibel",
+          "known_issues": "Masalah diketahui"
+        }
+      },
       "currentCommit": "Commit saat ini",
       "latestCommit": "Commit terbaru",
       "updateChannelChanged": "Kanal pembaruan diubah",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "Cari email, komentar, sub ID, UUID, kata sandi, auth, Telegram ID…",
       "filterTitle": "Filter klien",
       "clearAllFilters": "Hapus semua",
-      "filters": {
-        "nodes": "Node",
-        "localPanel": "Lokal (panel ini)"
-      },
       "showingCount": "Menampilkan {shown} dari {total}",
       "sortOldest": "Terlama dulu",
       "sortNewest": "Terbaru dulu",
@@ -2715,7 +2726,9 @@
         "addToSubs": "Tambahkan ke langganan",
         "addToSubsTitle": "Tambahkan \"{name}\" ke langganan klien",
         "addToSubsHint": "Setiap klien terpilih mendapat tautan https://t.me/webproxy profil ini di langganannya. Klien yang terikat ke profil lain dipindahkan ke profil ini.",
-        "selectClients": "Pilih klien"
+        "selectClients": "Pilih klien",
+        "selectAll": "Pilih semua ({count})",
+        "selectAllHint": "Pilih semua melewati klien yang sudah punya TG Web Proxy dan klien yang hanya ada di inbound node terhubung."
       },
       "egress": {
         "button": "Periksa IP keluar",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "Kolom",
   "tableColumnsShowAll": "Tampilkan semua",
+  "tableColumnsNoRoom": "Disembunyikan: ruang tidak cukup. Lebarkan jendela untuk menampilkannya.",
   "shortcuts": {
     "title": "Pintasan keyboard",
     "palette": "Palet perintah",

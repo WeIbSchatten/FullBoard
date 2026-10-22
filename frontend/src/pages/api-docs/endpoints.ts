@@ -586,6 +586,22 @@ export const sections: readonly Section[] = [
       },
       {
         method: 'GET',
+        path: '/panel/api/server/getChangelog',
+        summary:
+          'Release notes for the update dialog, read from CHANGELOG.md of the latest release tag, or of main when that tag predates the file (always main on the dev channel). With an update available it lists every version after the installed one up to the latest; otherwise the installed version. Sections are added, changed, fixed, removed, breaking and known_issues.',
+        params: [
+          {
+            name: 'lang',
+            in: 'query',
+            type: 'string',
+            desc: 'Panel language, e.g. ru-RU. ru and uk get the Russian changelog when the tag has one; anything else gets English.',
+            optional: true,
+          },
+        ],
+        responseSchema: 'PanelChangelog',
+      },
+      {
+        method: 'GET',
         path: '/panel/api/server/getConfigJson',
         summary: 'Return the assembled Xray config that\u2019s currently running on this host.',
         response:
@@ -1153,6 +1169,13 @@ export const sections: readonly Section[] = [
             in: 'query',
             type: 'string',
             desc: 'CSV group names, matched case-insensitively after trimming. Values are ORed.',
+            optional: true,
+          },
+          {
+            name: 'node',
+            in: 'query',
+            type: 'string',
+            desc: 'Scopes the page, total and summary to one tab: local keeps clients attached to an inbound of this panel or to none; a node ID keeps clients attached to that node’s inbounds. Omitted means every client.',
             optional: true,
           },
         ],

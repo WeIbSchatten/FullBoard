@@ -204,6 +204,7 @@
 .email-cell {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .email-cell .email {
@@ -217,7 +218,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
+  max-width: 100%;
 }
 
 .client-cards {

@@ -418,6 +418,23 @@ export interface CaddyH2WSStatus {
   path: string;
 }
 
+export interface ChangelogItem {
+  sub?: string[];
+  text: string;
+}
+
+export interface ChangelogRelease {
+  date?: string;
+  note?: string;
+  sections: ChangelogSection[];
+  version: string;
+}
+
+export interface ChangelogSection {
+  items: ChangelogItem[];
+  kind: string;
+}
+
 export interface Client {
   adTag?: string;
   allowedIPs?: string[];
@@ -974,6 +991,13 @@ export interface OutboundTraffics {
   tag: string;
   total: number;
   up: number;
+}
+
+export interface PanelChangelog {
+  currentVersion: string;
+  latestVersion: string;
+  releases: ChangelogRelease[];
+  url: string;
 }
 
 export interface PanelUpdateStatus {

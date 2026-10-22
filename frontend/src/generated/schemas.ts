@@ -1705,6 +1705,71 @@ export const SCHEMAS: Record<string, unknown> = {
     ],
     "type": "object"
   },
+  "ChangelogItem": {
+    "description": "ChangelogItem is one bullet; Sub holds its nested bullets.",
+    "properties": {
+      "sub": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "text": {
+        "example": "Hysteria keeps its UDP buffers across reboots.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "text"
+    ],
+    "type": "object"
+  },
+  "ChangelogRelease": {
+    "properties": {
+      "date": {
+        "example": "2026-10-20",
+        "type": "string"
+      },
+      "note": {
+        "type": "string"
+      },
+      "sections": {
+        "items": {
+          "$ref": "#/components/schemas/ChangelogSection"
+        },
+        "type": "array"
+      },
+      "version": {
+        "example": "1.8.4",
+        "type": "string"
+      }
+    },
+    "required": [
+      "sections",
+      "version"
+    ],
+    "type": "object"
+  },
+  "ChangelogSection": {
+    "description": "ChangelogSection groups a release's bullets by kind: added, changed, fixed,\nremoved, breaking or known_issues.",
+    "properties": {
+      "items": {
+        "items": {
+          "$ref": "#/components/schemas/ChangelogItem"
+        },
+        "type": "array"
+      },
+      "kind": {
+        "example": "fixed",
+        "type": "string"
+      }
+    },
+    "required": [
+      "items",
+      "kind"
+    ],
+    "type": "object"
+  },
   "Client": {
     "description": "Client represents a client configuration for Xray inbounds with traffic limits and settings.",
     "properties": {
@@ -4239,6 +4304,36 @@ export const SCHEMAS: Record<string, unknown> = {
       "tag",
       "total",
       "up"
+    ],
+    "type": "object"
+  },
+  "PanelChangelog": {
+    "description": "PanelChangelog is what the update dialog shows: the releases between the installed\nversion and the latest one (or the installed one when nothing is newer).",
+    "properties": {
+      "currentVersion": {
+        "example": "1.8.3",
+        "type": "string"
+      },
+      "latestVersion": {
+        "example": "v1.8.4",
+        "type": "string"
+      },
+      "releases": {
+        "items": {
+          "$ref": "#/components/schemas/ChangelogRelease"
+        },
+        "type": "array"
+      },
+      "url": {
+        "example": "https://github.com/WeIbSchatten/We1ssBoard/blob/v1.8.4/CHANGELOG.md",
+        "type": "string"
+      }
+    },
+    "required": [
+      "currentVersion",
+      "latestVersion",
+      "releases",
+      "url"
     ],
     "type": "object"
   },

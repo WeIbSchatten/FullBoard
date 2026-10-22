@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   SECRET_PATTERN,
+  bindAllCandidates,
   generateSecret,
   isLoopbackHostPort,
   isLoopbackHttpUrl,
@@ -46,5 +47,37 @@ describe('tg-web-proxy secrets and backends', () => {
     expect(nextBackend(['127.0.0.1:2398', '127.0.0.1:2405', '127.0.0.1:2399'])).toBe(
       '127.0.0.1:2406',
     );
+  });
+});
+
+// FR 2: "select all" must leave out clients that live only on a connected node's inbounds
+// and clients that already have a TG Web Proxy binding.
+describe('bindAllCandidates', () => {
+  const inbounds = [
+    { id: 1, nodeId: null },
+    { id: 2 },
+    { id: 10, nodeId: 7 },
+    { id: 11, nodeId: 8 },
+  ];
+
+  it('picks local clients that have no binding yet', () => {
+    const clients = [
+      { email: 'zed', inboundIds: [1] },
+      { email: 'amy', inboundIds: [2, 10] },
+      { email: 'bound', inboundIds: [1] },
+      { email: 'node-only', inboundIds: [10, 11] },
+      { email: 'detached', inboundIds: [] },
+      { email: 'legacy' },
+    ];
+    expect(bindAllCandidates(clients, inbounds, ['bound'])).toEqual([
+      'amy',
+      'detached',
+      'legacy',
+      'zed',
+    ]);
+  });
+
+  it('treats an inbound missing from the options as local, not as a node one', () => {
+    expect(bindAllCandidates([{ email: 'x', inboundIds: [99] }], inbounds, [])).toEqual(['x']);
   });
 });

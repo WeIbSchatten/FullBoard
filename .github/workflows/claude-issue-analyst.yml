@@ -253,7 +253,7 @@ jobs:
             credential exposure, privilege escalation - do NOT investigate or
             analyse it publicly. Post one short comment asking the reporter to
             resubmit privately via the repository's Security tab ("Report a
-            vulnerability"; see SECURITY.md). Do not confirm or deny the
+            vulnerability"; see .github/SECURITY.md). Do not confirm or deny the
             vulnerability, and post no file paths, line numbers, severity or
             reproduction detail. Add no type label, tag
             @${{ github.repository_owner }} in one neutral English sentence,

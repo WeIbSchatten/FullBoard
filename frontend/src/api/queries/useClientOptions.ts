@@ -31,3 +31,12 @@ export function useClientOptions(enabled = true) {
         .sort((a, b) => a.localeCompare(b)),
   });
 }
+
+export function useClientRecords(enabled = true) {
+  return useQuery({
+    queryKey: keys.clients.all(),
+    queryFn: fetchClients,
+    enabled,
+    staleTime: 30_000,
+  });
+}

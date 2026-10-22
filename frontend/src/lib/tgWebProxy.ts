@@ -49,3 +49,32 @@ export function nextBackend(backends: string[]): string {
   const next = ports.length ? Math.max(...ports) + 1 : 2398;
   return `127.0.0.1:${next}`;
 }
+
+interface BindableClient {
+  email: string;
+  inboundIds?: number[] | null;
+}
+
+interface InboundHost {
+  id: number;
+  nodeId?: number | null;
+}
+
+// Clients "select all" may bind: not yet bound, and not living only on a connected node's
+// inbounds (those belong to the node panel). A client with no inbounds counts as local.
+export function bindAllCandidates(
+  clients: BindableClient[],
+  inbounds: InboundHost[],
+  boundEmails: Iterable<string>,
+): string[] {
+  const nodeInbounds = new Set(inbounds.filter((ib) => ib.nodeId != null).map((ib) => ib.id));
+  const bound = new Set(boundEmails);
+  return clients
+    .filter((c) => {
+      if (!c.email.trim() || bound.has(c.email)) return false;
+      const ids = c.inboundIds ?? [];
+      return ids.length === 0 || ids.some((id) => !nodeInbounds.has(id));
+    })
+    .map((c) => c.email.trim())
+    .sort((a, b) => a.localeCompare(b));
+}

@@ -200,6 +200,21 @@
       "panelUpToDate": "パネルは最新です",
       "devChannel": "開発チャンネル",
       "devChannelWarning": "開発ビルドは main の各コミットを追跡し、安定版ではありません。自動ダウングレードはありません。",
+      "changelog": {
+        "title": "新機能",
+        "current": "現在のバージョンの内容",
+        "failed": "変更履歴を読み込めませんでした。",
+        "openFull": "変更履歴の全文",
+        "empty": "これらのバージョンの記載はありません。",
+        "kinds": {
+          "added": "追加",
+          "changed": "変更",
+          "fixed": "修正",
+          "removed": "削除",
+          "breaking": "互換性のない変更",
+          "known_issues": "既知の問題"
+        }
+      },
       "currentCommit": "現在のコミット",
       "latestCommit": "最新のコミット",
       "updateChannelChanged": "更新チャンネルを変更しました",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "メール、コメント、sub ID、UUID、パスワード、auth、Telegram ID を検索…",
       "filterTitle": "クライアントをフィルタ",
       "clearAllFilters": "すべてクリア",
-      "filters": {
-        "nodes": "ノード",
-        "localPanel": "ローカル（このパネル）"
-      },
       "showingCount": "{total} 件中 {shown} 件を表示",
       "sortOldest": "古い順",
       "sortNewest": "新しい順",
@@ -2715,7 +2726,9 @@
         "addToSubs": "サブスクリプションに追加",
         "addToSubsTitle": "「{name}」をクライアントのサブスクリプションに追加",
         "addToSubsHint": "選択した各クライアントのサブスクリプションに、このプロファイルの https://t.me/webproxy リンクが追加されます。別のプロファイルに紐付いたクライアントはこちらに移ります。",
-        "selectClients": "クライアントを選択"
+        "selectClients": "クライアントを選択",
+        "selectAll": "すべて選択（{count}）",
+        "selectAllHint": "「すべて選択」は、TG Web Proxy が既にあるクライアントと、接続ノードのインバウンドにしか存在しないクライアントを除外します。"
       },
       "egress": {
         "button": "出口 IP を確認",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "列",
   "tableColumnsShowAll": "すべて表示",
+  "tableColumnsNoRoom": "非表示：幅が足りません。ウィンドウを広げると表示されます。",
   "shortcuts": {
     "title": "キーボードショートカット",
     "palette": "コマンドパレット",

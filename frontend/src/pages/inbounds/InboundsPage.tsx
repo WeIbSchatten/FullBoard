@@ -47,6 +47,8 @@ const PromptModal = lazy(() => import('@/components/feedback/PromptModal'));
 import { useInbounds } from './useInbounds';
 import { InboundList } from './list';
 import { LazyMount } from '@/components/utility';
+import { NodeScopeTabs, useNodeScope } from '@/components/nodes/NodeScopeTabs';
+import { inNodeScope, nodeScopeTabs } from '@/components/nodes/nodeScope';
 const InboundFormModal = lazy(() => import('./form/InboundFormModal'));
 const CloneInboundModal = lazy(() => import('./CloneInboundModal'));
 const InboundInfoModal = lazy(() => import('./info/InboundInfoModal'));
@@ -91,7 +93,6 @@ export default function InboundsPage() {
     onlineClients,
     lastOnlineMap,
     inboundSpeed,
-    totals,
     expireDiff,
     trafficDiff,
     pageSize,
@@ -136,6 +137,32 @@ export default function InboundsPage() {
     [dbInbounds],
   );
   const showNodeInfo = hasNodeAttachedInbound || hasActiveNode;
+
+  const scopeTabs = useMemo(
+    () =>
+      nodeScopeTabs(
+        nodesList || [],
+        (dbInbounds || []).map((ib) => ib?.nodeId),
+      ),
+    [nodesList, dbInbounds],
+  );
+  const [nodeScope, setNodeScope] = useNodeScope(scopeTabs);
+  const scopedInbounds = useMemo(
+    () =>
+      nodeScope === undefined
+        ? dbInbounds
+        : dbInbounds.filter((ib) => inNodeScope(ib.nodeId, nodeScope)),
+    [dbInbounds, nodeScope],
+  );
+  const totals = useMemo(() => {
+    let up = 0;
+    let down = 0;
+    for (const ib of scopedInbounds) {
+      up += ib.up || 0;
+      down += ib.down || 0;
+    }
+    return { up, down };
+  }, [scopedInbounds]);
 
   // Ports already bound per clone target (0 = local panel, matching the
   // clients page node-filter sentinel), for the clone dialog's client-side
@@ -739,6 +766,11 @@ export default function InboundsPage() {
               />
             ) : (
               <Row gutter={[isMobile ? 8 : 16, 12]}>
+                {nodeScope !== undefined && (
+                  <Col span={24}>
+                    <NodeScopeTabs tabs={scopeTabs} value={nodeScope} onChange={setNodeScope} />
+                  </Col>
+                )}
                 <Col span={24}>
                   <Card size="small" hoverable className="summary-card">
                     <Row gutter={[16, 12]}>
@@ -765,7 +797,7 @@ export default function InboundsPage() {
                       <Col xs={24} sm={24} md={8}>
                         <Statistic
                           title={t('pages.inbounds.inboundCount')}
-                          value={String(dbInbounds.length)}
+                          value={String(scopedInbounds.length)}
                           prefix={<BarsOutlined />}
                         />
                       </Col>
@@ -775,7 +807,7 @@ export default function InboundsPage() {
 
                 <Col span={24}>
                   <InboundList
-                    dbInbounds={dbInbounds}
+                    dbInbounds={scopedInbounds}
                     clientCount={clientCount}
                     onlineClients={onlineClients}
                     lastOnlineMap={lastOnlineMap}
