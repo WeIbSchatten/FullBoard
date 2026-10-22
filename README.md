@@ -153,6 +153,61 @@ the kernel's default `cubic` depends on your route, so We1ssBoard does not chang
 own: compare both with the steps in [Performance](docs/content/docs/en/operations/performance.mdx)
 and keep the winner (BBR is one click in the `we1ssboard` menu).
 
+## Telegram WEB Proxy: install and setup
+
+The relay lets Telegram reach MTProxy over ordinary HTTPS or WebSocket, behind a landing page of
+your choice. Full reference: [Telegram WEB Proxy docs](docs/content/docs/en/operations/tg-web-proxy.mdx).
+
+**Before you start**
+
+- A Linux server with systemd (the upstream installer supports Ubuntu/Debian x86_64).
+- A hostname for the proxy, for example `tg.example.com`, with an A/AAAA record pointing at that
+  server.
+- Ports **80** and **443** free: the installer puts Caddy on them. If an Xray inbound already listens
+  on 443, run the relay on a separate server connected as a node (see below).
+
+### On this panel
+
+1. Open **Connections → Telegram WEB Proxy → Overview** and click **Install**. Enter the hostname,
+   an ACME email and the first profile's secret (**Regenerate** fills in a random one); the base path and the
+   site served on the root are optional. The install job's log streams on the same tab.
+2. When it finishes, every unit in the table is `active` and the admin probe shows healthy and
+   ready.
+3. On **Profiles**, add one profile per audience: a name, a secret and a loopback backend.
+   `127.0.0.1:2398` is the installer's MTProxy; for any other port the panel starts and firewalls an
+   MTProxy itself. Choose `websocket` as the carrier mode if HTTPS long-polling is blocked; the panel
+   then patches Caddy for WebSocket (**Fix Caddy for WebSocket** re-applies it).
+4. **Share** on a profile gives the `https://t.me/webproxy?...` link, a `tg://` link and a QR code.
+
+### Give the proxy to clients
+
+On **Profiles**, click **Add to subscriptions** on a profile and pick clients, or press
+**Select all (N)**: it skips clients that already have a web-proxy link and clients that exist only
+on a connected node's inbounds. Keep **Dedicated secret** on to give every client its own secret: a
+disabled or expired client then loses the proxy too. A single client can also be set in its form,
+on the **TG WEB Proxy** tab.
+
+The link appears in the client's **raw** subscription and in its QR menu (JSON and Clash
+subscriptions do not carry it).
+
+### Through a connected panel (node)
+
+Use this when the relay must run on another server, for example abroad while the clients live on
+the main panel.
+
+1. Install We1ssBoard on the relay server with the [quick start](#quick-start) command.
+2. On that server open **Settings → Remote management**, click **Generate invite** and copy the
+   `fb-enroll-1.…` string (it works once and expires in about 30 minutes).
+3. On the main panel open **Nodes & hosts → Add from invite** and paste it. The node appears in the
+   list with its own tab on the Clients and Connections pages.
+4. Install the relay on the node: **Manage panel** on the node's row, then **Log in to panel**, and
+   follow "On this panel" above inside the node.
+5. Back on the main panel, **Manage panel → Telegram WEB Proxy** lists the node's profiles. Add,
+   edit or delete them there, and use **Add to subscriptions** to give main-panel clients a link
+   through the node. Such bindings always use a dedicated secret.
+6. The **Overview** dashboard shows a Telegram WEB Proxy card with the state of every relay this
+   panel uses: its own and each node's.
+
 ## Management
 
 | Command | What it does |
@@ -216,6 +271,7 @@ Arch, Manjaro, openSUSE, Alpine, Windows. Architectures: `amd64`, `386`, `arm64`
 | [First login](docs/content/docs/en/guide/first-login.mdx) | Reach and harden the panel |
 | [REALITY](docs/content/docs/en/config/reality.mdx) | VLESS + REALITY + Vision step by step |
 | [Telegram WEB Proxy](docs/content/docs/en/operations/tg-web-proxy.mdx) | Relay, profiles, client secrets |
+| [Changelog](CHANGELOG.md) | Every release: added, changed, fixed, removed, breaking |
 | [Multi-node](docs/content/docs/en/operations/multi-node.mdx) | Invites, sync, mTLS |
 | [Performance](docs/content/docs/en/operations/performance.mdx) | BBR, transports, speed checklist |
 | [Troubleshooting](docs/content/docs/en/help/troubleshooting.mdx) | Common problems and fixes |
