@@ -54,6 +54,7 @@ func (a *ServerController) initRouter(g *gin.RouterGroup) {
 	g.GET("/getXrayVersion", a.getXrayVersion)
 	g.GET("/getPanelUpdateInfo", a.getPanelUpdateInfo)
 	g.GET("/getUpdateStatus", a.getUpdateStatus)
+	g.GET("/getChangelog", a.getChangelog)
 	g.GET("/getConfigJson", a.getConfigJson)
 	g.GET("/getDb", a.getDb)
 	g.GET("/getMigration", a.getMigration)
@@ -203,6 +204,17 @@ func (a *ServerController) getPanelUpdateInfo(c *gin.Context) {
 		return
 	}
 	jsonObj(c, info, nil)
+}
+
+// getChangelog returns the release notes the update dialog lists, in the ?lang= language.
+func (a *ServerController) getChangelog(c *gin.Context) {
+	log, err := a.panelService.GetChangelog(c.Query("lang"))
+	if err != nil {
+		logger.Debug("panel changelog fetch failed:", err)
+		c.JSON(http.StatusOK, entity.Msg{Success: false})
+		return
+	}
+	jsonObj(c, log, nil)
 }
 
 // installXray installs or updates Xray to the specified version.

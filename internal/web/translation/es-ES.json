@@ -200,6 +200,21 @@
       "panelUpToDate": "El panel está actualizado",
       "devChannel": "Canal de desarrollo",
       "devChannelWarning": "Las compilaciones de desarrollo siguen cada commit en main y no son versiones estables; no hay reversión automática.",
+      "changelog": {
+        "title": "Novedades",
+        "current": "Qué trae tu versión",
+        "failed": "No se pudo cargar el registro de cambios.",
+        "openFull": "Registro completo",
+        "empty": "No hay entradas para estas versiones.",
+        "kinds": {
+          "added": "Añadido",
+          "changed": "Cambiado",
+          "fixed": "Corregido",
+          "removed": "Eliminado",
+          "breaking": "Incompatible",
+          "known_issues": "Problemas conocidos"
+        }
+      },
       "currentCommit": "Commit actual",
       "latestCommit": "Último commit",
       "updateChannelChanged": "Canal de actualización cambiado",

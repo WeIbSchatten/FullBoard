@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel güncel",
       "devChannel": "Geliştirme kanalı",
       "devChannelWarning": "Geliştirme yapıları main üzerindeki her commit'i izler ve kararlı sürüm değildir — otomatik geri alma yoktur.",
+      "changelog": {
+        "title": "Yenilikler",
+        "current": "Sürümünüzde neler var",
+        "failed": "Değişiklik günlüğü yüklenemedi.",
+        "openFull": "Tüm değişiklik günlüğü",
+        "empty": "Bu sürümler için kayıt yok.",
+        "kinds": {
+          "added": "Eklendi",
+          "changed": "Değişti",
+          "fixed": "Düzeltildi",
+          "removed": "Kaldırıldı",
+          "breaking": "Uyumsuz",
+          "known_issues": "Bilinen sorunlar"
+        }
+      },
       "currentCommit": "Geçerli commit",
       "latestCommit": "Son commit",
       "updateChannelChanged": "Güncelleme kanalı değiştirildi",

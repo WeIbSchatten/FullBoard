@@ -200,6 +200,21 @@
       "panelUpToDate": "O painel está atualizado",
       "devChannel": "Canal de desenvolvimento",
       "devChannelWarning": "As builds de desenvolvimento acompanham cada commit na main e não são versões estáveis — não há downgrade automático.",
+      "changelog": {
+        "title": "Novidades",
+        "current": "O que há na sua versão",
+        "failed": "Não foi possível carregar o changelog.",
+        "openFull": "Changelog completo",
+        "empty": "Não há entradas para estas versões.",
+        "kinds": {
+          "added": "Adicionado",
+          "changed": "Alterado",
+          "fixed": "Corrigido",
+          "removed": "Removido",
+          "breaking": "Incompatível",
+          "known_issues": "Problemas conhecidos"
+        }
+      },
       "currentCommit": "Commit atual",
       "latestCommit": "Último commit",
       "updateChannelChanged": "Canal de atualização alterado",

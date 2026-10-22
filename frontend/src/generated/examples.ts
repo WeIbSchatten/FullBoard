@@ -418,6 +418,41 @@ export const EXAMPLES: Record<string, unknown> = {
     "needsFix": true,
     "path": "/etc/caddy/Caddyfile"
   },
+  "ChangelogItem": {
+    "sub": [
+      ""
+    ],
+    "text": "Hysteria keeps its UDP buffers across reboots."
+  },
+  "ChangelogRelease": {
+    "date": "2026-10-20",
+    "note": "",
+    "sections": [
+      {
+        "items": [
+          {
+            "sub": [
+              ""
+            ],
+            "text": "Hysteria keeps its UDP buffers across reboots."
+          }
+        ],
+        "kind": "fixed"
+      }
+    ],
+    "version": "1.8.4"
+  },
+  "ChangelogSection": {
+    "items": [
+      {
+        "sub": [
+          ""
+        ],
+        "text": "Hysteria keeps its UDP buffers across reboots."
+      }
+    ],
+    "kind": "fixed"
+  },
   "Client": {
     "adTag": "0123456789abcdef0123456789abcdef",
     "allowedIPs": [
@@ -1053,6 +1088,31 @@ export const EXAMPLES: Record<string, unknown> = {
     "tag": "",
     "total": 0,
     "up": 0
+  },
+  "PanelChangelog": {
+    "currentVersion": "1.8.3",
+    "latestVersion": "v1.8.4",
+    "releases": [
+      {
+        "date": "2026-10-20",
+        "note": "",
+        "sections": [
+          {
+            "items": [
+              {
+                "sub": [
+                  ""
+                ],
+                "text": "Hysteria keeps its UDP buffers across reboots."
+              }
+            ],
+            "kind": "fixed"
+          }
+        ],
+        "version": "1.8.4"
+      }
+    ],
+    "url": "https://github.com/WeIbSchatten/We1ssBoard/blob/v1.8.4/CHANGELOG.md"
   },
   "PanelUpdateStatus": {
     "exitCode": 0,
