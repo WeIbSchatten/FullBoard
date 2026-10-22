@@ -20,7 +20,7 @@ We1ssBoard is an open-source web control panel for managing Xray-core servers.
 - It runs Xray-core as a managed child process (`internal/xray/process.go`) and
   imports `github.com/xtls/xray-core` for config types and the gRPC
   stats/handler/router API. The release the panel BUNDLES is pinned in
-  `DockerInit.sh`; the version it COMPILES against is pinned in `go.mod`, and
+  `docker/DockerInit.sh`; the version it COMPILES against is pinned in `go.mod`, and
   the two are not always the same.
 - MTProto inbounds run a SECOND managed child, the `mtg-multi` binary (a
   multi-secret mtg fork, panel-side code in `internal/mtproto/`), one process
@@ -55,7 +55,7 @@ We1ssBoard is an open-source web control panel for managing Xray-core servers.
 | master/sub-node over mTLS | `internal/web/runtime/` |
 | i18n | `internal/web/locale/`, `internal/web/translation/` |
 | UI source | `frontend/src/` |
-| install / upgrade | `install.sh`, `we1ssboard.sh`, `DockerInit.sh` |
+| install / upgrade | `install.sh`, `update.sh`, `we1ssboard.sh`, `packaging/`, `docker/DockerInit.sh` |
 
 ## Hard rules a change must respect
 

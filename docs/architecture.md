@@ -287,9 +287,11 @@ We1ssBoard/
 ├── docs/                     # Markdown docs (this file, custom-subscription-templates.md, …)
 ├── media/                    # README images
 │
-├── Dockerfile / docker-compose.yml / DockerEntrypoint.sh / DockerInit.sh   # Container build/run
+├── Dockerfile / docker-compose.yml                         # Container build/run
+├── docker/                   # DockerInit.sh (fetches Xray, mtg-multi, geo files) + DockerEntrypoint.sh
 ├── install.sh / update.sh / we1ssboard.sh                        # VPS install + management CLI
-├── we1ssboard.service.*  / we1ssboard.rc                               # systemd units (debian/rhel/arch) + rc script
+├── packaging/                # systemd units (we1ssboard.service.debian/rhel/arch) + OpenRC we1ssboard.rc
+├── CHANGELOG.md / CHANGELOG.ru_RU.md                       # Release notes; the update dialog and GitHub releases read them
 ├── windows_files/                                          # Windows service support
 └── .github/workflows/        # CI: ci.yml, codeql.yml, docker.yml, release.yml,
                               #     mutation.yml, cleanup_caches.yml, claude-pr-review.yml,
@@ -598,7 +600,7 @@ npm run build        # gen:api + vite build → outputs to internal/web/dist (th
 **Full local loop:** `cd frontend && npm run build` (refresh embedded `dist/`) → back to repo
 root → `go build ./...` / `go run main.go`.
 
-**Docker:** `docker compose up -d` (uses `Dockerfile` + `DockerEntrypoint.sh`).
+**Docker:** `docker compose up -d` (uses `Dockerfile` + `docker/DockerEntrypoint.sh`).
 
 **CI** (`.github/workflows/`): `ci.yml` (build/test/lint), `codeql.yml` (security scan),
 `mutation.yml` (mutation testing), `docker.yml` + `release.yml`

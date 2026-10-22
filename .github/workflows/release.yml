@@ -16,9 +16,7 @@ on:
       - "**.sh"
       - "frontend/**"
       - "internal/config/version"
-      - "we1ssboard.service.debian"
-      - "we1ssboard.service.arch"
-      - "we1ssboard.service.rhel"
+      - "packaging/**"
       - ".github/workflows/release.yml"
 
 jobs:
@@ -140,9 +138,9 @@ jobs:
 
           mkdir we1ssboard
           cp xui-release we1ssboard/
-          cp we1ssboard.service.debian we1ssboard/
-          cp we1ssboard.service.arch we1ssboard/
-          cp we1ssboard.service.rhel we1ssboard/
+          cp packaging/we1ssboard.service.debian we1ssboard/
+          cp packaging/we1ssboard.service.arch we1ssboard/
+          cp packaging/we1ssboard.service.rhel we1ssboard/
           cp we1ssboard.sh we1ssboard/
           mv we1ssboard/xui-release we1ssboard/we1ssboard
           mkdir we1ssboard/bin

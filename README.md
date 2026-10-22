@@ -222,8 +222,8 @@ Arch, Manjaro, openSUSE, Alpine, Windows. Architectures: `amd64`, `386`, `arm64`
 
 ## Contributing
 
-Read the [contributing guide](CONTRIBUTING.md) before opening a pull request. To report a
-vulnerability, see [SECURITY.md](SECURITY.md).
+Read the [contributing guide](.github/CONTRIBUTING.md) before opening a pull request. To report a
+vulnerability, see [SECURITY.md](.github/SECURITY.md).
 
 ## Acknowledgments
 

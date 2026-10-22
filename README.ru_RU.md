@@ -224,8 +224,8 @@ Arch, Manjaro, openSUSE, Alpine, Windows. Архитектуры: `amd64`, `386`
 
 ## Участие в разработке
 
-Перед pull request прочитайте [руководство](CONTRIBUTING.md). Об уязвимостях сообщайте по
-инструкции в [SECURITY.md](SECURITY.md).
+Перед pull request прочитайте [руководство](.github/CONTRIBUTING.md). Об уязвимостях сообщайте по
+инструкции в [SECURITY.md](.github/SECURITY.md).
 
 ## Благодарности
 

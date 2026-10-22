@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 Operational guide for AI agents working in this repo. Long-form human docs:
-`CONTRIBUTING.md` (setup, testing philosophy) and `frontend/README.md`.
+`.github/CONTRIBUTING.md` (setup, testing philosophy) and `frontend/README.md`.
 Read those before large changes. This file is the short, must-follow version.
 For a deep navigation map (request lifecycle, cron-job table, symptom → file
 index, layering rules), read `docs/architecture.md` on demand — do not guess
@@ -13,7 +13,7 @@ file locations when it can answer in one hop.
   imports `github.com/xtls/xray-core` for config types + gRPC stats/handler/router
   API. MTProto inbounds run a second managed child — the `mtg-multi` binary
   (a multi-secret mtg fork — NOT a Go dependency; its prebuilt release binary is
-  fetched at image/release build time by `DockerInit.sh` + `release.yml`,
+  fetched at image/release build time by `docker/DockerInit.sh` + `release.yml`,
   panel-side code in `internal/mtproto/`) — outside Xray, one process per inbound
   serving each
   client's FakeTLS secret via the fork's `[secrets]` section (plus per-client
@@ -116,6 +116,10 @@ file locations when it can answer in one hop.
   (`internal/web/runtime/`) — never straight to `internal/xray/api.go`, never from
   a controller or cron job. A direct call passes every local test and silently
   breaks every multi-node deployment. Other layering rules: `docs/architecture.md` §8.
+- A user-visible change adds a bullet under `## [Unreleased]` in BOTH `CHANGELOG.md`
+  and `CHANGELOG.ru_RU.md`; a release bump renames it `## [X.Y.Z] - date`. The update
+  dialog and the GitHub release read these files; `TestRepoChangelogsCoverEveryRelease`
+  fails when the version has no entry or the two files disagree.
 - Conventional commits: `type(area): short imperative summary`, then a body
   explaining the why. Types in use: `fix`, `feat`, `chore`, `refactor`, `perf`,
   `docs`, `style`.
