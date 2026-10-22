@@ -3101,6 +3101,7 @@
   },
   "tableColumns": "الأعمدة",
   "tableColumnsShowAll": "إظهار الكل",
+  "tableColumnsNoRoom": "مخفي: لا توجد مساحة كافية. وسّع النافذة لإظهاره.",
   "shortcuts": {
     "title": "اختصارات لوحة المفاتيح",
     "palette": "لوحة الأوامر",

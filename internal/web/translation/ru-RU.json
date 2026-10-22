@@ -3101,6 +3101,7 @@
   },
   "tableColumns": "Столбцы",
   "tableColumnsShowAll": "Показать все",
+  "tableColumnsNoRoom": "Скрыт: не хватает места. Расширьте окно, чтобы показать.",
   "shortcuts": {
     "title": "Горячие клавиши",
     "palette": "Командная палитра",
