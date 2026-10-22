@@ -31,11 +31,17 @@ import { activateOnKey } from '@/utils/a11y';
 
 import { buildRowActionsMenu } from './RowActions';
 import { useColumnVisibility } from '@/components/table/ColumnPicker';
+import { useElementWidth } from '@/hooks/useElementWidth';
 import { useInboundColumns } from './useInboundColumns';
 import { buildHostRemarksByInboundId, formatHostRemarksLabel } from './helpers';
 import InboundStatsModal from './InboundStatsModal';
 import type { DBInboundRecord, GeneralAction, InboundListProps, RowAction } from './types';
 import './InboundList.css';
+
+// antd adds the row-selection checkbox column itself, outside our column list.
+const ROW_SELECTION_WIDTH = 36;
+// Least-read columns drop out first when the table would overflow its card.
+const INBOUND_COLUMN_COLLAPSE_ORDER = ['node', 'subSortIndex', 'expiryTime', 'port', 'enable'];
 
 function HostRemarksSuffix({ remarks }: { remarks: string[] }) {
   if (remarks.length === 0) return null;
@@ -161,17 +167,16 @@ export default function InboundList({
     onRowAction,
     onSwitchEnable,
   });
-  const { columns, picker: columnPicker } = useColumnVisibility('inbounds', allColumns, [
-    'id',
-    'action',
-    'remark',
-  ]);
-
-  const tableScrollX = useMemo(
-    () =>
-      columns.reduce((sum, c) => sum + (!c.hidden && typeof c.width === 'number' ? c.width : 0), 0),
-    [columns],
-  );
+  const [tableBoxRef, tableBoxWidth] = useElementWidth<HTMLDivElement>();
+  const {
+    columns,
+    picker: columnPicker,
+    scrollX: tableScrollX,
+  } = useColumnVisibility('inbounds', allColumns, ['id', 'action', 'remark'], {
+    width: tableBoxWidth,
+    collapseOrder: INBOUND_COLUMN_COLLAPSE_ORDER,
+    reserved: ROW_SELECTION_WIDTH,
+  });
 
   const paginationFor = (rows: DBInboundRecord[]) => {
     const size = pageSize > 0 ? pageSize : rows.length || 1;
@@ -335,27 +340,30 @@ export default function InboundList({
             )}
           </div>
         ) : (
-          <Table
-            columns={columns}
-            dataSource={visibleInbounds}
-            rowKey={(r) => r.id}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: (keys: Key[]) => setSelectedRowKeys(keys as number[]),
-            }}
-            pagination={paginationFor(visibleInbounds)}
-            scroll={{ x: tableScrollX }}
-            style={{ marginTop: 10 }}
-            size="small"
-            locale={{
-              emptyText: (
-                <div className="card-empty">
-                  <ImportOutlined style={{ fontSize: 32, marginBottom: 8 }} />
-                  <div>{t('noData')}</div>
-                </div>
-              ),
-            }}
-          />
+          <div ref={tableBoxRef}>
+            <Table
+              columns={columns}
+              dataSource={visibleInbounds}
+              rowKey={(r) => r.id}
+              rowSelection={{
+                selectedRowKeys,
+                onChange: (keys: Key[]) => setSelectedRowKeys(keys as number[]),
+              }}
+              pagination={paginationFor(visibleInbounds)}
+              tableLayout="fixed"
+              scroll={{ x: tableScrollX }}
+              style={{ marginTop: 10 }}
+              size="small"
+              locale={{
+                emptyText: (
+                  <div className="card-empty">
+                    <ImportOutlined style={{ fontSize: 32, marginBottom: 8 }} />
+                    <div>{t('noData')}</div>
+                  </div>
+                ),
+              }}
+            />
+          </div>
         )}
       </Space>
 
