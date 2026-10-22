@@ -588,7 +588,7 @@ export const sections: readonly Section[] = [
         method: 'GET',
         path: '/panel/api/server/getChangelog',
         summary:
-          'Release notes for the update dialog, read from CHANGELOG.md of the latest release tag (main on the dev channel). With an update available it lists every version after the installed one up to the latest; otherwise the installed version. Sections are added, changed, fixed, removed, breaking and known_issues.',
+          'Release notes for the update dialog, read from CHANGELOG.md of the latest release tag, or of main when that tag predates the file (always main on the dev channel). With an update available it lists every version after the installed one up to the latest; otherwise the installed version. Sections are added, changed, fixed, removed, breaking and known_issues.',
         params: [
           {
             name: 'lang',

@@ -148,59 +148,60 @@ func SelectChangelog(releases []ChangelogRelease, info *PanelUpdateInfo) []Chang
 	return out
 }
 
-// fetchChangelog downloads the changelog at ref, in Russian for ru/uk panels when that
-// file exists, otherwise in English. It returns the text and the file it came from.
-func fetchChangelog(client *http.Client, base, ref, lang string) (string, string, error) {
+// fetchChangelog returns the first changelog found, trying each ref in order and, for
+// ru/uk panels, the Russian file before the English one. The path is "<ref>/<file>".
+func fetchChangelog(client *http.Client, base string, refs []string, lang string) (string, string, error) {
 	files := []string{changelogEnglish}
 	if l := strings.ToLower(lang); strings.HasPrefix(l, "ru") || strings.HasPrefix(l, "uk") {
 		files = []string{changelogRussian, changelogEnglish}
 	}
-	var lastErr error
-	for _, file := range files {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, base+"/"+ref+"/"+file, nil)
-		if err != nil {
-			cancel()
-			return "", "", err
+	lastErr := errors.New("no changelog file to fetch")
+	for _, ref := range refs {
+		for _, file := range files {
+			body, err := fetchChangelogFile(client, base+"/"+ref+"/"+file)
+			if err != nil {
+				lastErr = err
+				continue
+			}
+			return body, ref + "/" + file, nil
 		}
-		resp, err := client.Do(req)
-		if err != nil {
-			cancel()
-			lastErr = err
-			continue
-		}
-		body, err := io.ReadAll(io.LimitReader(resp.Body, maxChangelogBytes))
-		resp.Body.Close()
-		cancel()
-		if err != nil {
-			lastErr = err
-			continue
-		}
-		if resp.StatusCode != http.StatusOK {
-			lastErr = fmt.Errorf("GET %s: %s", file, resp.Status)
-			continue
-		}
-		return string(body), file, nil
-	}
-	if lastErr == nil {
-		lastErr = errors.New("no changelog file to fetch")
 	}
 	return "", "", lastErr
 }
 
-// GetChangelog returns the changelog entries the update dialog shows, read from the
-// latest release tag (or main on the dev channel) so it lists versions this build predates.
+func fetchChangelogFile(client *http.Client, url string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return "", err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("GET %s: %s", url, resp.Status)
+	}
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxChangelogBytes))
+	return string(body), err
+}
+
+// GetChangelog returns the changelog entries the update dialog shows, read from the latest
+// release tag so it lists versions this build predates. Tags up to 1.8.4 predate the file,
+// so main is the fallback; the dev channel reads main directly.
 func (s *PanelService) GetChangelog(lang string) (*PanelChangelog, error) {
 	info, err := s.GetUpdateInfo()
 	if err != nil {
 		return nil, err
 	}
-	ref := info.LatestVersion
+	refs := []string{info.LatestVersion, "main"}
 	if info.Channel == "dev" {
-		ref = "main"
+		refs = []string{"main"}
 	}
 	client := (&service.SettingService{}).NewProxiedHTTPClient(10 * time.Second)
-	md, file, err := fetchChangelog(client, changelogBaseURL, ref, lang)
+	md, path, err := fetchChangelog(client, changelogBaseURL, refs, lang)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +209,7 @@ func (s *PanelService) GetChangelog(lang string) (*PanelChangelog, error) {
 	return &PanelChangelog{
 		CurrentVersion: config.GetBaseVersion(),
 		LatestVersion:  info.LatestVersion,
-		URL:            changelogPageURL + ref + "/" + file,
+		URL:            changelogPageURL + path,
 		Releases:       SelectChangelog(releases, info),
 	}, nil
 }
