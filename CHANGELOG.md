@@ -11,6 +11,11 @@ and the version that fixes them).
 
 ## [Unreleased]
 
+### Breaking
+- A child panel with a self-signed certificate can only be enrolled with an invite it
+  generated on this version or later (the invite must carry the certificate pin).
+  Update the child, or give it a publicly trusted certificate.
+
 ### Added
 - **Update** dialog shows the changelog between the installed version and the
   new one, in English or Russian depending on the panel language.
@@ -50,6 +55,13 @@ and the version that fixes them).
   the inbounds page; the node tabs replace them.
 
 ### Fixed
+- Enrolling a node from an invite no longer trusts any TLS certificate. The child
+  answers with an admin API token, so anyone on the path could read the one-time code
+  and the token. Invites of https panels now carry their certificate's SHA-256; the
+  master sends the code only to a publicly trusted certificate or one matching that
+  pin, and keeps a self-signed node in `pin` TLS mode. Invite addresses must be
+  plain http(s) URLs (CodeQL #10, #11).
+- The release workflow's version gate runs with a read-only token (CodeQL #14).
 - The clients table overflowed its card on windows narrower than about
   1600 px and clipped the speed column at the card's edge.
 

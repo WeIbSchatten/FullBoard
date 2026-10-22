@@ -2,16 +2,25 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
+	"crypto/subtle"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/util/netsafe"
+	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/runtime"
 	"github.com/WeIbSchatten/We1ssBoard/v3/internal/web/session"
 )
 
@@ -21,7 +30,13 @@ type EnrollInvitePayload struct {
 	V    int    `json:"v"`
 	Base string `json:"base"`
 	Code string `json:"code"`
+	// Pin is the hex SHA-256 of the child's TLS leaf certificate, so a master can trust
+	// a self-signed child on first contact; empty for http panels or without a cert file.
+	Pin string `json:"pin,omitempty"`
 }
+
+// enrollRootCAs replaces the system roots in tests; nil means the system pool.
+var enrollRootCAs *x509.CertPool
 
 type EnrollInviteResponse struct {
 	Invite    string `json:"invite" example:"fb-enroll-1.eyJ2IjoxLCJiYXNlIjoiaHR0cHM6Ly9ldS5leGFtcGxlLmNvbTozMDAwLyIsImNvZGUiOiJhYmMifQ"`
@@ -61,11 +76,15 @@ func (s *SettingService) IssueEnrollInvite(publicBase string) (EnrollInviteRespo
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		return EnrollInviteResponse{}, fmt.Errorf("public base URL must include scheme and host")
 	}
+	pin := ""
+	if u.Scheme == "https" {
+		pin = s.panelCertPin()
+	}
 	code, err := session.IssueEnrollInviteCode(base)
 	if err != nil {
 		return EnrollInviteResponse{}, err
 	}
-	raw, err := json.Marshal(EnrollInvitePayload{V: 1, Base: base, Code: code})
+	raw, err := json.Marshal(EnrollInvitePayload{V: 1, Base: base, Code: code, Pin: pin})
 	if err != nil {
 		return EnrollInviteResponse{}, err
 	}
@@ -74,6 +93,25 @@ func (s *SettingService) IssueEnrollInvite(publicBase string) (EnrollInviteRespo
 		ExpiresIn: int(session.EnrollInviteTTL.Seconds()),
 		BaseURL:   base,
 	}, nil
+}
+
+// panelCertPin hashes the leaf of the panel's own certificate file. A panel behind a
+// proxy with its own certificate gets no usable pin, and the master falls back to CA checks.
+func (s *SettingService) panelCertPin() string {
+	file, err := s.GetCertFile()
+	if err != nil || strings.TrimSpace(file) == "" {
+		return ""
+	}
+	raw, err := os.ReadFile(file)
+	if err != nil {
+		return ""
+	}
+	block, _ := pem.Decode(raw)
+	if block == nil || block.Type != "CERTIFICATE" {
+		return ""
+	}
+	sum := sha256.Sum256(block.Bytes)
+	return hex.EncodeToString(sum[:])
 }
 
 // GuessPanelBaseURL builds https?://domain|listen:port/basePath/ from settings.
@@ -193,10 +231,11 @@ func (s *NodeService) EnrollFromInvite(req EnrollFromInviteRequest) (*NodeView, 
 	if err != nil {
 		return nil, err
 	}
-	consumeURL, err := url.JoinPath(payload.Base, "enroll/consume")
+	base, err := validateEnrollBase(payload.Base)
 	if err != nil {
 		return nil, err
 	}
+	consumeURL := base.JoinPath("enroll/consume").String()
 	body, _ := json.Marshal(map[string]string{"code": payload.Code})
 	httpReq, err := http.NewRequestWithContext(context.Background(), http.MethodPost, consumeURL, strings.NewReader(string(body)))
 	if err != nil {
@@ -204,13 +243,19 @@ func (s *NodeService) EnrollFromInvite(req EnrollFromInviteRequest) (*NodeView, 
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-Requested-With", "XMLHttpRequest")
-	// First contact trusts the invite URL; TLS pin/verify can be set after.
+	pinned := false
+	tlsCfg, err := enrollTLSConfig(base.Hostname(), payload.Pin, &pinned)
+	if err != nil {
+		return nil, err
+	}
 	client := &http.Client{
 		Timeout: 20 * time.Second,
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, //nolint:gosec // intentional for one-shot enroll
+			DialContext:     netsafe.SSRFGuardedDialContext,
+			TLSClientConfig: tlsCfg,
 		},
 	}
+	httpReq = httpReq.WithContext(netsafe.ContextWithAllowPrivate(httpReq.Context(), true))
 	resp, err := client.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("contact child panel: %w", err)
@@ -239,7 +284,13 @@ func (s *NodeService) EnrollFromInvite(req EnrollFromInviteRequest) (*NodeView, 
 		name = env.Obj.Address
 	}
 	token := env.Obj.ApiToken
+	tlsMode, certPin := "", ""
+	if pinned {
+		tlsMode, certPin = "pin", payload.Pin
+	}
 	return s.CreateFromRequest(&NodeMutationRequest{
+		TlsVerifyMode:       tlsMode,
+		PinnedCertSha256:    certPin,
 		Name:                name,
 		Scheme:              env.Obj.Scheme,
 		Address:             env.Obj.Address,
@@ -250,4 +301,59 @@ func (s *NodeService) EnrollFromInvite(req EnrollFromInviteRequest) (*NodeView, 
 		AllowPrivateAddress: true,
 		InboundSyncMode:     "all",
 	})
+}
+
+// validateEnrollBase accepts only a plain http(s) panel address: the invite is pasted
+// text, and its base decides where the one-time code and the reply go.
+func validateEnrollBase(raw string) (*url.URL, error) {
+	u, err := url.Parse(strings.TrimSpace(raw))
+	if err != nil {
+		return nil, fmt.Errorf("invite address is not a URL: %w", err)
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return nil, fmt.Errorf("invite address must be http or https, got %q", u.Scheme)
+	}
+	if u.User != nil || u.RawQuery != "" || u.Fragment != "" || u.Opaque != "" {
+		return nil, errors.New("invite address must not carry credentials, a query or a fragment")
+	}
+	if _, err := netsafe.NormalizeHost(u.Hostname()); err != nil {
+		return nil, fmt.Errorf("invite address: %w", err)
+	}
+	return u, nil
+}
+
+// enrollTLSConfig trusts the child when its certificate chains to the system roots or,
+// failing that, matches the invite's pin; *pinned reports that only the pin vouched for it.
+func enrollTLSConfig(serverName, pin string, pinned *bool) (*tls.Config, error) {
+	if pin == "" {
+		return &tls.Config{ServerName: serverName, RootCAs: enrollRootCAs, MinVersion: tls.VersionTLS12}, nil
+	}
+	want, err := runtime.DecodeCertPin(pin)
+	if err != nil {
+		return nil, fmt.Errorf("invite certificate pin: %w", err)
+	}
+	return &tls.Config{
+		ServerName: serverName,
+		MinVersion: tls.VersionTLS12,
+		// Chain and pin are both checked in VerifyConnection, so a self-signed child can pass.
+		InsecureSkipVerify: true,
+		VerifyConnection: func(cs tls.ConnectionState) error {
+			if len(cs.PeerCertificates) == 0 {
+				return errors.New("child panel presented no certificate")
+			}
+			opts := x509.VerifyOptions{DNSName: serverName, Roots: enrollRootCAs, Intermediates: x509.NewCertPool()}
+			for _, c := range cs.PeerCertificates[1:] {
+				opts.Intermediates.AddCert(c)
+			}
+			if _, err := cs.PeerCertificates[0].Verify(opts); err == nil {
+				return nil
+			}
+			sum := sha256.Sum256(cs.PeerCertificates[0].Raw)
+			if subtle.ConstantTimeCompare(sum[:], want) != 1 {
+				return errors.New("child panel certificate does not match the invite pin")
+			}
+			*pinned = true
+			return nil
+		},
+	}, nil
 }
