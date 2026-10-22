@@ -19,7 +19,8 @@ const FORMATTER_BOUNDARY_RATE = {
   up: SizeFormatter.ONE_GB - 1,
   down: SizeFormatter.ONE_GB - 1,
 } as const;
-const FORMATTER_BOUNDARY_NATURAL_WIDTH = 192.765625;
+// Widest single line "↑ 1024.00 MB/s" in Chromium plus the tag's padding and border.
+const FORMATTER_BOUNDARY_NATURAL_WIDTH = 101.609375;
 
 function firstTag(): HTMLElement {
   const tag = document.querySelector('.ant-tag');
@@ -74,7 +75,10 @@ describe('stable table speed tags (issue #5912)', () => {
     );
     const tags = Array.from(document.querySelectorAll<HTMLElement>('.ant-tag'));
     expect(tags).toHaveLength(2);
-    expect(tags[0]?.textContent).toBe('↑ 1024.00 MB/s / ↓ 1024.00 MB/s');
+    expect(Array.from(tags[0]?.children ?? [], (line) => line.textContent)).toEqual([
+      '↑ 1024.00 MB/s',
+      '↓ 1024.00 MB/s',
+    ]);
     expect(tags[1]?.textContent).toBe(tags[0]?.textContent);
     for (const tag of tags) expectStableTableTag(tag);
 

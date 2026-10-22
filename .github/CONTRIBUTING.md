@@ -224,7 +224,7 @@ frontend/
     └── utils/             — HttpUtil, ClipboardManager, SizeFormatter, …
 ```
 
-For deeper notes on the frontend toolchain see [`frontend/README.md`](frontend/README.md).
+For deeper notes on the frontend toolchain see [`frontend/README.md`](../frontend/README.md).
 
 ## Project layout
 
@@ -238,6 +238,9 @@ For deeper notes on the frontend toolchain see [`frontend/README.md`](frontend/R
 | `internal/sub/` | Subscription endpoints (raw, JSON, Clash) |
 | `internal/config/` | Environment-variable helpers, paths, defaults |
 | `we1ssboard/` | **Runtime data** — db, logs, xray binary, geo files (gitignored) |
+| `docker/` | `DockerInit.sh` (fetches Xray, mtg-multi, geo files) and `DockerEntrypoint.sh` |
+| `packaging/` | systemd units and the OpenRC script that `install.sh` / `update.sh` install |
+| `CHANGELOG.md`, `CHANGELOG.ru_RU.md` | Release notes, read by the panel's update dialog and the GitHub release |
 
 ## Testing
 
@@ -297,7 +300,11 @@ CI runs this for you nightly (and on demand) via `.github/workflows/mutation.yml
    - `go test ./...` (when Go code changed)
    - `cd frontend && npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build && npm run build-storybook` (when the frontend changed; CI runs this same set on every PR via `.github/workflows/ci.yml`)
 4. Commit messages follow the existing pattern in `git log` — `<area>: short imperative summary`, then a body explaining the *why*. Conventional-commit prefixes (`feat`, `fix`, `refactor`, `chore`, `style`, `docs`) are encouraged.
-5. Open the PR against `main` with a brief description of what changed and how to test it.
+5. A user-visible change adds a bullet under `## [Unreleased]` in **both** `CHANGELOG.md` and
+   `CHANGELOG.ru_RU.md` (Added / Changed / Fixed / Removed / Breaking / Known issues). The
+   release-bump PR renames that heading to `## [X.Y.Z] - YYYY-MM-DD`; `release.yml` refuses a
+   tag without an entry.
+6. Open the PR against `main` with a brief description of what changed and how to test it.
 
 ## Useful environment variables
 

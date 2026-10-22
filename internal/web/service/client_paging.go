@@ -65,6 +65,8 @@ type ClientPageParams struct {
 	HasTgID    string `form:"hasTgId"`
 	HasComment string `form:"hasComment"`
 	Group      string `form:"group"`
+	// Node scopes everything, summary included, to one tab: "local" or a node id.
+	Node string `form:"node"`
 }
 
 // ClientPageResponse is the shape returned by ListPaged. `Total` is the
@@ -167,6 +169,7 @@ func clientSearchCond(variants []string) (string, []any) {
 type clientQuery struct {
 	db               *gorm.DB
 	joins            []clientQueryJoin
+	scope            *clientQueryJoin
 	usedExpr         string
 	nowMs            int64
 	expireDiffMs     int64
@@ -212,7 +215,34 @@ func (q clientQuery) from() *gorm.DB {
 	for _, j := range q.joins {
 		tx = tx.Joins(j.sql, j.args...)
 	}
+	if q.scope != nil {
+		tx = tx.Where(q.scope.sql, q.scope.args...)
+	}
 	return tx
+}
+
+// withNode limits every statement to one clients-page tab. "local" keeps clients with a
+// panel inbound or none at all; a node id keeps clients on that node's inbounds.
+func (q clientQuery) withNode(node string) clientQuery {
+	node = strings.TrimSpace(node)
+	switch {
+	case node == "":
+	case strings.EqualFold(node, "local"):
+		q.scope = &clientQueryJoin{sql: "(NOT EXISTS (SELECT 1 FROM client_inbounds ci WHERE ci.client_id = c.id)" +
+			" OR EXISTS (SELECT 1 FROM client_inbounds ci JOIN inbounds ib ON ib.id = ci.inbound_id" +
+			" WHERE ci.client_id = c.id AND ib.node_id IS NULL))"}
+	default:
+		id, err := strconv.Atoi(node)
+		if err != nil {
+			id = -1
+		}
+		q.scope = &clientQueryJoin{
+			sql: "EXISTS (SELECT 1 FROM client_inbounds ci JOIN inbounds ib ON ib.id = ci.inbound_id" +
+				" WHERE ci.client_id = c.id AND ib.node_id = ?)",
+			args: []any{id},
+		}
+	}
+	return q
 }
 
 func (q clientQuery) depletedExpr() string {
@@ -400,10 +430,14 @@ func (s *ClientService) ListPaged(inboundSvc *InboundService, settingSvc *Settin
 	}
 
 	onlines := inboundSvc.GetOnlineClients()
-	q := newClientQuery(db, time.Now().UnixMilli(), expireDiffMs, trafficDiffBytes)
+	q := newClientQuery(db, time.Now().UnixMilli(), expireDiffMs, trafficDiffBytes).withNode(params.Node)
 
 	var total int64
-	if err := db.Model(&model.ClientRecord{}).Count(&total).Error; err != nil {
+	counter := db.Model(&model.ClientRecord{})
+	if q.scope != nil {
+		counter = q.from()
+	}
+	if err := counter.Count(&total).Error; err != nil {
 		return nil, err
 	}
 
@@ -582,10 +616,10 @@ func (q clientQuery) onlineEmails(onlines []string) ([]string, int, error) {
 	count := 0
 	for _, batch := range chunkStrings(onlines, sqlInChunk) {
 		var page []string
-		if err := q.db.Model(&model.ClientRecord{}).
-			Where("COALESCE(enable, FALSE) = TRUE AND email IN ?", batch).
-			Order("id ASC").
-			Pluck("email", &page).Error; err != nil {
+		if err := q.from().
+			Where(sqlClientEnabled+" = TRUE AND c.email IN ?", batch).
+			Order("c.id ASC").
+			Pluck("c.email", &page).Error; err != nil {
 			return nil, 0, err
 		}
 		count += len(page)

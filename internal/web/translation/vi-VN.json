@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel đã được cập nhật",
       "devChannel": "Kênh phát triển",
       "devChannelWarning": "Bản dev bám theo từng commit trên main và không phải bản ổn định — không có hạ cấp tự động.",
+      "changelog": {
+        "title": "Có gì mới",
+        "current": "Nội dung phiên bản của bạn",
+        "failed": "Không tải được nhật ký thay đổi.",
+        "openFull": "Toàn bộ nhật ký thay đổi",
+        "empty": "Không có mục nào cho các phiên bản này.",
+        "kinds": {
+          "added": "Thêm mới",
+          "changed": "Thay đổi",
+          "fixed": "Sửa lỗi",
+          "removed": "Gỡ bỏ",
+          "breaking": "Không tương thích",
+          "known_issues": "Sự cố đã biết"
+        }
+      },
       "currentCommit": "Commit hiện tại",
       "latestCommit": "Commit mới nhất",
       "updateChannelChanged": "Đã đổi kênh cập nhật",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "Tìm email, ghi chú, sub ID, UUID, mật khẩu, auth, Telegram ID…",
       "filterTitle": "Lọc client",
       "clearAllFilters": "Xóa tất cả",
-      "filters": {
-        "nodes": "Nút",
-        "localPanel": "Cục bộ (bảng này)"
-      },
       "showingCount": "Hiển thị {shown} trên {total}",
       "sortOldest": "Cũ nhất trước",
       "sortNewest": "Mới nhất trước",
@@ -2715,7 +2726,9 @@
         "addToSubs": "Thêm vào gói đăng ký",
         "addToSubsTitle": "Thêm \"{name}\" vào gói đăng ký của khách hàng",
         "addToSubsHint": "Mỗi khách hàng được chọn sẽ nhận liên kết https://t.me/webproxy của hồ sơ này trong gói đăng ký. Khách hàng đang gắn với hồ sơ khác sẽ được chuyển sang hồ sơ này.",
-        "selectClients": "Chọn khách hàng"
+        "selectClients": "Chọn khách hàng",
+        "selectAll": "Chọn tất cả ({count})",
+        "selectAllHint": "«Chọn tất cả» bỏ qua client đã có TG Web Proxy và client chỉ nằm trên inbound của node đã kết nối."
       },
       "egress": {
         "button": "Kiểm tra IP thoát",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "Cột",
   "tableColumnsShowAll": "Hiện tất cả",
+  "tableColumnsNoRoom": "Đã ẩn: không đủ chỗ. Mở rộng cửa sổ để hiển thị.",
   "shortcuts": {
     "title": "Phím tắt",
     "palette": "Bảng lệnh",

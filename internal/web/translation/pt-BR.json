@@ -200,6 +200,21 @@
       "panelUpToDate": "O painel está atualizado",
       "devChannel": "Canal de desenvolvimento",
       "devChannelWarning": "As builds de desenvolvimento acompanham cada commit na main e não são versões estáveis — não há downgrade automático.",
+      "changelog": {
+        "title": "Novidades",
+        "current": "O que há na sua versão",
+        "failed": "Não foi possível carregar o changelog.",
+        "openFull": "Changelog completo",
+        "empty": "Não há entradas para estas versões.",
+        "kinds": {
+          "added": "Adicionado",
+          "changed": "Alterado",
+          "fixed": "Corrigido",
+          "removed": "Removido",
+          "breaking": "Incompatível",
+          "known_issues": "Problemas conhecidos"
+        }
+      },
       "currentCommit": "Commit atual",
       "latestCommit": "Último commit",
       "updateChannelChanged": "Canal de atualização alterado",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "Buscar email, comentário, sub ID, UUID, senha, auth, Telegram ID…",
       "filterTitle": "Filtrar clientes",
       "clearAllFilters": "Limpar tudo",
-      "filters": {
-        "nodes": "Nós",
-        "localPanel": "Local (este painel)"
-      },
       "showingCount": "Mostrando {shown} de {total}",
       "sortOldest": "Mais antigos primeiro",
       "sortNewest": "Mais novos primeiro",
@@ -2715,7 +2726,9 @@
         "addToSubs": "Adicionar às assinaturas",
         "addToSubsTitle": "Adicionar \"{name}\" às assinaturas dos clientes",
         "addToSubsHint": "Cada cliente selecionado recebe o link https://t.me/webproxy deste perfil na assinatura. Um cliente já vinculado a outro perfil passa para este.",
-        "selectClients": "Selecione clientes"
+        "selectClients": "Selecione clientes",
+        "selectAll": "Selecionar todos ({count})",
+        "selectAllHint": "«Selecionar todos» ignora clientes que já têm TG Web Proxy e clientes que existem só em inbounds de um nó conectado."
       },
       "egress": {
         "button": "Verificar IP de saída",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "Colunas",
   "tableColumnsShowAll": "Mostrar todas",
+  "tableColumnsNoRoom": "Oculta: falta espaço. Amplie a janela para exibi-la.",
   "shortcuts": {
     "title": "Atalhos de teclado",
     "palette": "Paleta de comandos",

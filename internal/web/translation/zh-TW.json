@@ -200,6 +200,21 @@
       "panelUpToDate": "面板已是最新",
       "devChannel": "開發通道",
       "devChannelWarning": "開發版會追蹤 main 的每次提交，並非穩定版本，且無法自動降級。",
+      "changelog": {
+        "title": "更新內容",
+        "current": "目前版本內容",
+        "failed": "無法載入更新日誌。",
+        "openFull": "完整更新日誌",
+        "empty": "這些版本沒有更新日誌。",
+        "kinds": {
+          "added": "新增",
+          "changed": "變更",
+          "fixed": "修正",
+          "removed": "移除",
+          "breaking": "不相容變更",
+          "known_issues": "已知問題"
+        }
+      },
       "currentCommit": "目前提交",
       "latestCommit": "最新提交",
       "updateChannelChanged": "更新通道已切換",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "搜尋電子郵件、備註、sub ID、UUID、密碼、auth、Telegram ID…",
       "filterTitle": "篩選客戶端",
       "clearAllFilters": "清除全部",
-      "filters": {
-        "nodes": "節點",
-        "localPanel": "本機（此面板）"
-      },
       "showingCount": "顯示 {shown} / {total}",
       "sortOldest": "最舊優先",
       "sortNewest": "最新優先",
@@ -2715,7 +2726,9 @@
         "addToSubs": "加入訂閱",
         "addToSubsTitle": "將「{name}」加入客戶端訂閱",
         "addToSubsHint": "每個選取的客戶端會在訂閱中取得此設定的 https://t.me/webproxy 連結。已綁定其他設定的客戶端會改為此設定。",
-        "selectClients": "選擇客戶端"
+        "selectClients": "選擇客戶端",
+        "selectAll": "全選（{count}）",
+        "selectAllHint": "「全選」會略過已有 TG Web Proxy 的用戶端，以及僅存在於已連線節點入站上的用戶端。"
       },
       "egress": {
         "button": "檢查出口 IP",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "欄位",
   "tableColumnsShowAll": "全部顯示",
+  "tableColumnsNoRoom": "已隱藏：空間不足。加寬視窗即可顯示。",
   "shortcuts": {
     "title": "鍵盤快捷鍵",
     "palette": "命令面板",

@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel is up to date",
       "devChannel": "Dev channel",
       "devChannelWarning": "Dev builds track every commit on main and aren't stable releases — there is no automatic downgrade.",
+      "changelog": {
+        "title": "What's new",
+        "current": "What's in your version",
+        "failed": "Could not load the changelog.",
+        "openFull": "Full changelog",
+        "empty": "No changelog entries for these versions.",
+        "kinds": {
+          "added": "Added",
+          "changed": "Changed",
+          "fixed": "Fixed",
+          "removed": "Removed",
+          "breaking": "Breaking",
+          "known_issues": "Known issues"
+        }
+      },
       "currentCommit": "Current commit",
       "latestCommit": "Latest commit",
       "updateChannelChanged": "Update channel changed",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "Search email, comment, sub ID, UUID, password, auth, Telegram ID…",
       "filterTitle": "Filter clients",
       "clearAllFilters": "Clear all",
-      "filters": {
-        "nodes": "Nodes",
-        "localPanel": "Local (this panel)"
-      },
       "showingCount": "Showing {shown} of {total}",
       "sortOldest": "Oldest first",
       "sortNewest": "Newest first",
@@ -1375,7 +1386,9 @@
         "addToSubs": "Add to subscriptions",
         "addToSubsTitle": "Add \"{name}\" to client subscriptions",
         "addToSubsHint": "Each selected client gets this profile's https://t.me/webproxy link in its raw subscription. A client already bound elsewhere is moved to this profile.",
-        "selectClients": "Select clients"
+        "selectClients": "Select clients",
+        "selectAll": "Select all ({count})",
+        "selectAllHint": "Select all skips clients that already have TG Web Proxy and clients that exist only on a connected node's inbounds."
       },
       "egress": {
         "button": "Check egress IP",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "Columns",
   "tableColumnsShowAll": "Show all",
+  "tableColumnsNoRoom": "Hidden: not enough room. Widen the window to show it.",
   "shortcuts": {
     "title": "Keyboard shortcuts",
     "palette": "Command palette",

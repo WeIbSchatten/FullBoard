@@ -200,6 +200,21 @@
       "panelUpToDate": "Панель оновлено",
       "devChannel": "Канал розробки",
       "devChannelWarning": "Збірки розробки відстежують кожен коміт у main і не є стабільними релізами — автоматичного відкату немає.",
+      "changelog": {
+        "title": "Що нового",
+        "current": "Що у вашій версії",
+        "failed": "Не вдалося завантажити список змін.",
+        "openFull": "Увесь список змін",
+        "empty": "Для цих версій немає записів у списку змін.",
+        "kinds": {
+          "added": "Додано",
+          "changed": "Змінено",
+          "fixed": "Виправлено",
+          "removed": "Видалено",
+          "breaking": "Несумісно",
+          "known_issues": "Відомі проблеми"
+        }
+      },
       "currentCommit": "Поточний коміт",
       "latestCommit": "Останній коміт",
       "updateChannelChanged": "Канал оновлення змінено",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "Пошук email, коментаря, sub ID, UUID, паролю, auth, Telegram ID…",
       "filterTitle": "Фільтр клієнтів",
       "clearAllFilters": "Очистити все",
-      "filters": {
-        "nodes": "Вузли",
-        "localPanel": "Локально (ця панель)"
-      },
       "showingCount": "Показано {shown} з {total}",
       "sortOldest": "Спочатку старі",
       "sortNewest": "Спочатку нові",
@@ -2715,7 +2726,9 @@
         "addToSubs": "Додати до підписок",
         "addToSubsTitle": "Додати «{name}» до підписок клієнтів",
         "addToSubsHint": "Кожен вибраний клієнт отримає посилання https://t.me/webproxy цього профілю у звичайній підписці. Клієнта, прив'язаного до іншого профілю, буде перенесено на цей.",
-        "selectClients": "Виберіть клієнтів"
+        "selectClients": "Виберіть клієнтів",
+        "selectAll": "Вибрати всіх ({count})",
+        "selectAllHint": "«Вибрати всіх» пропускає клієнтів, які вже мають TG Web Proxy, і клієнтів, що є лише на інбаундах підключених вузлів."
       },
       "egress": {
         "button": "Перевірити IP виходу",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "Стовпці",
   "tableColumnsShowAll": "Показати всі",
+  "tableColumnsNoRoom": "Приховано: бракує місця. Розширте вікно, щоб показати.",
   "shortcuts": {
     "title": "Гарячі клавіші",
     "palette": "Командна палітра",

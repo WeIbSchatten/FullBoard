@@ -200,6 +200,21 @@
       "panelUpToDate": "پنل به‌روز است",
       "devChannel": "کانال توسعه (Dev)",
       "devChannelWarning": "بیلدهای توسعه هر کامیت روی main را دنبال می‌کنند و نسخهٔ پایدار نیستند — بازگشت خودکار به نسخهٔ قبلی وجود ندارد.",
+      "changelog": {
+        "title": "تازه‌ها",
+        "current": "تغییرات نسخهٔ شما",
+        "failed": "بارگیری فهرست تغییرات ناموفق بود.",
+        "openFull": "فهرست کامل تغییرات",
+        "empty": "برای این نسخه‌ها موردی ثبت نشده است.",
+        "kinds": {
+          "added": "افزوده شد",
+          "changed": "تغییر کرد",
+          "fixed": "رفع شد",
+          "removed": "حذف شد",
+          "breaking": "ناسازگار",
+          "known_issues": "مشکلات شناخته‌شده"
+        }
+      },
       "currentCommit": "کامیت فعلی",
       "latestCommit": "آخرین کامیت",
       "updateChannelChanged": "کانال به‌روزرسانی تغییر کرد",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "جستجوی ایمیل، توضیح، Sub ID، UUID، رمز، احراز، Telegram ID...",
       "filterTitle": "فیلتر کاربران",
       "clearAllFilters": "پاک کردن همه",
-      "filters": {
-        "nodes": "نودها",
-        "localPanel": "محلی (همین پنل)"
-      },
       "showingCount": "نمایش {shown} از {total}",
       "sortOldest": "قدیمی‌ترین",
       "sortNewest": "جدیدترین",
@@ -2715,7 +2726,9 @@
         "addToSubs": "افزودن به اشتراک‌ها",
         "addToSubsTitle": "افزودن «{name}» به اشتراک کاربران",
         "addToSubsHint": "هر کاربر انتخاب‌شده لینک https://t.me/webproxy این پروفایل را در اشتراک خود می‌گیرد. کاربری که به پروفایل دیگری متصل است به این پروفایل منتقل می‌شود.",
-        "selectClients": "کاربران را انتخاب کنید"
+        "selectClients": "کاربران را انتخاب کنید",
+        "selectAll": "انتخاب همه ({count})",
+        "selectAllHint": "«انتخاب همه» کاربرانی را که از قبل TG Web Proxy دارند و کاربرانی را که فقط روی ورودی‌های یک نود متصل هستند، رد می‌کند."
       },
       "egress": {
         "button": "بررسی IP خروجی",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "ستون‌ها",
   "tableColumnsShowAll": "نمایش همه",
+  "tableColumnsNoRoom": "پنهان: جای کافی نیست. برای نمایش، پنجره را بزرگ‌تر کنید.",
   "shortcuts": {
     "title": "میان‌برهای صفحه‌کلید",
     "palette": "پالت فرمان",

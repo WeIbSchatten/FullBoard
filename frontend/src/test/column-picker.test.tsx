@@ -3,7 +3,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
-import { useColumnVisibility } from '@/components/table/ColumnPicker';
+import { useColumnVisibility, type ColumnFit } from '@/components/table/ColumnPicker';
 import { renderWithProviders } from './test-utils';
 
 interface Row {
@@ -13,12 +13,12 @@ interface Row {
 }
 
 const COLUMNS: ColumnsType<Row> = [
-  { key: 'name', title: 'Name', dataIndex: 'name' },
-  { key: 'port', title: 'Port', dataIndex: 'port' },
+  { key: 'name', title: 'Name', dataIndex: 'name', width: 200 },
+  { key: 'port', title: 'Port', dataIndex: 'port', width: 120 },
 ];
 
-function Harness() {
-  const { columns, picker } = useColumnVisibility('test-table', COLUMNS, ['name']);
+function Harness({ fit }: { fit?: ColumnFit }) {
+  const { columns, picker } = useColumnVisibility('test-table', COLUMNS, ['name'], fit);
   return (
     <>
       {picker}
@@ -51,5 +51,20 @@ describe('useColumnVisibility', () => {
     renderWithProviders(<Harness />);
     expect(screen.queryByRole('columnheader', { name: 'Port' })).toBeNull();
     expect(screen.getByRole('columnheader', { name: 'Name' })).toBeTruthy();
+  });
+
+  // A column dropped for lack of room must not read as shown, or as hidden by the user.
+  it('shows a column that does not fit as unchecked and locked until there is room', async () => {
+    const fit = { width: 250, collapseOrder: ['port'] };
+    const view = renderWithProviders(<Harness fit={fit} />);
+    expect(screen.queryByRole('columnheader', { name: 'Port' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Columns' }));
+    const port = (await screen.findByRole('checkbox', { name: 'Port' })) as HTMLInputElement;
+    expect(port.checked).toBe(false);
+    expect(port.disabled).toBe(true);
+
+    view.rerender(<Harness fit={{ ...fit, width: 400 }} />);
+    expect(screen.getByRole('columnheader', { name: 'Port' })).toBeTruthy();
   });
 });

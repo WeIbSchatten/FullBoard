@@ -6,6 +6,7 @@ import { CloudDownloadOutlined } from '@ant-design/icons';
 import { HttpUtil, PromiseUtil } from '@/utils';
 import { formatPanelVersion } from '@/lib/panel-version';
 import type { PanelUpdateStatus } from '@/generated/types';
+import PanelChangelog from './PanelChangelog';
 import './PanelUpdateModal.css';
 
 type UpdateOutcome = 'success' | 'failed' | 'timeout';
@@ -184,6 +185,8 @@ export default function PanelUpdateModal({
             </div>
           )}
         </div>
+
+        {open && <PanelChangelog updateAvailable={info.updateAvailable} />}
 
         <div className="actions-row">
           <Button

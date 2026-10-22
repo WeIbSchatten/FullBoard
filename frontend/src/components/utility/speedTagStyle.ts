@@ -1,12 +1,14 @@
 import type { CSSProperties } from 'react';
 
 export const SPEED_TAG_CLASS_NAME = 'table-speed-tag' as const;
-export const SPEED_TAG_WIDTH = 200 as const;
+// Up and down rates stack on two lines in table cells so the column stays narrow.
+export const SPEED_TAG_WIDTH = 112 as const;
 export const SPEED_TABLE_CELL_INLINE_PADDING = 8 as const;
 
 export const SPEED_TAG_STYLE = {
   width: SPEED_TAG_WIDTH,
   display: 'inline-flex',
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   textAlign: 'center',

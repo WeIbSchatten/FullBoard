@@ -442,6 +442,26 @@ export const CaddyH2WSStatusSchema = z.object({
 });
 export type CaddyH2WSStatus = z.infer<typeof CaddyH2WSStatusSchema>;
 
+export const ChangelogItemSchema = z.object({
+  sub: z.array(z.string()).optional(),
+  text: z.string(),
+});
+export type ChangelogItem = z.infer<typeof ChangelogItemSchema>;
+
+export const ChangelogReleaseSchema = z.object({
+  date: z.string().optional(),
+  note: z.string().optional(),
+  sections: z.array(z.lazy(() => ChangelogSectionSchema)),
+  version: z.string(),
+});
+export type ChangelogRelease = z.infer<typeof ChangelogReleaseSchema>;
+
+export const ChangelogSectionSchema = z.object({
+  items: z.array(z.lazy(() => ChangelogItemSchema)),
+  kind: z.string(),
+});
+export type ChangelogSection = z.infer<typeof ChangelogSectionSchema>;
+
 export const ClientSchema = z.object({
   adTag: z.string().optional(),
   allowedIPs: z.array(z.string()).optional(),
@@ -1040,6 +1060,14 @@ export const OutboundTrafficsSchema = z.object({
   up: z.number().int(),
 });
 export type OutboundTraffics = z.infer<typeof OutboundTrafficsSchema>;
+
+export const PanelChangelogSchema = z.object({
+  currentVersion: z.string(),
+  latestVersion: z.string(),
+  releases: z.array(z.lazy(() => ChangelogReleaseSchema)),
+  url: z.string(),
+});
+export type PanelChangelog = z.infer<typeof PanelChangelogSchema>;
 
 export const PanelUpdateStatusSchema = z.object({
   exitCode: z.number().int(),

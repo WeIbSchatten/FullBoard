@@ -200,6 +200,21 @@
       "panelUpToDate": "Panel güncel",
       "devChannel": "Geliştirme kanalı",
       "devChannelWarning": "Geliştirme yapıları main üzerindeki her commit'i izler ve kararlı sürüm değildir — otomatik geri alma yoktur.",
+      "changelog": {
+        "title": "Yenilikler",
+        "current": "Sürümünüzde neler var",
+        "failed": "Değişiklik günlüğü yüklenemedi.",
+        "openFull": "Tüm değişiklik günlüğü",
+        "empty": "Bu sürümler için kayıt yok.",
+        "kinds": {
+          "added": "Eklendi",
+          "changed": "Değişti",
+          "fixed": "Düzeltildi",
+          "removed": "Kaldırıldı",
+          "breaking": "Uyumsuz",
+          "known_issues": "Bilinen sorunlar"
+        }
+      },
       "currentCommit": "Geçerli commit",
       "latestCommit": "Son commit",
       "updateChannelChanged": "Güncelleme kanalı değiştirildi",
@@ -830,10 +845,6 @@
       "searchPlaceholder": "E-posta, yorum, sub ID, UUID, parola, auth, Telegram ID ara…",
       "filterTitle": "Kullanıcıları Filtrele",
       "clearAllFilters": "Tümünü Temizle",
-      "filters": {
-        "nodes": "Düğümler",
-        "localPanel": "Yerel (bu panel)"
-      },
       "showingCount": "{total} içinden {shown} gösteriliyor",
       "sortOldest": "Önce En Eski",
       "sortNewest": "Önce En Yeni",
@@ -2715,7 +2726,9 @@
         "addToSubs": "Aboneliklere ekle",
         "addToSubsTitle": "\"{name}\" profilini istemci aboneliklerine ekle",
         "addToSubsHint": "Seçilen her istemci bu profilin https://t.me/webproxy bağlantısını aboneliğinde alır. Başka profile bağlı istemci bu profile taşınır.",
-        "selectClients": "İstemcileri seçin"
+        "selectClients": "İstemcileri seçin",
+        "selectAll": "Tümünü seç ({count})",
+        "selectAllHint": "«Tümünü seç», zaten TG Web Proxy'si olan istemcileri ve yalnızca bağlı bir düğümün gelenlerinde bulunan istemcileri atlar."
       },
       "egress": {
         "button": "Çıkış IP'sini kontrol et",
@@ -3101,6 +3114,7 @@
   },
   "tableColumns": "Sütunlar",
   "tableColumnsShowAll": "Tümünü göster",
+  "tableColumnsNoRoom": "Gizlendi: yer yetersiz. Göstermek için pencereyi genişletin.",
   "shortcuts": {
     "title": "Klavye kısayolları",
     "palette": "Komut paleti",
