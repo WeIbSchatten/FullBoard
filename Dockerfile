@@ -29,7 +29,7 @@ ENV CGO_ENABLED=1
 ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 RUN go build -ldflags "-w -s" -o build/we1ssboard main.go
 # Windows checkouts may lack the executable bit on *.sh; invoke via sh.
-RUN sh ./DockerInit.sh "$TARGETARCH"
+RUN sh ./docker/DockerInit.sh "$TARGETARCH"
 
 # ========================================================
 # Stage: Final Image of We1ssBoard
@@ -47,7 +47,7 @@ RUN apk add --no-cache --update \
   openssl
 
 COPY --from=builder /app/build/ /app/
-COPY --from=builder /app/DockerEntrypoint.sh /app/
+COPY --from=builder /app/docker/DockerEntrypoint.sh /app/
 COPY --from=builder /app/we1ssboard.sh /usr/bin/we1ssboard
 COPY --from=builder /app/internal/web/translation /app/internal/web/translation
 
