@@ -1731,6 +1731,71 @@
         ],
         "type": "object"
       },
+      "ChangelogItem": {
+        "description": "ChangelogItem is one bullet; Sub holds its nested bullets.",
+        "properties": {
+          "sub": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "text": {
+            "example": "Hysteria keeps its UDP buffers across reboots.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "ChangelogRelease": {
+        "properties": {
+          "date": {
+            "example": "2026-10-20",
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/ChangelogSection"
+            },
+            "type": "array"
+          },
+          "version": {
+            "example": "1.8.4",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sections",
+          "version"
+        ],
+        "type": "object"
+      },
+      "ChangelogSection": {
+        "description": "ChangelogSection groups a release's bullets by kind: added, changed, fixed,\nremoved, breaking or known_issues.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChangelogItem"
+            },
+            "type": "array"
+          },
+          "kind": {
+            "example": "fixed",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "kind"
+        ],
+        "type": "object"
+      },
       "Client": {
         "description": "Client represents a client configuration for Xray inbounds with traffic limits and settings.",
         "properties": {
@@ -4265,6 +4330,36 @@
           "tag",
           "total",
           "up"
+        ],
+        "type": "object"
+      },
+      "PanelChangelog": {
+        "description": "PanelChangelog is what the update dialog shows: the releases between the installed\nversion and the latest one (or the installed one when nothing is newer).",
+        "properties": {
+          "currentVersion": {
+            "example": "1.8.3",
+            "type": "string"
+          },
+          "latestVersion": {
+            "example": "v1.8.4",
+            "type": "string"
+          },
+          "releases": {
+            "items": {
+              "$ref": "#/components/schemas/ChangelogRelease"
+            },
+            "type": "array"
+          },
+          "url": {
+            "example": "https://github.com/WeIbSchatten/We1ssBoard/blob/v1.8.4/CHANGELOG.md",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currentVersion",
+          "latestVersion",
+          "releases",
+          "url"
         ],
         "type": "object"
       },
@@ -7972,6 +8067,77 @@
         }
       }
     },
+    "/panel/api/server/getChangelog": {
+      "get": {
+        "tags": [
+          "Server"
+        ],
+        "summary": "Release notes for the update dialog, read from CHANGELOG.md of the latest release tag (main on the dev channel). With an update available it lists every version after the installed one up to the latest; otherwise the installed version. Sections are added, changed, fixed, removed, breaking and known_issues.",
+        "operationId": "get_panel_api_server_getChangelog",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "description": "Panel language, e.g. ru-RU. ru and uk get the Russian changelog when the tag has one; anything else gets English.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string"
+                    },
+                    "obj": {
+                      "$ref": "#/components/schemas/PanelChangelog"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "obj": {
+                    "currentVersion": "1.8.3",
+                    "latestVersion": "v1.8.4",
+                    "releases": [
+                      {
+                        "date": "2026-10-20",
+                        "note": "",
+                        "sections": [
+                          {
+                            "items": [
+                              {
+                                "sub": [
+                                  ""
+                                ],
+                                "text": "Hysteria keeps its UDP buffers across reboots."
+                              }
+                            ],
+                            "kind": "fixed"
+                          }
+                        ],
+                        "version": "1.8.4"
+                      }
+                    ],
+                    "url": "https://github.com/WeIbSchatten/We1ssBoard/blob/v1.8.4/CHANGELOG.md"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/panel/api/server/getConfigJson": {
       "get": {
         "tags": [
@@ -9694,6 +9860,15 @@
             "in": "query",
             "required": false,
             "description": "CSV group names, matched case-insensitively after trimming. Values are ORed.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "node",
+            "in": "query",
+            "required": false,
+            "description": "Scopes the page, total and summary to one tab: local keeps clients attached to an inbound of this panel or to none; a node ID keeps clients attached to that node’s inbounds. Omitted means every client.",
             "schema": {
               "type": "string"
             }
