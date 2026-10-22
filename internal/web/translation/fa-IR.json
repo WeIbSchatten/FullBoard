@@ -830,10 +830,6 @@
       "searchPlaceholder": "جستجوی ایمیل، توضیح، Sub ID، UUID، رمز، احراز، Telegram ID...",
       "filterTitle": "فیلتر کاربران",
       "clearAllFilters": "پاک کردن همه",
-      "filters": {
-        "nodes": "نودها",
-        "localPanel": "محلی (همین پنل)"
-      },
       "showingCount": "نمایش {shown} از {total}",
       "sortOldest": "قدیمی‌ترین",
       "sortNewest": "جدیدترین",

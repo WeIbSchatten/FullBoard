@@ -668,3 +668,72 @@ func TestCaseVariants(t *testing.T) {
 		t.Fatalf("ASCII variants = %v", got)
 	}
 }
+
+// FR 5: the clients page splits this panel's clients from a connected node's into tabs,
+// so the list, the filtered count and the stat cards must all follow the chosen tab.
+func TestListPagedNodeScope(t *testing.T) {
+	svc, inboundSvc, settingSvc := setupPagingServices(t)
+	seedPagingClients(t)
+	nodeID := 5
+	if err := database.GetDB().Model(&model.Inbound{}).Where("tag = ?", "in-trojan").
+		Update("node_id", nodeID).Error; err != nil {
+		t.Fatalf("move trojan inbound to node: %v", err)
+	}
+
+	cases := []struct {
+		name         string
+		params       ClientPageParams
+		emails       []string
+		total        int
+		depleted     []string
+		depletedSeen int
+	}{
+		{
+			name:   "local tab keeps clients with a local inbound or none",
+			params: ClientPageParams{Node: "local", PageSize: 50, Sort: "email"},
+			emails: []string{"alpha@x", "bravo@x", "delta@x", "echo@x", "golf@x", "hotel@x", "india@x", "juliet@x", "kilo_1@x"},
+			total:  9, depleted: []string{"delta@x"}, depletedSeen: 1,
+		},
+		{
+			name:   "node tab holds only clients on that node's inbounds",
+			params: ClientPageParams{Node: strconv.Itoa(nodeID), PageSize: 50, Sort: "email"},
+			emails: []string{"bravo@x", "charlie@x", "foxtrot@x", "kilo1@x"},
+			total:  4, depleted: []string{"charlie@x", "foxtrot@x"}, depletedSeen: 2,
+		},
+		{
+			name:   "a stat-card filter stays inside the tab",
+			params: ClientPageParams{Node: strconv.Itoa(nodeID), PageSize: 50, Sort: "email", Filter: "depleted"},
+			emails: []string{"charlie@x", "foxtrot@x"},
+			total:  4, depleted: []string{"charlie@x", "foxtrot@x"}, depletedSeen: 2,
+		},
+		{
+			name:   "an unknown node is an empty tab, not the whole panel",
+			params: ClientPageParams{Node: "99", PageSize: 50},
+			emails: []string{},
+			total:  0, depleted: []string{}, depletedSeen: 0,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			resp, err := svc.ListPaged(inboundSvc, settingSvc, tc.params)
+			if err != nil {
+				t.Fatalf("ListPaged: %v", err)
+			}
+			if got := pagedEmails(resp.Items); !slices.Equal(got, tc.emails) {
+				t.Fatalf("items = %v, want %v", got, tc.emails)
+			}
+			if resp.Filtered != len(tc.emails) {
+				t.Fatalf("filtered = %d, want %d", resp.Filtered, len(tc.emails))
+			}
+			if resp.Total != tc.total || resp.Summary.Total != tc.total {
+				t.Fatalf("total = %d / summary.total = %d, want %d", resp.Total, resp.Summary.Total, tc.total)
+			}
+			if resp.Summary.DepletedCount != tc.depletedSeen || !slices.Equal(resp.Summary.Depleted, tc.depleted) {
+				t.Fatalf("depleted = %d %v, want %d %v", resp.Summary.DepletedCount, resp.Summary.Depleted, tc.depletedSeen, tc.depleted)
+			}
+			if sum := resp.Summary.Active + resp.Summary.DepletedCount + resp.Summary.ExpiringCount + resp.Summary.DeactiveCount; sum != tc.total {
+				t.Fatalf("cards sum to %d, want %d", sum, tc.total)
+			}
+		})
+	}
+}

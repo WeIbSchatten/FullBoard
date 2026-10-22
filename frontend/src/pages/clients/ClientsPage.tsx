@@ -55,6 +55,8 @@ import {
 } from '@ant-design/icons';
 import { useColumnVisibility } from '@/components/table/ColumnPicker';
 import { useElementWidth } from '@/hooks/useElementWidth';
+import { NodeScopeTabs, useNodeScope } from '@/components/nodes/NodeScopeTabs';
+import { inNodeScope, nodeScopeTabs } from '@/components/nodes/nodeScope';
 import { activateOnKey } from '@/utils/a11y';
 
 import { useTheme } from '@/hooks/useTheme';
@@ -246,7 +248,6 @@ function readFilterState(): PersistedFilterState {
         buckets: Array.isArray(fromRaw.buckets) ? fromRaw.buckets : [],
         protocols: Array.isArray(fromRaw.protocols) ? fromRaw.protocols : [],
         inboundIds: Array.isArray(fromRaw.inboundIds) ? fromRaw.inboundIds : [],
-        nodeIds: Array.isArray(fromRaw.nodeIds) ? fromRaw.nodeIds : [],
         groups: Array.isArray(fromRaw.groups) ? fromRaw.groups : [],
       },
       sort: typeof raw.sort === 'string' ? raw.sort : '',
@@ -400,9 +401,23 @@ export default function ClientsPage() {
     client_stats: applyClientStatsEvent,
   });
 
-  // Node list for the Nodes filter; the section only renders when the panel
-  // actually manages nodes (#4997).
-  const { nodes } = useNodesQuery();
+  const { nodes, fetched: nodesFetched } = useNodesQuery();
+  const scopeTabs = useMemo(
+    () =>
+      nodeScopeTabs(
+        nodes,
+        inbounds.map((ib) => ib.nodeId),
+      ),
+    [nodes, inbounds],
+  );
+  const [nodeScope, setNodeScope] = useNodeScope(scopeTabs);
+  const scopedInbounds = useMemo(
+    () =>
+      nodeScope === undefined
+        ? inbounds
+        : inbounds.filter((ib) => inNodeScope(ib.nodeId, nodeScope)),
+    [inbounds, nodeScope],
+  );
   // Tunnel configs advertise these Hosts, so an empty list must mean "no hosts"
   // and not "not loaded yet" — the page gate waits for it.
   const {
@@ -511,35 +526,23 @@ export default function ClientsPage() {
     // Reset to page 1 whenever a filter or sort changes — otherwise an empty
     // result set on a high page number leaves the user staring at "no clients".
     setCurrentPage(1);
-  }, [debouncedSearch, filters, sortColumn, sortOrder]);
-
-  // The node filter maps onto inbound ids client-side (#4997): the paging API
-  // already accepts an inbound CSV, so nodes never have to reach the backend.
-  // Sentinel 0 = "local panel" (inbounds without a nodeId).
-  const effectiveInboundCsv = useMemo(() => {
-    if (!filters.nodeIds.length) return filters.inboundIds.join(',');
-    const nodeSet = new Set(filters.nodeIds);
-    const nodeInboundIds = inbounds.filter((ib) => nodeSet.has(ib.nodeId ?? 0)).map((ib) => ib.id);
-    const pool = filters.inboundIds.length
-      ? nodeInboundIds.filter((id) => filters.inboundIds.includes(id))
-      : nodeInboundIds;
-    // Nothing matches the selected nodes: send an impossible id so the filter
-    // yields an honest empty result instead of being silently ignored.
-    return pool.length ? pool.join(',') : '-1';
-  }, [filters.nodeIds, filters.inboundIds, inbounds]);
+  }, [debouncedSearch, filters, sortColumn, sortOrder, nodeScope]);
 
   useEffect(() => {
     // With no remembered size and no settings yet, any query we build would be a
     // guess, and issuing it costs a full server round trip that is thrown away as
     // soon as the real size arrives.
     if (resolvedPageSize === null) return;
+    // Until the node list is in, the tab is unknown and the query would list every node's clients.
+    if (!nodesFetched) return;
     setQuery({
       page: currentPage,
       pageSize: tablePageSize,
       search: debouncedSearch,
       filter: filters.buckets.join(','),
       protocol: filters.protocols.join(','),
-      inbound: effectiveInboundCsv,
+      inbound: filters.inboundIds.join(','),
+      node: nodeScope === undefined ? undefined : String(nodeScope),
       expiryFrom: filters.expiryFrom,
       expiryTo: filters.expiryTo,
       usageFrom: gbToBytes(filters.usageFromGB),
@@ -554,11 +557,12 @@ export default function ClientsPage() {
   }, [
     setQuery,
     resolvedPageSize,
+    nodesFetched,
     currentPage,
     tablePageSize,
     debouncedSearch,
     filters,
-    effectiveInboundCsv,
+    nodeScope,
     sortColumn,
     sortOrder,
   ]);
@@ -1444,6 +1448,11 @@ export default function ClientsPage() {
               />
             ) : (
               <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 12]}>
+                {nodeScope !== undefined && (
+                  <Col span={24}>
+                    <NodeScopeTabs tabs={scopeTabs} value={nodeScope} onChange={setNodeScope} />
+                  </Col>
+                )}
                 <Col span={24}>
                   <Card size="small" hoverable className="summary-card">
                     <Row gutter={[16, 12]}>
@@ -2182,10 +2191,9 @@ export default function ClientsPage() {
             onOpenChange={setFilterDrawerOpen}
             filters={filters}
             onChange={setFilters}
-            inbounds={inbounds}
+            inbounds={scopedInbounds}
             protocols={protocolOptions}
             groups={groupOptions}
-            nodes={nodes}
           />
         </LazyMount>
         <LazyMount when={textOpen}>

@@ -1155,6 +1155,13 @@ export const sections: readonly Section[] = [
             desc: 'CSV group names, matched case-insensitively after trimming. Values are ORed.',
             optional: true,
           },
+          {
+            name: 'node',
+            in: 'query',
+            type: 'string',
+            desc: 'Scopes the page, total and summary to one tab: local keeps clients attached to an inbound of this panel or to none; a node ID keeps clients attached to that node’s inbounds. Omitted means every client.',
+            optional: true,
+          },
         ],
         responseSchema: 'ClientPageResponse',
       },

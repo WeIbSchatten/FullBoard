@@ -830,10 +830,6 @@
       "searchPlaceholder": "搜索邮箱、备注、sub ID、UUID、密码、auth、Telegram ID…",
       "filterTitle": "筛选客户端",
       "clearAllFilters": "清除全部",
-      "filters": {
-        "nodes": "节点",
-        "localPanel": "本机（此面板）"
-      },
       "showingCount": "显示 {shown} / {total}",
       "sortOldest": "最旧优先",
       "sortNewest": "最新优先",
