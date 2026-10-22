@@ -9697,6 +9697,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "node",
+            "in": "query",
+            "required": false,
+            "description": "Scopes the page, total and summary to one tab: local keeps clients attached to an inbound of this panel or to none; a node ID keeps clients attached to that node’s inbounds. Omitted means every client.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

@@ -830,10 +830,6 @@
       "searchPlaceholder": "Cari email, komentar, sub ID, UUID, kata sandi, auth, Telegram ID…",
       "filterTitle": "Filter klien",
       "clearAllFilters": "Hapus semua",
-      "filters": {
-        "nodes": "Node",
-        "localPanel": "Lokal (panel ini)"
-      },
       "showingCount": "Menampilkan {shown} dari {total}",
       "sortOldest": "Terlama dulu",
       "sortNewest": "Terbaru dulu",

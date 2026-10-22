@@ -1,0 +1,24 @@
+.node-scope-tabs.ant-tabs {
+  margin-bottom: 4px;
+}
+
+.node-scope-tabs > .ant-tabs-nav {
+  margin-bottom: 0;
+}
+
+.node-scope-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.node-scope-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ant-color-error);
+}
+
+.node-scope-dot.is-online {
+  background: var(--ant-color-success);
+}

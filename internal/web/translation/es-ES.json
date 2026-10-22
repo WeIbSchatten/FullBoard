@@ -830,10 +830,6 @@
       "searchPlaceholder": "Buscar email, comentario, sub ID, UUID, contraseña, auth, Telegram ID…",
       "filterTitle": "Filtrar clientes",
       "clearAllFilters": "Limpiar todo",
-      "filters": {
-        "nodes": "Nodos",
-        "localPanel": "Local (este panel)"
-      },
       "showingCount": "Mostrando {shown} de {total}",
       "sortOldest": "Más antiguos",
       "sortNewest": "Más recientes",

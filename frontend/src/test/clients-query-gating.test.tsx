@@ -96,6 +96,23 @@ describe('useClients query gating', () => {
     expect(pagedUrls[0]).toContain('sort=createdAt');
   });
 
+  // FR 5: the open node tab scopes the list and the stat cards on the server.
+  it('refetches with the new node when the tab changes', async () => {
+    const pagedUrls = mockPanel({ pageSize: 25 });
+    const { result } = renderHook(() => useClients(), { wrapper: wrapperFor() });
+
+    act(() => {
+      result.current.setQuery({ page: 1, pageSize: 25, node: 'local' });
+    });
+    await waitFor(() => expect(pagedUrls).toHaveLength(1));
+    act(() => {
+      result.current.setQuery({ page: 1, pageSize: 25, node: '4' });
+    });
+    await waitFor(() => expect(pagedUrls).toHaveLength(2));
+    const nodes = pagedUrls.map((u) => new URL(u, 'http://x').searchParams.get('node'));
+    expect(nodes).toEqual(['local', '4']);
+  });
+
   it('fetches as soon as a query arrives, without waiting for the settings', async () => {
     // The page remembers the previous visit's page size in localStorage, so on a
     // return visit it can supply a query on the first render. The hook must not

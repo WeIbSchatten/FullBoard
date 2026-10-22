@@ -830,10 +830,6 @@
       "searchPlaceholder": "Пошук email, коментаря, sub ID, UUID, паролю, auth, Telegram ID…",
       "filterTitle": "Фільтр клієнтів",
       "clearAllFilters": "Очистити все",
-      "filters": {
-        "nodes": "Вузли",
-        "localPanel": "Локально (ця панель)"
-      },
       "showingCount": "Показано {shown} з {total}",
       "sortOldest": "Спочатку старі",
       "sortNewest": "Спочатку нові",

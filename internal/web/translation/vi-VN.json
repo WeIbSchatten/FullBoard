@@ -830,10 +830,6 @@
       "searchPlaceholder": "Tìm email, ghi chú, sub ID, UUID, mật khẩu, auth, Telegram ID…",
       "filterTitle": "Lọc client",
       "clearAllFilters": "Xóa tất cả",
-      "filters": {
-        "nodes": "Nút",
-        "localPanel": "Cục bộ (bảng này)"
-      },
       "showingCount": "Hiển thị {shown} trên {total}",
       "sortOldest": "Cũ nhất trước",
       "sortNewest": "Mới nhất trước",
