@@ -35,6 +35,15 @@ The master contacts the new panel, receives a fresh admin API token and adds the
 </Step>
 </Steps>
 
+<Callout type="info">
+  For an https panel the invite carries the SHA-256 of its certificate. The master
+  sends the invite code only to a panel whose certificate a public CA vouches for or
+  that matches this pin, so a self-signed node can be enrolled safely; such a node is
+  saved with **TLS verify** set to `pin`. Without a pin (an http panel, or a child
+  before 1.9.0) the certificate must be publicly trusted. Invite addresses must be
+  plain `http` or `https` URLs without credentials, a query or a fragment.
+</Callout>
+
 ### Add a node by hand
 
 Provide the node's connection details:

@@ -25,6 +25,9 @@ jobs:
   verify-version:
     name: Check version matches tag
     runs-on: ubuntu-latest
+    # Reads the tree and uploads an artifact; neither needs a write token.
+    permissions:
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
