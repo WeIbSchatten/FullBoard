@@ -2715,7 +2715,9 @@
         "addToSubs": "Añadir a suscripciones",
         "addToSubsTitle": "Añadir «{name}» a las suscripciones de clientes",
         "addToSubsHint": "Cada cliente seleccionado recibe el enlace https://t.me/webproxy de este perfil en su suscripción. Un cliente ya vinculado a otro perfil pasa a este.",
-        "selectClients": "Selecciona clientes"
+        "selectClients": "Selecciona clientes",
+        "selectAll": "Seleccionar todos ({count})",
+        "selectAllHint": "«Seleccionar todos» omite los clientes que ya tienen TG Web Proxy y los que solo existen en inbounds de un nodo conectado."
       },
       "egress": {
         "button": "Comprobar IP de salida",

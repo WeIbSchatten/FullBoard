@@ -2715,7 +2715,9 @@
         "addToSubs": "加入訂閱",
         "addToSubsTitle": "將「{name}」加入客戶端訂閱",
         "addToSubsHint": "每個選取的客戶端會在訂閱中取得此設定的 https://t.me/webproxy 連結。已綁定其他設定的客戶端會改為此設定。",
-        "selectClients": "選擇客戶端"
+        "selectClients": "選擇客戶端",
+        "selectAll": "全選（{count}）",
+        "selectAllHint": "「全選」會略過已有 TG Web Proxy 的用戶端，以及僅存在於已連線節點入站上的用戶端。"
       },
       "egress": {
         "button": "檢查出口 IP",

@@ -2715,7 +2715,9 @@
         "addToSubs": "サブスクリプションに追加",
         "addToSubsTitle": "「{name}」をクライアントのサブスクリプションに追加",
         "addToSubsHint": "選択した各クライアントのサブスクリプションに、このプロファイルの https://t.me/webproxy リンクが追加されます。別のプロファイルに紐付いたクライアントはこちらに移ります。",
-        "selectClients": "クライアントを選択"
+        "selectClients": "クライアントを選択",
+        "selectAll": "すべて選択（{count}）",
+        "selectAllHint": "「すべて選択」は、TG Web Proxy が既にあるクライアントと、接続ノードのインバウンドにしか存在しないクライアントを除外します。"
       },
       "egress": {
         "button": "出口 IP を確認",

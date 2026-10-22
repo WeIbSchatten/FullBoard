@@ -2715,7 +2715,9 @@
         "addToSubs": "Thêm vào gói đăng ký",
         "addToSubsTitle": "Thêm \"{name}\" vào gói đăng ký của khách hàng",
         "addToSubsHint": "Mỗi khách hàng được chọn sẽ nhận liên kết https://t.me/webproxy của hồ sơ này trong gói đăng ký. Khách hàng đang gắn với hồ sơ khác sẽ được chuyển sang hồ sơ này.",
-        "selectClients": "Chọn khách hàng"
+        "selectClients": "Chọn khách hàng",
+        "selectAll": "Chọn tất cả ({count})",
+        "selectAllHint": "«Chọn tất cả» bỏ qua client đã có TG Web Proxy và client chỉ nằm trên inbound của node đã kết nối."
       },
       "egress": {
         "button": "Kiểm tra IP thoát",
