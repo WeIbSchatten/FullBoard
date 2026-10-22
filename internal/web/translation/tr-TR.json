@@ -2715,7 +2715,9 @@
         "addToSubs": "Aboneliklere ekle",
         "addToSubsTitle": "\"{name}\" profilini istemci aboneliklerine ekle",
         "addToSubsHint": "Seçilen her istemci bu profilin https://t.me/webproxy bağlantısını aboneliğinde alır. Başka profile bağlı istemci bu profile taşınır.",
-        "selectClients": "İstemcileri seçin"
+        "selectClients": "İstemcileri seçin",
+        "selectAll": "Tümünü seç ({count})",
+        "selectAllHint": "«Tümünü seç», zaten TG Web Proxy'si olan istemcileri ve yalnızca bağlı bir düğümün gelenlerinde bulunan istemcileri atlar."
       },
       "egress": {
         "button": "Çıkış IP'sini kontrol et",

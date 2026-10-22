@@ -2715,7 +2715,9 @@
         "addToSubs": "添加到订阅",
         "addToSubsTitle": "将“{name}”添加到客户端订阅",
         "addToSubsHint": "每个选中的客户端会在订阅中获得此配置的 https://t.me/webproxy 链接。已绑定其他配置的客户端会改为此配置。",
-        "selectClients": "选择客户端"
+        "selectClients": "选择客户端",
+        "selectAll": "全选（{count}）",
+        "selectAllHint": "“全选”会跳过已有 TG Web Proxy 的客户端，以及仅存在于已连接节点入站上的客户端。"
       },
       "egress": {
         "button": "检查出口 IP",
