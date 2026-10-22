@@ -3101,6 +3101,7 @@
   },
   "tableColumns": "列",
   "tableColumnsShowAll": "全部显示",
+  "tableColumnsNoRoom": "已隐藏：空间不足。加宽窗口即可显示。",
   "shortcuts": {
     "title": "键盘快捷键",
     "palette": "命令面板",

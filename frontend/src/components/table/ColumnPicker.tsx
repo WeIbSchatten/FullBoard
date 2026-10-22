@@ -1,11 +1,18 @@
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Checkbox, Popover } from 'antd';
+import { Button, Checkbox, Popover, Tooltip } from 'antd';
 import { InsertRowRightOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
+import { fitColumns } from './fitColumns';
 import './ColumnPicker.css';
+
+export interface ColumnFit {
+  width: number;
+  collapseOrder: string[];
+  reserved?: number;
+}
 
 const STORAGE_PREFIX = 'fb-columns:';
 
@@ -23,11 +30,13 @@ function columnKey<T>(col: ColumnsType<T>[number]): string {
 }
 
 // Per-table column visibility, remembered per browser; `locked` keys always show.
+// With `fit`, columns in its collapse order also drop out while the table is wider than its card.
 export function useColumnVisibility<T>(
   storageKey: string,
   columns: ColumnsType<T>,
   locked: string[] = [],
-): { columns: ColumnsType<T>; picker: ReactNode } {
+  fit?: ColumnFit,
+): { columns: ColumnsType<T>; picker: ReactNode; scrollX: number } {
   const { t } = useTranslation();
   const [hidden, setHidden] = useState<string[]>(() => readHidden(storageKey));
 
@@ -50,23 +59,35 @@ export function useColumnVisibility<T>(
       ),
     [columns, hidden, locked],
   );
+  const fitted = useMemo(
+    () => fitColumns(visibleColumns, fit?.width ?? 0, fit?.collapseOrder ?? [], fit?.reserved),
+    [visibleColumns, fit?.width, fit?.collapseOrder, fit?.reserved],
+  );
 
   const content = (
     <div className="column-picker">
       {choosable.map((c) => {
         const key = columnKey(c);
         const isLocked = locked.includes(key);
-        return (
+        const noRoom = fitted.collapsed.includes(key);
+        const box = (
           <Checkbox
             key={key}
-            checked={isLocked || !hidden.includes(key)}
-            disabled={isLocked}
+            checked={isLocked || (!hidden.includes(key) && !noRoom)}
+            disabled={isLocked || noRoom}
             onChange={(e) =>
               update(e.target.checked ? hidden.filter((k) => k !== key) : [...hidden, key])
             }
           >
             {c.title as ReactNode}
           </Checkbox>
+        );
+        return noRoom ? (
+          <Tooltip key={key} title={t('tableColumnsNoRoom')} placement="left">
+            {box}
+          </Tooltip>
+        ) : (
+          box
         );
       })}
       {hidden.length > 0 && (
@@ -85,5 +106,5 @@ export function useColumnVisibility<T>(
     </Popover>
   );
 
-  return { columns: visibleColumns, picker };
+  return { columns: fitted.columns, picker, scrollX: fitted.scrollX };
 }

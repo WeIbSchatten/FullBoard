@@ -54,6 +54,7 @@ import {
   UsergroupDeleteOutlined,
 } from '@ant-design/icons';
 import { useColumnVisibility } from '@/components/table/ColumnPicker';
+import { useElementWidth } from '@/hooks/useElementWidth';
 import { activateOnKey } from '@/utils/a11y';
 
 import { useTheme } from '@/hooks/useTheme';
@@ -101,6 +102,18 @@ import './ClientsPage.css';
 const FILTER_STATE_KEY = 'clientsFilterState';
 const DISABLED_PAGE_SIZE = 200;
 const DEFAULT_TABLE_PAGE_SIZE = 25;
+// antd adds the row-selection checkbox column itself, outside our column list.
+const ROW_SELECTION_WIDTH = 36;
+// Least-read columns drop out first when the table would overflow its card.
+const CLIENT_COLUMN_COLLAPSE_ORDER = [
+  'drag',
+  'remaining',
+  'group',
+  'inboundIds',
+  'enable',
+  'expiryTime',
+  'online',
+];
 
 function UngroupIcon() {
   return (
@@ -1164,7 +1177,7 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.actions'),
         key: 'actions',
-        width: 200,
+        width: 172,
         render: (_v, record) => (
           <ClientRowActions
             email={record.email}
@@ -1179,7 +1192,7 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.enabled'),
         key: 'enable',
-        width: 80,
+        width: 72,
         render: (_v, record) => (
           <Switch
             checked={!!record.enable}
@@ -1223,7 +1236,7 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.client'),
         key: 'email',
-        width: 220,
+        width: 184,
         render: (_v, record) => (
           <div className="email-cell">
             <span className="email">{record.email}</span>
@@ -1239,7 +1252,7 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.group'),
         key: 'group',
-        width: 130,
+        width: 120,
         hidden: allGroups.length === 0,
         render: (_v, record) => {
           if (!record.group) return <Typography.Text type="secondary">—</Typography.Text>;
@@ -1263,7 +1276,7 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.attachedInbounds'),
         key: 'inboundIds',
-        width: 170,
+        width: 150,
         render: (_v, record) => {
           return (
             <ClientInboundChips
@@ -1278,7 +1291,7 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.traffic'),
         key: 'traffic',
-        width: 300,
+        width: 244,
         render: (_v, record) => (
           <ClientTrafficCell
             up={record.traffic?.up}
@@ -1309,13 +1322,13 @@ export default function ClientsPage() {
       {
         title: t('pages.clients.remaining'),
         key: 'remaining',
-        width: 130,
+        width: 100,
         render: (_v, record) => <Tag color={remainingColor(record)}>{remainingLabel(record)}</Tag>,
       },
       {
         title: t('pages.clients.duration'),
         key: 'expiryTime',
-        width: 130,
+        width: 110,
         render: (_v, record) => (
           <Tooltip title={expiryLabel(record)}>
             <Tag color={expiryColor(record)}>
@@ -1339,11 +1352,16 @@ export default function ClientsPage() {
       clientSpeed,
     ],
   );
-  const { columns, picker: columnPicker } = useColumnVisibility('clients', allColumns, [
-    'drag',
-    'actions',
-    'email',
-  ]);
+  const [tableBoxRef, tableBoxWidth] = useElementWidth<HTMLDivElement>();
+  const {
+    columns,
+    picker: columnPicker,
+    scrollX: tableScrollX,
+  } = useColumnVisibility('clients', allColumns, ['drag', 'actions', 'email'], {
+    width: tableBoxWidth,
+    collapseOrder: CLIENT_COLUMN_COLLAPSE_ORDER,
+    reserved: ROW_SELECTION_WIDTH,
+  });
 
   const tablePagination = {
     current: currentPage,
@@ -1800,42 +1818,45 @@ export default function ClientsPage() {
                     )}
 
                     {!isMobile ? (
-                      <Table<ClientRecord>
-                        columns={columns}
-                        dataSource={sortedClients}
-                        loading={transitioning}
-                        rowKey="email"
-                        rowSelection={rowSelection}
-                        pagination={tablePagination}
-                        size="small"
-                        scroll={{ x: 1200 }}
-                        onChange={onTableChange}
-                        onRow={(_record, index) => {
-                          const classes: string[] = [];
-                          if (draggedIndex === index) classes.push('client-row-dragging');
-                          if (
-                            dropTargetIndex === index &&
-                            draggedIndex != null &&
-                            draggedIndex !== index
-                          ) {
-                            classes.push(
-                              index > draggedIndex ? 'client-drop-after' : 'client-drop-before',
-                            );
-                          }
-                          return {
-                            className: classes.join(' '),
-                            'data-client-drag-index': index,
-                          } as HTMLAttributes<HTMLElement>;
-                        }}
-                        locale={{
-                          emptyText: (
-                            <div className="clients-empty">
-                              <TeamOutlined style={{ fontSize: 32, marginBottom: 8 }} />
-                              <div>{t('noData')}</div>
-                            </div>
-                          ),
-                        }}
-                      />
+                      <div ref={tableBoxRef}>
+                        <Table<ClientRecord>
+                          columns={columns}
+                          dataSource={sortedClients}
+                          loading={transitioning}
+                          rowKey="email"
+                          rowSelection={rowSelection}
+                          pagination={tablePagination}
+                          size="small"
+                          tableLayout="fixed"
+                          scroll={{ x: tableScrollX }}
+                          onChange={onTableChange}
+                          onRow={(_record, index) => {
+                            const classes: string[] = [];
+                            if (draggedIndex === index) classes.push('client-row-dragging');
+                            if (
+                              dropTargetIndex === index &&
+                              draggedIndex != null &&
+                              draggedIndex !== index
+                            ) {
+                              classes.push(
+                                index > draggedIndex ? 'client-drop-after' : 'client-drop-before',
+                              );
+                            }
+                            return {
+                              className: classes.join(' '),
+                              'data-client-drag-index': index,
+                            } as HTMLAttributes<HTMLElement>;
+                          }}
+                          locale={{
+                            emptyText: (
+                              <div className="clients-empty">
+                                <TeamOutlined style={{ fontSize: 32, marginBottom: 8 }} />
+                                <div>{t('noData')}</div>
+                              </div>
+                            ),
+                          }}
+                        />
+                      </div>
                     ) : (
                       <Spin spinning={transitioning}>
                         <div className="client-cards">

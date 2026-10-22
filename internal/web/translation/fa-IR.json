@@ -3101,6 +3101,7 @@
   },
   "tableColumns": "ستون‌ها",
   "tableColumnsShowAll": "نمایش همه",
+  "tableColumnsNoRoom": "پنهان: جای کافی نیست. برای نمایش، پنجره را بزرگ‌تر کنید.",
   "shortcuts": {
     "title": "میان‌برهای صفحه‌کلید",
     "palette": "پالت فرمان",
