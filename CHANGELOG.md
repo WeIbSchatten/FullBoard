@@ -9,11 +9,11 @@ differently now), **Fixed** (bugs), **Removed**, **Breaking** (needs action from
 you or breaks an old setup), **Known issues** (problems found after the release
 and the version that fixes them).
 
-## [Unreleased]
+## [1.9.0] - 2026-10-23
 
 ### Breaking
 - A child panel with a self-signed certificate can only be enrolled with an invite it
-  generated on this version or later (the invite must carry the certificate pin).
+  generated on 1.9.0 or later (the invite must carry the certificate pin).
   Update the child, or give it a publicly trusted certificate.
 
 ### Added
@@ -36,6 +36,9 @@ and the version that fixes them).
   relay on a node and managing it from the main panel.
 
 ### Changed
+- The panel is built with Go 1.27.3, which distrusts the compromised intermediate
+  certificates in `crypto/x509` (GO-2026-6809); the REALITY target scan verifies
+  certificates with it.
 - Bundled Xray-core 26.10.21. XTLS withdrew 26.10.10 and 26.10.17 because they
   trusted compromised intermediate certificates; 26.10.21 drops them and is built
   with Go 1.27.3. Release builds had started failing on the deleted download.
@@ -62,8 +65,10 @@ and the version that fixes them).
   pin, and keeps a self-signed node in `pin` TLS mode. Invite addresses must be
   plain http(s) URLs (CodeQL #10, #11).
 - The release workflow's version gate runs with a read-only token (CodeQL #14).
-- The clients table overflowed its card on windows narrower than about
-  1600 px and clipped the speed column at the card's edge.
+- The clients and inbounds tables overflowed their card on windows narrower than
+  about 1600 px and clipped the last columns (speed, duration) at the card's edge.
+- The API Docs page bundled DOMPurify 3.4.16, which has three critical advisories
+  (GHSA-cg2g-xh64-v4q7, GHSA-mrv2-3pqr-j5jr, GHSA-c6gr-qvv4-5v3f); it now ships 3.4.17.
 
 ## [1.8.4] - 2026-10-20
 
