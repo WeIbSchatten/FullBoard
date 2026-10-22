@@ -6,7 +6,6 @@ import (
 	"os"
 	"reflect"
 	"slices"
-	"strings"
 	"testing"
 
 	"github.com/WeIbSchatten/We1ssBoard/v3/internal/config"
@@ -109,27 +108,51 @@ func TestSelectChangelog(t *testing.T) {
 	}
 }
 
-func TestFetchChangelogFallsBackToEnglish(t *testing.T) {
-	var paths []string
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		paths = append(paths, r.URL.Path)
-		if strings.HasSuffix(r.URL.Path, "/v1.3.0/CHANGELOG.md") {
-			_, _ = w.Write([]byte(sampleChangelog))
-			return
-		}
-		http.NotFound(w, r)
-	}))
-	defer srv.Close()
+func TestFetchChangelogFallbacks(t *testing.T) {
+	cases := []struct {
+		name     string
+		served   string
+		wantPath string
+		wantReqs []string
+	}{
+		{
+			name:     "a tag without the Russian file falls back to English",
+			served:   "/v1.3.0/CHANGELOG.md",
+			wantPath: "v1.3.0/CHANGELOG.md",
+			wantReqs: []string{"/v1.3.0/CHANGELOG.ru_RU.md", "/v1.3.0/CHANGELOG.md"},
+		},
+		{
+			// Tags cut before the changelog existed (up to 1.8.4) have no file at all.
+			name:     "a tag without any changelog falls back to main",
+			served:   "/main/CHANGELOG.md",
+			wantPath: "main/CHANGELOG.md",
+			wantReqs: []string{"/v1.3.0/CHANGELOG.ru_RU.md", "/v1.3.0/CHANGELOG.md", "/main/CHANGELOG.ru_RU.md", "/main/CHANGELOG.md"},
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var reqs []string
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				reqs = append(reqs, r.URL.Path)
+				if r.URL.Path == tc.served {
+					_, _ = w.Write([]byte(sampleChangelog))
+					return
+				}
+				http.NotFound(w, r)
+			}))
+			defer srv.Close()
 
-	md, file, err := fetchChangelog(srv.Client(), srv.URL, "v1.3.0", "ru-RU")
-	if err != nil {
-		t.Fatalf("fetchChangelog: %v", err)
-	}
-	if md != sampleChangelog || file != "CHANGELOG.md" {
-		t.Fatalf("got file %q (%d bytes), want the English changelog", file, len(md))
-	}
-	if want := []string{"/v1.3.0/CHANGELOG.ru_RU.md", "/v1.3.0/CHANGELOG.md"}; !slices.Equal(paths, want) {
-		t.Fatalf("requested %v, want %v", paths, want)
+			md, path, err := fetchChangelog(srv.Client(), srv.URL, []string{"v1.3.0", "main"}, "ru-RU")
+			if err != nil {
+				t.Fatalf("fetchChangelog: %v", err)
+			}
+			if md != sampleChangelog || path != tc.wantPath {
+				t.Fatalf("got %q (%d bytes), want %q", path, len(md), tc.wantPath)
+			}
+			if !slices.Equal(reqs, tc.wantReqs) {
+				t.Fatalf("requested %v, want %v", reqs, tc.wantReqs)
+			}
+		})
 	}
 }
 
