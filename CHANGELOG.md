@@ -36,6 +36,9 @@ and the version that fixes them).
   relay on a node and managing it from the main panel.
 
 ### Changed
+- Bundled Xray-core 26.10.21. XTLS withdrew 26.10.10 and 26.10.17 because they
+  trusted compromised intermediate certificates; 26.10.21 drops them and is built
+  with Go 1.27.3. Release builds had started failing on the deleted download.
 - The clients and inbounds tables fit their card: columns are sized to their
   content and, when the window is too narrow, the least-read columns hide in a
   fixed order. The **Columns** menu shows such a column unchecked and locked
