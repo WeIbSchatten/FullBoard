@@ -5,6 +5,8 @@ import (
 	"errors"
 	"strings"
 	"testing"
+
+	"github.com/xtls/xray-core/infra/conf"
 )
 
 func TestIsMissingGeoAssetErr(t *testing.T) {
@@ -266,5 +268,72 @@ func TestEnsureStatsRouting_AcceptsInboundTagAsString(t *testing.T) {
 	}
 	if got := firstRuleOutbound(t, out); got != "api" {
 		t.Fatalf("api rule with string-form inboundTag should hoist to front, got %q\nfull: %s", got, out)
+	}
+}
+
+// xray-core 26.10.17 (#7136) refuses a dns "script" beside fallback switches or domain-scoped servers;
+// a routing script stays allowed, since the build hands it the routing in place of the rules.
+func TestCheckXrayConfig_RefusesLuaScriptsTheCoreRefuses(t *testing.T) {
+	const outbounds = `"outbounds":[{"protocol":"freedom","tag":"direct"}]`
+	tests := []struct{ name, template, want string }{
+		{"routing script beside rules", `{"routing":{"script":"route.lua","domainStrategy":"AsIs","rules":[{"type":"field","inboundTag":["api"],"outboundTag":"api"}]},` + outbounds + `}`, ""},
+		{"dns script beside a domain-scoped server", `{"dns":{"script":"dns.lua","servers":[{"address":"1.1.1.1","domains":["example.com"]}]},` + outbounds + `}`, `dns: "script" cannot be used`},
+		{"dns script beside parallel queries", `{"dns":{"script":"dns.lua","enableParallelQuery":true,"servers":["1.1.1.1"]},` + outbounds + `}`, `dns: "script" cannot be used`},
+		{"dns script beside plain servers", `{"dns":{"script":"dns.lua","servers":["1.1.1.1",{"address":"8.8.8.8"}]},` + outbounds + `}`, ""},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			err := (&XraySettingService{}).CheckXrayConfig(tc.template)
+			if tc.want == "" {
+				if err != nil {
+					t.Fatalf("CheckXrayConfig = %v, want the script the core accepts kept", err)
+				}
+				return
+			}
+			if err == nil || !strings.Contains(err.Error(), tc.want) {
+				t.Fatalf("CheckXrayConfig = %v, want one containing %q", err, tc.want)
+			}
+		})
+	}
+}
+
+// 26.10.10 ignored the rules beside a routing script, 26.10.17 refuses them: the build keeps the
+// script and drops the rules, and drops a dns script the core refuses, so the core still starts.
+func TestGetXrayConfig_DropsLuaScriptsTheCoreRefuses(t *testing.T) {
+	setupConflictDB(t)
+	template := `{"outbounds":[{"protocol":"freedom","tag":"direct"}],
+		"routing":{"domainStrategy":"AsIs","script":"route.lua","rules":[{"type":"field","inboundTag":["api"],"outboundTag":"api"}]},
+		"dns":{"script":"dns.lua","servers":[{"address":"1.1.1.1","domains":["example.com"]}]}}`
+	if err := (&SettingService{}).saveSetting("xrayTemplateConfig", template); err != nil {
+		t.Fatalf("seed template: %v", err)
+	}
+
+	cfg, err := (&XrayService{}).GetXrayConfig()
+	if err != nil {
+		t.Fatalf("GetXrayConfig: %v", err)
+	}
+	router := new(conf.RouterConfig)
+	if err := json.Unmarshal(cfg.RouterConfig, router); err != nil {
+		t.Fatalf("decode routing: %v", err)
+	}
+	if _, err := router.Build(); err != nil {
+		t.Fatalf("xray-core refuses the emitted routing: %v", err)
+	}
+	var routing map[string]any
+	if err := json.Unmarshal(cfg.RouterConfig, &routing); err != nil {
+		t.Fatalf("decode routing map: %v", err)
+	}
+	if routing["script"] != "route.lua" || routing["rules"] != nil || routing["domainStrategy"] != nil {
+		t.Fatalf("routing = %v, want the script kept in place of rules and domainStrategy", routing)
+	}
+	dns := new(conf.DNSConfig)
+	if err := json.Unmarshal(cfg.DNSConfig, dns); err != nil {
+		t.Fatalf("decode dns: %v", err)
+	}
+	if _, err := dns.Build(); err != nil {
+		t.Fatalf("xray-core refuses the emitted dns: %v", err)
+	}
+	if dns.Script != "" {
+		t.Fatalf("dns script = %q, want the refused script dropped", dns.Script)
 	}
 }
