@@ -11,69 +11,95 @@ icon: ArrowRightLeft
 
 ## From 3x-ui
 
-We1ssBoard reads a 3x-ui database directly. `we1ssboard import-3xui` copies
-inbounds, clients, their traffic and IP history, panel settings and the admin
-account into a new We1ssBoard database, then checks every row against the source
-and refuses to finish if anything was lost. The 3x-ui database is opened
-read-only and never changed.
+We1ssBoard reads a 3x-ui database directly and carries over inbounds, clients,
+their traffic and IP history, panel settings and the admin account. Every row is
+checked against the source, and the import refuses to finish if anything was
+lost. The 3x-ui database is opened read-only and never changed.
+
+The migration script does the whole move on the same server and can undo it.
+Requirements: root, systemd, and SQLite on both panels (the 3x-ui default).
 
 <Steps>
 
 <Step>
 ### Install We1ssBoard
 
-Install it on the same server as 3x-ui (see [Installation](/docs/guide/installation)),
-then stop both panels so neither writes while you copy:
-
-```bash
-systemctl stop x-ui we1ssboard
-```
+Install it next to 3x-ui (see [Installation](/docs/guide/installation)). 3x-ui can
+keep running: by default the installer picks a random panel port, so the two
+panels do not clash. Do not give it 3x-ui's port.
 </Step>
 
 <Step>
-### Move the fresh database aside
-
-The import creates the database and will not overwrite one:
+### Run the migration script
 
 ```bash
-mv /etc/we1ssboard/we1ssboard.db /etc/we1ssboard/we1ssboard.db.empty
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/migrate-3xui.sh) migrate
 ```
+
+The script:
+
+1. runs a **test import** while 3x-ui is still serving clients; if it fails,
+   nothing is stopped or changed. If it printed a `WARNING`, the script asks
+   before going on;
+2. stops both panels and backs up 3x-ui (database, `/usr/local/x-ui`, the
+   service unit, the `x-ui` command and its env file) and the current
+   We1ssBoard database to `/root/3x-ui-migration-<date>/`;
+3. imports `x-ui.db`, disables `x-ui.service` and starts We1ssBoard;
+4. if We1ssBoard does not stay up, puts 3x-ui back automatically and shows
+   the last lines of the We1ssBoard log.
+
+Add `--yes` to skip the confirmations, for example in automation.
 </Step>
 
 <Step>
-### Import
+### Log in
 
-```bash
-/usr/local/we1ssboard/we1ssboard import-3xui -src /etc/x-ui/x-ui.db
-```
-
-The command prints how many inbounds, clients and settings it verified, and
-lists the certificate files your settings point at. A `WARNING` line means a
-value needs your attention, for example a client whose inbounds disagreed on a
-limit, or a certificate file that is missing on this server.
-</Step>
-
-<Step>
-### Switch over
-
-Disable 3x-ui so it does not grab the same ports, then start We1ssBoard:
-
-```bash
-systemctl disable --now x-ui
-systemctl start we1ssboard
-```
-
-Log in with your **3x-ui** username, password, port and web path: they were
-imported with the settings. Client links and subscription URLs stay the same,
-so clients do not need new configs.
+Open the panel at the **3x-ui** address and log in with your **3x-ui** username
+and password: the port, web path and login came over with the settings. Client
+links and subscription URLs stay the same, so clients do not need new configs.
 </Step>
 
 </Steps>
+
+A `WARNING` in the import output means a value needs your attention, for
+example a client whose inbounds disagreed on a limit, or a certificate file
+that is missing on this server. The full output is saved as `import.log` in
+the backup folder.
+
+### Roll back to 3x-ui
+
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/WeIbSchatten/We1ssBoard/main/migrate-3xui.sh) rollback
+```
+
+This restores 3x-ui from the latest backup exactly as it was, including whether
+its service was enabled and running, and checks the restored `x-ui.db` against
+its checksum. The imported We1ssBoard database is kept in the backup folder. To
+pick an older backup, pass its folder after `rollback`; `status` lists all
+backups. Run the script without arguments for a menu with the same actions.
 
 <Callout>
   IP limits only work with fail2ban. If fail2ban is not running, the import
   resets them to 0 exactly as a 3x-ui upgrade would, and says so.
 </Callout>
+
+### Manual import
+
+Without the script (for example, without systemd), run the same import by hand.
+Stop both panels so neither writes while you copy, move the fresh We1ssBoard
+database aside (the import creates the database and will not overwrite one),
+import, then switch services:
+
+```bash
+systemctl stop x-ui we1ssboard
+mv /etc/we1ssboard/we1ssboard.db /etc/we1ssboard/we1ssboard.db.empty
+/usr/local/we1ssboard/we1ssboard import-3xui -src /etc/x-ui/x-ui.db
+systemctl disable --now x-ui
+systemctl start we1ssboard
+```
+
+`-dst` writes the result to another file instead of the configured database,
+which is handy for a dry run.
 
 ## From FullBoard
 

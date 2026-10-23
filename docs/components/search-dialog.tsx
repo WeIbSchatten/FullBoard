@@ -15,6 +15,7 @@ import {
 } from 'fumadocs-ui/components/dialog/search';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
 import { useMemo } from 'react';
+import { withBasePath } from '@/lib/shared';
 
 interface SharedProps {
   open: boolean;
@@ -28,7 +29,7 @@ export default function SearchDialogClient(props: SharedProps) {
   const client = useMemo(
     () =>
       staticClient({
-        from: '/api/search',
+        from: withBasePath('/api/search'),
         locale,
         initDB: () => create({ schema: { _: 'string' }, language: 'english' }),
       }),

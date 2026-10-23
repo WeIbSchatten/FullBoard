@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Inter } from 'next/font/google';
 import './global.css';
-import { appName, appTagline, siteUrl } from '@/lib/shared';
+import { appName, appTagline, siteUrl, withBasePath } from '@/lib/shared';
 import { i18n, localeDirection } from '@/lib/i18n';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'], display: 'swap' });
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
   },
   icons: {
-    icon: '/favicon.png',
-    apple: '/icon.png',
+    icon: withBasePath('/favicon.png'),
+    apple: withBasePath('/icon.png'),
   },
 };
 
