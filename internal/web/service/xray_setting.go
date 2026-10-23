@@ -53,11 +53,17 @@ func (s *XraySettingService) CheckXrayConfig(XrayTemplateConfig string) error {
 	if err != nil {
 		return common.NewError("xray template config invalid:", err)
 	}
+	if err := checkTemplateLuaScripts(xrayConfig); err != nil {
+		return err
+	}
 	for _, inbound := range xrayConfig.InboundConfigs {
 		if err := validateFinalMaskSalamander(string(inbound.StreamSettings)); err != nil {
 			return common.NewError("xray template inbound \""+inbound.Tag+"\":", err)
 		}
 		if err := validateXDriveStorage(string(inbound.StreamSettings)); err != nil {
+			return common.NewError("xray template inbound \""+inbound.Tag+"\":", err)
+		}
+		if err := validateXDriveInbound(inbound.Protocol, string(inbound.Settings), string(inbound.StreamSettings)); err != nil {
 			return common.NewError("xray template inbound \""+inbound.Tag+"\":", err)
 		}
 	}
@@ -122,6 +128,16 @@ func isMissingGeoAssetErr(err error) bool {
 	}
 	msg := err.Error()
 	return strings.Contains(msg, "geoip.dat") || strings.Contains(msg, "geosite.dat")
+}
+
+// checkTemplateLuaScripts refuses a dns "script" beside settings xray-core 26.10.17 refuses (#7136).
+// A routing script is fine: GetXrayConfig hands it the routing in place of the rules.
+func checkTemplateLuaScripts(cfg *xray.Config) error {
+	var dns map[string]any
+	if json.Unmarshal(cfg.DNSConfig, &dns) == nil && dnsScriptRefused(dns) {
+		return common.NewError(`xray template dns: "script" cannot be used with disableFallback, disableFallbackIfMatch, enableParallelQuery, or a server's domains, skipFallback or finalQuery.`)
+	}
+	return nil
 }
 
 // shouldSkipLegacyUnencryptedOutboundRejection lets an older running Xray
