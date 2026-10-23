@@ -36,3 +36,10 @@ export const telegramChannelUrl = `https://t.me/${telegramChannel}`;
 // in CI — also falls back instead of shipping a blank origin.
 export const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || 'https://weibschatten.github.io/We1ssBoard';
+// Path prefix of the static export (e.g. "/We1ssBoard"), set in next.config.mjs.
+export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
+// Prefixes a root-relative path to a public file or route that does not go through next/link.
+export function withBasePath(path: string): string {
+  return `${basePath}${path}`;
+}

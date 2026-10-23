@@ -3,7 +3,7 @@ import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
 import { openapiPlugin } from 'fumadocs-openapi/server';
 import { i18n } from '@/lib/i18n';
-import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
+import { docsContentRoute, docsImageRoute, docsRoute, withBasePath } from './shared';
 
 // See https://fumadocs.dev/docs/headless/source-api for more info.
 // `i18n` builds one page tree per language; untranslated pages fall back to en.
@@ -20,7 +20,7 @@ export function getPageImage(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: `${docsImageRoute}/${segments.join('/')}`,
+    url: withBasePath(`${docsImageRoute}/${segments.join('/')}`),
   };
 }
 
