@@ -9,6 +9,43 @@ differently now), **Fixed** (bugs), **Removed**, **Breaking** (needs action from
 you or breaks an old setup), **Known issues** (problems found after the release
 and the version that fixes them).
 
+## [1.9.1] - 2026-10-23
+
+### Breaking
+- XDRIVE follows Xray-core 26.10.21: it runs only for VLESS with VLESS
+  Encryption ("decryption" on the inbound, "encryption" on the outbound), with no
+  "flow", on a single port, and an outbound only over Mux. The panel offers XDRIVE
+  only for VLESS, refuses to save an inbound without decryption and turns Mux on
+  when an outbound picks XDRIVE. An XDRIVE inbound or outbound saved earlier that
+  the core refuses is left out of the running config with a warning in the log
+  instead of stopping every other inbound: add VLESS Encryption to it (**Generate
+  keys → Generate** in its VLESS settings) and hand clients the new link.
+- A DNS Lua "script" can no longer be combined with disableFallback,
+  disableFallbackIfMatch, enableParallelQuery, or a server's domains,
+  skipFallback or finalQuery. Saving such a template is refused; a stored one runs
+  without the script, with a warning in the log.
+
+### Added
+- XDNS finalmask resolvers take DoH addresses (`https://`) with workers, TLS and
+  QUIC settings; the mask editor edits all of them.
+- Finalmask `filter` on inbounds: allow or block source IPs for TCP and UDP.
+  Share links and JSON subscriptions leave it out, since it only applies on the
+  server.
+- A Lua script for noise masks; the mask editor gets a Script field.
+- XMUX settings for XDRIVE and MASQUE outbounds.
+
+### Changed
+- The Go module `xray-core` moves to the 26.10.21 commit, the same version as the
+  bundled core, so the panel validates configs the way the running core does.
+- XDRIVE's service "Google Drive" is now stored as "google-drive" (the old name
+  still reads).
+
+### Fixed
+- With a routing Lua script set, Xray-core 26.10.21 refused to start because the
+  panel always writes routing rules (its api rule included). Xray-core 26.10.10
+  ignored those rules beside a script, so the panel now leaves them out of the
+  running config and the script keeps routing, as it did before.
+
 ## [1.9.0] - 2026-10-23
 
 ### Breaking
@@ -69,6 +106,13 @@ and the version that fixes them).
   about 1600 px and clipped the last columns (speed, duration) at the card's edge.
 - The API Docs page bundled DOMPurify 3.4.16, which has three critical advisories
   (GHSA-cg2g-xh64-v4q7, GHSA-mrv2-3pqr-j5jr, GHSA-c6gr-qvv4-5v3f); it now ships 3.4.17.
+
+### Known issues
+- Xray-core 26.10.21 shipped in this release is more than a certificate update:
+  it refuses XDRIVE without VLESS Encryption and Mux, a routing Lua script next to
+  routing rules, and some DNS script combinations. On such configs Xray did not
+  start. Fixed in 1.9.1.
+
 
 ## [1.8.4] - 2026-10-20
 
